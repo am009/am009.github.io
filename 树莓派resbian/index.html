@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title> 树莓派resbian | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="树莓派resbian">
+<meta property="og:type" content="article">
+<meta property="og:title" content=" 树莓派resbian">
+<meta property="og:url" content="http://wjk.moe/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/">
+<meta property="og:site_name">
+<meta property="og:description" content="树莓派resbian">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-07-31T12:46:25.000Z">
+<meta property="article:modified_time" content="2020-10-07T16:27:31.909Z">
+<meta property="article:author" content="am009">
+<meta property="article:tag" content="raspberrypi">
+<meta property="article:tag" content="raspbian">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-树莓派resbian" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/" class="article-date">
+  <time datetime="2019-07-31T12:46:25.000Z" itemprop="datePublished">2019-07-31</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%A0%91%E8%8E%93%E6%B4%BE/">树莓派</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+       树莓派resbian
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="树莓派resbian"><a href="#树莓派resbian" class="headerlink" title="树莓派resbian"></a>树莓派resbian</h1><a id="more"></a>
+<p>2019-12-07<br><a target="_blank" rel="noopener" href="https://github.com/openfans-community-offical/Debian-Pi-Aarch64/blob/master/README_zh.md">https://github.com/openfans-community-offical/Debian-Pi-Aarch64/blob/master/README_zh.md</a><br>这是新系统？好像还不错</p>
+<h2 id="上手系统安装"><a href="#上手系统安装" class="headerlink" title="上手系统安装"></a>上手系统安装</h2><p>下载系统镜像，解压。。。<br>一般发行版下载的系统的iso，但是树莓派系统是img的压缩包，要先解压。</p>
+<p>刷镜像一般用win32diskimager。linux用dd命令。<br>也就是说，如果你经常刷系统，拿到树莓派如果先不急着拓展文件系统空间，安装完一些软件，就可以拿回来用win32diskimager读img镜像出来留着。<br>刷完反射性地在boot的根目录下新建ssh空文件。<br>然后就是启动，一句sudo raspi-config打开vnc。<br>树莓派还是对桌面玩家友好😭，图形界面比命令行调乱七八糟的参数好得多。</p>
+<p>一些闲话：<br>回忆起很久以前ubuntu等桌面版还不知道用什么刷到优盘的时候，有个opensusu的小工具也是刷优盘镜像的。主要需要对磁盘的二进制读写能力，才能写出启动盘。<br>最近装了一次win10，以前装win7还会用用ultraISO的写入硬盘镜像到优盘，现在它已经落后变得垃圾了，写入不是卡死就是不能启动，现在用rufus-3.6p.exe这个小巧的程序特别强。装系统的时候才了解到难道uefi已经支持ntfs了吗<br>已经是第二次不能从sd卡启动了。。。是不是uefi歧视sd卡。。。只能用优盘，也不知道是不是驱动不一样。</p>
+<h2 id="journalctl"><a href="#journalctl" class="headerlink" title="journalctl"></a>journalctl</h2><p>直接执行，进行日志的查看<br>参数：<br>-n 3<br>查看最近三条记录<br>-perr<br>查看错误日志<br>-overbose<br>查看日志的详细参数<br>–since<br>查看从什么时候开始的日志<br>–until<br>查看什么时候截止的日志</p>
+<p>这条命令主要是因为我之前用手机充电器，这里会报低电压警告<br>最近买了新电源，用这个命令来看看还会不会警告。果然换了电源就看不到了</p>
+<h2 id="电源管理"><a href="#电源管理" class="headerlink" title="电源管理"></a>电源管理</h2><p>sudo iw dev wlan0 set power_save on|off<br>这条命令关闭wifi的电源管理，否则wifi不稳，我以前通过wifi进行ssh不可靠就是因为这个和电源</p>
+<h2 id="安装无线网卡驱动"><a href="#安装无线网卡驱动" class="headerlink" title="安装无线网卡驱动"></a>安装无线网卡驱动</h2><p>手头有一块垃圾的tenda U6，是rtl8192eu的，还有一张rtl8812au<br><a target="_blank" rel="noopener" href="https://github.com/Mange/rtl8192eu-linux-driver">https://github.com/Mange/rtl8192eu-linux-driver</a><br><a target="_blank" rel="noopener" href="https://github.com/aircrack-ng/rtl8812au">https://github.com/aircrack-ng/rtl8812au</a><br>按照github的readme进行设置，<br>我有一次只是安装rtl8192eu的dkms模块，没有进行教程接下来的设置操作，就开不了机，只能重刷系统😭。<br>开机就可以执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git raspberrypi-kernel-headers build-essential dkms;</span><br></pre></td></tr></table></figure>
+<p>让它慢慢下载</p>
+<h2 id="networkManager"><a href="#networkManager" class="headerlink" title="networkManager"></a>networkManager</h2><p>这里我需要给树莓派固定的ip，但是发现这次树莓派每次启动wifi网卡mac地址都随机化，每次一个新ip，还查不出这个网卡是哪个厂商的。。。<br>但是图形化界面没有设置的地方，还是ubuntu的network-manager-gnome友好，里面有这个选项。<br>于是试图使用network-manager-gnome管理无线网<br>本来以为network-manager-gnome是gnome桌面专用的东西，后来装了才发现lxde照用不误，有桌面环境就行。<br>sudo apt-get install network-manager-gnome<br>这里安装后菜单就出现了advanced network Configuration<br>修改配置文件<br>sudo nano /etc/NetworkManager/NetworkManager.conf</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">plugins&#x3D;ifupdown,keyfile</span><br><span class="line"></span><br><span class="line">[ifupdown]</span><br><span class="line">managed&#x3D;false</span><br></pre></td></tr></table></figure>
+<p>把false改成true<br>#注：managed这里表示是否管理/etc/network/interfaces里配置了的网络接口<br>修改/etc/network/interfaces，在末尾加上如下内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug wlan0</span><br><span class="line">iface wlan0 inet dhcp</span><br><span class="line">        hwaddress b8:27:eb:00:00:00</span><br></pre></td></tr></table></figure>
+<p>相关原理：<br>下面基于2019年7月31日下载的raspbian系统<br>树莓派的这个发行版的网络组件和其他发行版不一样。一般linux首先读取/etc/network/interfaces，剩下没有被管理的网络接口被network-manager管理。<br>树莓派的网络也使用了networkmanager，而不使用interfaces文件，下面是树莓派默认的/etc/network/interfaces</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># interfaces(5) file used by ifup(8) and ifdown(8)</span><br><span class="line"></span><br><span class="line"># Please note that this file is written to be used with dhcpcd</span><br><span class="line"># For static IP, consult &#x2F;etc&#x2F;dhcpcd.conf and &#39;man dhcpcd.conf&#39;</span><br><span class="line"></span><br><span class="line"># Include files from &#x2F;etc&#x2F;network&#x2F;interfaces.d:</span><br><span class="line">source-directory &#x2F;etc&#x2F;network&#x2F;interfaces.d</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>而它include的/etc/network/interfaces.d是一个空文件夹，所以raspbian是不用interfaces的。<br>任何修改/etc/network/interfaces的教程现在都已经过时了，修改该文件会造成兼容性问题，具体表现在桌面右上角的图标失灵，不能正常管理网络。<br>桌面右上角的网络管理的图标比较简陋，软件包名称是lxplug-network，根据名字可以知道，这个应该是lxde的插件，不过肯定是用在raspbian的pixel桌面上的，而且lxplug- 还是一个系列，还包括蓝牙什么的，它在github上的链接是<br><a target="_blank" rel="noopener" href="https://github.com/raspberrypi-ui/lxplug-network">https://github.com/raspberrypi-ui/lxplug-network</a><br>听说原开发者已经退休了。。。<br>当右上角的图标失灵时，显示Connection to dhcpcd lost. 点击显示No wireless interface found.<br>这里可以看出它管理网络使用的是dhcpcd，c代表client，d是deamon守护进程。<br>下面这个帖子在小白互助的时候，一位大神出来说了一句技术内幕。看来有关树莓派的问题还是到官方论坛搜索比较好，接触全球的帖子。<br><a target="_blank" rel="noopener" href="https://www.raspberrypi.org/forums/viewtopic.php?f=28&amp;t=242721&amp;p=1482723&amp;hilit=/etc/network/interfaces+mac+random#p1482723">https://www.raspberrypi.org/forums/viewtopic.php?f=28&amp;t=242721&amp;p=1482723&amp;hilit=%2Fetc%2Fnetwork%2Finterfaces+mac+random#p1482723</a><br>其中关键的一句：<br>dhcpcd has a wpa_supplicant hook in Stretch.<br>Stretch是Debian9的代号现在都到debian10 buster了。<br>也就是说，这个管理程序还是用的是wpasupplicant，不是让你去interfaces里点名用wpasupplicant，而是它在dhcpcd里面它自己调用！用wpagui也可以管理到！<br>至于静态ip，树莓派的桌面环境可以设置。而且如果想在配置文件配置也是在dhcpcd.conf里配置。<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/bd918ef98a4d">https://www.jianshu.com/p/bd918ef98a4d</a></p>
+<p>其他相关页面<br><a target="_blank" rel="noopener" href="https://wiki.lxde.org/en/LXNM">https://wiki.lxde.org/en/LXNM</a><br><a target="_blank" rel="noopener" href="https://wiki.lxde.org/en/LXDE-Qt">https://wiki.lxde.org/en/LXDE-Qt</a></p>
+<h2 id="换tuna源"><a href="#换tuna源" class="headerlink" title="换tuna源"></a>换tuna源</h2><p>虽然树莓派基金会的镜像也能用，但是还是清华的快一些。<br><a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/help/raspbian/">https://mirrors.tuna.tsinghua.edu.cn/help/raspbian/</a></p>
+<h2 id="dump镜像"><a href="#dump镜像" class="headerlink" title="dump镜像"></a>dump镜像</h2><p>树莓派还是不要用太大的sd卡，完全没必要。现在因为不想以后换系统的时候重新配置文件，现在打算直接把整个sd卡做个镜像压缩一下。8g其实完全足够了。我用的32g的卡，为了省空间，打算先压缩分区大小再dump出来。</p>
+<ol>
+<li>fsck磁盘检查<br>要把树莓派关机，把卡拿下来，去别的linux系统上检查<br>sudo fsck /dev/sda2 -f<br>使用-f强制检查但是我检查了，还是后面报有node不对，忘了之前是怎么搞的了</li>
+<li>使用diskgenius压缩分区。<br>gparted还真的不容易做压缩分区，看来还是diskgenius好啊</li>
+</ol>
+<p>一不小心用了这个感觉挺危险的办法：<br><a target="_blank" rel="noopener" href="https://access.redhat.com/articles/1196333">https://access.redhat.com/articles/1196333</a><br><a target="_blank" rel="noopener" href="https://askubuntu.com/questions/780284/shrinking-ext4-partition-on-command-line">https://askubuntu.com/questions/780284/shrinking-ext4-partition-on-command-line</a><br>还要删除分区再建立。。。</p>
+<p>之后构建img文件还是使用win32diskimager，没办法，没什么其他好软件。<br>不过可以勾选只备份已有分区，挺好，没想到小工具能做到这么实用，我要是也能写出这样的工具就好了。</p>
+<h2 id="samba"><a href="#samba" class="headerlink" title="samba"></a>samba</h2><p>windows 清除登录密码<br>加上选项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">min protocol &#x3D; SMB3</span><br><span class="line">security &#x3D; user</span><br></pre></td></tr></table></figure>
+
+<p>debug samba</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo service smbd stop</span><br><span class="line">sudo smbd -F -S -d&#x3D;10</span><br></pre></td></tr></table></figure>
+<p>此时再连接, 就可以看到debug信息了.</p>
+<p>关键配置1 要加密或者签名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server signing &#x3D; mandatory</span><br><span class="line">smb encrypt &#x3D; mandatory</span><br></pre></td></tr></table></figure>
+<p>关键配置2 guest account 要手动设置</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://wjk.moe/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/" data-id="ckfy5cz40000ajsvp9k8y3nzv" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/raspberrypi/" rel="tag">raspberrypi</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/raspbian/" rel="tag">raspbian</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/os/ucore%20lab1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+           ucore lab1
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/%E5%A4%A9%E6%9E%A2%E7%9A%84%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%20Q&A/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"> 天枢的新手入门指南 Q&amp;A</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E5%AD%A6/">大学</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%A0%91%E8%8E%93%E6%B4%BE/">树莓派</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/raspberrypi/" rel="tag">raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/raspbian/" rel="tag">raspbian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91/" rel="tag">开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88/" rel="tag">栈</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/raspberrypi/" style="font-size: 10px;">raspberrypi</a> <a href="/tags/raspbian/" style="font-size: 10px;">raspbian</a> <a href="/tags/ucore/" style="font-size: 20px;">ucore</a> <a href="/tags/%E5%BC%80%E5%8F%91/" style="font-size: 10px;">开发</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/os/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"> rcore学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/unlink/"> unlink</a>
+          </li>
+        
+          <li>
+            <a href="/2019/HG6201m%E5%85%89%E7%8C%AB%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/"> 烽火HG6201M交叉编译transmission成功!!</a>
+          </li>
+        
+          <li>
+            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/"> 一句话博客</a>
+          </li>
+        
+          <li>
+            <a href="/windows%E6%9D%83%E9%99%90/"> windows 权限提升与监控</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 am009<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
