@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title">
-<meta property="og:url" content="http://wjk.moe/">
+<meta property="og:url" content="https://wjk.moe/">
 <meta property="og:site_name">
 <meta property="og:locale">
 <meta property="article:author" content="am009">
@@ -26,7 +26,7 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
-<meta name="generator" content="Hexo 5.2.0"></head>
+<meta name="generator" content="Hexo 5.4.0"></head>
 
 <body>
   <div id="container">
@@ -56,7 +56,7 @@
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -64,420 +64,16 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-os/rcore学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/os/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
-  <time datetime="2020-10-07T16:04:11.146Z" itemprop="datePublished">2020-10-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/os/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"> rcore学习笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="rcore学习笔记"><a href="#rcore学习笔记" class="headerlink" title="rcore学习笔记"></a>rcore学习笔记</h1><p>这是我这几天学习rcore-Tutorial第三版时的笔记, 汇总到了一起.<br><a href="#lab1%E4%B8%AD%E6%96%AD">lab1</a> 学习了不少RISC-V的中断相关的基础知识, 之后补的中断相关的知识也补在这里了<br><a href="#lab3%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86">lab3</a>, <a href="#lab4%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%B0%83%E5%BA%A6">lab4</a> 对实现细节写得详细一些, 稍微看懂一点代码就写上去了, 很多函数的实现细节都写下来了.</p>
-<p>有的地方还留下了一些疑问没有解决, 自己也查了资料但没有找到答案, 如果去掉感觉有可能产生误导, 所以就留着了.</p>
-<h2 id="lab1中断"><a href="#lab1中断" class="headerlink" title="lab1中断"></a>lab1中断</h2><p>回顾ucore, ucore的lab1也主要讲了中断, lab2讲分页<br>ucore的进程管理分了好几个lab, 内核进程, 用户进程, 进程调度.</p>
-<p>添加了interrupt/context.rs, 文件也是一个mod, interrupt文件夹也是一个新的mod, 现在rust2018, 既可以采用src/interrupt/mod.rs, 也可以用src/interrupt.rs来代表整个文件夹作为mod.</p>
-<p>由于中断说起来比较顺口, 因此下文中部分地方说中断这个词的时候其实既包括中断又包括异常, 也就是包括那些会跳转到trap vector的事件.</p>
-<h3 id="CSR-是什么"><a href="#CSR-是什么" class="headerlink" title="CSR 是什么"></a>CSR 是什么</h3><p>Control and status registers, 大部分是处理特权相关的寄存器. 为操作系统程序提供特权, 方便管理用户态程序.</p>
-<p>操作这相关的寄存器的包装, riscv这个crate, 这是相关的文档.<br><a target="_blank" rel="noopener" href="https://docs.rs/riscv/0.6.0/riscv/register/index.html">https://docs.rs/riscv/0.6.0/riscv/register/index.html</a><br>dependencies里写的居然是rcore自己的fork, 而且比官方的多了特别多的commit, 太神奇了. 因此可能有我们rcore自己的fork实现的东西, 而文档里没有.</p>
-<h3 id="RISC-V中断"><a href="#RISC-V中断" class="headerlink" title="RISC-V中断"></a>RISC-V中断</h3><p>比较关键的一点是sbi做什么, 而操作系统做什么<br><a target="_blank" rel="noopener" href="https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc">https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc</a><br>可以看看上面这个文档.<br>一个稍微比较重要的理念是supervisor态和user态都可能是虚拟化的, 只有m态不是虚拟化的. 因此一些对虚拟化有用的操作都不能直接从s态掌控. 包括时钟和ipc. 硬件线程间的通信.</p>
-<h4 id="异常-中断委托"><a href="#异常-中断委托" class="headerlink" title="异常/中断委托"></a>异常/中断委托</h4><p>委托机制的使用: 默认是所有中断和异常都转到m模式的mtvec, 通过设置mideleg/medeleg寄存器可以设置把哪些中断和异常委托给s模式.</p>
-<p>下面这段话是privileged isa手册中说的</p>
-<blockquote>
-<p>Some exceptions cannot occur at less privileged modes, and corresponding x edeleg bits should be hardwired to zero. In particular, <code>medeleg[11]</code> and <code>sedeleg[11:9]</code> are all hardwired to zero.</p>
-</blockquote>
-<p>最后一句的意思是m模式产生的ecall异常无法被委托, s模式下的ecall和m模式下的ecall在sedeleg中无法被委托给user模式.</p>
-<p>所以在tutorial中具体哪些中断被委派了? 启动的时候opensbi会打印委派寄存器的值如下.<br>MIDELEG : 0x0000000000000222<br>MEDELEG : 0x000000000000b109<br>mideleg的bit为分布和mip和mie相同, medeleg的bit分布对应那张异常的编号的表.<br>分析一下得知:<br>地址对齐异常, 断点异常, 用户模式的ecall, 三种页异常(读写和指令) 被委派.<br>中断有: s态软件中断, s态时间中断, s态外部中断 被委派</p>
-<p>TODO 为什么user态的三个中断没有被委派?? user态中断是m态先处理还是s态先处理??</p>
-<h4 id="中断的屏蔽"><a href="#中断的屏蔽" class="headerlink" title="中断的屏蔽"></a>中断的屏蔽</h4><p>sstatus的SIE位是总开关, 每个单独的中断也可以针对性地屏蔽, 在sie寄存器有对应的屏蔽位. sie和sip这两个寄存器中, 只有被m态委派的对应位能够修改.</p>
-<h4 id="中断向量"><a href="#中断向量" class="headerlink" title="中断向量"></a>中断向量</h4><p>中断寄存器stvec指向的是中断的入口. 不像x86有一长条的中断向量表. 有两种模式, 向量模式和直接模式, 直接模式用一个地址处理所有中断和异常, 向量模式则会让不同中断跳转到不同的位置, 在基地址的基础上加上一定的偏移量, 而异常还是直接跳转到基地址.<br>mtvec<a href="vec%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E6%8C%87%E4%BB%A4%E5%AF%B9%E9%BD%90%E4%BD%BF%E5%BE%97%E6%9C%80%E4%BD%8E%E4%BD%8D%E6%97%A0%E6%95%88">0</a>设置为1可启用向量模式中断, 根据中断原因x将PC设置为(base + 4x), 也就是跳转到不同的地址.</p>
-<p>产生中断时各种中断相关的位会被放到对应的previous位中, 之前的权限模式被放到sstatus的SPP.</p>
-<p>执行相关的sRet指令的时候, 类似于产生异常的逆过程. 1是会把sepc恢复到pc, 2是sstatus中各种previous位都恢复到原来的位置. mret, uret类似.</p>
-<h3 id="中断过程梳理"><a href="#中断过程梳理" class="headerlink" title="中断过程梳理"></a>中断过程梳理</h3><p>之前lab0完成了最小的启动, 通过sbi接口打印字符<br>本次lab1的代码主要完成的是中断相关. 接到控制权后转到了entry.asm 将bss段作为栈, 然后调用rust_main.</p>
-<h4 id="中断准备"><a href="#中断准备" class="headerlink" title="中断准备"></a>中断准备</h4><p>正是因为rust_main被汇编调用, 因此声明的时候要加上extern “C”从而使用C的abi.<br>rust_main 作为初始化代码, 刚启动就执行的代码, 自然是调用各种初始化函数. 这里调用中断初始化, 这部分代码单独放到一个mod内了, 也就是interrupt文件夹. </p>
-<p>具体来说, 使用global_asm宏引入了interrupt.asm, 在要用到的地方用extern “C” 声明函数, 最后使用write写入__interrupt地址到stvec.这里把写入stvec寄存器也放到unsafe内的原因是这个函数声明的作用域仅限unsafe作用域内.</p>
-<p>main函数中调用interrupt模块的初始化, 完成中断的准备. 中断的初始化主要做两件事, 把准备好的中断处理函数加载到trap vector寄存器stvec, 和打开中断总开关和对应的分开关.</p>
-<p>进入interrupt模块的初始化函数, 分别是handler的初始化和timer的初始化.handler的初始化函数设置了stvec寄存器为interrupt.asm中符号<code>__interrupt</code>的地址, 同时开启sie寄存器中s态外部中断的开关 TODO 外部中断有哪些??.<br>timer的初始化函数则打开了sie中的s态时钟中断, 和中断的总开关, 并且设置了第一次时钟中断.</p>
-<p>那Sstatus寄存器的SIE位负责的是中断总开关, 而类似ebreak这样的是异常, 所以不设置这个位也能进入trap处理. 当lab1后半部分用到时钟中断的时候就要设置SIE位打开总开关了.</p>
-<h4 id="中断发生"><a href="#中断发生" class="headerlink" title="中断发生"></a>中断发生</h4><p>中断随时可能来, 发生的时候, 可能程序执行到一半, 即使是一些临时寄存器也可能正在使用. 因此不能破坏任何现场.</p>
-<p>断点异常和S态时钟中断都被opensbi在deleg系列寄存器中委托过了, 因此这两个中断产生时就会转到我们S态的中断向量处.</p>
-<p>当有中断或者异常发生的时候就会跳转到之前设置好的<code>__interrupt</code>处, 硬件只是会修改sepc, scause, stval等寄存器的值, 而不像x86会直接保存到栈上. 保存到栈上全靠我们操作系统的指令. 而<code>__interrupt</code>主要做的就是保存现场并恢复.<br>首先是把各个寄存器压栈形成Context, Context的结构并不复杂, 32个通用寄存器, 加上sstatus, sepc. (riscv的pc不在32个通用寄存器里)<br>然后将栈上的Context地址放到a0, 把scause放到a1, 把stval放到a2, 最后jal(jump and link) 实现跳转. 因为函数调用约定就是用的jal调用函数, ret返回. link代表把下一个指令的地址放到link寄存器中.<br>当handle_interrupt函数返回的时候, 就回到了汇编代码interrupt.asm中, 到了__restore这个部分, 自动开始了恢复中断的过程.</p>
-<p>sscratch是一个单纯用来存数据的寄存器, 在tutorial中, sscratch在用户态用来保存内核栈的地址, 内核态是0, 因为进入内核态(进入中断)的时候os把它清零.<br>之后为了支持用户态程序, 就需要用到sscratch, 先切换栈再保存Context, 而我们lab1还是一直内核态, 内核态发生中断, 就可以直接保存各种寄存器在当前栈上, 取出栈上的指针作为Context结构体的借用传入interrupt_handler.<br>sstatus里的带P(previous)的位会被设置好, 因此需要保存sstatus. 而scause和stval就直接看作局部于这次中断处理的临时变量(handle_interrupt的参数), 不保存, 在中断处理的过程中用寄存器传递.</p>
-<p>os/src/interrupt.asm 内含中断保存现场__interrupt, 和恢复现场__restore<br>首先sp减34<em>8开辟空间, 保存时使用以sp为基地址的栈上偏移量寻址Context成员(类似栈上临时变量), 为了sp(x2)保持不变, 首先保存x1, 然后利用空闲出来的x1去计算原来的sp, 也就是把sp加34\</em>8保存到x1, 再保存x1(作为sp(x2)), 再依次保存各种寄存器.<br>恢复的时候最后恢复sp即可.</p>
-<p>handle_interrupt函数直接根据cause来调用不同的函数处理. 如果是断点异常, 就打印出来, 将PC加2(看来使用了C拓展减少了指令长度), 时钟中断就调用tick函数, 默认就调用fault函数panic并且打印未解决的异常.</p>
-<h4 id="时钟中断"><a href="#时钟中断" class="headerlink" title="时钟中断"></a>时钟中断</h4><p>现在RISC-V的timer一般都是内置在cpu内的, 不像x86是通过外部芯片产生时钟中断.</p>
-<p>每次时钟中断的时候, 都会从中断处理程序那走一遭, 然后调用tick函数计数并继续设置下一次时钟. 目前设置的是每10 0000条指令产生一次时钟中断</p>
-<blockquote>
-<p>S模式不直接控制 时钟中断 和软件中断，而是使用 ecall指令请求 M模式设置定时器或代表它发送处理器间中断。该软件约定是监管者二进制接口 (Supervisor Binary Interface)的一部分。</p>
-</blockquote>
-<p>上面这句话来自那本中文的《riscv手册》. 虽然时钟的设置是通过sbi接口, 也就是ecall指令去使用m态程序(opensbi)提供的服务, 但时间到了的通知, 还是通过S态时钟中断. (猜测是opensbi设置时钟, 得到m态的时钟中断信号的时候, 传递下来, 产生S态的时钟中断信号.)</p>
-<p>由于没有一个接口来设置固定重复的时间中断间隔，因此我们需要在每一次时钟中断时，设置再下一次的时钟中断.</p>
-<h4 id="断点异常"><a href="#断点异常" class="headerlink" title="断点异常"></a>断点异常</h4><p>ebreak指令会产生断点异常. 无论是ebreak还是ecall, 产生异常时的sepc都是指向该指令, 而不是下一条指令.</p>
-<p>??那其他异常呢? 是下一条指令吗?? TODO</p>
-<h4 id="中断结束"><a href="#中断结束" class="headerlink" title="中断结束"></a>中断结束</h4><p>当handle_interrupt函数返回的时候, 返回到调用它的interrupt.asm中的jal指令之后, 开始恢复之前保存的现场. 直接把各个保存的寄存器恢复, 这样寄存器的状态就是发生中断时的状态. 恢复现场后, sstatus和sepc也恢复了, sret, 返回的时候将pc设置为sepc. 并且恢复sstatus寄存器, 把里面的previous位都还原. 如果中断之前是打开中断的状态, sret后也会回到打开中断状态. 最终恢复到中断前被打断的位置继续执行。</p>
-<h3 id="interrupt-pending-寄存器"><a href="#interrupt-pending-寄存器" class="headerlink" title="interrupt pending 寄存器"></a>interrupt pending 寄存器</h3><p>machine/supervisor/user interrupt pending寄存器是提供有关正在等待的中断的信息.</p>
-<p>这里我也没有彻底学懂, 不过rcore-tutorial没怎么用到.</p>
-<h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>当多个中断发生的时候, riscv首先处理特权级最高的, 特权级相同的时候按照 外部-&gt;软件-&gt;时钟的顺序处理(使得最差情况时的处理时间最小). 因此当很多中断同时发生的时候, 或者ISA中断服务例程执行的时候, 其他中断却来了, 此时产生了中断pending.<br>让当前的中断例程能感知到新中断的存在有一定的作用, 我临时搜索了一下发现, 在arm架构中好像就有相关的应用. 看到一个是应用是省略相继产生的中断间的重新弹栈压栈, 提升性能.</p>
-<h4 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h4><p>当从mip(xip)寄存器中获取值的时候, 得到的是对应寄存器和对应中断产生信号的OR之后的值. 也就是如果这个中断真正在等待, 对应的pending位就为1.</p>
-<p>高特权级如果设置了低特权级的对应中断的pending位, (不知道是回到对应特权级的时候还是立刻?)就会产生对应的中断. 如, m态的程序就可以通过设置mip对应的supervisor的中断pending位, 从而让低特权级的程序产生中断. 各种m态的中断的pending位在mip寄存器中是只读的, mip中对应低特权级的pending位则既可读, 也可以写触发上述效果.<br>S态软件中断, U态软件中断(基本上)靠这种方式产生. </p>
-<h2 id="lab2内存管理"><a href="#lab2内存管理" class="headerlink" title="lab2内存管理"></a>lab2内存管理</h2><p>包括临时堆内存管理, 物理内存管理.</p>
-<h3 id="临时堆内存管理"><a href="#临时堆内存管理" class="headerlink" title="临时堆内存管理"></a>临时堆内存管理</h3><p>ucore中是先实现按页的物理内存管理, 再实现的任意大小的管理的. 而这里完全不一样, 先是bss段留了8M空间作为堆, 给操作系统动态内存分配用, 再去单独实现按页的物理内存管理.</p>
-<p>这里我暂时使用临时堆内存管理这个新词, 表示为了使用rust提供的一些需要使用堆内存的数据结构而在bss段上划分出一块空间作为堆. rcore-tutorial这里我们直接使用现有的buddy system内存分配算法, 在代码中开辟8M大小的bss段空间(u8数组), 作为被分配的空间.</p>
-<p>我们分配算法和rust的对接主要在于Trait GlobalAlloc, 实例化之后用 <code>#[global_allocator]</code>标记就可以使用动态内存分配了(可以使用一些需要动态内存分配的内置数据结构, 如Box, Vec等). 接口也是和C语言中malloc/free类似的接口: alloc和dealloc.</p>
-<h4 id="bss-buddy-system实现细节"><a href="#bss-buddy-system实现细节" class="headerlink" title="bss+buddy system实现细节"></a>bss+buddy system实现细节</h4><p>直接分配u8 static数组,数组名字指向的就是对应的空间.<br>添加buddy system这个包. spin和lazy_static也顺便加上.<br>创建memory文件夹作为新的mod, 创建init函数被main调用. 创建一个HEAP全局变量作为分配器, 并在init函数里面把那个数组的内存初始化给它.<br>想把数组的名字作为指针, 只需要调用.as_str()然后as转换为usize就可以了.<br>这样, main函数调用完heap的init之后就可以分配堆空间了.</p>
-<h4 id="使用自己的堆分配算法"><a href="#使用自己的堆分配算法" class="headerlink" title="使用自己的堆分配算法"></a>使用自己的堆分配算法</h4><p>也可以不使用buddy_system, 答案中的heap2使用自己的algorithm crate的bitmap_vector_allocator提供分配算法支持, 这里自己实现分配算法也可以很简单, 代码量挺少的.</p>
-<p>堆分配算法和其他代码的接口一个是<code>#[global_allocator]</code>标注, 一个是init函数.<br>这里使用的是bitmap标记空闲, 以字节为单位, 查找时按照对齐要求的倍数顺序查找(作为内存的开头), 直到遇到了空闲处.<br>只标记4096字节, 最多只能管理4K的内存. 这里的实现也是对给定内存范围的对应内存的index(偏移)做分配, 每次分配得到的只是一个偏移, 需要去找到对应的内存地址.</p>
-<p>不像buddy_system实现好了GlobalAlloc, 为了global_allocator要实现alloc::alloc::GlobalAlloc这个trait. 需要实现分配和回收两个函数, 传入的是core::alloc::Layout, 并且需要处理指针类型 *mut u8. 直接整个实现都是unsafe的. Heap全局变量也不再是简单的直接是一个实例, 而是在VectorAllocatorImpl的基础上包了一层Option, 再包UnsafeCell. UnsafeCell取内部的值需要get再as_mut, Option就直接unwarp, 就可以得到内部的VectorAllocatorImpl调用alloc/dealloc函数.</p>
-<p>包一层Option有一个好处就是可以提供默认值. 初始化之前, Option里是None, 初始化函数使用replace函数替换成实例之后才能分配, 否则会在unwrap的时候panic</p>
-<p>完成之后, 将main函数堆测试代码的两个循环数量从10000减少到100才能正常通过测试. 这个自己实现的算法毕竟管理的内存比较少.</p>
-<h3 id="按页的物理内存管理"><a href="#按页的物理内存管理" class="headerlink" title="按页的物理内存管理"></a>按页的物理内存管理</h3><p>物理内存管理不像临时堆内存管理只是为了让我们操作系统自己用, 它是虚拟内存管理的基础. 否则的话只要直接把buddy_system的LockedHeap的init函数中传入的内存改成我们可用的所有内存范围, 就能让我们操作系统自己用上这些内存了.</p>
-<h4 id="封装地址类型与frame-tracker"><a href="#封装地址类型与frame-tracker" class="headerlink" title="封装地址类型与frame tracker"></a>封装地址类型与frame tracker</h4><p>内存地址空间确实是非常常用的东西. 无论是分页内存管理还是mmio, 之后肯定会大量用到内存地址的. 因此这里封装出了地址类型.</p>
-<ol>
-<li>封装地址类和页号类</li>
-<li>抽象实现From trait在地址和页号间相互转换</li>
-<li>抽象实现地址转页号的向上/下取整</li>
-<li>抽象实现和usize的加减输出操作.</li>
-</ol>
-<p>还要在memory中新建mod range. 提供对内存地址range的支持. 它在基础的core::ops::range基础上增加相互转换, 和len函数, 和迭代, 重叠检测, 虚拟物理相互转换, 取下标, 包含检测的功能.</p>
-<p>frame tracker 作为物理页面的智能指针, 继承PhysicalPageNumber, 实现Drop.<br>frame模块除了frame_tracker的实现, 同时承载分配相关的实现: allocator.rs 对分配算法进行包装, 对接frame tracker和分配. 分配算法实现Allocator trait(一次分配回收一个元素的index), 包装后提供初始化创建(起始物理页号和页数量), 分配一个页(frame tracker), frame tracker析构的时候自动调用回收.<br>由于是简单的一次分配一个元素, 而且可以是离散的, 简单地使用一个栈进行分配. 创建StackedAllocator, 在allocator.rs中作为AllocImpl, 就会使用这个算法了.</p>
-<p>frame tracker创建的时候不会自动申请页面, 因此想要获得frame tracker需要通过allocator分配, 不能自己构造.</p>
-<h4 id="分配哪些内存"><a href="#分配哪些内存" class="headerlink" title="分配哪些内存"></a>分配哪些内存</h4><p>可以直接根据qemu内存映射, riscv从0x8000_0000开始到0x8800_0000这128M初始内存, 直接硬编码拿来. 硬编码在 MEMORY_END_ADDRESS, 另外还要设置这些全局变量KERNEL_END_ADDRESS, MEMORY_START_ADDRESS, KERNEL_HEAP_SIZE.</p>
-<p>在ucore中, 一般以函数指针结构体作为接口, 让不同的分配算法提供相同的接口. 而且还花大量精力, 使用Page结构体, 链表组织空闲页面.(物理内存管理), 而我们这里实现的就简单得多, 对物理页的下标直接管理.</p>
-<h4 id="FrameAllocator"><a href="#FrameAllocator" class="headerlink" title="FrameAllocator"></a>FrameAllocator</h4><p>实现单页单页的物理内存的分配和回收. 内部使用的算法是StackedAllocator, 非常简单, 一个Vec, 新建的时候把一段物理内存范围输入, 每次分配取栈顶的一页, 每次回收页就压入栈中. 按照单页的分配和回收使得实现起来非常简单, 时间空间复杂度也会很低.<br>接着在StackedAllocator基础上包装出FrameAllocator, 把对下标的分配转化成真正的内存地址, 并且返回时返回Frame Tracker.</p>
-<p>物理内存的分配器目前只实现的单页单页的分配和回收, 这一点我之前其实觉得挺合理的, 因为现在离散式虚拟内存技术已经非常成熟, 我们操作系统用到的现在全都是虚拟地址, 需要”连续的内存”时也一般是需要连续的虚拟地址空间, 因此物理地址的分配完全可以是这样一页一页离散的.<br>但是之后的lab可以看到, DMA确实出现了需要连续的物理内存空间这种需求, 看来这里的实现确实值得改进…</p>
-<h3 id="用到的其他小知识点"><a href="#用到的其他小知识点" class="headerlink" title="用到的其他小知识点"></a>用到的其他小知识点</h3><p>pub(super) 指只对父模块是public的<br><a target="_blank" rel="noopener" href="https://doc.rust-lang.org/reference/visibility-and-privacy.html">https://doc.rust-lang.org/reference/visibility-and-privacy.html</a></p>
-<p>KERNEL_END_ADDRESS是lazy_static, 因为不用会报错”pointer-to-integer cast” needs an rfc before being allowed inside constants</p>
-<p>下面这个impl代表某种类型, 而且最终会被确定下来<br><a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/keyword.impl.html">https://doc.rust-lang.org/std/keyword.impl.html</a></p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="function"><span class="keyword">fn</span> <span class="title">iter</span></span>(&amp;<span class="keyword">self</span>) -&gt; <span class="keyword">impl</span> <span class="built_in">Iterator</span>&lt;Item = T&gt; &#123;</span><br><span class="line">    (<span class="keyword">self</span>.start.into()..<span class="keyword">self</span>.end.into()).map(T::from)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>下面这句话的下划线似乎代表让编译器推断类型</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> offset = ptr <span class="keyword">as</span> <span class="built_in">usize</span> - &amp;HEAP_SPACE <span class="keyword">as</span> *<span class="keyword">const</span> _ <span class="keyword">as</span> <span class="built_in">usize</span>;</span><br></pre></td></tr></table></figure>
-
-<h2 id="lab3虚拟内存管理"><a href="#lab3虚拟内存管理" class="headerlink" title="lab3虚拟内存管理"></a>lab3虚拟内存管理</h2><h3 id="Sv39页内存管理"><a href="#Sv39页内存管理" class="headerlink" title="Sv39页内存管理"></a>Sv39页内存管理</h3><p>Sv39最大支持512G地址空间, 分为3级页表. 每级页表大小都是一页, 因为8B * 512 = 4K.<br>最高级的页表, 每一项表示1G的地址空间, 第二级页表每项表示2M地址空间, 最低级的页表每一项表示4K地址空间.<br>虚拟地址空间64位只有低39位有效, 63-39 位的值必须等于第 38 位的值. 也就是说, 根据最高位是不是1, 512G地址空间被分为低256G(高位都是0), 和高256G(高位都是F).</p>
-<p>39位的划分: 页内12位 + 9 + 9 + 9<br>对应的内存大小: 每页4K, —(512页)—&gt; 2M -(512)-&gt; 1G -&gt; 512G<br>十六进制表示: 0x1000 -&gt; 0x20 0000 -&gt; 0x4000 0000 -&gt; 0x80 0000 0000<br>现在架构中最大可寻址的物理地址有56位. 也就是有56-12=44位标识页<br>而页表项中<code>[53-10]</code>这44位用来标识一个物理页. 也就是物理地址的过高位和低12位去掉之后还要右移两位才可以对应上页表项中. 页表项内低10位自然就是标志位. 页表项最低位(Valid位), 为0则表示该页表项无效.</p>
-<p>然而三级和二级页表项不一定要指向下一级页表, 可以作为大页… 如果RWX位全0才是指向下一级页表, 否则作为大页, 项中指向映射的开始页, 向后自动映射2M/1G内存. 这方法厉害啊, 可以在线性映射的时候节约不少内存空间. 另外, 大页也需要按照自己的大小对齐.</p>
-<p>satp寄存器指向页表. 要在修改 satp 的指令后面马上使用 sfence.vma 指令刷新整个 TLB。手动修改一个页表项之后可以通过在sfence.vma后面加上一个虚拟地址来刷新单独的页表项中这个虚拟地址的映射.</p>
-<h4 id="页表工作方式"><a href="#页表工作方式" class="headerlink" title="页表工作方式"></a>页表工作方式</h4><ol>
-<li>首先从 <code>satp</code> 中获取页表根节点的页号，找到根页表</li>
-<li>对于虚拟地址中每一级 VPN（9 位），在对应的页表中找到对应的页表项</li>
-<li>如果对应项 Valid 位为 0，则发生 Page Fault</li>
-<li>如果对应项 Readable / Writable 位为 1，则表示这是一个叶子节点。<br>页表项中的值便是虚拟地址对应的物理页号<br>如果此时还没有达到最低级的页表，说明这是一个大页</li>
-<li>将页表项中的页号作为下一级查询目标，查询直到达到最低级的页表，最终得到页号</li>
-</ol>
-<h3 id="内核启动"><a href="#内核启动" class="headerlink" title="内核启动"></a>内核启动</h3><h4 id="内核地址空间的变化"><a href="#内核地址空间的变化" class="headerlink" title="内核地址空间的变化"></a>内核地址空间的变化</h4><p>内核的地址空间要抬高, 在512G虚拟地址中不是平移256G. 数据段起始地址变成0xffff ffff 8020 0000, 在Sv39看来是0x7f_8020_0000 而原来是0x00 8020 0000,<br>多了0x7f 0000 0000, 也就是平移了508G.</p>
-<p>另外观察到: 0x80200000 = 2G + 2M</p>
-<h4 id="启动过程"><a href="#启动过程" class="headerlink" title="启动过程"></a>启动过程</h4><ol>
-<li>0x80200000处(entry.asm)使用汇编开启分页模式</li>
-<li>开启分页模式的一瞬间, 当前的PC还在原来的位置, 因此需要映射0x80200000附近的位置, 同时需要映射0xffffffff80200000 附近的位置 直接使用大页映射, 4K空间作为最高级页表, 映射两个1g, 简单方便省内存. (这里之后的lab会为了访问磁盘设备需要再映射1g的页).</li>
-<li>跳转到rust内(rust_main)</li>
-</ol>
-<h3 id="代码变化梳理"><a href="#代码变化梳理" class="headerlink" title="代码变化梳理"></a>代码变化梳理</h3><p>内核启动之后, rust_main在之前的初始化的基础上, 我们还会新建一个kernel的MemorySet内存地址映射, 并激活它. 这里的MemorySet更多主要是为了之后的进程的地址空间映射准备的. 之后lab的main函数在初始化的时候就不会再激活这样的映射了.</p>
-<p>需要修改的地方有:</p>
-<ol>
-<li>ld脚本需要修改链接的基址, 这个比较简单</li>
-<li>启动的asm文件, 需要加上临时页表, 和装载临时页表的语句</li>
-<li>加入虚拟地址结构体, 实现一些相关trait, 增加一个偏移量常量KERNEL_MAP_OFFSET</li>
-</ol>
-<p>修改完这几个, 内核依然能够正常运行进入rust_main.<br>接着修改, 下面这前两步的工作量最大</p>
-<ol>
-<li>封装页表项, 页表等</li>
-<li>实现MemorySet, 和内部的Mapping和Segment </li>
-<li>main函数中新建kernel类型的映射并激活</li>
-</ol>
-<h4 id="entry-asm"><a href="#entry-asm" class="headerlink" title="entry.asm"></a>entry.asm</h4><p>这里只说说这个页表项</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.quad (0x80000 &lt;&lt; 10) | 0xcf</span><br></pre></td></tr></table></figure>
-<p>由于取页号放到第10位开始的位置, 也就相当于0x8000 0000 &gt;&gt;12 &lt;&lt;10, 0xcf表示 VRWXAD这几个标志位均为 1, 表示这个页具有RWX属性.</p>
-<h4 id="虚拟地址的封装-memory-address-rs"><a href="#虚拟地址的封装-memory-address-rs" class="headerlink" title="虚拟地址的封装 memory/address.rs"></a>虚拟地址的封装 memory/address.rs</h4><p>完善之前物理地址的封装, 加上虚拟地址</p>
-<ol>
-<li>指针转换为虚拟地址, 实现这个trait, 这样任何指针类型都可以直接转虚拟地址类型</li>
-<li>deref_kernel和deref可以用地址类型转换成任意类型的指针, 而且生命周期是static的. pageNumber类型的deref使得可以直接获得页表大小的u8数组.</li>
-<li>对VirtualPageNumber类型实现levels函数, 获得三级页号.</li>
-<li>也为address类型实现page_offset函数, 取得页内偏移.</li>
-</ol>
-<h4 id="实现页表-memory-mapping"><a href="#实现页表-memory-mapping" class="headerlink" title="实现页表 memory/mapping"></a>实现页表 memory/mapping</h4><p>不仅封装了页表, 页表项, 还封装了mapping结构, 类似ucore的vma</p>
-<ol>
-<li>page_table_entry.rs 封装页表项. 实现了Flags类, 表示每个entry低8bit的标志位. 用implement_flags宏抽象标志位的读的实现. 提供了address函数, page_number函数用来找到页表项指向的页面, 实现了flags函数获取flags, 还有is_empty函数, has_next_level函数, 最后实现了Debug trait的打印</li>
-<li>page_table.rs 封装了页表(页表项数组). 这里还需要把之前的frame_tracker增加了derefMut到u8数组的trait. 封装了PageTableTracker作为PageTable的智能指针. 内部包含一个FrameTracker, 实现自动释放内存的功能. 和PageTable只有一个Deref的距离. 创建页表时要申请物理页将FrameTracker包装为PageTable的智能指针类型再使用. FrameTracker管理一个页, 并且能转换为任何类型, 作为任何类型的智能指针. 而包装了FrameTracker的PageTableTracker则更加具体, 仅仅作为页表的智能指针. </li>
-<li>segment.rs 封装了线性映射类型, 实现了遍历某个映射中每个页的功能. 映射有两种类型, 操作系统使用的线性映射, 和按帧分配的离散映射. 后者只能遍历虚拟页, 前者可以直接使用虚拟转物理的转换trait遍历物理页.</li>
-<li>mapping.rs 负责管理各种页表. 使用vec保存PageTableTracker这个智能指针, 同时另外保存根页表的物理页号(对应页表寄存器). 实现了激活该页表activate函数, new函数新建页表同时分配根目录表, map函数映射一个segment, map_one函数映射一页, unmap移除映射, 会创建页表的find_entry函数(和ucore中那个函数类似), 虚拟地址查找物理地址的lookup函数.</li>
-<li>memorySet总览全局, 包含了Mapping结构体和Segment数组, 实现添加和删除映射的总接口, 调用下部的mapping的添加和删除映射的接口. 另外还实现了让main函数调用的new_kernel新建memorySet和各种映射的函数, 之后的lab里还要实现读取ELF创建映射的函数</li>
-</ol>
-<h3 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h3><h4 id="Mapping"><a href="#Mapping" class="headerlink" title="Mapping"></a>Mapping</h4><p>mapping负责管理页表, 整个文件100多行, 非常重要. </p>
-<ol>
-<li>map_one函数, 映射一个页, 调用find_entry找到对应的entry, 为空则新建并填入Page: <code>*entry = PageTableEntry::new(ppn, flags);</code>由于page_table就是page_table_entry数组, 因此直接赋值由于实现了Copy, 就导致页表项写入.</li>
-<li>lookup函数, 这个函数是静态的!! 首先拿出当前的页表寄存器内的值, 找到页目录表. 把参数的虚拟地址转为页号调用levels函数方便获取每级下标. 然后先取好最高级页表的下标, 再在循环中如果有下一级页表, 不断取下标, 直到页表项为空(判断valid???), 或者不再有下一level, 此时的entry就保存了base地址, 加上虚拟地址低位的offset(不一定只有12位)得到真正的地址.</li>
-<li>find_entry函数, 这个函数和lookup有些类似, 但是是从自己的mapping实例的页表物理页号中找到页表, 找的过程中如果页表不存在就直接分配新的页作为页表, 总是能找到页表项, 而且找的总是代表4k一页大小的第三级页表项.</li>
-<li>unmap函数, 调用find_entry函数并调用clear</li>
-<li>map函数, map一整个segment. 如果是线性映射, 则遍历虚拟地址不断调用map_one填页表项, 有数据复制数据, 最重要的特点是不用分配物理页面. 如果是离散映射, 则遍历虚拟地址不断分配页面, 把分配到的页面填充0. 拷贝数据的时候映射还没建立, 需要从物理地址加offset这个通用的访问物理内存的映射来复制, 还要考虑区间与整页不对齐的情况, start变量指从页开头开始的偏移, 指向需要复制数据的开始位置. stop变量也是偏移. 每次循环只处理一页. 当开始位置大于当前页的起始位置, 说明是第一页, 需要从开始位置而不是页开头进行复制. 否则就从开始位置复制. 当结束位置减去页起始位置, 小于页的大小的时候, 就说明是最后一页, 需要复制到结束位置为止, 而不是页结束位置.</li>
-</ol>
-<h4 id="MemorySet"><a href="#MemorySet" class="headerlink" title="MemorySet"></a>MemorySet</h4><p>MemorySet 就是一个进程的所有内存空间管理的信息了. 内部包含Mapping, 负责管理页表, 用一个数组保存PageTableTracker(自己管理页表占用的物理页面), 并且另外保存页目录表. 包含segment数组, 内含每个映射, 和allocated_pairs数组, 保存虚拟页号到物理页智能指针(FrameTracker)的二元组, 拿着分配的物理页.<br>简而言之, MemorySet包含1页表2映射3物理页</p>
-<p>添加新的映射的时候, 一方面要添加到页表里去, 一方面要加入映射vec保存, 如果申请了物理页要放到物理页vec中. 还检查是否和当前内存空间重叠.</p>
-<p>由于内核换了位置(使用了虚拟地址), 需要在memory/config中加入MMIO 设备段内存区域起始地址: DEVICE_START_ADDRESS, 和DEVICE_END_ADDRESS, 另外还要将kernel_end_address 改成虚拟地址, config里的部分高位地址都要改改.<br>(MMIO表示memory mapped io. 访问这里的地址就是直接与外设交互)</p>
-<h2 id="lab4线程与调度"><a href="#lab4线程与调度" class="headerlink" title="lab4线程与调度"></a>lab4线程与调度</h2><p>这个lab工作量非常大.</p>
-<h3 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h3><p>ucore中把初始化的执行包装成idleproc, 调用创建内核线程的函数创建init_main线程. 不过idleproc除了初始化外没有执行任何实质性的任务, 不存在也没有关系.<br>我们在rcore-tutorial中则直接切换到新来的线程. 而且切换后甚至原本我们使用的栈 bootstack也可以被回收.</p>
-<p>当前的内核由于只用一个单核cpu, 只有一个内核栈, 并且不支持中断的嵌套. 而且现在中断的时候无论是内核态还是用户态都会交换sp和sscratch, 这就导致如果嵌套会导致交换两次出现问题. 需要改进为用户态切换栈, 内核态不切换栈才能为支持嵌套中断打基础.</p>
-<p>进程和线程辨析: 线程是运行和调度的单位. 进程则包含了地址空间, 同一个进程的不同线程的地址空间是共享的.(意味着高位地址处会映射多块栈给不同的线程) 新建线程和Context都需要传入process结构体</p>
-<p>切换则直接通过保存当前中断栈上的Context, 把下一个要执行的线程的Context放到栈顶实现.</p>
-<h3 id="代码变化梳理-1"><a href="#代码变化梳理-1" class="headerlink" title="代码变化梳理"></a>代码变化梳理</h3><ol>
-<li>interrupt/context.rs 完善之前的Context实现. Context结构体不变, 为Context实现了Default, 使用全零作为Default. 实现了获取/设置 栈指针/返回地址的四个简单函数. 实现了按照调用规则把参数写入Context内对应寄存器的函数, 和传入函数地址, 参数, process结构体新建Context的函数. </li>
-<li>新建process文件夹作为mod</li>
-<li>增加全局Processor用到的Lock, 原本使用的是unsafeWrapper, 在algorithm目录内.<ol>
-<li>config.rs 包含了每个线程的运行栈大小, 和共用的内核栈大小, 目前都是512K</li>
-<li>process.rs process结构体当前只有is_user标志位和memory_set内存空间. 有三个函数, 新建内核进程的new_kernel, 从elf创建进程的from_elf函数(之后的lab才会添加), 映射新的虚拟地址的alloc_page_range函数(类似mmap)</li>
-<li>kernel_stack.rs 内核栈也就是作为一个大小为KERNEL_STACK_SIZE的u8数组. 此外实现了push_context函数, 能在栈顶减去Context大小的位置强转为Context指针, 然后赋值写进去, 最后把这个指针返回. 同时暴露出全局变量作为共用的全局内核栈.</li>
-<li>thread.rs Thread结构体包含id, 栈(虚拟地址range), 所属进程(arc+读写锁包装的Process结构体), 和inner(用一个mutex包装一些可变数据结构). inner包含context和是否进入休眠的sleeping标志. 实现了Hash Eq这两个trait, Debug打印的trait. prepare函数用于准备执行该线程, 会激活页表, 清空并返回Context, park函数会暂停线程, 保存传入的Context. 新建线程的new函数需要传入Process, 要执行的entry_point, 和参数, 该函数会新分配一段空间(alloc_page_range)作为栈, 并构建新的Context, 最后打包新建thread并返回</li>
-<li>processor.rs 包装调度器算法, 包装进程状态转移的操作.</li>
-</ol>
-</li>
-<li>增加新的调度算法: 使用hrrn高响应比优先的调度算法, 放到process文件夹内. hrrnThread结构体对线程再次包装, 增加birth_time和service_count两个字段. 调度结构体HrrnScheduler则包含linkedList保存的hrrnThread和currenttime的二元组.</li>
-<li>修改interrupt.asm支持切换线程, 加入交换sscratch的代码, 修改保存sp为保存sscratch. 恢复时保存弹出Context之后的栈到sscratch. 把a1放到sp使得<code>__restore</code>有返回值和参数这两种新的调用方法, 从而执行不同的线程.</li>
-<li>修改interrupt_handler (init函数里面的增加各种中断使能的操作先不做, 后面的lab需要键盘输入的时候再加上), 修改时钟中断处, tick之后调用保存当前进程和准备下一个进程的函数, timer模块不变.</li>
-<li>在interrupt/mod.rs中增加一个wait_for_interrupt函数. 给processor.rs中函数调用</li>
-<li>修改timer模块init, 删除<code>sstatus::set_sie();</code> 这样main函数就不开中断, 执行内核线程的时候再接受中断</li>
-<li>修改main.rs启动线程 main函数首先对各种东西进行初始化, 然后对线程的实现进行测试.</li>
-</ol>
-<h3 id="实现细节-1"><a href="#实现细节-1" class="headerlink" title="实现细节"></a>实现细节</h3><h4 id="interrupt-context-rs"><a href="#interrupt-context-rs" class="headerlink" title="interrupt/context.rs"></a>interrupt/context.rs</h4><p>这里新建的时候Context中返回值寄存器设置为-1, 如果执行的函数返回了, 就会报错. 之后新版的代码似乎修改了这里, 能正常返回.</p>
-<h4 id="process-process-rs"><a href="#process-process-rs" class="headerlink" title="process/process.rs"></a>process/process.rs</h4><p>process结构体也算是MemorySet的封装了, 新建的时候会新建MemorySet, 函数也是调用MemorySet的接口.</p>
-<p>alloc_page_range函数类似于mmap吧, 基于memory_set提供的接口操作, 传入一个size, 返回分配好的地址范围. 首先把size向上取整到页倍数, 再用while循环从0x100_0000开始不断步进查找可用内存空间(memory_set的overlap_with), 可用则调用memory_set.add_segment增加映射.</p>
-<h4 id="kernel-stack-rs"><a href="#kernel-stack-rs" class="headerlink" title="kernel_stack.rs"></a>kernel_stack.rs</h4><p>因为线程都有自己的栈映射在低地址区了, 函数调用关系的维护不靠内核栈, 内核栈只处理中断, 而且中断不会嵌套.<br>如果中断不嵌套, 那么Context总是在公用内核栈最顶上. 因此切换内核线程前可直接将Context放到栈顶上假装是正常的中断返回.</p>
-<h4 id="thread-rs"><a href="#thread-rs" class="headerlink" title="thread.rs"></a>thread.rs</h4><p>prepare函数, 1激活了新线程的页表, 2把Context放到了公共内核栈的栈顶.<br>切换线程的时候都是这样假装是中断返回. 此时大概调用了park函数保存好了中断进入时那个线程的Context.</p>
-<p>重点关注新建线程的函数.</p>
-<ol>
-<li>新建线程的时候用的栈, 是新映射分配的!!</li>
-<li>新建的Context, 在切换的过程中还不会打开中断, 直到sret的时候中断才会打开.</li>
-<li>是否是用户线程取决于Process的is_user.</li>
-<li>返回的时候, is_sleeping是false. 这意味着一创建就开始执行? 不, 这只说明不是放到sleeping的队列而是放到scheduler的队列里</li>
-</ol>
-<h4 id="processor-rs"><a href="#processor-rs" class="headerlink" title="processor.rs"></a>processor.rs</h4><p>processor 主要是包装一下进程的状态转换操作, 调度靠每次prepare_next_thread中询问调度算法的操作, 主要靠timer_interrupt的时候的park+prepare组合拳. 当线程出现问题调用fault函数的时候, 就会调用kill/prepare组合拳</p>
-<p>在这样单核的环境, 确实可以说调度器是局部于处理器的.</p>
-<p>线程的组织上, 使用了hashbrown这个crate保存sleeping的thread, 需要调度的线程让调度算法去用自己的数据结构保存.</p>
-<p>add thread会检查是否当前线程为None, 是则放入. 主要还是加入scheduler. 只有刚启动的时候, 和kill线程的时候会take当前的Option-thread 为none</p>
-<p>确实, __restore作为函数调用只出现在processor的run里面, run函数只出现在rust_main里面. 只有刚开始的时候会刻意去调用__restore 毕竟,初始化的时候并不是调用的interrupt_handler, 不会返回到__restore. 而且使用的是boot_stack</p>
-<p>执行的函数组合可以为 parl/kill [sleep] prepare_next_thread</p>
-<h4 id="interrupt-rs"><a href="#interrupt-rs" class="headerlink" title="interrupt.rs"></a>interrupt.rs</h4><p>外部中断如果是键盘输入, 就会把字符push到STDIN里(fs/stdin.rs)TODO</p>
-<h4 id="unsafeWrapper"><a href="#unsafeWrapper" class="headerlink" title="unsafeWrapper"></a>unsafeWrapper</h4><p>unsafe包装后能增加多少灵活性? 这里的unsafe一方面实现了&amp;self 转mut, 使得可以同时持有多个可变借用. 并且实现了(标记了)sync Trait, 使得可以多线程共享.</p>
-<p>static unsafe wrapper 还增加了Phantom data成员, 表明该结构体确实拥有T类型的值的所有权, 让wrapper被drop的时候也能drop T.</p>
-<h4 id="hrrn-scheduler-rs"><a href="#hrrn-scheduler-rs" class="headerlink" title="hrrn_scheduler.rs"></a>hrrn_scheduler.rs</h4><p>alloc::collections::LinkedList组织内部线程<br>对线程再增加了一层包装HrrnThread, 增加相关数据结构.<br>真正关键的只是一个.max_by()</p>
-<h4 id="interrupt-asm"><a href="#interrupt-asm" class="headerlink" title="interrupt.asm"></a>interrupt.asm</h4><p>原来是直接把sp保存不切换栈, 现在是先交换sscratch再保存, 而且保存的时候是保存的原来的sp, 所以恢复的时候直接正常恢复就好. 只要把当前的栈放好到sscratch就行.</p>
-<p>无论如何, 发生了中断就交换栈为sscratch. sscratch的值可能是什么?? 如果是单线程不嵌套中断的话, 一定是公共栈顶上?? 恐怕是的</p>
-<p>riscv调用约定中, a0, a1既是第一个参数, 又是返回地址. 这设计强!!</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">__restore:</span><br><span class="line">    mv      sp, a0  # 加入这一行</span><br></pre></td></tr></table></figure>
-<p>这样一方面可以调用__restore(context), 一方面也可以让interrupt_handler返回context指针. 也就是中断返回的时候, 如果不切换进程, 就返回当前的进程的context, 否则返回切换到的进程的context.<br>其次, 把第一个参数作为sp, 而sp不仅是当前Context的位置, 还是之后保存到sscratch的位置!!! 因此这个参数/返回值一定要放在作为栈的内存顶上</p>
-<h4 id="interrupt-handler-rs"><a href="#interrupt-handler-rs" class="headerlink" title="interrupt/handler.rs"></a>interrupt/handler.rs</h4><p>这里打开了一些神奇的中断. <code>sie::set_sext();</code>这个应该只是使能sie寄存器的某个中断, 中断的总开关还是没有打开的.<br>在某些特殊地址写入数字就能在OpenSBI中打开中断?? 为什么??</p>
-<p>handle_interrupt函数中, 每个单独的处理函数确实应该返回应该Result类型, 是错误则调用fault.</p>
-<p>fault函数现在出现异常的时候会杀死当前的线程了, 传入的参数也变了<br>最重要的当然还是timer的时候调度一下</p>
-<h4 id="lock-rs"><a href="#lock-rs" class="headerlink" title="lock.rs"></a>lock.rs</h4><p>为Mutex增加关中断的功能得到Lock类型. 则当获取其中内容的时候, 既关+保存了中断, 又独占了资源.</p>
-<p>具体实现上, 上锁是在get函数中, 释放是在Drop的trait中.</p>
-<p>同时实现了deref和deref mut, 可作为被包裹对象的智能指针使用.</p>
-<p>另外实现了一个不上锁不关中断, 直接获得内部对象的unsafe_get函数, 用于PROCESSOR::run()的时候因为不会返回, 导致不会调用对应的析构函数</p>
-<h3 id="线程的结束"><a href="#线程的结束" class="headerlink" title="线程的结束"></a>线程的结束</h3><p>目前, 内核线程的结束是靠设置自己线程的isDead变量, 然后触发中断的时候检查时结束的. 也就是说设置了这个变量后即使不使用ebreak, 用其他方式触发中断也会被结束.</p>
-<h3 id="线程-进程的保存与组织"><a href="#线程-进程的保存与组织" class="headerlink" title="线程/进程的保存与组织"></a>线程/进程的保存与组织</h3><p>线程的组织上, 使用了hashbrown这个crate保存sleeping的thread, 需要调度的线程让调度算法去用自己的数据结构保存.</p>
-<p>Arc RwLock包着进程, 创建新线程的时候会把Arc RwLock-进程的所有权要过来, 用clone可以多处持有. 似乎没有单独组织进程的地方, 父进程子进程之类的关系链接也似乎没有</p>
-<h2 id="lab5-设备驱动与文件系统"><a href="#lab5-设备驱动与文件系统" class="headerlink" title="lab5 设备驱动与文件系统"></a>lab5 设备驱动与文件系统</h2><h3 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h3><ol>
-<li>提供对ELF文件用户程序的解析</li>
-<li>提供对磁盘映像的支持</li>
-<li>实现系统调用支持</li>
-<li>支持文件描述符</li>
-</ol>
-<h3 id="相关修改"><a href="#相关修改" class="headerlink" title="相关修改"></a>相关修改</h3><ol start="0">
-<li>entry.asm 增加映射低位页表</li>
-<li>main函数增加参数, 调用drivers的初始化函数</li>
-<li>新建drivers文件夹, 在mod.rs中增加init函数, 调用设备树子模块的init函数</li>
-<li>drivers/device_tree.rs 增加对device_tree这个库的依赖. init函数调用dtb遍历库, walk函数负责遍历生成的树.</li>
-<li>修改makefile, 增加qemu的启动参数 增加TEST_IMG变量指向之后的磁盘镜像</li>
-<li>增加drivers/bus文件夹并增加子模块virtio_mmio. </li>
-</ol>
-<h4 id="entry-asm-1"><a href="#entry-asm-1" class="headerlink" title="entry.asm"></a>entry.asm</h4><p>这里没想到增加了新的页表. 花了我差不多一个小时的时间去debug<br>当parse dtb, 得到磁盘的Header的时候, 这个header的位置在0x1000_8000, 位于低地址, 而我们此时还处于初始化的状态, 映射还是巨页映射, 只映射了0x8000 0000开头的1GB, (1GB是0x4000 0000).<br>更加恐怖的是, 此时的sscratch都没有值, 中断都无法正常进行.<br>当前的设计是中断一定切换栈, 每次中断的时候都是先交换sscratch和sp, 然后保存真正的原来的sp到栈上. 离开的时候先把sp弹出后的位置放到sscratch. 而第一次放入sscratch就是运行线程时假装中断返回的时候.<br>因此, 我在debug的时候, 第一次页访问异常, 进入中断的时候, 从sscratch中取来了(似乎是-1)未知的值, 作为内核栈放到sp, 然后在保存第一个寄存器的时候发生了第二次页访问异常. 这时又把sscratch和sp交换, 得到了正常的sp值, 反而正常处理了, 但是报错的地址好像是0xffff_ffff_ffff_ffec.<br>我在main函数加入了把kernel stack放到sscratch的汇编才正常得到了中断发生错误的地址.</p>
-<h4 id="drivers模块"><a href="#drivers模块" class="headerlink" title="drivers模块"></a>drivers模块</h4><p>driver模块目前主要负责文件系统的driver. 对外暴露的接口是driver模块中的driver trait, 和DRIVERS这个组织各种驱动的数据结构.</p>
-<p>模块的初始化函数在mod.rs中, 参数传入dtb地址, 负责调用解析设备树的device_tree::init, device_tree的walk函数则一边遍历, 一边判断是不是想要的设备, 这里单指对应磁盘的块设备, 找到则把这个节点传给对应的总线协议驱动程序, 这里是bus/virtio_mmio. 本次实验中找到块设备的节点后, 把节点里reg字段拿出, 转换为virtio_drivers(库)::VirtIOHeader类型, 就传给驱动程序的包装virtio_blk, virtio_blk::VirtIOBlkDriver内部包装的是mutex包装的virtio_drivers(库)::VirtIOBlk, 对外实现了driver的trait.</p>
-<p>之后在fs中才会用到BlockDevice, 它包装driver, 实现rcore_fs的BlockDevice trait从而传入给SimpleFileSystem::open函数</p>
-<p>层次关系:<br>virtio_drivers(库)::VirtIOBlk –包装–&gt; VirtIOBlkDriver(实现Driver) –包装–&gt; BlockDevice(实现rcore_fs的BlockDevice)</p>
-<h4 id="driver-rs"><a href="#driver-rs" class="headerlink" title="driver.rs"></a>driver.rs</h4><p>这个模块包含了驱动接口driver trait, 描述驱动类型的DeviceType, 和lazy_static的DRIVERS.</p>
-<p>Driver 这个trait, 使用时根据device_type返回的DeviceType, 来调用对应的方法, 现在这个trait中只有块设备相关的方法, 提供了用unimplemented宏表明没有实现这个方法的默认实现. 实现新的设备驱动的时候, 只需要加入新的方法即可.</p>
-<p>DRIVERS保存所有驱动的数据结构, 方便获取驱动. 驱动是dyn Driver类型, 首先用Arc实现共享, 再通过Vec保存, 再加上读写锁保证多线程安全.</p>
-<h4 id="device-tree-rs"><a href="#device-tree-rs" class="headerlink" title="device_tree.rs"></a>device_tree.rs</h4><p>device tree blob 确实是个标准. 其中头部的字段其实很多, 包括了dtb的版本等等. 我们现在只读取了前两个字段. 第二个字段size确实是包含整个dtb的大小的, 包括头部.<br><a target="_blank" rel="noopener" href="https://www.devicetree.org/specifications/">https://www.devicetree.org/specifications/</a></p>
-<p>这里init函数首先校验头部, 得到size, 再把整个dtb作为u8数组传入DeviceTree的crate中, 并且让遍历的walk函数递归遍历.<br>而walk函数则只是搜索compatiable字段为virtio,mmio的节点, 把节点传入virtio_probe进行初始化</p>
-<h4 id="bus-virtio-mmio-rs"><a href="#bus-virtio-mmio-rs" class="headerlink" title="bus/virtio_mmio.rs"></a>bus/virtio_mmio.rs</h4><p>将传入的dtb节点的reg字段转为VirtIOHeader传入驱动程序进行初始化.</p>
-<p>这里会遇到不少verify不对的设备, 因此如果verify函数调用失败或者没有reg字段就直接返回. 这里verify的时候就会访问1000_xxxx开头的低地址.</p>
-<p>此外, 暴露了virtio_dma_dealloc, virtio_phys_to_virt, virtio_virt_to_phys这三个extern “C”且no_mangle的函数. 而且没有在我们代码中其他地方被调用. 这说明是库函数在C语言中或者汇编中调用了这两个函数. 根据名字看可能是virtio库.</p>
-<h4 id="block模块和-block-virtio-blk-rs"><a href="#block模块和-block-virtio-blk-rs" class="headerlink" title="block模块和 block/virtio_blk.rs"></a>block模块和 block/virtio_blk.rs</h4><p>block模块的mod.rs里提供了对接驱动与文件系统的VirtIOBlkDriver包装. 而模块内部则是保存的块设备的Driver实现.</p>
-<p>BlockDevice的实现主要是将Driver的返回bool值的read_block/write_block 函数转换成返回Result&lt;()&gt;的read_at/write_at函数, 另外实现假的sync函数</p>
-<p>VirtIOBlkDriver的实现就是调用内部的Driver的read_block/write_block函数, 把返回的Result再用is_ok转成bool.</p>
-<p>VirtIOBlkDriver则需要实现read_block/write_block的Driver接口, 另外给解析Node的virtio_mmio.rs:virtio_probe函数一个创建设备的add_driver函数. add_driver函数把header传给VirtIOBlk::new得到包装的内部驱动, 再把驱动包装上刚刚实现的VirtIOBlkDriver加入DRIVERS列表.</p>
-<h3 id="fs模块"><a href="#fs模块" class="headerlink" title="fs模块"></a>fs模块</h3><p>模块的mod.rs 提供了lazy_static的全局变量ROOT_INODE, 初始化的时候获取第一个Block类型的driver, 用BlockDevice包装后传入SimpleFileSystem::open()函数, 返回值赋给ROOT_INODE. 也许是SimpleFileSystem实现了对INode的deref, 在ROOT_INODE上可以调用到inode_ext拓展INode实现的方法</p>
-<p>还有init函数, 负责作为测试, main函数初始化的时候使用ls方法测试我们文件系统的功能.</p>
-<h4 id="inode-ext-rs"><a href="#inode-ext-rs" class="headerlink" title="inode_ext.rs"></a>inode_ext.rs</h4><p>impl INodeExt for dyn INode 通过这种方法为已有的Inode类型增加功能. 额外实现了 ls这个直接打印而不返回值的函数, 和readall函数, 把所有内容读到<code>Vec&lt;u8&gt;</code>并返回.</p>
-<h3 id="elf相关代码"><a href="#elf相关代码" class="headerlink" title="elf相关代码"></a>elf相关代码</h3><p>ELF文件也可以看作是一个地址空间. 因为它定义了各个段的映射关系.<br>MemorySet中增加根据ELF文件创建的from_elf函数, 它遍历elf文件的每个段, 根据大小和权限映射每个段.</p>
-<p>首先在program_header中对每个为load类型的段, 读取开始地址和大小和数据和权限之后进行映射</p>
-<p>process中也加入from_elf函数, 主要是调用MemorySet中的from_elf函数.</p>
-<h3 id="sfs文件系统中的指向关系"><a href="#sfs文件系统中的指向关系" class="headerlink" title="sfs文件系统中的指向关系"></a>sfs文件系统中的指向关系</h3><p>文件夹inode -&gt; 文件entry -&gt; 文件inode -&gt; 文件数据</p>
-<h2 id="lab6-用户程序-系统调用-文件描述符"><a href="#lab6-用户程序-系统调用-文件描述符" class="headerlink" title="lab6 用户程序, 系统调用, 文件描述符"></a>lab6 用户程序, 系统调用, 文件描述符</h2><h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ol>
-<li>完全构建新的crate作为user程序的框架, 这里也要新建Makefile文件, 并且可以单独build</li>
-<li>在外面新建makefile文件, 依次make两个子目录</li>
-<li>中断处理中, 初始化时开启外部中断, 用户态的ecall异常时调用kernel模块的syscall_handler, 增加外部中断处理键盘输入</li>
-<li>为线程增加打开的文件descriptor数组, 初始化创建的时候就放入STDIN, STDOUT.</li>
-<li>fs中增加stdin和stdout全局变量</li>
-<li>增加mod kernel<ol>
-<li>condvar.rs 利用线程的睡眠实现条件变量</li>
-<li>syscall.rs 系统调用的总入口.</li>
-<li>process.rs 处理线程退出的系统调用</li>
-<li>fs.rs 处理文件读取相关的系统调用</li>
-</ol>
-</li>
-</ol>
-<h3 id="用户进程"><a href="#用户进程" class="headerlink" title="用户进程"></a>用户进程</h3><p>类似于自己做一些rust标准库的事情.<br>首先是实现了ecall的包装,从而实现了sys_read, sys_write, sys_exit. 利用sys_write实现了print, println宏. 实现了对用户程序的输入输出的支持.</p>
-<p>hello_world主要使用了输出.<br>nodebook可以把输入的字符回显.</p>
-<h4 id="fs-stdout-rs-stdin-rs"><a href="#fs-stdout-rs-stdin-rs" class="headerlink" title="fs/stdout.rs stdin.rs"></a>fs/stdout.rs stdin.rs</h4><p>让标准输入和输出实现和文件一样的接口(INode)进行读写.</p>
-<p>stdout没想到就是一个空结构体</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">struct</span> <span class="title">Stdout</span></span>;</span><br></pre></td></tr></table></figure>
-<p>然后直接实现INode的方法, read和poll都返回不支持的错误, write不允许offset为非0.</p>
-<p>标准输入stdin同理, 只允许offset为0, buf中没有值则等待一次条件变量, 否则进入读过程, 要么是stdin的buffer空了, 要么是buf不够长, 返回.</p>
-<h4 id="系统调用的实现"><a href="#系统调用的实现" class="headerlink" title="系统调用的实现"></a>系统调用的实现</h4><p>syscall_handler函数根据传入的系统调用号调用各个子函数, 重要的是子函数的返回值还代表了对当前进程的处理方式.</p>
-<p>write: 根据fd在进程的descriptor内获取inode, 调用inode的write_at, 直接返回Proceed和返回值.</p>
-<p>read: 调用inode的read_at, 然后根据返回值包装一下. 和write不同的地方在于, 如果返回值为0则park当前线程(阻塞), 此时已经在read_at内部等待了condvar, 调用等待时会把当前线程放入等待队列并sleep_current_thread. 之后syscall_handler在处理返回值的时候发现是Park类型会再切换线程.<br>直到之后external interrupt键盘输入-&gt;push到stdin中-&gt;条件变量notify-&gt;进程恢复调度.</p>
-<h4 id="condvar"><a href="#condvar" class="headerlink" title="condvar"></a>condvar</h4><p>这里的条件变量利用的是线程的休眠, 等待条件变量时进入条件变量内部的队列, 线程休眠. 当notify时则唤醒进程.<br>只在fs/stdin.rs中被实例化并使用.</p>
-<p>如果有多个线程同时等待标准输入?<br>因为现在的线程的标准输入标准输出都是公用的, 没有不同的tty终端的概念, 如果等待输入的线程去sleep了, 那新执行的线程如果还想读取输入的话, 那就会产生冲突了, 两个线程读取一个标准输入. 如果引入了不同的终端的概念, 能有多个标准输入相互区分开就不会冲突. 目前看来还是阻塞, 另外加入新的把线程放到后台的按键, 这样比较好.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://wjk.moe/os/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="ckfy5cz56001ejsvp1rakavr3" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2019/unlink" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/unlink/" class="article-date">
-  <time datetime="2020-10-07T16:04:11.086Z" itemprop="datePublished">2020-10-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/unlink/"> unlink</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="unlink"><a href="#unlink" class="headerlink" title="unlink"></a>unlink</h1><p>程序里肯定会有指向堆块的地址. 而在我们的组织堆块的链表里面也是保存的堆块地址, 能否让堆块以为程序里这保存的地址是其他的堆块指向他的呢?</p>
-<p>在双向链表里面, 堆块们通过链表的形式排队. 当有堆块要离开的时候, 他就要进行工作交接, 否则一走了之的话链表就断了.</p>
-<p>工作交接具体是两个内容, 和前面的链表说, 你后面的兄弟不再是我了, 我要走了, 这是我后面的兄弟, 它以后才是你后面的兄弟了, 向后找的时候去找它.<br>同样和后面的兄弟说要照顾好原来自己前面的堆块<br>也就是让forword块保管好自己的back指针, 让back块保管好自己的forward指针.</p>
-<p>由于堆块经常被骗, 他们只好长个心眼, 不能改了别人的指针.<br>让后面的堆块照顾好自己前面的堆块时, 需要修改的是后面的堆块的fd指针, 这个指针原来的值就是堆块自己. 让前面的堆块照顾好自己后面的堆块时, 需要修改的是前面的堆块的bk指针, 这个指针原来的值就是堆块自己. 如果不是自己, 就肯定是被骗了, 这时候堆块就报警了, 程序就报错了</p>
-<p>这里先讲一个任意地址写的故事, 程序会分配堆块, 自己保存好堆块指针, 需要数据就根据堆块指针去找, 如果我们能够随意改写堆块指针, 不就可以达到想写(读)哪里就写哪里的效果了吗? 那怎么改写呢? 我们先放开这个问题</p>
-<p>但是unlink, 并没有这么简单, 我们接下来仔细分析一下<br>程序里面指向堆块的指针和libc里用的不太一样, 程序里是指向堆块的内容, 而libc里则是堆块结构体的头部, 向前偏移了0x10字节.<br>另外就是一般利用的是前向合并时的unlink. 当free一个堆块, 会前后检查free的堆块, 合并起来, 这样就不会有相邻的free块. 而free的块肯定都是在bins里的, 而且不是fastbin, 因为fastbin的块没有标成free.<br>所以free一个堆块的时候, 前向合并前一个堆块的时候, 就要把前面的堆块从链表里拿出来, 合并完再放到合适的链表里.<br>利用unlink时, 我们利用堆溢出漏洞, 修改unlink块溢出到下一块, 去除previous in use bit, 并伪造prev size, 这里伪造的size要小0x10字节, 刚好是用户内容域, 伪造的堆块小10字节也是为了和程序内指向堆块内容的指针合作.<br>这样free后面的块的时候, 就会对前面的伪造的小一号的堆块进行unlink, 所以unlink时伪造堆块的fd和bk指针指向哪里?<br>回顾之前的知识, 可以知道,<br>fd 的bk(+0x18) = 自己(堆块指针)<br>bk 的fd(+0x10) = 自己(堆块指针)<br>反过来<br>fd = 自己指针 - 0x18<br>bk = 自己指针 - 0x10</p>
-<p>效果就是把自己指针先改成自己的bk, 再改成自己的fd, 即自己的指针指向了 自己指针 - 0x18 这个地址可不得了, 不是堆段了, 而是程序数据域了, 旁边很可能就是其他堆块的指针, 去改他们就可以任意地址写了</p>
-<p>作用: UAF-&gt;溢出<br>要求: 修改free的堆块, 知道另外一处指向堆块的指针</p>
-<h1 id="虚假堆快"><a href="#虚假堆快" class="headerlink" title="虚假堆快"></a>虚假堆快</h1><p>需要能错位header, 再使用fastbin attack</p>
-<p>错位到main_arena 改写top chunk地址, 达到任意分配堆块的目的</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://wjk.moe/2019/unlink/" data-id="ckfy5cz48000fjsvpcryq5999" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2019/HG6201m光猫交叉编译" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/HG6201m%E5%85%89%E7%8C%AB%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/" class="article-date">
-  <time datetime="2020-10-07T16:04:11.052Z" itemprop="datePublished">2020-10-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/HG6201m%E5%85%89%E7%8C%AB%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/"> 烽火HG6201M交叉编译transmission成功!!</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="烽火HG6201M交叉编译transmission成功"><a href="#烽火HG6201M交叉编译transmission成功" class="headerlink" title="烽火HG6201M交叉编译transmission成功!!"></a>烽火HG6201M交叉编译transmission成功!!</h1><p>我家本来wifi是靠二楼的路由器的，后来发现光猫可以发射wifi，没想到三楼的光猫信号比二楼的wifi还好！！<br>自从看到了这个光猫的账号密码，而且光猫带usb接口，登进去发现内存和cpu都很不错，而且自带samba文件共享！！顿时我对这款光猫就陷入了无尽的崇拜,甚至想再买一块来当开发板玩。</p>
-<p>最近用惯了samba共享硬盘做nas，而且手头刚好有一个功率更大的和光猫电源相同dc头的12v电源，也不用怕硬盘供电不足了哈哈哈。正好硬盘盒有多，直接一个usb接上去。</p>
-<p>bt做种本来有很多大文件，我用fat32的文件系统被4g的限制卡住肯定不行，我直接接我的硬盘，NTFS分区不能识别，我就想着编译一个ntfs-3g进去，但是后来没想到这光猫居然支持ntfs！！只不过不支持GPT的分区表，我改成MBR的分区表就成了，插上去自动识别！！连接后自动挂载到/mnt下，usb1_n这种格式！！不过没想到它似乎不支持ext系列文件系统。</p>
-<p>接下来就是编译transmission了，为了transmission，还要编译各种它的依赖，curl，openssl什么的。openssl的动态库在光猫里有，但是因为没有头文件不能用在transmission里。。。我只能从头开始，先想办法安装旧版本的gcc，然后还不能直接上最新版本，各种挑选合适的旧版本，编译zlib，openssl，curl，libevent，百度解决各种报错，最后终于编译出来了transmission。而且我想着有了curl就可以自己写脚本搞ddns了！最近光猫有了ipv6，这样我无论在哪里都可以访问我的NAS了哈哈哈（后来发现这个ipv6虽然是公网的，但经常ping不通，无语。不知道为什么，可能移动的ipv6的路由没做好？）<br>然而我高兴得太早了，一运行curl就说invalid instruction。依赖curl的transmission也是，会报错不能运行。现在看感觉可能和openssl没选好架构，没加-mtune 34kc这个编译选项有关系。<br>最简单的交叉编译还是GO语言的，windows下一个环境变量就搞定了，可以直接放过去跑。</p>
-<p>最后我还是失去了兴趣，入了openwrt的设备做nas。</p>
-<p>之前了解到buildroot这个东西，听说它先要编译一个gcc，再用新的gcc去编译libc，整个linux系统等等东西，感觉它编译的太多了会很麻烦，没想到这才是真正方便的方法啊！！！这几天搞了一下，很容易就成功了。然而我已经买了其他设备做nas了。只能希望能帮到其他想拿这个光猫做NAS的人吧。</p>
-<p>这光猫的web端用的是java，印象里java是很大一个，很占内存的，它居然能跑起来，虽然不知道是不是标准版的。而且这光猫的cpu使用率感觉从来都是20%以下，一般只有个位数。内存好像也挺大的。我之前网有一段时间很卡，而且光猫的samba也，就一直在怀疑是不是光猫，后来发现是蓝牙</p>
-<p>————光猫相关信息——<br><a target="_blank" rel="noopener" href="https://www.right.com.cn/forum/thread-783839-1-1.html">https://www.right.com.cn/forum/thread-783839-1-1.html</a><br>光猫各个挂载点都满了，几M的空间都没有，除了/osgi目录，大概有50M的空间？不记得了。编译好的东西可以放在这里或者直接放在挂载的硬盘或者优盘上面。</p>
-<p>在根目录下面到处翻，还是能找到很多他们开发系统的信息的，要是没找到他们用的buildroot和linux内核版本，我可能就不会搞这个编译了。</p>
-<p>好像是MTK的什么CPU，没有什么路由器用同款。<br>光猫是MIPS架构 大端序 mips32v2 34kc架构</p>
-<p>下面是翻到的一些关键信息：<br>2017108-SmartHG_MTK7526_Engineering_CMCC-coverity<br>Linux (none) 2.6.36-svn159641 #15 SMP Thu Nov 2 10:18:12 CST 2017 mips unknown<br>mips-linux-glibc-4.9.3<br>proj/mtk04854/glibc-4.9.3/buildroot-2015.08.1/output/build/glibc-2.20/build/csu/start.o</p>
-<p>——–编译过程————<br>我顺便上传下我的build-root的.config文件。<br>用别人的二进制文件确实不好，万一被下了毒呢。不过我还是把我编译好的上传一下，毕竟自己之前也想下载别人编译好的。<br>总之用ubuntu，去buildroot官网下载2015.08.1的版本，然后解压，把.config文件覆盖进去，就可以编译了。主要是选择对mips32，再选v2架构，toolchain里选2.6.36内核头文件<br>如果选glibc-4.9.3，它要求动态编译，我想了想还是选了静态编译，用uglibc，反正静态编译不需要加载库，这个版本不一样没关系。<br>gcc里面我勾选了c++支持和宽字符支持（不选宽字符可以少一个报错），nano需要宽字符。然后再勾选想要的包。直接选transmission，我还选了nano，vi一直懒得学用得不习惯。然后看什么顺眼就选了什么。我瞎选了很多包，导致要下载很多东西。<br>还有一个地方选并行数，根据cpu线程数选吧，我选了8。类似于make -j8吧。<br>buildroot真是强啊，想要什么包选什么包<br>或者把我上传的.config文件放到目录下，相当于使用我的配置了，可以看着上面的图片在配置里删。然后直接make。<br>接下来就是解决下载国外网站的网速问题了。可以考虑先全部下载好放到dl文件夹里面。省的卡在那里。不过这些源码包都挺小的。<br>或者有条件的直接proxychains -q make</p>
-<p>这里会遇到几个报错，直接按顺序给出对应的解决网址：大家见招拆招吧</p>
-<ol>
-<li>一开头就遇到的host-m4什么的错误<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/Jun626/article/details/104870430">https://blog.csdn.net/Jun626/article/details/104870430</a></li>
-<li>uclibc的宽字符的报错（不选宽字符就不会有吧）：<br><a target="_blank" rel="noopener" href="https://dev.archive.openwrt.org/ticket/13095.html">https://dev.archive.openwrt.org/ticket/13095.html</a><br>这个需要下载patch打patch -p1</li>
-<li>gcc-final的<br><a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/335717/how-to-handle-error-compiling-gcc-4-7-0-using-gcc-6-2-1">https://unix.stackexchange.com/questions/335717/how-to-handle-error-compiling-gcc-4-7-0-using-gcc-6-2-1</a></li>
-</ol>
-<p>我编译了算是2.5次，一次是编译的动态库，顺便也发出来吧，后面又觉得要选宽字符。大概率不会遇到什么其他的报错了。<br>跑起来挺快的。不包括解决报错的时间只花了半小时不到。</p>
-<p>——–光猫的samba——-<br>ps一下就可以看到运行的smbd的路径，也可以找到改密码的smbpasswd。这里的用户好像要和linux系统中的用户对应，但是不好创建用户，所以推荐使用root用户，好像是smbpasswd-aroot然后就可以设置密码。然后在配置文件里面允许下root登录。因为感觉不设密码还是不安全</p>
-<p>下面贴出我光猫samba的配置文件。之前配的时候看日志发现不能设置charset，因为编译的时候就不支持其他charset。我也不记得改了哪里了，应该能用吧</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">smbpasswdfile&#x3D;&#x2F;flash&#x2F;cfg&#x2F;app_conf&#x2F;samba&#x2F;smbpasswd</span><br><span class="line">workgroup&#x3D;WORKGROUP</span><br><span class="line">guestaccount&#x3D;root</span><br><span class="line">netbiosname&#x3D;Fiberhome-samba_test</span><br><span class="line">serverstring&#x3D;SambaServer</span><br><span class="line">dnsproxy&#x3D;no</span><br><span class="line">#displaycharset&#x3D;cp936</span><br><span class="line">#unixcharset&#x3D;UTF-8</span><br><span class="line">#doscharset&#x3D;cp936</span><br><span class="line">loglevel&#x3D;0</span><br><span class="line">logfile&#x3D;&#x2F;dev&#x2F;null</span><br><span class="line">interfaces&#x3D;0.0.0.0&#x2F;0[::]&#x2F;0</span><br><span class="line">loadprinters&#x3D;no</span><br><span class="line">security&#x3D;user</span><br><span class="line">socketoptions&#x3D;TCP_NODELAYSO_RCVBUF&#x3D;65536SO_SNDBUF&#x3D;65536</span><br><span class="line">usesendfile&#x3D;yes</span><br><span class="line">deadtime&#x3D;5</span><br><span class="line">[usbshare]</span><br><span class="line">comment&#x3D;AllStoragedevices</span><br><span class="line">forceuser&#x3D;root</span><br><span class="line">forcegroup&#x3D;root</span><br><span class="line">public&#x3D;no</span><br><span class="line">writable&#x3D;yes</span><br><span class="line">browseable&#x3D;yes</span><br></pre></td></tr></table></figure>
-
-
-<hr>
-<p>其实这些编译的东西我没有全部测试，毕竟已经买了openwrt做NAS，我就用了下curl是正常的，使用https需要设置-cacert到旁边的etc/ssl/certs/ca-certificates.crt。感觉应该能用，不会真的打脸翻车，又报invalid instruction吧，不过跑transmission需要自己搞一个配置文件，启动的时候设置好配置文件夹的路径。<br>顺便还编译了nginx<br>建议使用前做好备份，万一误删了什么就不好了。<br>这里都是静态编译的，直接把想要的复制出来放到优盘里，再插上光猫，开启telnet进去启动。比如transmission-daemon复制出来，在旁边的文件夹放好配置文件，启动的时候加上参数。<br>可以加上自己的开机启动脚本。开机自动启动一下transmission，然后再自己写个ddns脚本更新ipv6地址。参考：<a target="_blank" rel="noopener" href="https://hotfeel.me/?p=119">https://hotfeel.me/?p=119</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://wjk.moe/2019/HG6201m%E5%85%89%E7%8C%AB%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/" data-id="ckfy5cz41000bjsvp3bw77rf8" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-一句话" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/" class="article-date">
-  <time datetime="2020-10-07T16:04:10.645Z" itemprop="datePublished">2020-10-08</time>
+  <time datetime="2021-03-01T03:11:11.000Z" itemprop="datePublished">2021-03-01</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Notes/">Notes</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -486,7 +82,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/"> 一句话博客</a>
+      <a class="article-title" href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
     </h1>
   
 
@@ -494,14 +90,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="一句话博客"><a href="#一句话博客" class="headerlink" title="一句话博客"></a>一句话博客</h1><h2 id="最稳定的给自己的推送"><a href="#最稳定的给自己的推送" class="headerlink" title="最稳定的给自己的推送"></a>最稳定的给自己的推送</h2><p>通过qq邮箱SMTP，发给自己（同一个邮箱），通过qq的QQ邮箱提醒接收</p>
-<h2 id="最方便地换硬盘重装系统"><a href="#最方便地换硬盘重装系统" class="headerlink" title="最方便地换硬盘重装系统"></a>最方便地换硬盘重装系统</h2><p>利用win10自带的 <code>备份与恢复（win7）</code> 借来一个大容量移动硬盘先备份，换硬盘之后恢复</p>
-<h2 id="ida出现import-site-failed"><a href="#ida出现import-site-failed" class="headerlink" title="ida出现import site failed"></a>ida出现import site failed</h2><p>清空自己的PYTHONHOME才行<br>或者通过bat启动</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set PYTHONHOME&#x3D;</span><br><span class="line">set PYTHONPATH&#x3D;</span><br><span class="line">start C:\Users\warren\my_programs\IDA_Pro_v7.0_Portable\ida.exe</span><br></pre></td></tr></table></figure>
+        <h1 id="一句话的问题">一句话的问题</h1>
+<p>很多问题的解决方案，虽然非常有用，但是概括起来不需要多少字，都汇总在这里。</p>
+        
+          <p class="article-more-link">
+            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wjk.moe/%E4%B8%80%E5%8F%A5%E8%AF%9D/" data-id="ckfy5cz3z0009jsvp8h4h3j8i" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/%E4%B8%80%E5%8F%A5%E8%AF%9D/" data-id="ckm6g0ddg00003ktr5gczhm4z" class="article-share-link">Share</a>
       
       
     </footer>
@@ -511,12 +110,16 @@
 
 
   
-    <article id="post-windows权限" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2021/换电脑-2021" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/windows%E6%9D%83%E9%99%90/" class="article-date">
-  <time datetime="2020-10-07T16:04:10.637Z" itemprop="datePublished">2020-10-08</time>
+    <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/" class="article-date">
+  <time datetime="2021-03-01T03:11:11.000Z" itemprop="datePublished">2021-03-01</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Digi/">Digi</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -525,7 +128,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/windows%E6%9D%83%E9%99%90/"> windows 权限提升与监控</a>
+      <a class="article-title" href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
     </h1>
   
 
@@ -533,111 +136,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="windows-权限提升与监控"><a href="#windows-权限提升与监控" class="headerlink" title="windows 权限提升与监控"></a>windows 权限提升与监控</h1><h2 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h2><p>在windows中有两种访问控制，首先是强制完整性控制，它蕴含在SACL中。其次是自主访问控制DACL。</p>
-<p>SACL原本的用途是类似自主访问控制一样自主控制系统日志，但完整性控制加入到了它的范围内。</p>
-<p>UAC提权不仅完整性从medium到了high，而且多了特权。特权是另外的资源。</p>
-<p>UAC绕过的例外方法：提升的COM名字对象，UIAccess</p>
-<p>从admin到system的方法：令牌窃取。</p>
-<h3 id="强制完整性控制（MIC）"><a href="#强制完整性控制（MIC）" class="headerlink" title="强制完整性控制（MIC）"></a>强制完整性控制（MIC）</h3><p>windows 首先是自主访问控制, 只有很简单的强制访问控制, 在原本只是打印日志的SACL的完整性字段里. 实现的方式是”可上读, 可下写”. 为了保证完整性, 只需要严格控制写权限. TODO: 能不能下读.</p>
-<p>保护完整性的强制访问控制: 低级的不可以（发送消息）影响高级的程序。</p>
-<p>与之对应的是保护机密性的强制访问控制：低级的可以发消息给高级程序，而高级程序无法发消息给低级程序（泄露机密。）</p>
-<p>windows中的完整性等级：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SeUntrustedMandatorySid</span><br><span class="line">SeLowMandatorySid</span><br><span class="line">SeMediumMandatorySid</span><br><span class="line">SeHighMandatorySid</span><br><span class="line">SeSystemMandatorySid</span><br></pre></td></tr></table></figure>
-
-<p>主体的缺省完整性级别是SeUntrustedMandatorySid，而客体的缺省完整性级别是SeMediumMandatorySid</p>
-<blockquote>
-<p>进程完整性级别是为了保证不同标签的进程（TOKEN) 和对象（SACL)之间的访问安全<br><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BC%BA%E5%88%B6%E5%AE%8C%E6%95%B4%E6%80%A7%E6%8E%A7%E5%88%B6">https://zh.wikipedia.org/wiki/%E5%BC%BA%E5%88%B6%E5%AE%8C%E6%95%B4%E6%80%A7%E6%8E%A7%E5%88%B6</a></p>
-<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Security_Identifier">SID</a></p>
-<p>可以看到标准用户和经过权限提升的UAC用户信息的差别。用户名项中组信息和sid均相同，区别就是UAC用户是经过权限提升的，最终体现在权限上的不同如下：</p>
-<p>1.组信息项中主要是Integrity levels (IL)【进程完整性级别不同】。标准用户是Medium Mandatory Level，UAC用户是High Mandatory Level,它包括Untrust， Low， Medium， Hight， System等， 级别越低，权限也就越低。我们可以通过GetTokenInformation的TokenIntegrityLevel来进行查询。<br>2.体现在Privilege中的就是UAC用户拥有很多Privilege，比如最常用的SeDebugPrivilege 。<br>注释：<br>进程完整性级别是为了保证不同标签的进程（TOKEN) 和对象（SACL)之间的访问安全，如果当前进程的TOKEN 是Low Mandatory Level， 它就不能修改具有Medium Mandatory Level的对象，即使我们对象的DACL赋予完全读写的权限。当每个进程打开对象， 我们会进行SACL和DACL检查，这个检查通过核心态函数<br>SeAccessCheck . 只有当前进程TOKEN的　完整性标签　高于或者等于　对象的完整性标，　我们才会进一步进行 DACL 检查。如果完整性标签验证通不过。 即使DACL给予再高权限都无济于事。</p>
-</blockquote>
-<h3 id="DACL-自主访问控制列表"><a href="#DACL-自主访问控制列表" class="headerlink" title="DACL 自主访问控制列表"></a>DACL 自主访问控制列表</h3><p>文件/注册表方面自然是还有自主访问控制. 进程没想到!!和文件一样的, 有安全描述符<br>主体是访问令牌. 每个进程都有一个基本令牌 (Primary Token)，可以被进程中的每个线程所共享, 后面线程可以获得其他令牌. 令牌里有用户sid, 组sid, 受限sid, 特权, 身份模拟级别, 完整度级别.<br>客体是对象: 文件/注册表/进程. 客体关联了安全描述符, 安全描述符包括所有者SID, 组SID, DACL, SACL(日志)</p>
-<p>“属性” =&gt; “安全”, “权限”选项卡就是DACL，”审核”选项卡是SACL，“所有者”是Owner、Group。</p>
-<p>每个DACL内有很多ACE, 访问控制表项, 可以接受也可以拒绝, 先找到的生效. 因此(有时?)一般拒绝的放在接受的前面.</p>
-<p>impersonation 身份模拟 传输层, 被rpc使用的, 服务端可以使用客户端的令牌.</p>
-<p>令牌里的权限有的没有enable, 要单独开启</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+0x000 Present          : Uint8B</span><br><span class="line">+0x008 Enabled          : Uint8B</span><br><span class="line">+0x010 EnabledByDefault : Uint8B</span><br></pre></td></tr></table></figure>
-<p>特权Privilege在访问某个具体的安全对象时并没有作用，Privilege是表示进程是否能够进行特定的系统操作，如关闭系统、修改系统时间、加载设备驱动等。</p>
-<h3 id="UAC"><a href="#UAC" class="headerlink" title="UAC"></a>UAC</h3><p>当用户登录Windows时，操作系统会为用户生成一对初始令牌，分别是代表着用户所拥有的全部权限的完整版本令牌(即管理员权限令牌)，以及被限制管理员权限后的普通令牌，二者互为关联令牌;此后，代表用户的进程所使用的令牌都是由普通令牌继承而来，用来进行常规的、非敏感的操作;当用户需要进行一些需要管理员权限的操作时，比如安装软件、修改重要的系统设置时，都会通过弹出提权对话框的形式提示用户面临的风险，征求用户的同意，一旦用户同意，将会切换到当前普通令牌关联的管理员权限令牌，来进行敏感操作。通过这种与用户交互的方式，避免一些恶意程序在后台稍稍执行敏感操作。<br><a target="_blank" rel="noopener" href="http://blog.nsfocus.net/analysis-windows-access-authority-inspection-mechanism/">来自</a></p>
-<blockquote>
-<p>Access Token：是一个包含了登陆会话安全信息的 Windows 软件对象，用于指名一个用户以及他所在组以及相应的特权。<br>UAC Token：定义了Windows Vista 用户在UAC支持开启的时候的默认交互式登陆特权。一个 UAC Token 定义了最小的运行特权。<br>Full Token：给账户提供了最大的经过授权的特权。Full Token 实际上是由该用户隶属于的用户组决定的。</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">通过whoami -all查看当前用户所拥有的Privilege。</span><br></pre></td></tr></table></figure>
-
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>部分受保护进程难以获得debug, 注入等权限. 保护进程的Protection成员不为0. 两种保护类型：Protected Process(PP)，Protected Process Lite(PPL). 对于Signer为PsProtectedSignerWindows(5)和PsProtectedSignerTcb(6)的保护进程, 其Type和Signer信息会被抽取出来, 组合成sid, 保存到基本令牌中的TrustLevelSid成员中</p>
-<p>通过创建受限令牌，可以获得一个普通令牌所有拥有的权限集合的一个子集，用来进行一些低权限操作，降低安全风险。</p>
-<p><a target="_blank" rel="noopener" href="http://www.youngroe.com/2015/08/14/Windows/Windows-Permissions-Privilege/">权限编程需要注意的</a><br><a target="_blank" rel="noopener" href="http://www.cppblog.com/weiym/archive/2013/08/25/202751.html?opt=admin">权限编程2</a></p>
-<h2 id="用户界面特权隔离-User-Interface-Privilege-Isolation-UIPI"><a href="#用户界面特权隔离-User-Interface-Privilege-Isolation-UIPI" class="headerlink" title="用户界面特权隔离 User Interface Privilege Isolation, UIPI"></a>用户界面特权隔离 User Interface Privilege Isolation, UIPI</h2><p>通过结合强制完整性控制，用户界面特权隔离阻止较低等完整性级别（Integrity level）的进程向较高等完整性级别进程的窗口发送消息或者安装钩子，但也有一些消息不被阻止。</p>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/user-account-control-allow-uiaccess-applications-to-prompt-for-elevation-without-using-the-secure-desktop">UIAccess</a> 选项The ability to bypass UIPI restrictions across privilege levels is available for UI automation programs by using UIAccess. 但是必须签名并且安装在指定地点.</p>
-<p>UAC level: asInvoker 不询问权限, 但是用户可以右键以管理员权限运行. highestAvailable时如果用户在admin用户组则和requireAdministrator一样, 必须以管理员权限运行.</p>
-<blockquote>
-<p>A lower privilege process cannot:</p>
-</blockquote>
-<blockquote>
-<ul>
-<li>Perform a window handle validation of higher process privilege.</li>
-<li>SendMessage or PostMessage to higher privilege application windows. These application programming interfaces (APIs) return success but silently drop the window message.</li>
-<li>Use thread hooks to attach to a higher privilege process.</li>
-<li>Use Journal hooks to monitor a higher privilege process.</li>
-<li>Perform dynamic link library (DLL)–injection to a higher privilege process.</li>
-</ul>
-</blockquote>
-<h2 id="键盘监控的思路"><a href="#键盘监控的思路" class="headerlink" title="键盘监控的思路"></a>键盘监控的思路</h2><table>
-<thead>
-<tr>
-<th>API</th>
-<th>适用范围</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>GetAsyncKeyState</td>
-<td></td>
-<td>每次获取单个按键的状态, 轮询每个键状态, 效率略低</td>
-</tr>
-<tr>
-<td>GetKeyboardState</td>
-<td></td>
-<td>一次获取所有的键的状态, 和消息队列相关</td>
-</tr>
-<tr>
-<td>SetWindowsHookEx 指定键盘</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<h3 id="SetWindowsHookEx"><a href="#SetWindowsHookEx" class="headerlink" title="SetWindowsHookEx"></a>SetWindowsHookEx</h3><p>在回调函数中，我们将接收KeyboardProc的wParam中的虚拟键码和LowLevelKeyboardProc的KBDLLHOOKSTRUCT.vkCode（wParam指向KBDLLHOOKSTRUCT）。</p>
-<p>如果m_ThreadId = 0，则消息钩子是全局消息钩子。针对全局消息钩子，你必须将回调函数置于dll中，并且需要编写2个dll来分别处理x86/x64进程。</p>
-<p>针对底层键盘钩子，SetWindowsHookEx的HMod参数可以为NULL或者本进程加载的模块（我测试了user32，ntdll）。</p>
-<p>WH_KEYBOARD_LL不需要dll中的回调函数，并且能适应x86/x64进程。</p>
-<p>WH_KEYBOARD需要两个版本的dll，分别处理x86/x64。但是如果使用x86版本的全局消息钩子，所有的x64线程仍被标记为“hooked”，并且系统在钩子应用上下文执行钩子。类似的，如果是x64，所有的32位的进程将使用x64钩子应用的回调函数。这就是为什么安装钩子的线程必须要有一个消息循环。</p>
-<p>hook是在整个桌面环境(desktop)内的. uac是safe desktop, 另外一个桌面</p>
-<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/86403">来自</a><br><a target="_blank" rel="noopener" href="https://securelist.com/keyloggers-implementing-keyloggers-in-windows-part-two/36358/">专业文章</a></p>
-<p>已知设置钩子是不能跨越完整度保护的. 猜测至少需要最高的完整度级别才能设置全局钩子</p>
-<blockquote>
-<p>“Process isolation provides a way to extend the authorization model to common extension points for inter-process communication. For example, if an application running at medium integrity were to register a hook to process Windows messages, this hook would not be active in a process running at the high integrity level.”</p>
-</blockquote>
-<p>所以可能可以安装但是其实不是全局?</p>
-<h3 id="subsystem-console"><a href="#subsystem-console" class="headerlink" title="subsystem: console"></a>subsystem: console</h3><p>是一个过时的东西, 直接用subsystem: windows??<br><a target="_blank" rel="noopener" href="https://www.devever.net/~hl/win32con">看这</a></p>
-<h2 id="自启动技术"><a href="#自启动技术" class="headerlink" title="自启动技术"></a>自启动技术</h2><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/cf01fee50fb4">自启动技术</a></p>
-<h2 id="bypass-uac"><a href="#bypass-uac" class="headerlink" title="bypass uac"></a>bypass uac</h2><p><a target="_blank" rel="noopener" href="https://cqureacademy.com/cqure-labs/cqlabs-how-uac-bypass-methods-really-work-by-adrian-denkiewicz">概述</a></p>
-<p>这里研究的是COM接口绕过<br><a target="_blank" rel="noopener" href="https://y4er.com/post/bypassuac-with-icmluautil/">详述</a></p>
-<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><ol>
-<li>权限窃取</li>
-<li>使用服务的impersonation<br>真正的关键是分析其中的权限问题</li>
-</ol>
-<p>首先是bypass UAC, 得到SeDebugPrivilege, 然后就可以直接用窃取的方式得到System<br>没有UAC时特权很少, 完整度级别为Medium, 过了UAC就是High</p>
-<p>现在就看创建服务了. 如果创建服务获取system不需要高完整度, 那就神了. 否则还是要bypass uac, 那还不如上面的方法.<br>目前我猜测大概是要高完整度的.</p>
-<h2 id="远程线程注入"><a href="#远程线程注入" class="headerlink" title="远程线程注入"></a>远程线程注入</h2><p>远程线程注入首当其冲就是权限问题, 需要debug权限?? !!<br>meterpreter 怎么migrate的</p>
-<p>打开一个同级别的进程, Medium的完整度的, OpenProcess的时候指定什么权限??</p>
-<h2 id="raw-input方法的主函数的消息循环"><a href="#raw-input方法的主函数的消息循环" class="headerlink" title="raw_input方法的主函数的消息循环"></a>raw_input方法的主函数的消息循环</h2><p>发现主函数其实消息非常少… 平时只有一个消息, 开了hook之后每按下和松开都有一个事件.<br>理解为是winmain的消息传过去的吗… 或者要先给到这边, 才能给到那边winProc<br>发现如果没有getMessage的循环，无论是Hook的keylog还是rawInput的keylog都不行。创建一个子进程执行而不是在dllmain里面执行好像没什么区别？？？ notepad.exe正常使用？？<br>我的问题是，notepad.exe这种桌面程序难道不是应该winmain里有自己的Getmessage吗。。。为什么即使是注入也需要自己有getMessage的循环？？</p>
-
+        <h1 id="换电脑-2021">换电脑-2021</h1>
+<p>电脑终于换上5800u了，这里记录一些换电脑系统重装与迁移的过程。</p>
+<p>早就意识到QQ使用了驱动进行自我保护，这几天又出现了读取浏览记录的事件，我就感到我的电脑如果腾讯想干什么我是拦不住的。从此就计划新电脑一定要24小时跑一个虚拟机，用来装这些流氓软件。</p>
+<p>具体的方案是家庭版安装hyper-v，然后外部通过windows远程桌面连进去。现在用了快一个多月，还挺不错的，CPU占用也不高。唯一的缺点是内部启动腾讯会议，会使用CPU而不是显卡处理视频，CPU占用较高。</p>
+        
+          <p class="article-more-link">
+            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wjk.moe/windows%E6%9D%83%E9%99%90/" data-id="ckfy5cz3y0008jsvphhuw4zr4" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/" data-id="ckm6g0de300173ktr3v5u7o4f" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li></ul>
+
     </footer>
   </div>
   
@@ -645,12 +160,16 @@
 
 
   
-    <article id="post-spi" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2021/软件分析" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/spi/" class="article-date">
-  <time datetime="2020-10-07T16:04:10.627Z" itemprop="datePublished">2020-10-08</time>
+    <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/" class="article-date">
+  <time datetime="2021-02-01T03:11:11.000Z" itemprop="datePublished">2021-02-01</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Notes/">Notes</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -659,7 +178,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/spi/"> SPI</a>
+      <a class="article-title" href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
     </h1>
   
 
@@ -667,78 +186,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="SPI"><a href="#SPI" class="headerlink" title="SPI"></a>SPI</h1><p>Widora AIRV R3 适配Maixpy 项目</p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>看到推荐就买了, 毕竟板载的传感器太全了, 一个小板子就什么都有了, 而且便宜. 导致我走上了这条路. 希望能静下心来. 学到什么. 我经常为了像这样做到些什么而学习, 但往往走偏, 后期只想着想要做到的事情, 完全抛弃了学习, 瞎试, 就是不去继续学.</p>
-<p>TODO: 为maixpy 贡献一点文档</p>
-<h2 id="spi总线"><a href="#spi总线" class="headerlink" title="spi总线"></a>spi总线</h2><p>maixpy支持其他板子, 经测试, 无法驱动本板子屏幕. 怀疑是接线有问题. 找来板子的接线图, 和各种硬件资料.</p>
-<p>中景园1.14寸屏幕用的是TODO的芯片. 支持各种SPI通讯方式. 主要看屏幕控制芯片的手册.</p>
-<p>SPI总线可以只靠一条线(3线接口), 或者控制/数据的电平信号线 + 真正的数据线(4线接口). 控制/数据的电平信号线为(高/低)的时候表示发送的这个字节是命令, 否则表示是数据(命令的参数). 另外, 这些传输都有时钟信号的同步.</p>
-<p>片选信号变低, 选择芯片, 芯片准备接受数据. 不带(控制/数据的电平信号线)的时候传输9个bit, 第一个bit表示是控制还是数据. 带的时候连续传输8个bit,  传输第8个bit结束的时候对控制/数据信号进行采样, 判断是控制还是数据.</p>
-<p>k210芯片带有fpio, 能够软件控制输出引脚和对应芯片内真正引脚的映射关系!! 可能类似fpga, 这个功能真是绝了, 可能是我见识太浅. 接spi线的时候, 一般spi接口的数据线还是直连, 其他复位, 控制/数据选择, 片选都可以直接在GPIO或者高速GPIO里面随便选一个. 因此不同板子要调整这些映射.</p>
-<p>SPI总线也可以多条线, 4条,8条甚至16条等并行连接, 这个屏幕是典型的4线. 该板子可以外接的另外那个大屏幕似乎就是8数据线的spi.</p>
-<p>4-line serial interface Ⅱ</p>
-<table>
-<thead>
-<tr>
-<th>Pin Name</th>
-<th>description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>CSX/CS</td>
-<td>Chip selection signal</td>
-</tr>
-<tr>
-<td>SCL</td>
-<td>Clock signal</td>
-</tr>
-<tr>
-<td>SDA</td>
-<td>Serial data input data</td>
-</tr>
-<tr>
-<td>WRX/RS</td>
-<td>Data is regarded as a command when WRX is low. Data is regarded as a parameter or data when WRX is high</td>
-</tr>
-<tr>
-<td>DCX</td>
-<td>Clock signal</td>
-</tr>
-<tr>
-<td>SDO</td>
-<td>serial output data</td>
-</tr>
-</tbody></table>
-<p>3 line interface Ⅰ spi 只有片选CSX, DCX时钟, SDA 输入输出<br>3 line interface Ⅱ 多了 SDO, 输入和输出引脚分开了.<br>4 line interface Ⅰ 只有片选CSX, WRX控制/数据(参数)选择, DCX时钟, SDA 输入输出 .<br>4 line interface Ⅱ同理.</p>
-<p>DCX有时说是WRX一样的控制/数据选择. 可能是叫法的问题还是理解的问题???TODO</p>
-<p>SCL –&gt; LCD_WR<br>WRX/RS –&gt; LCD_DC</p>
-<p>LCD_WR是时钟<br>GPIOHS30在maixpy代表LCD复位<br>GPIOHS31代表控制/数据选择</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fm.unregister(36, fm.fpioa.SPI0_SS3)</span><br><span class="line">fm.register(37, fm.fpioa.SPI0_SS3)</span><br><span class="line"></span><br><span class="line">fm.unregister(37, fm.fpioa.SPI0_SCLK)</span><br><span class="line">fm.register(39, fm.fpioa.SPI0_SCLK)</span><br><span class="line"></span><br><span class="line">fm.unregister(38, fm.fpioa.GPIOHS30)</span><br><span class="line">fm.unregister(39, fm.fpioa.GPIOHS31)</span><br><span class="line">fm.register(38, fm.fpioa.GPIOHS31)</span><br></pre></td></tr></table></figure>
-
-<p>LCD是片选3</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+----------|-----------------------+</span><br><span class="line">|   36     |     LCD_CS            |</span><br><span class="line">+----------|-----------------------+</span><br><span class="line">|   37     |     LCD_RST           |</span><br><span class="line">+----------|-----------------------+</span><br><span class="line">|   38     |     LCD_DC            |</span><br><span class="line">+----------|-----------------------+</span><br><span class="line">|   39     |     LCD_WR            |</span><br><span class="line">+----------|-----------------------+</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fm.unregister(36, fm.fpioa.SPI0_SS3)</span><br><span class="line">fm.unregister(37, fm.fpioa.SPI0_SCLK)</span><br><span class="line"></span><br><span class="line">fm.register(37, fm.fpioa.SPI0_SS3)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fpioa_set_function(37, FUNC_GPIOHS0 + RST_GPIONUM);</span><br><span class="line">fpioa_set_function(38, FUNC_GPIOHS0 + DCX_GPIONUM);</span><br><span class="line">fpioa_set_function(36, FUNC_SPI0_SS0+LCD_SPI_SLAVE_SELECT);</span><br><span class="line">fpioa_set_function(39, FUNC_SPI0_SCLK);</span><br></pre></td></tr></table></figure>
-
-<p>SPI_FF_STANDARD： 标准<br>​ SPI_FF_DUAL： 双线<br>​ SPI_FF_QUAD： 四线<br>​ SPI_FF_OCTAL： 八线（SPI3 不支持）</p>
-<h2 id="屏幕控制芯片TODO"><a href="#屏幕控制芯片TODO" class="headerlink" title="屏幕控制芯片TODO"></a>屏幕控制芯片TODO</h2><p>和芯片的交互基于SPI之后, 就是发送各种控制和数据. 芯片一般有nt35310和我现在的这个st7789. 首先是各种初始化的命令, 后面就是发送数据了. 显示的数据是一个个像素传送的, 有RGB565和SUV等颜色模式.</p>
-<p>初始化首先发送SOFTWARE_RESET -(睡100ms 后面同理)-&gt; SLEEP_OFF –&gt; PIXEL_FORMAT_SET= 0x55 (表示是TODO模式) –&gt; DISPALY_ON</p>
-<h2 id="屏幕定位"><a href="#屏幕定位" class="headerlink" title="屏幕定位"></a>屏幕定位</h2><p>横着是x, 竖着是y方向</p>
-<p>控制芯片的大小是<code>320x240</code>, 当设置屏幕大小是这个值的时候.<br>屏幕的大小是<code>240x135</code>, 刚好在中间. 左右空出40, 上下空出53/52左右<br>左上角大概在(40, 52), 右下角在(280, 187)左右. 发现代码中可以设置偏移, 把偏移设置成50 40(横屏模式), 和 40 52(竖屏模式) 就好了. 基本完美.<br>而且反色了… 和代码中写的颜色是反的, 代码中初始化是背景色红色, 白色的字. 不知道是不是有意为之, 或者有的屏幕就是这样. 反色之后的背景白里透蓝, 黑色的字.<br>那我就默认反色吧, 就和代码里的颜色一致了.</p>
-<p>可以设置默认的屏幕大小. 按照保证允许软件传参更改的同时, 设置好能用的默认值的这个方针.</p>
-<h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><p>micropython 解释器里面 摄像头能不能用</p>
-<p>测试硅麦能不能用<br>找笑声检测模型</p>
-<h2 id="摄像头"><a href="#摄像头" class="headerlink" title="摄像头"></a>摄像头</h2><p>引脚接的都是对的. 可以直接用, 但是不稳.<br>不知道为什么例程很稳, 而当前的maixpy经常会报错</p>
-<p>TODO:<br>学习DVP接口, 学习摄像头相关的参数.<br>似乎是i2c? i2s? 2号 总线</p>
-<h2 id="麦克风"><a href="#麦克风" class="headerlink" title="麦克风"></a>麦克风</h2><p>TODO:<br>完全没有声音… 全是0</p>
-
+        <h1 id="南京大学软件分析课程笔记">南京大学《软件分析》课程笔记</h1>
+<p>（静态分析）</p>
+<p>警告：本笔记可能包含错误推论。有待学成后回来检查。</p>
+<p>做了实验是因为碰巧从Github上搜到了原本应该不外传的实验代码。</p>
+        
+          <p class="article-more-link">
+            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wjk.moe/spi/" data-id="ckfy5cz3x0007jsvp9oyt8joj" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/" data-id="ckm6g0de5001e3ktr73icevo8" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li></ul>
+
     </footer>
   </div>
   
@@ -746,12 +210,16 @@
 
 
   
-    <article id="post-samba" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2020/rcore学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/samba/" class="article-date">
-  <time datetime="2020-10-07T16:04:10.607Z" itemprop="datePublished">2020-10-08</time>
+    <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time datetime="2020-08-29T05:46:25.000Z" itemprop="datePublished">2020-08-29</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -760,7 +228,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/samba/"> 设置最新版本的windows10 能够访问的samba服务器</a>
+      <a class="article-title" href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
     </h1>
   
 
@@ -768,38 +236,22 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="设置最新版本的windows10-能够访问的samba服务器"><a href="#设置最新版本的windows10-能够访问的samba服务器" class="headerlink" title="设置最新版本的windows10 能够访问的samba服务器"></a>设置最新版本的windows10 能够访问的samba服务器</h1><p>需要有只读的公共访问和可读可写的非公共访问<br>注意的地方是, 第一次访问可能会询问用户名密码, 不代表guest配置失败, 乱输用户名即可通过<code>map to guest = bad user</code> 作为guest</p>
-<h2 id="关键配置1-加密和签名"><a href="#关键配置1-加密和签名" class="headerlink" title="关键配置1 加密和签名"></a>关键配置1 加密和签名</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">	server signing &#x3D; mandatory</span><br><span class="line">#	smb encrypt &#x3D; mandatory</span><br></pre></td></tr></table></figure>
-<p>查看日志发现, 新版本的win10(还是samba服务器??)对没有加密也没有签名的连接会拒绝. 所以需要这两个选项.</p>
-<p>加密必须要用户名和密码, 因为加密的会话密钥就是和用户名关联的. 因此为了guest用户, 需要注释掉加密的选项.</p>
-<p>来自<a target="_blank" rel="noopener" href="https://serverfault.com/questions/874423/how-to-enable-samba-encryption-and-do-not-require-user-authentication">How to enable SAMBA encryption and do not require user authentication
-</a></p>
-<h2 id="关键配置2"><a href="#关键配置2" class="headerlink" title="关键配置2"></a>关键配置2</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#	min protocol &#x3D; SMB2</span><br></pre></td></tr></table></figure>
-<p>自从win10开始, 默认使用的就是SMB3_11了, 在 <code>启用或关闭windows功能</code> 里开启SMB1/CIFS, 访问时就可能会使用SMB2. 这里调试的时候可以考虑强制改成SMB3. 发现关键问题之后为了兼容性注释掉了</p>
-<h2 id="关键配置3"><a href="#关键配置3" class="headerlink" title="关键配置3"></a>关键配置3</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">guest account &#x3D; guest</span><br><span class="line">null passwords &#x3D; yes</span><br></pre></td></tr></table></figure>
-<p>默认是<code>guest account = nobody</code>. #TODO<br>第二个参数 <code>null passwords</code> 不加上, 使用空密码登录的时候就会被拒绝.</p>
-<h2 id="关键配置4-ntlm-auth"><a href="#关键配置4-ntlm-auth" class="headerlink" title="关键配置4 ntlm auth"></a>关键配置4 ntlm auth</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ntlm auth &#x3D; ntlmv1-permitted</span><br><span class="line">lanman auth &#x3D; yes</span><br><span class="line">raw NTLMv2 auth &#x3D; yes</span><br></pre></td></tr></table></figure>
-<p>win10可能会使用ntlmv1, 而经过永恒之蓝事件之后samba默认只接受ntlmv2了.<br>关键的只是第一条, 后面的两条是逛的时候发现的, 加了可以增加兼容性.</p>
-<p><a target="_blank" rel="noopener" href="https://bgstack15.wordpress.com/2017/10/01/samba-and-ntlm-for-windows-clients/">Samba and ntlm for Windows clients</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#NTLMAUTH">samba config ntlmauth</a></p>
-<h2 id="关键配置5-passdb-backend"><a href="#关键配置5-passdb-backend" class="headerlink" title="关键配置5 passdb backend"></a>关键配置5 passdb backend</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">passdb backend &#x3D; smbpasswd:&#x2F;etc&#x2F;samba&#x2F;smbpasswd</span><br><span class="line">smb passwd file &#x3D; &#x2F;etc&#x2F;samba&#x2F;smbpasswd</span><br></pre></td></tr></table></figure>
-<p>新版本默认使用的不是smbpasswd, 默认的数据库位置更不是 <code>/etc/samba/smbpasswd</code>. 新版本似乎用的是 <code>pdbedit</code>? </p>
-<p>指定数据库文件位置似乎是用第一行的方式了, 第二行似乎没有效果了?</p>
-<h2 id="关键配置6-force-user"><a href="#关键配置6-force-user" class="headerlink" title="关键配置6 force user"></a>关键配置6 force user</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">force user &#x3D; pi</span><br></pre></td></tr></table></figure>
-<p>强制用户了之后上传的文件的所有者就都是一样的了</p>
-<h2 id="总体配置"><a href="#总体配置" class="headerlink" title="总体配置:"></a>总体配置:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">    map to guest &#x3D; Bad User</span><br><span class="line">	server signing &#x3D; mandatory</span><br><span class="line">#	smb encrypt &#x3D; mandatory</span><br><span class="line">#	min protocol &#x3D; SMB2</span><br><span class="line">	passdb backend &#x3D; smbpasswd:&#x2F;etc&#x2F;samba&#x2F;smbpasswd</span><br><span class="line">	smb passwd file &#x3D; &#x2F;etc&#x2F;samba&#x2F;smbpasswd</span><br><span class="line">	guest account &#x3D; guest</span><br><span class="line">	null passwords &#x3D; yes</span><br><span class="line">	security&#x3D;user</span><br><span class="line">	ntlm auth &#x3D; ntlmv1-permitted</span><br><span class="line">	lanman auth &#x3D; yes</span><br><span class="line">	raw NTLMv2 auth &#x3D; yes</span><br><span class="line"></span><br><span class="line">[ro]</span><br><span class="line">        # This share allows anonymous (guest) access</span><br><span class="line">        # without authentication!</span><br><span class="line">        path &#x3D; &#x2F;home&#x2F;pi&#x2F;</span><br><span class="line">#	force user &#x3D; pi</span><br><span class="line">        read only &#x3D; yes</span><br><span class="line">        guest ok &#x3D; yes</span><br><span class="line">#        guest only &#x3D; yes</span><br><span class="line"></span><br><span class="line">[rw]</span><br><span class="line">	path &#x3D; &#x2F;home&#x2F;pi&#x2F;</span><br><span class="line">	read only &#x3D; no</span><br><span class="line">	valid users &#x3D; pi</span><br><span class="line">	force user &#x3D; pi</span><br></pre></td></tr></table></figure>
-
-<h2 id="debug方法"><a href="#debug方法" class="headerlink" title="debug方法"></a>debug方法</h2><p>windows 清除登录密码首先要凭据管理器删除<br>接着我任务管理器关闭explorer再启动, 没有用, 只有重启</p>
-<p>debug samba 的方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo service smbd stop</span><br><span class="line">sudo smbd -F -S -d&#x3D;10</span><br></pre></td></tr></table></figure>
-<p>此时再连接, 就可以看到debug信息了. -d指定的loglevel从1到10.<br><code>-d=5</code>的时候的log就已经很多了, <code>-d=3</code> 的时候log不是很多.平时一般先使用 <code>-d=3</code></p>
-
+        <h1 id="rcore学习笔记">rcore学习笔记</h1>
+<p>这是我这几天学习rcore-Tutorial第三版时的笔记, 汇总到了一起. <a href="#lab1中断">lab1</a> 学习了不少RISC-V的中断相关的基础知识, 之后补的中断相关的知识也补在这里了 <a href="#lab3虚拟内存管理">lab3</a>, <a href="#lab4线程与调度">lab4</a> 对实现细节写得详细一些, 稍微看懂一点代码就写上去了, 很多函数的实现细节都写下来了.</p>
+<p>有的地方还留下了一些疑问没有解决, 自己也查了资料但没有找到答案, 如果去掉感觉有可能产生误导, 所以就留着了.</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wjk.moe/samba/" data-id="ckfy5cz3w0006jsvpg8vc3nvv" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="ckm6g0ddy000o3ktr9pgm0jie" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li></ul>
+
     </footer>
   </div>
   
@@ -807,12 +259,16 @@
 
 
   
-    <article id="post-ov2640" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2020/COM与RPC" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/ov2640/" class="article-date">
-  <time datetime="2020-10-07T16:04:10.588Z" itemprop="datePublished">2020-10-08</time>
+    <a href="/2020/COM%E4%B8%8ERPC/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -821,7 +277,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/ov2640/"> ov2640 摄像头模块</a>
+      <a class="article-title" href="/2020/COM%E4%B8%8ERPC/">COM与RPC</a>
     </h1>
   
 
@@ -829,104 +285,21 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="ov2640-摄像头模块"><a href="#ov2640-摄像头模块" class="headerlink" title="ov2640 摄像头模块"></a>ov2640 摄像头模块</h1><p>关键在于学习如何操作寄存器<br>k210的dvp datasheet:</p>
-<blockquote>
-<p>3.9 数字视频接口(DVP)<br>DVP 是摄像头接口模块，特性如下：</p>
-<ul>
-<li>支持DVP接口的摄像头</li>
-<li>支持SCCB协议配置摄像头寄存器</li>
-<li>最大支持640X480 及以下分辨率，每帧大小可配置</li>
-<li>支持YUV422 和RGB565 格式的图像输入</li>
-<li>支持图像同时输出到KPU和显示屏:<ul>
-<li>输出到KPU 的格式可选RGB888，或YUV422输入时的Y分量</li>
-<li>输出到显示屏的格式为RGB565</li>
-</ul>
-</li>
-<li>检测到一帧开始或一帧图像传输完成时可向CPU发送中断</li>
-</ul>
-</blockquote>
-<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><p>PCLK,即像素时钟,一个PCLK时钟,输出一个(或半个)像素。</p>
-<p>VSYNC,即帧同步信号。</p>
-<p>HREF/ HSYNC,即行同步信号。</p>
-<h2 id="颜色格式-RGB-YUV-YCbCr"><a href="#颜色格式-RGB-YUV-YCbCr" class="headerlink" title="颜色格式 RGB, YUV, YCbCr"></a>颜色格式 RGB, YUV, YCbCr</h2><h2 id="sccb"><a href="#sccb" class="headerlink" title="sccb"></a>sccb</h2><p>SCCB 特性都与 I2C 无区别, 可以直接用I2C控制器去通信</p>
-<h2 id="dvp"><a href="#dvp" class="headerlink" title="dvp"></a>dvp</h2><p>各种大大小小的时钟, 最终形成了同步的信号. 一个帧同步信号的有效时间内有很多个行同步信号, 每个行同步信号的有效时间内有很多像素时钟.</p>
-<h2 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h2><p>SVGA: 800 x 600<br>摄像头也可以配置缩放. 没写怎么配置的缩放的.</p>
-<h2 id="图形翻转"><a href="#图形翻转" class="headerlink" title="图形翻转"></a>图形翻转</h2><p>0xFF=1的时候, 04寄存器最高两位分别是水平镜像和垂直翻转.<br>widora的ov2640例程中, 注释了airv r3 back的地方是 d8 也就是这两位都有.<br>maixpy则是只有水平镜像(0xa8). 在去掉水平镜像之后, 也就是两个bit都不设置的时候(0x28), 后置摄像头显示刚好正常.<br>(怀疑是)两边lcd的方向设置不一致, maixpy暂时调整摄像头这边.</p>
-<h2 id="代码对比阅读"><a href="#代码对比阅读" class="headerlink" title="代码对比阅读"></a>代码对比阅读</h2><p>linux的ov2640代码可能是发源地, 也是最完善的吧. 接着是openmv的代码, 比maixpy的整齐很多, 不乱. 接着就是kendryte的代码, 也许是参照openmv的,对比一下widora的例程. 最后是maixpy的代码.</p>
-<h2 id="widora对比kentryte"><a href="#widora对比kentryte" class="headerlink" title="widora对比kentryte"></a>widora对比kentryte</h2><p>代码的对比最好先format后diff. 这样即使widora他们声明数组是好几个一行, 也能迅速展平方便对比</p>
-<p>经过对比发现, 除了多设置了一个翻转bit之外, 只有这两个不同.<br>官方是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;0x5a, 0xc8&#125;,</span><br><span class="line">&#123;0x5b, 0x96&#125;,</span><br></pre></td></tr></table></figure>
-<p>widora是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;0x5a, 0x50&#125;,</span><br><span class="line">&#123;0x5b, 0x3C&#125;,</span><br></pre></td></tr></table></figure>
-<p>搜索ov2640和zmow, 找到了Android的相关驱动代码!!! Android它们相关驱动可能比linux还完善.</p>
-<p>#define ZMOW        0x5A /* Zoom: Out Width  OUTW[7:0] (real/4) <em>/<br>#define   ZMOW_OUTW_SET(x)      VAL_SET(x, 0xFF, 2, 0)<br>#define ZMOH        0x5B /</em> Zoom: Out Height OUTH[7:0] (real/4) */</p>
-<p>这样看的话, widora是: 320*240分辨率. 官方是800*600, 修改这里确实说得过去, 不过也不注释一下…</p>
-<p>没想到这样的例程都用到了ai加速器?</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置允许导流到AI模型</span></span><br><span class="line">dvp_set_output_enable(<span class="number">0</span>, <span class="number">1</span>);    <span class="comment">//enable to ai</span></span><br><span class="line"><span class="comment">// DVP不直接导流到LCD</span></span><br><span class="line">dvp_set_output_enable(<span class="number">1</span>, <span class="number">1</span>);    <span class="comment">//disable to lcd</span></span><br></pre></td></tr></table></figure>
-<p>dvp_set_ai_addr设置AI 存放图像的地址，供AI 模块进行算法处理。<br>void dvp_set_ai_addr(uint32_tr_addr, uint32_tg_addr, uint32_tb_addr)设置采集图像在内存中的存放地址，可以用来显示。<br>dvp_clear_interrupt(DVP_STS_FRAME_START | DVP_STS_FRAME_FINISH); 一般表示当前的这种中断处理完了, 可以来新的中断了. 算是是中断的pending位?.<br>dvp_config_interrupt(DVP_CFG_START_INT_ENABLE | DVP_CFG_FINISH_INT_ENABLE, 1); 打开中断开关<br>dvp_start_convert() 在开始采集图像的时候调用 表示开始采集图像<br>dvp_disable_auto() 禁用自动接收图像模式。</p>
-<p>总结起来, 就是开启dvp中断. k210的dvp会提供开始采集和停止采集的两种中断. 开始采集的时候, 在中断处理中调用start_convert. 结束采集的时候, 设置标志位. 当中断退出的时候, 忙等的处理器就会注意到标志位, 清零并设置切换buffer的标志, 向屏幕发送数据. 另外就是中断处理的时候根据buffer标志设置buffer.<br>根据需要切换buffer是在结束采集的时候?? 不应该啊, 切换buffer不是为了让采集和输出不在同一个buffer吗.</p>
-<p>根据LCD的需求来切换dvp数据放到哪个缓存，目的是保证把图像传给LCD的时候, dvp不是正好输出到这个buf。</p>
-<p>buf大小上, ai为什么要给三个RGB的buf? 我修改了zoom出来的大小是否相关的buf大小也需要变化?<br>查看发现widora和官方的main函数一直, buf大小相同.<br>RGB565是2字节一个像素. 这里是320*240*2 = 38400个uint32 (widora的dvp buffer大小.)<br>而AI的buffer大小是3*12c00 = 38400 这是怎么回事? RGB怎么可能均分呢? 这可是RGB565.</p>
-<p>set_framesize在设置QVGA的时候不仅设置了dvp_set_image_size, 也设置了摄像头那边的zoom寄存器.</p>
-<h2 id="ov2640-帧率"><a href="#ov2640-帧率" class="headerlink" title="ov2640 帧率"></a>ov2640 帧率</h2><p>分析software application notes的帧率设置案例.<br>下面的寄存器都在0xff=1的情况下<br>首先是0x11寄存器, 最低4位为clock dividor. 寄存器的值高帧率的时候为0, 低的时候为1, 可能divide了就帧率减半吗?<br>0x12寄存器的(低到高)第三位, zoom mode. svga的时候设为1, uxga的时候为0<br>0x2a寄存器, 大家都设置为0 line interval adjust value的高四位, Hsync start/end point adjustment MSB. 0x2b也为0, line interval adjust value的低8位. 帧率会被这个12bit的值微调.<br>0x46为低位, 0x47为高位, 组成了frame length adjustment. 这个值每多1, 就在帧中增加了1个水平线的时间. 0x47大家也都设置为0. 这个值是调整帧率的关键.<br>0x3d寄存器很神秘, 在手册的保留寄存器的范围内. svga设置为了0x38, uxga设置成了0x34</p>
-<p>SVGA 800×600来看的话, 高度是600. frame length adjustment为0时的刷新率是30fps. 而增加了clock dividor, 帧率减半得到15fps. 如果只frame length adjustment设置为了0x87=135, 那么帧率就乘上了缩放倍数(600/600+135), 得到25fps.</p>
-<p>总之关键在于寄存器0x11和寄存器0x46 0x47. </p>
-<table>
-<thead>
-<tr>
-<th>type</th>
-<th>clock dividor</th>
-<th>frame length adjustment</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>widora/kendryte</td>
-<td>0</td>
-<td>0x22</td>
-</tr>
-<tr>
-<td>maixpy</td>
-<td>0</td>
-<td>0x22</td>
-</tr>
-</tbody></table>
-<p>当前maixpy的帧率, 30fps * (600/600+34) = 28.4帧… 为什么是这种奇怪的帧数? 难道是我哪里理解错了? 或者为了凑什么倍数??</p>
-<h2 id="ov2460-颜色"><a href="#ov2460-颜色" class="headerlink" title="ov2460 颜色"></a>ov2460 颜色</h2><p>0xff=<br>CTRL0 = 0xC2寄存器 最低四位由低到高依次为RAW_EN, RGB_EN, YUV_EN, YUV422. 默认和maixpy的配置都是0x0C=1100<br>0xDA寄存器的名字是IMAGE_MODE, bit0 byte swap for DVP(low/high byte first), bit[3:2] 00-&gt;yuv422, 01-&gt;raw10, 10-&gt; RGB565, 11-&gt;Reserved<br>kendryte是0x08, 也就是RGB565, maixpy是0x01, 也就是YUV422+byte swap</p>
-<p>这边寄存器的设置要和那边dvp的接收设置匹配起来. 而调用picformat只是设置dvp的接收的格式. </p>
-<h2 id="maixpy和openmv的代码解析"><a href="#maixpy和openmv的代码解析" class="headerlink" title="maixpy和openmv的代码解析"></a>maixpy和openmv的代码解析</h2><p>openmv的代码更大型一些, 功能更多. 对摄像头相关的寄存器使用得更灵活. 前面的配置一般还是svga, 但是最后zoom出来分辨率不会那么大.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import sensor    </span><br><span class="line">import lcd</span><br><span class="line"></span><br><span class="line">lcd.init()</span><br><span class="line"></span><br><span class="line">sensor.reset()</span><br><span class="line">sensor.set_pixformat(sensor.RGB565)</span><br><span class="line">sensor.set_framesize(sensor.QVGA)</span><br><span class="line">sensor.run(1)</span><br><span class="line"></span><br><span class="line">while True:</span><br><span class="line">    img &#x3D; sensor.snapshot()</span><br><span class="line">    lcd.display(img)</span><br></pre></td></tr></table></figure>
-<p>先在这个典型的例程里, 依次分析一下各个函数.<br>代码结构依次是py_sensor.c -&gt; sensor.c -&gt; ov2460.c<br>首先是探测过程, 读取厂家和型号id. ov2460_init函数会填写sensor结构体, 暴露出内部函数.<br>设置frame_size的时候, 也会设置摄像头的zoom相关寄存器.<br>set_pixformat似乎没有用了, 而且似乎是yuv. 设置成其他的格式会花屏. 也许是方便直接输入模型吧.<br>set_framerate也无法设置, ov2460.c中直接返回-1了.</p>
-<p>sensor和lcd没有直接的关联或者相互调用, snapshot函数则是传过去的关键.<br>snapshot函数甚至还对buf做了什么jpeg压缩处理, 考虑了连接ide的情况.</p>
-<p>超时不一定是摄像头配置问题. 也可能是中断处理问题. 试了下去掉双buf选项编译还是不行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    #ifdef CONFIG_BOARD_AIRVR3</span><br><span class="line">	&#123;0x5a, 0x50&#125;,</span><br><span class="line">	&#123;0x5b, 0x3c&#125;,</span><br><span class="line">    #else</span><br><span class="line">	&#123;0x5a, 0xc8&#125;,</span><br><span class="line">	&#123;0x5b, 0x96&#125;,</span><br><span class="line">    #endif</span><br><span class="line">	&#123;0x5c, 0x00&#125;,</span><br><span class="line">	&#123;0xc3, 0xed&#125;,</span><br><span class="line">	&#123;0x7f, 0x00&#125;,</span><br><span class="line">	&#123;0xe5, 0x1f&#125;,</span><br><span class="line">	&#123;0xdd, 0x7f&#125;,</span><br><span class="line">	&#123;0x05, 0x00&#125;,</span><br><span class="line">#if 1	&#x2F;&#x2F;color bar</span><br><span class="line">	&#123;0xff, 0x01&#125;,</span><br><span class="line">	&#123;0x12, 0x02&#125;,</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="尝试log"><a href="#尝试log" class="headerlink" title="尝试log"></a>尝试log</h2><p>reduced the clock to 11MHz, 似乎能提高帧率</p>
-<p>图像格式的问题, 搞清楚是怎么设置的. 八成不是中断的问题…<br>把RGB关掉试试, 用YUV也是好的</p>
-<p>测试情况:<br>使用airv配置 不注释svga, 有时花屏有时正常显示, 图像也上下左右反了<br>使用maixpy配置有时无法显示, 有时正常</p>
-<p>不会显示异常的关键是选对dvp的颜色格式和摄像头配置的颜色格式</p>
-<p>maixpy的摄像头相关还是不太行, 可能有bug. 这里如果不设置framesize就直接snapshot, 会报错Not init.<br>之后居然就崩了…</p>
-<p>这就是软件工程的困境吗?</p>
-<p>等一波新版本发布, github watch了</p>
-<p>不会是供电问题吧… 只有程序小的时候才能正常显示</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>今天添加散热片发现, k210在dvp2lcd的时候发热还是非常大的. 而当我把k210吹冷了之后, 摄像头就又能用了.<br>可能摄像头本身就是好的吧, 一个是摄像头的参数不如官方的例程调教得好, 有一些彩色条纹. 看电脑屏幕有波纹(可能是正常现象.)<br>另外就是Back的时候, 需要额外设置hmirror(1)的时候才是正确的, 之后可以把这个设置搞成默认.</p>
-<p>也可能是摄像头发热严重(更可能了, 因为我CPU降频了还是不太稳.) 这个还不好贴散热片<br>降频试试, 改代码增加了个clock devidor, 帧率减半, 看看会不会好一点</p>
-<p>最后发现帧率减半确实稳定了一些, 没有显示的时候手动按下reset也容易来显示.<br>另外修改main.py, 利用time的计时器, 计算了一下调用sensor.snapshot和lcd.display消耗的时间</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">while True:</span><br><span class="line">    img&#x3D;sensor.snapshot()</span><br><span class="line">    print(&#39;sensor time consume:&#39;)</span><br><span class="line">    print(time.ticks_diff(time.ticks_us(), last))</span><br><span class="line">    last &#x3D; time.ticks_us()</span><br><span class="line">    lcd.display(img)</span><br><span class="line">    print(&#39;display time consume:&#39;)</span><br><span class="line">    print(time.ticks_diff(time.ticks_us(), last))</span><br><span class="line">    last &#x3D; time.ticks_us()</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">sensor time consume:</span><br><span class="line">64081</span><br><span class="line">display time consume:</span><br><span class="line">158648</span><br><span class="line">sensor time consume:</span><br><span class="line">64122</span><br><span class="line">display time consume:</span><br><span class="line">158715</span><br><span class="line">sensor time consume:</span><br><span class="line">64022</span><br><span class="line">display time consume:</span><br><span class="line">158769</span><br><span class="line">sensor time consume:</span><br><span class="line">63994</span><br><span class="line">display time consume:</span><br><span class="line">158708</span><br><span class="line">sensor time consume:</span><br><span class="line">64098</span><br><span class="line">display time consume:</span><br><span class="line">158698</span><br></pre></td></tr></table></figure>
-<p>可能拖后腿的还是这个小屏吧? 毕竟只有一根线的spi? 或者说是maixpy的display太消耗时间了?</p>
-<p>看了看那边widora例程的频率确实高一些, 设置<code>lcd.freq(20000000)</code>和那边相同之后帧率感觉高了一些, 不知道是不是错觉</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">sensor time consume:</span><br><span class="line">73897</span><br><span class="line">display time consume:</span><br><span class="line">148786</span><br><span class="line">sensor time consume:</span><br><span class="line">74002</span><br><span class="line">display time consume:</span><br><span class="line">148886</span><br><span class="line">sensor time consume:</span><br><span class="line">73860</span><br><span class="line">display time consume:</span><br><span class="line">148909</span><br><span class="line">sensor time consume:</span><br><span class="line">73860</span><br><span class="line">display time consume:</span><br><span class="line">148867</span><br></pre></td></tr></table></figure>
-<p>把这个帧率也搞成默认吧. 直接在makefile里面设置就可以. 帧率就先不考虑, 主要考虑摄像头的稳定性, 不会重启用不了就好</p>
-<p>我以为freq.conf是自己改的, 没想到是设置之后自动保存的, 我们不用改…</p>
-<p>希望maixpy越来越好.</p>
-
+        <h1 id="com与rpc">COM与RPC</h1>
+<p>研究windows安全的过程中对COM非常不熟。于是找资料学习了一会。</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/COM%E4%B8%8ERPC/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wjk.moe/ov2640/" data-id="ckfy5cz3v0005jsvpaqaj8rbj" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2020/COM%E4%B8%8ERPC/" data-id="ckm6g0dds000b3ktr6kw5cxjt" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li></ul>
+
     </footer>
   </div>
   
@@ -934,12 +307,16 @@
 
 
   
-    <article id="post-ollvm" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2020/K210开发板相关外设学习" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/ollvm/" class="article-date">
-  <time datetime="2020-10-07T16:04:10.587Z" itemprop="datePublished">2020-10-08</time>
+    <a href="/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -948,7 +325,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/ollvm/"> ollvm 学习</a>
+      <a class="article-title" href="/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/">K210开发板相关外设学习</a>
     </h1>
   
 
@@ -956,140 +333,21 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="ollvm-学习"><a href="#ollvm-学习" class="headerlink" title="ollvm 学习"></a>ollvm 学习</h1><p>ollvm/armariris/hikari 三个一起学习.<br><a target="_blank" rel="noopener" href="https://www.leadroyal.cn/?p=1072">ollvm/armariris/hikari 适配llvm10</a></p>
-<p>llvm提供了很方便地操作二进制代码的api. 自己移植不一定有利于学习, 移植主要解决的是llvm版本更新的各种杂七杂八的变化, 反而那些主要的逻辑不要求理解. </p>
-<p>计划: </p>
-<ol>
-<li>作为使用者, 使用这几个代码混淆器, 成功编译混淆代码(使用移植好到llvm10的代码)</li>
-<li>作为开发者, 学习混淆的原理, 学习代码编写的思路, 熟悉llvm的api.</li>
-<li>开始考虑混淆的对策</li>
-</ol>
-<h2 id="常用的命令"><a href="#常用的命令" class="headerlink" title="常用的命令"></a>常用的命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt -load lib&#x2F;LLVMHello.so -help</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt -load lib&#x2F;LLVMHello.so -hello &lt; hello.bc &gt; out.bc</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang -Xclang -load -Xclang Obfuscation.dll</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang -c -emit-llvm $1.c</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="如何编写pass"><a href="#如何编写pass" class="headerlink" title="如何编写pass"></a>如何编写pass</h2><p>要运行的代码是 <a target="_blank" rel="noopener" href="https://github.com/LeadroyaL/llvm-pass-tutorial">https://github.com/LeadroyaL/llvm-pass-tutorial</a> , 这里每个项目是单独的文件夹. 三个项目合在一起, 共用外面的cmake文件. 为了明白这个移植怎么跑起来, 学习源码外的pass项目的建立. 先学下面的项目, 配置好路径.<br><a target="_blank" rel="noopener" href="https://github.com/abenkhadra/llvm-pass-tutorial">pass-skeleton</a></p>
-<p><a target="_blank" rel="noopener" href="https://llvm.org/docs/WritingAnLLVMPass.html">如何写一个pass llvm.org</a><br>确实, 写一个pass就真的是一个pass, 出来一个so文件, 在passmanager里过一遍llvm bytecode. pass的加载和运行暴露在命令行选项. </p>
-<ol>
-<li>pass项目可以单独在源码外</li>
-</ol>
-<p>编译的时候需要在 <code>[LLVM_DIR]</code> 找到llvm的配置. 该项目骨架会通过 <code>$LLVM_HOME</code> 环境变量设置好 <code>[LLVM_DIR]</code><br>编译出来可以使用opt直接运行pass. 也可以clang编译的时候指定opt加载这个so文件, 然后加上调用so的选项.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang-7.0 -Xclang -load -Xclang build/skeleton/libSkeletonPass.* something.c$</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>pass项目在llvm源码内</li>
-</ol>
-<p>可以像他们几个项目一样直接在llvm-project源码内的 <code>/lib/Transform</code> 修改. 并且修改默认加载这个pass, 只需要给出使用的选项.</p>
-<h3 id="源码外的pass"><a href="#源码外的pass" class="headerlink" title="源码外的pass"></a>源码外的pass</h3><p><a target="_blank" rel="noopener" href="http://llvm.org/docs/CMake.html#developing-llvm-passes-out-of-source">Developing LLVM passes out of source</a></p>
-<p>LLVM_HOME 应该是 <code>/usr/lib/llvm-10</code>, 这样就会设置LLVM_DIR为 <code>/usr/lib/llvm-10/lib/cmake/llvm</code> LLVM_DIR里面有LLVMConfig.cmake, 设置了这个环境变量, cmake中调用 <code>find_package(LLVM REQUIRED CONFIG)</code> 就可以找到llvm作为一个cmake的library</p>
-<p>为了构建源码外的pass, 重要的cmake语句有</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.4)</span><br><span class="line">project(llvm-pass-tutorial)</span><br><span class="line"></span><br><span class="line">find_package(LLVM REQUIRED CONFIG)</span><br><span class="line">add_definitions($&#123;LLVM_DEFINITIONS&#125;)</span><br><span class="line">include_directories($&#123;LLVM_INCLUDE_DIRS&#125;)</span><br><span class="line">link_directories($&#123;LLVM_LIBRARY_DIRS&#125;)</span><br><span class="line"></span><br><span class="line">add_subdirectory(skeleton)  # Use your pass name here.</span><br><span class="line">add_subdirectory(ollvm)  # ollvm</span><br><span class="line">add_subdirectory(Hikari)  # Hikari</span><br><span class="line">add_subdirectory(Armariris)  # Armariris</span><br></pre></td></tr></table></figure>
-<p>在每个文件夹内的CMakeList里调用 <code>add_library</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">add_library(Armariris MODULE</span><br><span class="line">        # List your source files here.</span><br><span class="line">        CryptoUtils.cpp</span><br><span class="line">        StringObfuscation.cpp</span><br><span class="line">        Substitution.cpp</span><br><span class="line">        Flattening.cpp</span><br><span class="line">        Utils.cpp</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Flattening.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;StringObfuscation.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Substitution.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Utils.h</span><br><span class="line">        Enter.cpp</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
-
-<h3 id="案例-ollvm做出的修改"><a href="#案例-ollvm做出的修改" class="headerlink" title="案例: ollvm做出的修改"></a>案例: ollvm做出的修改</h3><p>以下是ollvm4.0和llvm4.0进行对比的不同的文件. 来自<a target="_blank" rel="noopener" href="https://magic-king.net/2020/02/27/ollvm-learning/">这里</a> 使用<a target="_blank" rel="noopener" href="https://truehumandesign.se/s_diffinity.php">Diffinity</a>. </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;include&#x2F;llvm&#x2F;Transforms&#x2F;Obfuscation&#x2F; # obfuscation的头文件</span><br><span class="line">.&#x2F;include&#x2F;llvm&#x2F;Transforms&#x2F;CryptoUtils.h # obfuscation的头文件</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;IPO&#x2F;LLVMBuild.txt</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;IPO&#x2F;PassManagerBuilder.cpp # Pass注册</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;Obfuscation&#x2F; # obfuscation source code</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;CMakeLists.txt</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;LLVMBuild.txt</span><br><span class="line">.&#x2F;tools&#x2F;clang # 集成clang,要在gitignore里取消clang的注释</span><br><span class="line">.&#x2F;.gitignore</span><br><span class="line">.&#x2F;CMakeLists.txt</span><br><span class="line">.&#x2F;CODE_OWNERS.TXT</span><br><span class="line">.&#x2F;LICENSE.TXT</span><br></pre></td></tr></table></figure>
-
-<h3 id="行动"><a href="#行动" class="headerlink" title="行动"></a>行动</h3><p>为了避免编译llvm. 我采用直接apt安装的方式安装llvm, 源码外建立pass项目.<br>好像安装了llvm-dev<br>安装后在 <code>/usr/lib/llvm-10</code> 附近有各种编译头文件</p>
-<p>在<code>project(llvm-pass-tutorial)</code>之后加上</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set(ENV&#123;LLVM_HOME&#125; &#x2F;usr&#x2F;lib&#x2F;llvm-10)</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用pass"><a href="#使用pass" class="headerlink" title="使用pass"></a>使用pass</h2><h3 id="ubuntu的pass测试"><a href="#ubuntu的pass测试" class="headerlink" title="ubuntu的pass测试"></a>ubuntu的pass测试</h3><p>为了方便地测试我的pass，我想要方便地看到结果。输入是c语言的helloworld程序，输出路过pass后的中间表示。</p>
-<h2 id="visual-studio-配置使用pass"><a href="#visual-studio-配置使用pass" class="headerlink" title="visual studio 配置使用pass"></a>visual studio 配置使用pass</h2><p>经过查阅资料, 没找到, 不能android一样,<br><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/48947973/use-llvm-in-a-cmake-build">重新编译才能得到cmake库</a><br>编译后将build文</p>
-<p>在Windows平台编译不是一个简单的问题，需要各种支持。现在虽然难，但似乎有人成功了。</p>
-<p>安装</p>
-<p>了tdm-Gcc之后用如下的选项编译</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake -G Ninja -DLLVM_ENABLE_PROJECTS&#x3D;&quot;clang&quot; -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS&#x3D;On ..\llvm</span><br></pre></td></tr></table></figure>
-
-<p>出现报错，说</p>
-<p>cant close file too big</p>
-<p>改设置上一些其他的选项试试，看看能不能好一点。可能只能编译release版本的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake -G Ninja -DLLVM_ENABLE_PROJECTS&#x3D;&quot;clang&quot; -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS&#x3D;On -DLLVM_INCLUDE_TESTS&#x3D;Off DLLVM_TARGETS_TO_BUILD&#x3D;&quot;X86&quot; -DCMAKE_BUILD_TYPE&#x3D;Release ..\llvm</span><br></pre></td></tr></table></figure>
-
-<p>时间过于漫长，我把环境变量里面的clang提前了，不行的话看看能不能clang自己编译自己。</p>
-<p>TODO 描述编译经历</p>
-<ol>
-<li>坚持使用MSVC编译，使用MSVC自带的开发控制台的x64 native tools</li>
-<li>使用上面的方法后，即使用Ninja生成器，不加-hHost=x64，也能正确用上64位的toolchain好像</li>
-<li>源码内pass比源码外pass更容易配</li>
-</ol>
-<p>现在是windows平台，in source编写pass。</p>
-<h2 id="编写混淆pass"><a href="#编写混淆pass" class="headerlink" title="编写混淆pass"></a>编写混淆pass</h2><ol>
-<li><p>自己编写的pass编译成dll之后是否只能通过opt运行？不能通过clang自动运行？</p>
-<p><a target="_blank" rel="noopener" href="https://www.cs.cornell.edu/~asampson/blog/clangpass.html">这里</a> 其实是一种挺Hack的方法，让组件加载dll/so的时候去注册，我在windows上这样加载LLVMHello.dll 会报错 <code>动态链接库(DLL)初始化例程失败。 (0x45A)</code> </p>
-<p>首先写一个bat自动化进行编译成中间代码和使用pass的过程。</p>
-<p>一种方法是源码内编写pass，直接修改相关代码加载pass，这种方法其实挺不容易的，我首先在clang的一些cmakelist里加入了Hello链接进去，但是似乎还是需要注册？需要继续深入了解研究看看源码，看问题4 <a target="_blank" rel="noopener" href="https://medium.com/@mshockwave/writing-llvm-pass-in-2018-part-iv-d69dac57171d">内置的方法</a> </p>
-<p>否则即使在源码内编写，也出来的是动态库，还是只能opt加载。。。</p>
-</li>
-<li><p>头文件缺失的问题怎么解决？visual studio是怎么编译的？</p>
-<p>visual studio 最近有了llvm支持。而我自己编译的llvm是没有基本的C++头文件的。用微软的安装包安的clang也是一样，所以可能是手动添加了include路径？</p>
-</li>
-<li><p>llvm的pass是如何注册命令行选项的？怎样编译成dll，又如何不出dll而是内置到clang里？</p>
-<p>想要内置考虑可以通过<a target="_blank" rel="noopener" href="https://llvm.org/docs/WritingAnLLVMPass.html#building-pass-plugins">llvm plugin</a>。是否编译成dll和Transform里的自己的pass的CmakeList里的add_llvm_library 里是否加上Module参数有关系。加上就是动态链接，不加上就是静态链接出来。</p>
-</li>
-<li><p>Transform的那些pass是怎么加载进clang里的？</p>
-<p>lib/CodeGen/CMakeList.txt</p>
-<p>tools/driver/CMakeList.txt</p>
-<p>这两个地方有clang会link进去的东西。</p>
-<p>要去掉自己的MODULE BUILDTREE_ONLY</p>
-<p>我编译进去了，但是好像不太行。。 </p>
-<p>好像要在IPO的PassManagerBuilder::populateFunctionPassManager/populateModulePassManager</p>
-<p> <a target="_blank" rel="noopener" href="https://medium.com/@mshockwave/writing-llvm-pass-in-2018-part-iv-d69dac57171d">内置的方法</a> </p>
-</li>
-<li><p>bytecode转可执行文件？</p>
-<p>可以直接clang编译成可执行文件 <a target="_blank" rel="noopener" href="https://blog.csdn.net/pc153262603/article/details/89553688">来源</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang a.o.bc -o struct</span><br></pre></td></tr></table></figure>
-
-<p>首先llc编译成S的汇编文件，再用gcc什么的生成可执行文件 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/32523847/how-to-make-llvm-bc-file-executable">来自</a> </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">llc -filetype&#x3D;obj hello.bc -o hello.o</span><br><span class="line">llc hello.bc -o hello.s</span><br><span class="line">gcc hello.o&#x2F;s -o hello</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h2 id="pass的集成"><a href="#pass的集成" class="headerlink" title="pass的集成"></a>pass的集成</h2><ol>
-<li><p>要有一个ID，初始值不重要，因为是根据ID的地址区别各个函数的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">char Hello::ID &#x3D; 0;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>注册pass，得到一个命令行。这里是通过构造函数注册的，我们只需要初始化一个类。这种方法似乎只对opt有效？？当有这个选项的时候我们的pass才会被加载</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">static RegisterPass&lt;Hello&gt; X(&quot;hello&quot;, &quot;Hello World Pass&quot;,</span><br><span class="line">                             false &#x2F;* not modify CFG *&#x2F;,</span><br><span class="line">                             false &#x2F;* pure Analysis Pass *&#x2F;);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>加载时自动注册，这里用的是匿名函数，我们可以写一个函数。这种方法对opt无效。对<code>clang -Xclang -load -Xclang Obfuscation.dll</code> 有效。这种注册方法有待探索。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static RegisterStandardPasses Y(</span><br><span class="line">    PassManagerBuilder::EP_EarlyAsPossible,</span><br><span class="line">    [](const PassManagerBuilder &amp;Builder,</span><br><span class="line">       legacy::PassManagerBase &amp;PM) &#123; PM.add(new Hello()); &#125;);</span><br></pre></td></tr></table></figure>
-
-<p>TODO：研究原理。它会先调用PassManagerBuilder::addGlobalExtension，这个函数则是Transform/IPO里的，它把<code>std::make_tuple(Ty, std::move(Fn), ExtensionID)</code> 放到GlobalExtensions这个static全局Vector里面。最终是populateFunctionPassManager这里把注册的这些东西放进FPM的</p>
-</li>
-<li><p>命令行选项，加载后通过参数更详细地控制pass</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">static cl::opt&lt;int&gt;</span><br><span class="line">ObfProbRate(&quot;bcf_prob&quot;, cl::desc(&quot;Choose the probability [%] each basic blocks will be obfuscated by the -bcf pass&quot;), cl::value_desc(&quot;probability rate&quot;), cl::init(defaultObfRate), cl::Optional);</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cl::opt&lt;RegisterMyPasses::FunctionPassCtor, false,</span><br><span class="line">        RegisterPassParser&lt;RegisterMyPasses&gt; &gt;</span><br><span class="line">MyPassOpt(&quot;mypass&quot;,</span><br><span class="line">          cl::init(&amp;createDefaultMyPass),</span><br><span class="line">          cl::desc(&quot;my pass option help&quot;));</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h2 id="OLLVM-实现解析"><a href="#OLLVM-实现解析" class="headerlink" title="OLLVM 实现解析"></a>OLLVM 实现解析</h2><h3 id="Instruction-substitution"><a href="#Instruction-substitution" class="headerlink" title="Instruction substitution"></a>Instruction substitution</h3><p>指令替换是最简单的。对于加减与或 异或这五种运算，分别有多种替换方法，ollvm随机选一个替换。增加的命令行选项是每个函数替换多少遍。第一遍替换的是原始的指令，后面每次替换的就是混淆后的指令了，通过反复替换增加复杂度。</p>
-<p>如何让自己的pass在优化后运行？ 可以考虑opt过了pass之后，编译的时候就用 -O0 ?</p>
-<p>继承Funcpass的Substitution有几个函数指针数组，在初始化的时候把自己的成员函数填进去，之后通过随机数产生器随机调用。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Function::iterator bb = tmp-&gt;begin(); bb != tmp-&gt;end(); ++bb) &#123;</span><br><span class="line">  <span class="keyword">for</span> (BasicBlock::iterator inst = bb-&gt;begin(); inst != bb-&gt;end(); ++inst) &#123;</span><br><span class="line">    <span class="keyword">if</span> (inst-&gt;isBinaryOp()) &#123;</span><br><span class="line">      <span class="keyword">switch</span> (inst-&gt;getOpcode()) &#123;</span><br><span class="line">      <span class="keyword">case</span> BinaryOperator::Add:</span><br><span class="line">                  <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> BinaryOperator::Sub:</span><br><span class="line">      ...</span><br></pre></td></tr></table></figure>
-
-<p>真正核心的替换函数，参数只是那个指令<code>BinaryOperator *bo</code>。</p>
-<p><img src="ollvm/image-20200928135000792.png" alt="image-20200928135000792"></p>
-<p>addNeg：增加一个Neg指令，把加法变成减法。addDoubleNeg同理。</p>
-<p>精髓在于BinaryOperator::Create的方法的最后一个参数是InsertBefore，这样按顺序插入到那个指令前面，最后的时候再对原来的指令调用replaceAllUsesWith，用最后生成的指令去替换它就好了。意味着用最后一个指令产生的值去替换它产生的值。</p>
-<p>binaryOperator成员如下，rem是取余数的运算符 <a target="_blank" rel="noopener" href="https://llvm.org/docs/LangRef.html#binary-operations">多找找llvm手册</a> 。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Standard binary operators...</span><br><span class="line"> FIRST_BINARY_INST(13)</span><br><span class="line">HANDLE_BINARY_INST(13, Add  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(14, FAdd , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(15, Sub  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(16, FSub , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(17, Mul  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(18, FMul , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(19, UDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(20, SDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(21, FDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(22, URem , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(23, SRem , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(24, FRem , BinaryOperator)</span><br></pre></td></tr></table></figure>
-
-<p>TODO 确实会留下原来被代替的指令。需要在合适的时候调用<code>bo-&gt;eraseFromParent();</code>直接调用会导致iterator出现问题。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i &#x3D; vec.erase(i); </span><br></pre></td></tr></table></figure>
+        <h1 id="k210开发板相关外设学习">K210开发板相关外设学习</h1>
+<p>这篇文章是我买了<code>Widora AIRV R3</code>这个<code>K210</code>芯片的开发板。这时候刚好看了一些Python内部实现的书，并且Maixpy（一个移植Micropython到K210开发板上的项目）对这块开发版支持还不完善，于是就克隆下来，试图修改移植。</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wjk.moe/ollvm/" data-id="ckfy5cz3t0003jsvp3fp0avee" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" data-id="ckm6g0ddu000e3ktr6bme2l2s" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li></ul>
+
     </footer>
   </div>
   
@@ -1097,12 +355,16 @@
 
 
   
-    <article id="post-i2s" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-2020/heap" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/i2s/" class="article-date">
-  <time datetime="2020-10-07T16:04:10.576Z" itemprop="datePublished">2020-10-08</time>
+    <a href="/2020/heap/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Hack/">Hack</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -1111,7 +373,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/i2s/"> i2s学习与maixpy麦克风</a>
+      <a class="article-title" href="/2020/heap/">堆复习</a>
     </h1>
   
 
@@ -1119,87 +381,169 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="i2s学习与maixpy麦克风"><a href="#i2s学习与maixpy麦克风" class="headerlink" title="i2s学习与maixpy麦克风"></a>i2s学习与maixpy麦克风</h1><p>适配麦克风中.</p>
-<p><a target="_blank" rel="noopener" href="https://www.allaboutcircuits.com/technical-articles/introduction-to-the-i2s-interface/">https://www.allaboutcircuits.com/technical-articles/introduction-to-the-i2s-interface/</a></p>
-<p><a target="_blank" rel="noopener" href="https://hackaday.com/2019/04/18/all-you-need-to-know-about-i2s/">https://hackaday.com/2019/04/18/all-you-need-to-know-about-i2s/</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e4f07bcd9df4">https://www.jianshu.com/p/e4f07bcd9df4</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/schips/p/12305649.html">https://www.cnblogs.com/schips/p/12305649.html</a></p>
-<table>
-<thead>
-<tr>
-<th>引脚</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>SCK/BLCK/SLCK</td>
-<td>clock</td>
-</tr>
-<tr>
-<td>WS/LRCK</td>
-<td>word select</td>
-</tr>
-<tr>
-<td>SD/SDATA</td>
-<td>data</td>
-</tr>
-<tr>
-<td>NC</td>
-<td>(悬空)</td>
-</tr>
-<tr>
-<td>EN</td>
-<td>片选/启用? 直接接到了3v3</td>
-</tr>
-<tr>
-<td>LR</td>
-<td>左右选择</td>
-</tr>
-</tbody></table>
-<p>I2S就是被设计来传送音频数据的, 其他的数据都是之后的hacky玩法. 它用一条线区分左右声道, 一条时钟线同步信号, 和一条真正的线传送数据. 在我们板子的receiver=master的情况下, 时钟和WS是接收方发送给麦克风的, 发送方通过SD发送数据给接收方.</p>
-<p>I2S允许两个声道的数据在一条线上传送. 因此有了左右声道的选择线. 采样的时候要交替左右轮流读一个字, 导致这个选择线的信号也类似于时钟. 麦克风的规格书里推荐的就是两个麦克风的三条I2S线相连, 一个L/R接地, 一个L/R接电源, 这样就成为了一个立体麦克风.</p>
-<p>板子的L/R是接地的, 因此音频要在左声道接受, 需要给出WS为低的时候才有数据, 否则为0. 这是使用的左对齐标准, 24bit的采样数据包装在32位中. 最右边8bit固定为0. Phillips标准则在WS高的时候发送左声道数据.</p>
-<p>MSB优先发送. 变化WS之后要等一个时钟周期再开始接受数据. SCLK的频率=2×采样频率×采样位数, LRCK的频率等于采样频率, 这样就刚好能完整收集左右声道的采样数据了.</p>
-<p>下面这段来自麦克风的规格书</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">I²S DATA INTERFACE</span><br><span class="line">  The serial data is in slave mode I²S format, which has 24‐bit depth in a 32 bit word. In a stereo frame there are 64 SCK cycles, or 32 SCK cycles per data‐word. When L&#x2F;R&#x3D;0, the output data in the left channel, while L&#x2F;R&#x3D;Vdd, data in the right channel. The output data pin (SD) is tristated after the LSB is output so that another microphone can drive the common data line.</span><br><span class="line">Data Word Length</span><br><span class="line">  The output data‐word length is 24 bits per channel. The Mic must always have 64 clock cycles for every stereo data‐word (fSCK &#x3D; 64 × fWS).</span><br><span class="line">Data‐Word Format</span><br><span class="line">  The default data format is I²S, MSB‐first. In this format, the MSB of each word is delayed by one SCK cycle from the start of each half‐frame.</span><br></pre></td></tr></table></figure>
-
-<h2 id="k210的I2S"><a href="#k210的I2S" class="headerlink" title="k210的I2S"></a>k210的I2S</h2><p>k210有3个I2S, 因此说它能接6麦克风阵列.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">其中I²S0 支持可配置连接语音处理模块，实现语音增强和声源定向的功能。</span><br><span class="line">• 总线宽度可配置为8，16，和32 位</span><br><span class="line">• 每个接口最多支持4个立体声通道</span><br><span class="line">• 由于发送器和接收器的独立性，所以支持全双工通讯</span><br><span class="line">• APB 总线和I²S SCLK 的异步时钟</span><br><span class="line">• 音频数据分辨率为12,16,20,24 和32 位</span><br><span class="line">• I²S0 发送FIFO 深度为64 字节, 接收为8 字节，I²S1 和I²S2 的发送和接收FIFO 深度都为8字节</span><br><span class="line">• 支持DMA 传输</span><br><span class="line">• 可编程FIFO 阈值</span><br></pre></td></tr></table></figure>
-
-<p>k210使用的是4通道的I2S.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[MAIXPY]: numchannels &#x3D; 2</span><br><span class="line">[MAIXPY]: samplerate &#x3D; 22050</span><br><span class="line">[MAIXPY]: byterate &#x3D; 88200</span><br><span class="line">[MAIXPY]: blockalign &#x3D; 4</span><br><span class="line">[MAIXPY]: bitspersample &#x3D; 16</span><br></pre></td></tr></table></figure>
-<p>目前还是没声音, 需要学习I2S的FIFO是什么意思. 深度是什么意思, 然后就是怎么处理ws的, 为什么每个I2S有4个输入,4个输出引脚, 采样率怎么设置</p>
-<p>4个输入和4个输出应该是对应4个channel, 可能方便切换吧?? 接受数据的时候, 一个每次传送数据的cycle. 每次传送的数据的bit数</p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>word_length/RESOLUTION</td>
-<td>每个word的长度. 12/16/20/24/32选24</td>
-</tr>
-<tr>
-<td>word_select_size/SCLK_CYCLES</td>
-<td>16/24/32选32. 大概是指在WS不变化的时候的cycle数, 也就是WS周期的一半.</td>
-</tr>
-<tr>
-<td>word_mode</td>
-<td>选左对齐.</td>
-</tr>
-</tbody></table>
-<p>有声音了, 关键是上面列举的参数选择. I2S学习先告一段落.</p>
-<p>i2s_set_dma_divide_16 函数能设置让DMA的时候自动把32 比特INT32 数据分成两个16 比特的左右声道数据。 那么这32bit的数据从哪来的?</p>
-<p>I2S要不要设置时钟周期??</p>
-
+        <h1 id="堆复习">堆复习</h1>
+<p>64位时, 默认开启的fastbin范围(chunk总大小)是0x20 - 0x80 32位TODO</p>
+<p>tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。 fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个, 大小基本重合.</p>
+<p>当某一个tcache链表满了7个，再有对应的chunk（不属于fastbin的）被free，就直接进入了unsortedbin中。 tcache_perthread_struct结构，一般是在heapbase+0x10（0x8）的位置。对应tcache的数目是char类型。</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/heap/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wjk.moe/i2s/" data-id="ckfy5cz3u0004jsvp8vb06n5w" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2020/heap/" data-id="ckm6g0ddv000h3ktra2x68gty" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2020/samba" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/samba/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/samba/">设置最新版本的windows10能够访问的samba服务器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="设置最新版本的windows10能够访问的samba服务器">设置最新版本的windows10能够访问的samba服务器</h1>
+<p>目标：需要有只读的公共访问和可读可写的非公共访问</p>
+<p>注意的地方是, 第一次访问可能会询问用户名密码, 不代表guest配置失败, 乱输用户名即可通过<code>map to guest = bad user</code> 作为guest。坑惨我了</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/samba/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2020/samba/" data-id="ckm6g0ddz000s3ktr1utw5z09" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2020/windows权限" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/windows%E6%9D%83%E9%99%90/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/windows%E6%9D%83%E9%99%90/">Windows权限与UAC</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="windows权限与uac">Windows权限与UAC</h1>
+<p>这篇文章是课程中被逼无奈（被一门2学分的课的老师疯狂压榨时间）调研Windows相关的攻击，UAC绕过中总结的一些笔记</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/windows%E6%9D%83%E9%99%90/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2020/windows%E6%9D%83%E9%99%90/" data-id="ckm6g0de200133ktr9j0depzc" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-2021/自制Ollvm" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/%E8%87%AA%E5%88%B6Ollvm/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/%E8%87%AA%E5%88%B6Ollvm/">自制Ollvm</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="自制ollvm">自制Ollvm</h1>
+<p>原本网上没有多少开源的代码混淆器，现在却发现学习OLLVM的人特别多，很多人也有自己的混淆器。</p>
+<p>汇编的混淆和LLVM还是挺有意思的。虽然这个项目的进度依然停滞在只学完简单运算混淆的地步，但有时间我应该会回来继续。</p>
+        
+          <p class="article-more-link">
+            <a href="/2021/%E8%87%AA%E5%88%B6Ollvm/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2021/%E8%87%AA%E5%88%B6Ollvm/" data-id="ckm6g0de400193ktrh1rd68qr" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li></ul>
+
     </footer>
   </div>
   
@@ -1222,7 +566,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E5%AD%A6/">大学</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%A0%91%E8%8E%93%E6%B4%BE/">树莓派</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li></ul>
     </div>
   </div>
 
@@ -1232,7 +576,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/raspberrypi/" rel="tag">raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/raspbian/" rel="tag">raspbian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91/" rel="tag">开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%88/" rel="tag">栈</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
   </div>
 
@@ -1242,7 +586,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/raspberrypi/" style="font-size: 10px;">raspberrypi</a> <a href="/tags/raspbian/" style="font-size: 10px;">raspbian</a> <a href="/tags/ucore/" style="font-size: 20px;">ucore</a> <a href="/tags/%E5%BC%80%E5%8F%91/" style="font-size: 10px;">开发</a> <a href="/tags/%E6%A0%88/" style="font-size: 10px;">栈</a>
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
     </div>
   </div>
 
@@ -1251,7 +595,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -1264,23 +608,23 @@
       <ul>
         
           <li>
-            <a href="/os/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"> rcore学习笔记</a>
+            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
           </li>
         
           <li>
-            <a href="/2019/unlink/"> unlink</a>
+            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
           </li>
         
           <li>
-            <a href="/2019/HG6201m%E5%85%89%E7%8C%AB%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/"> 烽火HG6201M交叉编译transmission成功!!</a>
+            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
           </li>
         
           <li>
-            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/"> 一句话博客</a>
+            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
           </li>
         
           <li>
-            <a href="/windows%E6%9D%83%E9%99%90/"> windows 权限提升与监控</a>
+            <a href="/2020/COM%E4%B8%8ERPC/">COM与RPC</a>
           </li>
         
       </ul>
@@ -1295,7 +639,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 am009<br>
+      &copy; 2021 am009<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -1310,7 +654,9 @@
 </nav>
     
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
 
 
   

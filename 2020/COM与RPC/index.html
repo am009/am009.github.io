@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>COM与RPC | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="COM与RPC 研究windows安全的过程中对COM非常不熟。于是找资料学习了一会。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="COM与RPC">
+<meta property="og:url" content="https://wjk.moe/2020/COM%E4%B8%8ERPC/">
+<meta property="og:site_name">
+<meta property="og:description" content="COM与RPC 研究windows安全的过程中对COM非常不熟。于是找资料学习了一会。">
+<meta property="og:locale">
+<meta property="og:image" content="https://wjk.moe/2020/COM%E4%B8%8ERPC/COM.jpg">
+<meta property="article:published_time" content="2020-06-01T03:11:11.000Z">
+<meta property="article:modified_time" content="2021-03-12T14:24:46.238Z">
+<meta property="article:author" content="am009">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjk.moe/2020/COM%E4%B8%8ERPC/COM.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2020/COM与RPC" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/COM%E4%B8%8ERPC/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      COM与RPC
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="com与rpc">COM与RPC</h1>
+<p>研究windows安全的过程中对COM非常不熟。于是找资料学习了一会。</p>
+<span id="more"></span>
+<h2 id="概述">概述</h2>
+<p>COM，组件对象模型，它解决的问题是二进制间兼容性问题，并在此基础上实现了RPC。</p>
+<p>主要学习资料： <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/c_1234485736897552384">COM编程攻略</a></p>
+<p>它的兼容思想是通过只暴露接口，不得出现跨边界的编译器相关行为，从而实现二进制的兼容。即不依赖结构体的布局，不依赖类型转换和new、delete的实现。</p>
+<p>AddRef()：返回之后的引用计数。</p>
+<p>Release()：一旦引用计数为0，实现者必须要释放此对象。</p>
+<p>QueryInterface()</p>
+<h2 id="接口转换的实现原则">接口转换的实现原则</h2>
+<p><code>HRESULT QueryInterface(REFIID iid, void** ppvObject);</code></p>
+<p>1、如果可以成功拿出接口，返回S_OK。如果ppvObject为空，返回E_POINTER。如果不能拿出接口，那么返回E_NOINTERFACE。</p>
+<p>2、QueryInterface(下面简称QI)是静态的，不是动态的。这说明，一个对象QI能否成功，和时间没有关系。如果某个特定的类的实例QI(A)-&gt;B（执行QueryInterface拿到B），那么任何时候都应该能拿到B。</p>
+<p>3、QI是自反的（如果QI(A)-&gt;B，那么QI(B)-&gt;A。</p>
+<p>4、QI是对称的。</p>
+<p>5、QI是可传递的。</p>
+<p>6、如果需要取的是IUnknown(IID_IUnknown)，那么必须要返回相同的指针。</p>
+<h2 id="iunknown-继承模型-聚合模型">IUnknown 继承模型 聚合模型</h2>
+<p>继承模型：一个接口继承IUnknown，要用的时候转换成自己。</p>
+<p>聚合模型：实现IUnknown的是套壳接口，QI的时候返回不同的接口。</p>
+<p>结合聚合模型的特点和接口转换的实现原则，进行推理：用不同的地址代表不同接口的具体实现：</p>
+<ol type="1">
+<li>根据自反性，必须能够一次任意转换。因此所有的聚合在同一个套壳接口的类型调用QI的时候必须调用套壳接口的QI。</li>
+<li>根据</li>
+</ol>
+<h2 id="atl实现的三层模型">ATL实现的三层模型</h2>
+<p><code>Wrapper -&gt; YourClass -&gt; Internal</code></p>
+<figure>
+<img src="COM.jpg" alt="COM" /><figcaption aria-hidden="true">COM</figcaption>
+</figure>
+<p><code>CComObject</code> 对应继承模型，如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Base</span>&gt;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CComObject</span> :</span> </span><br><span class="line">	<span class="keyword">public</span> Base</span><br></pre></td></tr></table></figure>
+<p><code>CComAggObject</code> 则对应的是聚合模型，不再直接继承。</p>
+<p>YourClass需要继承internal和各种需要的interface，并用宏指明转换规则。从而创建<code>_QueryInterface</code> 函数和静态与 <code>_GetEntries</code> 的Entries。由 <code>InternalQueryInterface</code> 来调用API遍历这个表。YourClass不只是一个分发器，而是把接口的实现都作为自己的成员函数。</p>
+<p>Interface是带有很多虚函数的基类罢了。虚函数是父类声明时，用来告知编译器，希望即使把子类作为父类，调用同名方法的时候要调用子类的方法。</p>
+<ol type="1">
+<li>调用QI（wrapper的）会调用到内部的YourClass分发器的QI。</li>
+<li>成功分发，转换类型后，再调用QI得调用回Wrapper的QI。</li>
+</ol>
+<p><code>CComObjectRootBase</code> 类型自身就有m_pOuterUnknown成员，和<code>OuterAddRef</code> 、 <code>OuterRelease</code> 函数，用来对聚合模型实现支持。它的QI就是总的QI，之后转换出去的COM接口都要调用回来这里的QI。</p>
+<p>其实是COM手动实现了对与Interface类型的转换？YourClass注册Interface的时候，通过一个方法的静态数组成员来记录每个IID和对应的指针相对于this的偏移，转换的时候用到。但实际上，外围的CComAggObject持有的是通过模板生成的CComContainedObject。它通过模板继承上面写的类，重写了QueryInterface。通过CComAggObject拿到的都是继承自己的类之后的CComContainedObject了，此时构建的时候传入了原来的IUnokown的指针，通过继承和重新实现QI，把QI导向到了总的QI。导向方法是转调OuterQueryInterface，它调用了CComObjectRootBase的m_pOuterUnknown-&gt;QueryInterface</p>
+<p>由于拿到的总是被<code>CComContainedObject</code> 包围的QI，这里是调用<code>CComContainedObject</code> 的QI。此时则调用的之前保存的OuterUnknown的QI。</p>
+<p>QI，的时候，是把</p>
+<h2 id="example">Example</h2>
+<ol type="1">
+<li><p>首先vs2019选ATL项目模板，创建ATLMessageBox项目，选择服务exe</p>
+<p>此时的解决方案里面有ATLMessgaeBox和ATLMessageBoxPS项目，后者是ProxyStub代理桩，给享受服务的客户端用的，客户端调用对应服务的时候由它来处理序列化，通讯等事情。</p></li>
+<li><p><strong>uuidgen /i /ohello.idl</strong> 创建带有UUID的IDL文件</p></li>
+<li><p>IDL 文件描述接口，填写创建</p></li>
+<li><p>rgs注册表消息，填写创建</p></li>
+<li><p>创建MessageBox.cpp MessageBox.h</p></li>
+<li><p>注册：C:.exe /RegServer</p></li>
+</ol>
+<h2 id="rpc">RPC</h2>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/rpc/rpc-start-page">Remote Procedure Call</a></p>
+<p>主要分析的是 <a target="_blank" rel="noopener" href="https://github.com/microsoft/Windows-classic-samples/blob/master/Samples/Win7Samples/netds/rpc/hello/Hellop.c">这个微软的例子RPCHello</a></p>
+<p>TODO rpc的跨平台，是否支持linux或者Unix / Apple</p>
+<p>RPC的环境内置在windows中，而RPC的开发环境在windows sdk中。</p>
+<p>Microsoft Interface Definition Language MIDL，用来描述调用的接口。</p>
+<p>客户端程序调用的服务端的函数，实际上不是真正的实现函数，而是一个stub函数，负责把参数转换成标准的NDR格式，通过网络传输请求。</p>
+<p>服务器的运行时函数接受请求，转换参数，最后再调用服务端的stub函数，返回值数据的时候也是类似的方法传输回去。</p>
+<p>RPC有如下组件：MIDL编译器，运行时的lib和头文件，Name service provider和Endpoint mapper。还有uuidgen工具。</p>
+<p>承载RPC的dll有通过命名管道的、tcp/ip、NetBIOS、SPX、IPX、UDP的等等。</p>
+<p>开发的过程包括：开发接口-&gt;开发服务端-&gt;开发客户端。</p>
+<p>接口的定义主要包括的是IDL文件和ACF文件。编写后用MIDL编译器得到服务端和客户端的stub。VS1029中idl文件属于源文件，而acf文件属于资源文件。编译时的选项在项目的属性中多出来的MIDL项里面配置。</p>
+<ul>
+<li><p>Hello_c.c 客户端stub</p></li>
+<li><p>Hello.h 两边都包括的头文件</p></li>
+<li><p>Hello_s.c 服务端的stub</p></li>
+</ul>
+<p>Hellop.c 这个文件不是生成的，（example里面的）包含对server的procedure的实现。</p>
+<p>Hellos.c和Helloc.c里面就是真正的RPC代码了。这一块才是重点关注的部分。</p>
+<h3 id="midl">MIDL</h3>
+<p>服务端和客户端代码容易混在一起，在同一个项目里建立两个文件夹。</p>
+<p>默认情况下，客户端和服务端的stub函数名字相同，导致不能同时链接服务端和客户端的stub，编译的时候加上 <code>/prefix</code> 参数可以避免这种情况。</p>
+<p>如果编译的时候不加上 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/midl/-osf"><code>/osf</code></a> (Open Software Foundation compatibility mode)，就需要提供一个函数分配和回收内存。开启这个模式会失去很多功能特性。</p>
+<h3 id="server">server</h3>
+<p>API调用序列大致如下</p>
+<p>RpcServerUseProtseqEp</p>
+<p>RpcServerRegisterAuthInfo (增加安全机制)</p>
+<p>RpcServerRegisterIfEx</p>
+<p>RpcServerListen</p>
+<p>RpcMgmtWaitServerListen 循环等待</p>
+<p>RpcMgmtStopServerListening</p>
+<p>RpcServerUnregisterIf</p>
+<p>applications must specify a string that represents a combination of</p>
+<ol type="1">
+<li><p>an RPC protocol,</p>
+<ol type="1">
+<li>Network Computing Architecture connection-oriented protocol (NCACN)</li>
+<li>Network Computing Architecture datagram protocol (NCADG)</li>
+<li>Network Computing Architecture local remote procedure call (NCALRPC)</li>
+</ol>
+<p>一般都选这个NCALRPC ？</p></li>
+<li><p>a transport protocol and a network protocol. TCP/IP. IPX/SPX, NetBIOS, AppleTalk DSP什么的。肯定选tcp/ip</p></li>
+</ol>
+<p><strong>ncalrpc</strong> for local communications and <strong>ncacn_ip_tcp</strong> or <strong>ncacn_http</strong> for remote communications are recommended</p>
+<p>选好了就可以通过the <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/Rpcdce/nf-rpcdce-rpcstringbindingcompose"><strong>RpcStringBindingCompose</strong></a> and <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/Rpcdce/nf-rpcdce-rpcbindingfromstringbinding"><strong>RpcBindingFromStringBinding</strong></a> functions创建binding的handle了。</p>
+<p>另外需要实现 the <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/Rpc/the-midl-user-allocate-function"><strong>midl_user_allocate</strong></a> and <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/Rpc/the-midl-user-free-function"><strong>midl_user_free</strong></a> 这两个函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> __RPC_FAR * __RPC_USER <span class="title">midl_user_allocate</span><span class="params">(<span class="keyword">size_t</span> len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span>(<span class="built_in">malloc</span>(len));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> __RPC_USER <span class="title">midl_user_free</span><span class="params">(<span class="keyword">void</span> __RPC_FAR * ptr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">free</span>(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="client">client</h3>
+<p>源文件添加上生成的 _c.c后缀的文件。此外要加上任何可能需要的lib文件</p>
+<p>API调用序列如下</p>
+<p>RpcStringBindingCompose</p>
+<p>RpcBindingFromStringBinding</p>
+<p>RpcBindingSetAuthInfoEx (增加安全机制)</p>
+<p>HelloProc</p>
+<p>RpcStringFree</p>
+<p>RpcBindingFree</p>
+<h4 id="spn">spn</h4>
+<p><em>Service Principal Name</em> is a concept from Kerberos</p>
+<p>实现安全机制的时候用的，所以目前可以暂时不管。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2020/COM%E4%B8%8ERPC/" data-id="ckm6g0dds000b3ktr6kw5cxjt" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          rcore学习笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">K210开发板相关外设学习</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/COM%E4%B8%8ERPC/">COM与RPC</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 am009<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

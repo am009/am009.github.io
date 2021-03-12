@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Windows权限与UAC | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Windows权限与UAC 这篇文章是课程中被逼无奈（被一门2学分的课的老师疯狂压榨时间）调研Windows相关的攻击，UAC绕过中总结的一些笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows权限与UAC">
+<meta property="og:url" content="https://wjk.moe/2020/windows%E6%9D%83%E9%99%90/">
+<meta property="og:site_name">
+<meta property="og:description" content="Windows权限与UAC 这篇文章是课程中被逼无奈（被一门2学分的课的老师疯狂压榨时间）调研Windows相关的攻击，UAC绕过中总结的一些笔记">
+<meta property="og:locale">
+<meta property="article:published_time" content="2020-06-01T03:11:11.000Z">
+<meta property="article:modified_time" content="2021-03-12T13:45:06.032Z">
+<meta property="article:author" content="am009">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2020/windows权限" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/windows%E6%9D%83%E9%99%90/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Windows权限与UAC
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="windows权限与uac">Windows权限与UAC</h1>
+<p>这篇文章是课程中被逼无奈（被一门2学分的课的老师疯狂压榨时间）调研Windows相关的攻击，UAC绕过中总结的一些笔记</p>
+<span id="more"></span>
+<h2 id="综述">综述</h2>
+<p>在windows中有两种访问控制，首先是强制完整性控制，它蕴含在SACL中。其次是自主访问控制DACL。</p>
+<p>SACL原本的用途是类似自主访问控制一样自主控制系统日志，但完整性控制加入到了它的范围内。</p>
+<p>UAC提权不仅完整性从medium到了high，而且多了特权。特权是另外的资源。</p>
+<p>UAC绕过的例外方法：提升的COM名字对象，UIAccess</p>
+<p>从admin到system的方法：令牌窃取。</p>
+<h3 id="强制完整性控制mic">强制完整性控制（MIC）</h3>
+<p>windows 首先是自主访问控制, 只有很简单的强制访问控制, 在原本只是打印日志的SACL的完整性字段里. 实现的方式是"可上读, 可下写". 为了保证完整性, 只需要严格控制写权限. TODO: 能不能下读.</p>
+<p>保护完整性的强制访问控制: 低级的不可以（发送消息）影响高级的程序。</p>
+<p>与之对应的是保护机密性的强制访问控制：低级的可以发消息给高级程序，而高级程序无法发消息给低级程序（泄露机密。）</p>
+<p>windows中的完整性等级：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SeUntrustedMandatorySid</span><br><span class="line">SeLowMandatorySid</span><br><span class="line">SeMediumMandatorySid</span><br><span class="line">SeHighMandatorySid</span><br><span class="line">SeSystemMandatorySid</span><br></pre></td></tr></table></figure>
+<p>主体的缺省完整性级别是SeUntrustedMandatorySid，而客体的缺省完整性级别是SeMediumMandatorySid</p>
+<blockquote>
+<p>进程完整性级别是为了保证不同标签的进程（TOKEN) 和对象（SACL)之间的访问安全 https://zh.wikipedia.org/wiki/%E5%BC%BA%E5%88%B6%E5%AE%8C%E6%95%B4%E6%80%A7%E6%8E%A7%E5%88%B6</p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Security_Identifier">SID</a></p>
+<p>可以看到标准用户和经过权限提升的UAC用户信息的差别。用户名项中组信息和sid均相同，区别就是UAC用户是经过权限提升的，最终体现在权限上的不同如下：</p>
+<p>1.组信息项中主要是Integrity levels (IL)【进程完整性级别不同】。标准用户是Medium Mandatory Level，UAC用户是High Mandatory Level,它包括Untrust， Low， Medium， Hight， System等， 级别越低，权限也就越低。我们可以通过GetTokenInformation的TokenIntegrityLevel来进行查询。 2.体现在Privilege中的就是UAC用户拥有很多Privilege，比如最常用的SeDebugPrivilege 。 注释： 进程完整性级别是为了保证不同标签的进程（TOKEN) 和对象（SACL)之间的访问安全，如果当前进程的TOKEN 是Low Mandatory Level， 它就不能修改具有Medium Mandatory Level的对象，即使我们对象的DACL赋予完全读写的权限。当每个进程打开对象， 我们会进行SACL和DACL检查，这个检查通过核心态函数 SeAccessCheck . 只有当前进程TOKEN的　完整性标签　高于或者等于　对象的完整性标，　我们才会进一步进行 DACL 检查。如果完整性标签验证通不过。 即使DACL给予再高权限都无济于事。</p>
+</blockquote>
+<h3 id="dacl-自主访问控制列表">DACL 自主访问控制列表</h3>
+<p>文件/注册表方面自然是还有自主访问控制. 进程没想到!!和文件一样的, 有安全描述符 主体是访问令牌. 每个进程都有一个基本令牌 (Primary Token)，可以被进程中的每个线程所共享, 后面线程可以获得其他令牌. 令牌里有用户sid, 组sid, 受限sid, 特权, 身份模拟级别, 完整度级别. 客体是对象: 文件/注册表/进程. 客体关联了安全描述符, 安全描述符包括所有者SID, 组SID, DACL, SACL(日志)</p>
+<p>“属性” =&gt; “安全”, “权限”选项卡就是DACL，”审核”选项卡是SACL，“所有者”是Owner、Group。</p>
+<p>每个DACL内有很多ACE, 访问控制表项, 可以接受也可以拒绝, 先找到的生效. 因此(有时?)一般拒绝的放在接受的前面.</p>
+<p>impersonation 身份模拟 传输层, 被rpc使用的, 服务端可以使用客户端的令牌.</p>
+<p>令牌里的权限有的没有enable, 要单独开启 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+0x000 Present          : Uint8B</span><br><span class="line">+0x008 Enabled          : Uint8B</span><br><span class="line">+0x010 EnabledByDefault : Uint8B</span><br></pre></td></tr></table></figure> 特权Privilege在访问某个具体的安全对象时并没有作用，Privilege是表示进程是否能够进行特定的系统操作，如关闭系统、修改系统时间、加载设备驱动等。</p>
+<h3 id="uac">UAC</h3>
+<p>当用户登录Windows时，操作系统会为用户生成一对初始令牌，分别是代表着用户所拥有的全部权限的完整版本令牌(即管理员权限令牌)，以及被限制管理员权限后的普通令牌，二者互为关联令牌;此后，代表用户的进程所使用的令牌都是由普通令牌继承而来，用来进行常规的、非敏感的操作;当用户需要进行一些需要管理员权限的操作时，比如安装软件、修改重要的系统设置时，都会通过弹出提权对话框的形式提示用户面临的风险，征求用户的同意，一旦用户同意，将会切换到当前普通令牌关联的管理员权限令牌，来进行敏感操作。通过这种与用户交互的方式，避免一些恶意程序在后台稍稍执行敏感操作。 <a target="_blank" rel="noopener" href="http://blog.nsfocus.net/analysis-windows-access-authority-inspection-mechanism/">来自</a></p>
+<blockquote>
+<p>Access Token：是一个包含了登陆会话安全信息的 Windows 软件对象，用于指名一个用户以及他所在组以及相应的特权。 UAC Token：定义了Windows Vista 用户在UAC支持开启的时候的默认交互式登陆特权。一个 UAC Token 定义了最小的运行特权。 Full Token：给账户提供了最大的经过授权的特权。Full Token 实际上是由该用户隶属于的用户组决定的。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">通过whoami -all查看当前用户所拥有的Privilege。</span><br></pre></td></tr></table></figure>
+<h3 id="其他">其他</h3>
+<p>部分受保护进程难以获得debug, 注入等权限. 保护进程的Protection成员不为0. 两种保护类型：Protected Process(PP)，Protected Process Lite(PPL). 对于Signer为PsProtectedSignerWindows(5)和PsProtectedSignerTcb(6)的保护进程, 其Type和Signer信息会被抽取出来, 组合成sid, 保存到基本令牌中的TrustLevelSid成员中</p>
+<p>通过创建受限令牌，可以获得一个普通令牌所有拥有的权限集合的一个子集，用来进行一些低权限操作，降低安全风险。</p>
+<p><a target="_blank" rel="noopener" href="http://www.youngroe.com/2015/08/14/Windows/Windows-Permissions-Privilege/">权限编程需要注意的</a> <a target="_blank" rel="noopener" href="http://www.cppblog.com/weiym/archive/2013/08/25/202751.html?opt=admin">权限编程2</a></p>
+<h2 id="用户界面特权隔离-user-interface-privilege-isolation-uipi">用户界面特权隔离 User Interface Privilege Isolation, UIPI</h2>
+<p>通过结合强制完整性控制，用户界面特权隔离阻止较低等完整性级别（Integrity level）的进程向较高等完整性级别进程的窗口发送消息或者安装钩子，但也有一些消息不被阻止。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/user-account-control-allow-uiaccess-applications-to-prompt-for-elevation-without-using-the-secure-desktop">UIAccess</a> 选项The ability to bypass UIPI restrictions across privilege levels is available for UI automation programs by using UIAccess. 但是必须签名并且安装在指定地点.</p>
+<p>UAC level: asInvoker 不询问权限, 但是用户可以右键以管理员权限运行. highestAvailable时如果用户在admin用户组则和requireAdministrator一样, 必须以管理员权限运行.</p>
+<blockquote>
+<p>A lower privilege process cannot:</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>Perform a window handle validation of higher process privilege.</li>
+<li>SendMessage or PostMessage to higher privilege application windows. These application programming interfaces (APIs) return success but silently drop the window message.</li>
+<li>Use thread hooks to attach to a higher privilege process.</li>
+<li>Use Journal hooks to monitor a higher privilege process.</li>
+<li>Perform dynamic link library (DLL)–injection to a higher privilege process.</li>
+</ul>
+</blockquote>
+<h2 id="键盘监控的思路">键盘监控的思路</h2>
+<table>
+<thead>
+<tr class="header">
+<th>API</th>
+<th>适用范围</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GetAsyncKeyState</td>
+<td></td>
+<td>每次获取单个按键的状态, 轮询每个键状态, 效率略低</td>
+</tr>
+<tr class="even">
+<td>GetKeyboardState</td>
+<td></td>
+<td>一次获取所有的键的状态, 和消息队列相关</td>
+</tr>
+<tr class="odd">
+<td>SetWindowsHookEx 指定键盘</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="setwindowshookex">SetWindowsHookEx</h3>
+<p>在回调函数中，我们将接收KeyboardProc的wParam中的虚拟键码和LowLevelKeyboardProc的KBDLLHOOKSTRUCT.vkCode（wParam指向KBDLLHOOKSTRUCT）。</p>
+<p>如果m_ThreadId = 0，则消息钩子是全局消息钩子。针对全局消息钩子，你必须将回调函数置于dll中，并且需要编写2个dll来分别处理x86/x64进程。</p>
+<p>针对底层键盘钩子，SetWindowsHookEx的HMod参数可以为NULL或者本进程加载的模块（我测试了user32，ntdll）。</p>
+<p>WH_KEYBOARD_LL不需要dll中的回调函数，并且能适应x86/x64进程。</p>
+<p>WH_KEYBOARD需要两个版本的dll，分别处理x86/x64。但是如果使用x86版本的全局消息钩子，所有的x64线程仍被标记为“hooked”，并且系统在钩子应用上下文执行钩子。类似的，如果是x64，所有的32位的进程将使用x64钩子应用的回调函数。这就是为什么安装钩子的线程必须要有一个消息循环。</p>
+<p>hook是在整个桌面环境(desktop)内的. uac是safe desktop, 另外一个桌面</p>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/86403">来自</a> <a target="_blank" rel="noopener" href="https://securelist.com/keyloggers-implementing-keyloggers-in-windows-part-two/36358/">专业文章</a></p>
+<p>已知设置钩子是不能跨越完整度保护的. 猜测至少需要最高的完整度级别才能设置全局钩子</p>
+<blockquote>
+<p>"Process isolation provides a way to extend the authorization model to common extension points for inter-process communication. For example, if an application running at medium integrity were to register a hook to process Windows messages, this hook would not be active in a process running at the high integrity level."</p>
+</blockquote>
+<p>所以可能可以安装但是其实不是全局?</p>
+<h3 id="subsystem-console">subsystem: console</h3>
+<p>是一个过时的东西, 直接用subsystem: windows?? <a target="_blank" rel="noopener" href="https://www.devever.net/~hl/win32con">看这</a></p>
+<h2 id="自启动技术">自启动技术</h2>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/cf01fee50fb4">自启动技术</a></p>
+<h2 id="bypass-uac">bypass uac</h2>
+<p><a target="_blank" rel="noopener" href="https://cqureacademy.com/cqure-labs/cqlabs-how-uac-bypass-methods-really-work-by-adrian-denkiewicz">概述</a></p>
+<p>这里研究的是COM接口绕过 <a target="_blank" rel="noopener" href="https://y4er.com/post/bypassuac-with-icmluautil/">详述</a></p>
+<h2 id="提权">提权</h2>
+<ol type="1">
+<li>权限窃取</li>
+<li>使用服务的impersonation 真正的关键是分析其中的权限问题</li>
+</ol>
+<p>首先是bypass UAC, 得到SeDebugPrivilege, 然后就可以直接用窃取的方式得到System 没有UAC时特权很少, 完整度级别为Medium, 过了UAC就是High</p>
+<p>现在就看创建服务了. 如果创建服务获取system不需要高完整度, 那就神了. 否则还是要bypass uac, 那还不如上面的方法. 目前我猜测大概是要高完整度的.</p>
+<h2 id="远程线程注入">远程线程注入</h2>
+<p>远程线程注入首当其冲就是权限问题, 需要debug权限?? !! meterpreter 怎么migrate的</p>
+<p>打开一个同级别的进程, Medium的完整度的, OpenProcess的时候指定什么权限??</p>
+<h2 id="raw_input方法的主函数的消息循环">raw_input方法的主函数的消息循环</h2>
+<p>发现主函数其实消息非常少... 平时只有一个消息, 开了hook之后每按下和松开都有一个事件. 理解为是winmain的消息传过去的吗... 或者要先给到这边, 才能给到那边winProc 发现如果没有getMessage的循环，无论是Hook的keylog还是rawInput的keylog都不行。创建一个子进程执行而不是在dllmain里面执行好像没什么区别？？？ notepad.exe正常使用？？ 我的问题是，notepad.exe这种桌面程序难道不是应该winmain里有自己的Getmessage吗。。。为什么即使是注入也需要自己有getMessage的循环？？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2020/windows%E6%9D%83%E9%99%90/" data-id="ckm6g0de200133ktr9j0depzc" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/samba/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          设置最新版本的windows10能够访问的samba服务器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/%E8%87%AA%E5%88%B6Ollvm/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">自制Ollvm</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/COM%E4%B8%8ERPC/">COM与RPC</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 am009<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

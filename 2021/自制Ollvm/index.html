@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>自制Ollvm | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="自制Ollvm 原本网上没有多少开源的代码混淆器，现在却发现学习OLLVM的人特别多，很多人也有自己的混淆器。 汇编的混淆和LLVM还是挺有意思的。虽然这个项目的进度依然停滞在只学完简单运算混淆的地步，但有时间我应该会回来继续。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自制Ollvm">
+<meta property="og:url" content="https://wjk.moe/2021/%E8%87%AA%E5%88%B6Ollvm/">
+<meta property="og:site_name">
+<meta property="og:description" content="自制Ollvm 原本网上没有多少开源的代码混淆器，现在却发现学习OLLVM的人特别多，很多人也有自己的混淆器。 汇编的混淆和LLVM还是挺有意思的。虽然这个项目的进度依然停滞在只学完简单运算混淆的地步，但有时间我应该会回来继续。">
+<meta property="og:locale">
+<meta property="og:image" content="https://wjk.moe/2021/%E8%87%AA%E5%88%B6Ollvm/image-20200928135000792.png">
+<meta property="article:published_time" content="2020-06-01T03:11:11.000Z">
+<meta property="article:modified_time" content="2021-03-12T14:24:34.583Z">
+<meta property="article:author" content="am009">
+<meta property="article:tag" content="LLVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjk.moe/2021/%E8%87%AA%E5%88%B6Ollvm/image-20200928135000792.png">
+  
+    <link rel="alternate" href="/atom.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2021/自制Ollvm" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/%E8%87%AA%E5%88%B6Ollvm/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      自制Ollvm
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="自制ollvm">自制Ollvm</h1>
+<p>原本网上没有多少开源的代码混淆器，现在却发现学习OLLVM的人特别多，很多人也有自己的混淆器。</p>
+<p>汇编的混淆和LLVM还是挺有意思的。虽然这个项目的进度依然停滞在只学完简单运算混淆的地步，但有时间我应该会回来继续。</p>
+<span id="more"></span>
+<p>ollvm/armariris/hikari 三个一起学习. <a target="_blank" rel="noopener" href="https://www.leadroyal.cn/?p=1072">ollvm/armariris/hikari 适配llvm10</a></p>
+<p>http://mayuyu.io/ 这里有很多关于llvm的</p>
+<p>https://iosre.com/t/llvm/10610/39 实现字符串加密</p>
+<p>llvm提供了很方便地操作二进制代码的api. 自己移植不一定有利于学习, 移植主要解决的是llvm版本更新的各种杂七杂八的变化, 反而那些主要的逻辑不要求理解.</p>
+<p>既然是学习，就好好以LLVM的字节码为基础，而不是看最终的机器码汇编了。</p>
+<p>计划: 1. 作为使用者, 使用这几个代码混淆器, 成功编译混淆代码(使用移植好到llvm10的代码) 2. 作为开发者, 学习混淆的原理, 学习代码编写的思路, 熟悉llvm的api. 3. 开始考虑混淆的对策</p>
+<p>TODO: 1. 如何自己打开自己的 2. 找合适的软件或者片段，调用我的ollvm。 3. 可视化、或者如何方便查看llvm字节码，甚至生成的机器码</p>
+<p>和godbolt结合可视化。</p>
+<p>TODO:</p>
+<ol type="1">
+<li>学习llvm中的Annotation</li>
+<li>编译debug版本，配好调试环境，方便gdb源码调试</li>
+<li>分析opt怎么通过RegisterPass<HelloPass>增加的命令行选项。看看clang是怎么管理和加载Pass的。</li>
+<li>探索Windows下llvm的pass的现状</li>
+<li>改下代码格式化的格式，看看怎么把大括号不单独起一行。</li>
+<li>指令替换方面把llvm的全加进来，改用llvm的随机化函数。</li>
+<li>学学C++的匿名函数的具体原理。闭包，捕获什么的具体规则和实现</li>
+</ol>
+<p>[toc]</p>
+<h2 id="杂谈">杂谈</h2>
+<p>-m64 选项生成64位的代码，但是int还是32位大小的。long才是64位大小的。似乎没有选项能让int变成64位大小的。而main函数的返回值因此也是32位的</p>
+<p>读取函数的Annotation上，ollvm可能还是比较猛的？搜<code>llvm readAnnotate</code> 炸出一大片分析ollvm的。</p>
+<h2 id="常用的命令">常用的命令</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt -load lib&#x2F;LLVMHello.so -help</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt -load lib&#x2F;LLVMHello.so -hello &lt; hello.bc &gt; out.bc</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang -Xclang -load -Xclang Obfuscation.dll</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">clang -c -emit-llvm $1.c #生成bc</span><br><span class="line">clang -S -emit-llvm $1.c #生成.ll的文本形式</span><br></pre></td></tr></table></figure>
+<h2 id="如何编写pass">如何编写pass</h2>
+<p>要运行的代码是 https://github.com/LeadroyaL/llvm-pass-tutorial , 这里每个项目是单独的文件夹. 三个项目合在一起, 共用外面的cmake文件. 为了明白这个移植怎么跑起来, 学习源码外的pass项目的建立. 先学下面的项目, 配置好路径. <a target="_blank" rel="noopener" href="https://github.com/abenkhadra/llvm-pass-tutorial">pass-skeleton</a></p>
+<p><a target="_blank" rel="noopener" href="https://llvm.org/docs/WritingAnLLVMPass.html">如何写一个pass llvm.org</a> 确实, 写一个pass就真的是一个pass, 出来一个so文件, 在passmanager里过一遍llvm bytecode. pass的加载和运行暴露在命令行选项.</p>
+<ol type="1">
+<li>pass项目可以单独在源码外</li>
+</ol>
+<p>编译的时候需要在 <code>[LLVM_DIR]</code> 找到llvm的配置. 该项目骨架会通过 <code>$LLVM_HOME</code> 环境变量设置好 <code>[LLVM_DIR]</code> 编译出来可以使用opt直接运行pass. 也可以clang编译的时候指定opt加载这个so文件, 然后加上调用so的选项.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang-7.0 -Xclang -load -Xclang build/skeleton/libSkeletonPass.* something.c$</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>pass项目在llvm源码内</li>
+</ol>
+<p>可以像他们几个项目一样直接在llvm-project源码内的 <code>/lib/Transform</code> 修改. 并且修改默认加载这个pass, 只需要给出使用的选项.</p>
+<h3 id="源码外的pass">源码外的pass</h3>
+<p><a target="_blank" rel="noopener" href="http://llvm.org/docs/CMake.html#developing-llvm-passes-out-of-source">Developing LLVM passes out of source</a></p>
+<p>LLVM_HOME 应该是 <code>/usr/lib/llvm-10</code>, 这样就会设置LLVM_DIR为 <code>/usr/lib/llvm-10/lib/cmake/llvm</code> LLVM_DIR里面有LLVMConfig.cmake, 设置了这个环境变量, cmake中调用 <code>find_package(LLVM REQUIRED CONFIG)</code> 就可以找到llvm作为一个cmake的library</p>
+<p>为了构建源码外的pass, 重要的cmake语句有 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.4)</span><br><span class="line">project(llvm-pass-tutorial)</span><br><span class="line"></span><br><span class="line">find_package(LLVM REQUIRED CONFIG)</span><br><span class="line">add_definitions($&#123;LLVM_DEFINITIONS&#125;)</span><br><span class="line">include_directories($&#123;LLVM_INCLUDE_DIRS&#125;)</span><br><span class="line">link_directories($&#123;LLVM_LIBRARY_DIRS&#125;)</span><br><span class="line"></span><br><span class="line">add_subdirectory(skeleton)  # Use your pass name here.</span><br><span class="line">add_subdirectory(ollvm)  # ollvm</span><br><span class="line">add_subdirectory(Hikari)  # Hikari</span><br><span class="line">add_subdirectory(Armariris)  # Armariris</span><br></pre></td></tr></table></figure> 在每个文件夹内的CMakeList里调用 <code>add_library</code> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">add_library(Armariris MODULE</span><br><span class="line">        # List your source files here.</span><br><span class="line">        CryptoUtils.cpp</span><br><span class="line">        StringObfuscation.cpp</span><br><span class="line">        Substitution.cpp</span><br><span class="line">        Flattening.cpp</span><br><span class="line">        Utils.cpp</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Flattening.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;StringObfuscation.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Substitution.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Utils.h</span><br><span class="line">        Enter.cpp</span><br><span class="line">        )</span><br></pre></td></tr></table></figure></p>
+<h3 id="行动">行动</h3>
+<p>为了避免编译llvm. 我采用直接apt安装的方式安装llvm, 源码外建立pass项目. 好像安装了llvm-dev 安装后在 <code>/usr/lib/llvm-10</code> 附近有各种编译头文件</p>
+<p>在<code>project(llvm-pass-tutorial)</code>之后加上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set(ENV&#123;LLVM_HOME&#125; &#x2F;usr&#x2F;lib&#x2F;llvm-10)</span><br></pre></td></tr></table></figure>
+<h3 id="pass的集成">pass的集成</h3>
+<p>我想知道如何无缝集成到clang。</p>
+<p>新的passmanager能更细粒度地控制Pass之间的互斥关系。每一个函数都返回了对应invalidate了的其他pass。还没迁移过去。所以可能还是legacy的PM多一些，clang应该还是吧。而legacy的PM，这两种注册方法中</p>
+<ol type="1">
+<li><p>要有一个ID，初始值不重要，因为是根据ID的地址区别各个函数的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">char Hello::ID &#x3D; 0;</span><br></pre></td></tr></table></figure></li>
+<li><p>注册pass，得到一个命令行。这里是通过构造函数注册的，我们只需要初始化一个类。这种方法似乎只对opt有效？？当有这个选项的时候我们的pass才会被加载</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">static RegisterPass&lt;Hello&gt; X(&quot;hello&quot;, &quot;Hello World Pass&quot;,</span><br><span class="line">                             false &#x2F;* not modify CFG *&#x2F;,</span><br><span class="line">                             false &#x2F;* pure Analysis Pass *&#x2F;);</span><br></pre></td></tr></table></figure>
+<p>这种方法会注册到全局的passRegistry里面。TODO：探索何时被注册了命令行选项。</p></li>
+<li><p>加载时自动注册，这里用的是匿名函数，我们可以写一个函数。这种方法对opt无效。对<code>clang -Xclang -load -Xclang Obfuscation.dll</code> 有效。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static RegisterStandardPasses Y(</span><br><span class="line">    PassManagerBuilder::EP_EarlyAsPossible,</span><br><span class="line">    [](const PassManagerBuilder &amp;Builder,</span><br><span class="line">       legacy::PassManagerBase &amp;PM) &#123; PM.add(new Hello()); &#125;);</span><br></pre></td></tr></table></figure>
+<p>TODO：研究原理。它会先调用PassManagerBuilder::addGlobalExtension，这个函数则是Transform/IPO里的，它把<code>std::make_tuple(Ty, std::move(Fn), ExtensionID)</code> 放到GlobalExtensions这个static全局Vector里面。最终是populateFunctionPassManager这里把注册的这些东西放进FPM的</p>
+<p>怀疑可能这里把我们的Pass放进内部统一的“Pass数据库”里了，opt根据数据库生成命令行选项，每个选项对应一个Pass的启用和关闭。</p></li>
+<li><p>命令行选项，加载后通过参数更详细地控制pass</p>
+<p>https://stackoverflow.com/questions/13626993/is-it-possible-to-add-arguments-for-user-defined-passes-in-llvm</p>
+<p>https://llvm.org/docs/CommandLine.html#commandline-2-0-library-manual</p>
+<p>使用commandline api: ​cl::opt。这个工具是完全独立于llvm的，可以拿出来自己用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  cl::ParseCommandLineOptions(argc, argv);</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它负责初始化全局变量，选项都反映在全局变量里。因此和opt、clang是否加载使用我们的pass没有关系。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">static cl::opt&lt;int&gt;</span><br><span class="line">ObfProbRate(&quot;bcf_prob&quot;, cl::desc(&quot;Choose the probability [%] each basic blocks will be obfuscated by the -bcf pass&quot;), cl::value_desc(&quot;probability rate&quot;), cl::init(defaultObfRate), cl::Optional);</span><br></pre></td></tr></table></figure>
+<p>表示解析一个int类型的命令行</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cl::opt&lt;RegisterMyPasses::FunctionPassCtor, <span class="literal">false</span>,</span><br><span class="line">        RegisterPassParser&lt;RegisterMyPasses&gt; &gt;</span><br><span class="line">MyPassOpt(<span class="string">&quot;mypass&quot;</span>,</span><br><span class="line">          cl::init(&amp;createDefaultMyPass),</span><br><span class="line">          cl::desc(<span class="string">&quot;my pass option help&quot;</span>));</span><br></pre></td></tr></table></figure>
+<p><strong>llvm::cl::opt&lt; DataType, ExternalStorage, ParserClass &gt;</strong> 这里的cl初始化，声明了一个自定义parser，parser返回的结果是RegisterMyPasses类型的命令行选项。</p></li>
+<li><p><a target="_blank" rel="noopener" href="https://llvm.org/docs/WritingAnLLVMPass.html#id47">Registering dynamically loaded passes</a></p></li>
+<li></li>
+</ol>
+<h3 id="ubuntu的pass测试">ubuntu的pass测试</h3>
+<p>为了方便地测试pass，方便地看到结果。输入是c语言的程序，输出pass前和pass后的llvm ir。</p>
+<p>使用makefile文件</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">%.ll: %.c</span></span><br><span class="line">	clang -S -emit-llvm <span class="variable">$^</span></span><br><span class="line"></span><br><span class="line"><span class="section">%.obf.ll: %.ll</span></span><br><span class="line">	opt -stats -S -load ../build/myobf/libmyobf.so -hello <span class="variable">$^</span> -o <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
+<h2 id="llvm的annotation">LLVM的Annotation</h2>
+<h3 id="资料搜寻">资料搜寻</h3>
+<p>https://groups.google.com/g/llvm-dev/search?q=llvm.global.annotations</p>
+<p>https://groups.google.com/g/llvm-dev/c/IiuO8EOM6dI/m/nQdjQ1qOYIgJ</p>
+<p>通过google groups搜索mailing list，最终找到了用法的讨论。在08年的时候有个AnnotationManager，之后被删掉了。2020年11月最近似乎增加了!annotate的新用法，对旧的__attribute__((annotate)) 用法可能也做了什么处理？</p>
+<p>有些东西可能真的就没有文档。。。？？仔细学习后我发现我的想法错了，可能只是因为用法没有什么特殊的地方，所以不需要单独成文档。最后只是靠看各种其他文档弄懂的，llvm的mailing list反而用处不大。</p>
+<p>主要靠的是：llvm的struct、array类型，getElementPtr指令（复杂结构体的地址计算指令），bitcast指令（类似强制类型转换）</p>
+<h3 id="ir解析">IR解析</h3>
+<p>tl;dr 全局变量，包括函数的Annotation被放在llvm.global.annotations这个全局变量里。局部变量、函数参数的annotation会产生对<a target="_blank" rel="noopener" href="https://llvm.org/docs/LangRef.html#llvm-var-annotation-intrinsic">llvm.var.annotation</a>这个函数的call指令，相关信息放在函数参数里。</p>
+<p>数组类型为<code>&#123; i8*, i8*, i8*, i32 &#125;</code>，类似于<code>&#123;char*, char*, char*, int&#125;</code> 依次为 函数地址、annotation字符串地址、源码文件名、源码内的行号。</p>
+<p>对参数的annotate会转化为有内存空间的局部变量，然后对内存空间annotate。此外，因为每个函数的局部空间是通过alloca指令分配的，所以llvm.var.annotation的第一个参数会指向分配的内存空间内部。局部变量的变量名会丢失。</p>
+<p>可能通过Debug_info能够找回局部变量名？增加-g选项后生成的ll文件内确实会增加dwarf4信息。会通过<code>call void @llvm.dbg.declare(metadata i32* %2, metadata !14, metadata !DIExpression()), !dbg !15</code>的方式声明局部变量，需要分析一下变量。通过<code>!llvm.module.flags</code> 可以判断是否开启了debug。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Annotation.c</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a __attribute__((annotate((<span class="string">&quot;hello1&quot;</span>)))) = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">b</span><span class="params">(<span class="keyword">int</span> __attribute__((annotate((<span class="string">&quot;hello2&quot;</span>)))) c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> c + <span class="number">41</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">d</span><span class="params">(<span class="keyword">int</span> e)</span> __<span class="title">attribute__</span><span class="params">((annotate((<span class="string">&quot;hello&quot;</span>))))</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> e + <span class="number">42</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; ModuleID = &#x27;Annotation.c&#x27;</span></span><br><span class="line">source_filename <span class="operator">=</span> <span class="string">&quot;Annotation.c&quot;</span></span><br><span class="line"><span class="keyword">target</span> <span class="keyword">datalayout</span> <span class="operator">=</span> <span class="string">&quot;e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128&quot;</span></span><br><span class="line"><span class="keyword">target</span> <span class="keyword">triple</span> <span class="operator">=</span> <span class="string">&quot;x86_64-pc-linux-gnu&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="title">@a</span> <span class="operator">=</span> dso_local <span class="keyword">global</span> <span class="type">i32</span> <span class="number">3</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line"><span class="title">@.str</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello1\00&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.1</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;Annotation.c\00&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.2</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello2\00&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.3</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello\00&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@llvm.global.annotations</span> <span class="operator">=</span> <span class="keyword">appending</span> <span class="keyword">global</span> [<span class="number">2</span> <span class="keyword">x</span> &#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125;] [&#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125; &#123; <span class="type">i8</span>* <span class="keyword">bitcast</span> (<span class="type">i32</span>* <span class="title">@a</span> <span class="keyword">to</span> <span class="type">i8</span>*)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">3</span> &#125;<span class="punctuation">,</span> &#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125; &#123; <span class="type">i8</span>* <span class="keyword">bitcast</span> (<span class="type">i32</span> (<span class="type">i32</span>)* <span class="title">@d</span> <span class="keyword">to</span> <span class="type">i8</span>*)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.3</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">10</span> &#125;]<span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: noinline nounwind optnone uwtable</span></span><br><span class="line"><span class="keyword">define</span> dso_local <span class="type">i32</span> <span class="title">@b</span>(<span class="type">i32</span> <span class="variable">%0</span>) <span class="variable">#0</span> &#123;</span><br><span class="line">  <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">alloca</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="keyword">store</span> <span class="type">i32</span> <span class="variable">%0</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">bitcast</span> <span class="type">i32</span>* <span class="variable">%2</span> <span class="keyword">to</span> <span class="type">i8</span>*</span><br><span class="line">  <span class="keyword">call</span> void <span class="title">@llvm.var.annotation</span>(<span class="type">i8</span>* <span class="variable">%3</span><span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.2</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">5</span>)</span><br><span class="line">  <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%5</span> <span class="operator">=</span> <span class="keyword">add</span> <span class="keyword">nsw</span> <span class="type">i32</span> <span class="variable">%4</span><span class="punctuation">,</span> <span class="number">41</span></span><br><span class="line">  <span class="keyword">ret</span> <span class="type">i32</span> <span class="variable">%5</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: nounwind willreturn</span></span><br><span class="line"><span class="keyword">declare</span> void <span class="title">@llvm.var.annotation</span>(<span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span>) <span class="variable">#1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: noinline nounwind optnone uwtable</span></span><br><span class="line"><span class="keyword">define</span> dso_local <span class="type">i32</span> <span class="title">@d</span>(<span class="type">i32</span> <span class="variable">%0</span>) <span class="variable">#0</span> &#123;</span><br><span class="line">  <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">alloca</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="keyword">store</span> <span class="type">i32</span> <span class="variable">%0</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">add</span> <span class="keyword">nsw</span> <span class="type">i32</span> <span class="variable">%3</span><span class="punctuation">,</span> <span class="number">42</span></span><br><span class="line">  <span class="keyword">ret</span> <span class="type">i32</span> <span class="variable">%4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>llvm.global.annotations的声明中，最开头的<code>[2 x &#123; i8*, i8*, i8*, i32 &#125;]</code>是类型，紧接着的是主体，ConstantExpr，最末尾是section说明<code>, section "llvm.metadata"</code>。</p>
+<p>而ConstantExpr部分就利用bitcast把函数类型转换成i8*类型<code>bitcast (i32* @a to i8*)</code>，再<code>getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0)</code>。</p>
+<h3 id="pass中的解析方法">Pass中的解析方法</h3>
+<p>首先获取Module级别的全局变量llvm.global.annotations</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GlobalVariable *glob &#x3D;</span><br><span class="line">      f-&gt;getParent()-&gt;getGlobalVariable(&quot;llvm.global.annotations&quot;);</span><br></pre></td></tr></table></figure>
+<p>得到全局变量的初始值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ConstantArray *ca &#x3D; dyn_cast&lt;ConstantArray&gt;(glob-&gt;getInitializer())</span><br></pre></td></tr></table></figure>
+<p>这是一个数组类型，先进行遍历，长度是<code>ca-&gt;getNumOperands()</code>，取下标使用<code>ca-&gt;getOperand(i)</code>。取了后得到ConstantStruct。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ConstantStruct *structAn &#x3D; dyn_cast&lt;ConstantStruct&gt;(ca-&gt;getOperand(i))</span><br></pre></td></tr></table></figure>
+<p>这就是<code>&#123; i8*, i8*, i8*, i32 &#125;</code>结构体，使用<code>structAn-&gt;getOperand(0)</code>这样的方法取0-3的下标得到成员。其中前三个取出来都是ConstantExpr：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ConstantExpr *expr &#x3D; dyn_cast&lt;ConstantExpr&gt;(structAn-&gt;getOperand(0))</span><br><span class="line">ConstantExpr *note &#x3D; cast&lt;ConstantExpr&gt;(structAn-&gt;getOperand(1));</span><br></pre></td></tr></table></figure>
+<p>第一个基本上都是bitcast</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">expr-&gt;getOpcode() &#x3D;&#x3D; Instruction::BitCast </span><br><span class="line">expr-&gt;getOperand(0)是Function类型</span><br></pre></td></tr></table></figure>
+<p>第二第三个都是getElementPtr，然后先获取GlobalVariable类型的字符串，再获取Initializer得到真正的字符串内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">note-&gt;getOpcode() &#x3D;&#x3D; Instruction::GetElementPtr</span><br><span class="line">GlobalVariable *annoteStr &#x3D; dyn_cast&lt;GlobalVariable&gt;(note-&gt;getOperand(0))</span><br><span class="line">ConstantDataSequential *data &#x3D; dyn_cast&lt;ConstantDataSequential&gt;(annoteStr-&gt;getInitializer())</span><br><span class="line">if (data-&gt;isString()) &#123; annotation +&#x3D; data-&gt;getAsString().lower() + &quot; &quot;; &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="annotationhello-在pass中读取annotation实例">AnnotationHello 在Pass中读取Annotation实例</h3>
+<p>继承一个ModulePass，对每个模块解析一次Annotation。</p>
+<p>继承一个FunctionPass函数，在第一个基本块内解析Annotation。</p>
+<p>TODO：能否（简单地）一个命令行开启两个Pass？呃，那个Register决定opt是否启用，而</p>
+<h2 id="windows平台下的混淆visual-studio-配置使用pass">Windows平台下的混淆：visual studio 配置使用pass</h2>
+<p>经过查阅资料, 没找到, 不能android一样, <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/48947973/use-llvm-in-a-cmake-build">重新编译才能得到cmake库</a> 编译后将build文</p>
+<p>在Windows平台编译不是一个简单的问题，需要各种支持。现在虽然难，但似乎有人成功了。</p>
+<p>安装</p>
+<p>了tdm-Gcc之后用如下的选项编译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake -G Ninja -DLLVM_ENABLE_PROJECTS&#x3D;&quot;clang&quot; -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS&#x3D;On ..\llvm</span><br></pre></td></tr></table></figure>
+<p>出现报错，说</p>
+<p>cant close file too big</p>
+<p>改设置上一些其他的选项试试，看看能不能好一点。可能只能编译release版本的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake -G Ninja -DLLVM_ENABLE_PROJECTS&#x3D;&quot;clang&quot; -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS&#x3D;On -DLLVM_INCLUDE_TESTS&#x3D;Off DLLVM_TARGETS_TO_BUILD&#x3D;&quot;X86&quot; -DCMAKE_BUILD_TYPE&#x3D;Release ..\llvm</span><br></pre></td></tr></table></figure>
+<p>时间过于漫长，我把环境变量里面的clang提前了，不行的话看看能不能clang自己编译自己。</p>
+<p>TODO 描述编译经历</p>
+<ol type="1">
+<li>坚持使用MSVC编译，使用MSVC自带的开发控制台的x64 native tools</li>
+<li>使用上面的方法后，即使用Ninja生成器，不加-hHost=x64，也能正确用上64位的toolchain好像</li>
+<li>源码内pass比源码外pass更容易配</li>
+</ol>
+<p>现在是windows平台，in source编写pass。如果做成DLL，则不能集成进clang里，这样visual studio不好调用。</p>
+<h3 id="编写混淆pass">编写混淆pass</h3>
+<ol type="1">
+<li><p>自己编写的pass编译成dll之后是否只能通过opt运行？不能通过clang自动运行？</p>
+<p><a target="_blank" rel="noopener" href="https://www.cs.cornell.edu/~asampson/blog/clangpass.html">这里</a> 其实是一种挺Hack的方法，让组件加载dll/so的时候去注册，我在windows上这样加载LLVMHello.dll 会报错 <code>动态链接库(DLL)初始化例程失败。 (0x45A)</code></p>
+<p>首先写一个bat自动化进行编译成中间代码和使用pass的过程。</p>
+<p>一种方法是源码内编写pass，直接修改相关代码加载pass，这种方法其实挺不容易的，我首先在clang的一些cmakelist里加入了Hello链接进去，但是似乎还是需要注册？需要继续深入了解研究看看源码，看问题4 <a target="_blank" rel="noopener" href="https://medium.com/@mshockwave/writing-llvm-pass-in-2018-part-iv-d69dac57171d">内置的方法</a></p>
+<p>否则即使在源码内编写，也出来的是动态库，还是只能opt加载。。。</p></li>
+<li><p>头文件缺失的问题怎么解决？visual studio是怎么编译的？</p>
+<p>visual studio 最近有了llvm支持。而我自己编译的llvm是没有基本的C++头文件的。用微软的安装包安的clang也是一样，所以可能是手动添加了include路径？</p></li>
+<li><p>llvm的pass是如何注册命令行选项的？怎样编译成dll，又如何不出dll而是内置到clang里？</p>
+<p>想要内置考虑可以通过<a target="_blank" rel="noopener" href="https://llvm.org/docs/WritingAnLLVMPass.html#building-pass-plugins">llvm plugin</a>。是否编译成dll和Transform里的自己的pass的CmakeList里的add_llvm_library 里是否加上Module参数有关系。加上就是动态链接，不加上就是静态链接出来。</p></li>
+<li><p>Transform的那些pass是怎么加载进clang里的？</p>
+<p>lib/CodeGen/CMakeList.txt</p>
+<p>tools/driver/CMakeList.txt</p>
+<p>这两个地方有clang会link进去的东西。</p>
+<p>要去掉自己的MODULE BUILDTREE_ONLY</p>
+<p>我编译进去了，但是好像不太行。。</p>
+<p>好像要在IPO的PassManagerBuilder::populateFunctionPassManager/populateModulePassManager</p>
+<p><a target="_blank" rel="noopener" href="https://medium.com/@mshockwave/writing-llvm-pass-in-2018-part-iv-d69dac57171d">内置的方法</a></p></li>
+<li><p>bytecode转可执行文件？</p>
+<p>可以直接clang编译成可执行文件 <a target="_blank" rel="noopener" href="https://blog.csdn.net/pc153262603/article/details/89553688">来源</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang a.o.bc -o struct</span><br></pre></td></tr></table></figure>
+<p>首先llc编译成S的汇编文件，再用gcc什么的生成可执行文件 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/32523847/how-to-make-llvm-bc-file-executable">来自</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">llc -filetype&#x3D;obj hello.bc -o hello.o</span><br><span class="line">llc hello.bc -o hello.s</span><br><span class="line">gcc hello.o&#x2F;s -o hello</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="pass与clang的集成">PASS与Clang的集成</h2>
+<h3 id="案例-ollvm做出的修改">案例: ollvm做出的修改</h3>
+<p>以下是ollvm4.0和llvm4.0进行对比的不同的文件. 来自<a target="_blank" rel="noopener" href="https://magic-king.net/2020/02/27/ollvm-learning/">这里</a> 使用<a target="_blank" rel="noopener" href="https://truehumandesign.se/s_diffinity.php">Diffinity</a>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;include&#x2F;llvm&#x2F;Transforms&#x2F;Obfuscation&#x2F; # obfuscation的头文件</span><br><span class="line">.&#x2F;include&#x2F;llvm&#x2F;Transforms&#x2F;CryptoUtils.h # obfuscation的头文件</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;IPO&#x2F;LLVMBuild.txt</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;IPO&#x2F;PassManagerBuilder.cpp # Pass注册</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;Obfuscation&#x2F; # obfuscation source code</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;CMakeLists.txt</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;LLVMBuild.txt</span><br><span class="line">.&#x2F;tools&#x2F;clang # 集成clang,要在gitignore里取消clang的注释</span><br><span class="line">.&#x2F;.gitignore</span><br><span class="line">.&#x2F;CMakeLists.txt</span><br><span class="line">.&#x2F;CODE_OWNERS.TXT</span><br><span class="line">.&#x2F;LICENSE.TXT</span><br></pre></td></tr></table></figure>
+<h2 id="ollvm-实现分析">OLLVM 实现分析</h2>
+<h3 id="概述">概述</h3>
+<ol type="1">
+<li><strong>Instruction substitution:</strong> 将加减与或异或这几个指令通过数学方式变成更复杂但等效的计算。</li>
+<li><strong>Bogus Control Flow</strong> 将一个基本块的入口加上虚假分支语句，不会执行的分支指向虚假代码。再在出口加上虚假分支，不会执行的分支指向虚假代码，最后将虚假基本块的出口指向真实基本块，构成类似循环的结构。</li>
+<li><strong>Control Flow Flattening</strong> 把整个函数的控制流都收到路由变量和分发块的逻辑里来，类似于switch case。（是不是可以直接做源码级的混淆）更进一步，可以让CRC代码完整性检查的结果参与进来，这样如果代码的CRC不对，就直接影响跳转的逻辑。（但是只有在完全编译链接生成最终的可执行文件的时候才能确定CRC。而如果CRC检查部分的代码是相互依赖的（检查到其他检查部分的代码），则还需要解决依赖关系（利用CRC的线性代数的线性性质））</li>
+<li><strong>Basic-block splitting</strong> 这是什么？直接增加虚假分支和基本块？</li>
+<li><strong>Code Tamper-Proofing</strong> 有多个check例程，往正常逻辑中插入对它的调用，然后检查值对不对。通过融合进控制流的方法，如果CRC不对的话则之后不会跳转到正确的基本块。</li>
+<li><strong>Procedures Merging</strong> 将多个函数合并成一个merged函数，第一个参数用来判断调用的是哪个函数，通过switch case调用对应的函数。原来的函数被wrapper函数替代，使用varg技术像，merged函数提供正确的参数，再跳转到对应的函数。（如果能在链接时处理，则甚至不需要wrapper函数，而是修改每个调用前push参数的过程增加调用号。）merged函数被其他混淆（如控制流平坦化）处理后能大幅增加抗分析能力。此外这种方法还能防止不分析的情况下直接重用汇编的攻击。</li>
+</ol>
+<p>未来的方向： 特定于平台的反调试代码，对密码学常量和字符串的混淆，代码水印技术</p>
+<h3 id="instruction-substitution">Instruction substitution</h3>
+<p>指令替换是最简单的。对于加减与或 异或这五种运算，分别有多种替换方法，ollvm随机选一个替换。增加的命令行选项是每个函数替换多少遍。第一遍替换的是原始的指令，后面每次替换的就是混淆后的指令了，通过反复替换增加复杂度。</p>
+<p>这个pass明显需要放在优化pass之后。如何让自己的pass在优化后运行？ 可以考虑opt过了pass之后，编译的时候就用 -O0 ?</p>
+<p>继承Funcpass的Substitution有几个函数指针数组，在初始化的时候把自己的成员函数填进去，之后通过随机数产生器随机调用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Function::iterator bb = tmp-&gt;begin(); bb != tmp-&gt;end(); ++bb) &#123;</span><br><span class="line">  <span class="keyword">for</span> (BasicBlock::iterator inst = bb-&gt;begin(); inst != bb-&gt;end(); ++inst) &#123;</span><br><span class="line">    <span class="keyword">if</span> (inst-&gt;isBinaryOp()) &#123;</span><br><span class="line">      <span class="keyword">switch</span> (inst-&gt;getOpcode()) &#123;</span><br><span class="line">      <span class="keyword">case</span> BinaryOperator::Add:</span><br><span class="line">                  <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> BinaryOperator::Sub:</span><br><span class="line">      ...</span><br></pre></td></tr></table></figure>
+<p>真正核心的替换函数，参数只是那个指令<code>BinaryOperator *bo</code>。</p>
+<figure>
+<img src="image-20200928135000792.png" alt="image-20200928135000792" /><figcaption aria-hidden="true">image-20200928135000792</figcaption>
+</figure>
+<p>addNeg：增加一个Neg指令，把加法变成减法。addDoubleNeg同理。</p>
+<p>精髓在于BinaryOperator::Create的方法的最后一个参数是InsertBefore，这样按顺序插入到那个指令前面，最后的时候再对原来的指令调用replaceAllUsesWith，用最后生成的指令去替换它就好了。意味着用最后一个指令产生的值去替换它产生的值。</p>
+<p>binaryOperator成员如下，rem是取余数的运算符 <a target="_blank" rel="noopener" href="https://llvm.org/docs/LangRef.html#binary-operations">多找找llvm手册</a> 。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Standard binary operators...</span><br><span class="line"> FIRST_BINARY_INST(13)</span><br><span class="line">HANDLE_BINARY_INST(13, Add  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(14, FAdd , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(15, Sub  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(16, FSub , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(17, Mul  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(18, FMul , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(19, UDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(20, SDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(21, FDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(22, URem , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(23, SRem , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(24, FRem , BinaryOperator)</span><br></pre></td></tr></table></figure>
+<p>TODO 确实会留下原来被代替的指令。需要在合适的时候调用<code>bo-&gt;eraseFromParent();</code>直接调用会导致iterator出现问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i &#x3D; vec.erase(i); </span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2021/%E8%87%AA%E5%88%B6Ollvm/" data-id="ckm6g0de400193ktrh1rd68qr" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/windows%E6%9D%83%E9%99%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Windows权限与UAC
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/main%E5%87%BD%E6%95%B0%E5%90%AF%E5%8A%A8%E4%B8%8EPOSIX-ABI/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">main函数启动与POSIX-ABI</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/COM%E4%B8%8ERPC/">COM与RPC</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 am009<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

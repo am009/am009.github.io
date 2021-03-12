@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>树莓派与resbian | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="树莓派与resbian">
+<meta property="og:type" content="article">
+<meta property="og:title" content="树莓派与resbian">
+<meta property="og:url" content="https://wjk.moe/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/">
+<meta property="og:site_name">
+<meta property="og:description" content="树莓派与resbian">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-07-31T12:46:25.000Z">
+<meta property="article:modified_time" content="2021-03-12T13:45:00.381Z">
+<meta property="article:author" content="am009">
+<meta property="article:tag" content="Raspberrypi">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2019/树莓派resbian" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/" class="article-date">
+  <time datetime="2019-07-31T12:46:25.000Z" itemprop="datePublished">2019-07-31</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      树莓派与resbian
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="树莓派与resbian">树莓派与resbian</h1>
+<span id="more"></span>
+<h2 id="上手系统安装">上手系统安装</h2>
+<p>下载系统镜像，解压。。。 一般发行版下载的系统的iso，但是树莓派系统是img的压缩包，要先解压。</p>
+<p>刷镜像一般用win32diskimager。linux用dd命令。 也就是说，如果你经常刷系统，拿到树莓派如果先不急着拓展文件系统空间，安装完一些软件，就可以拿回来用win32diskimager读img镜像出来留着。 刷完反射性地在boot的根目录下新建ssh空文件。 然后就是启动，一句sudo raspi-config打开vnc。 树莓派还是对桌面玩家友好😭，图形界面比命令行调乱七八糟的参数好得多。</p>
+<p>一些闲话： 回忆起很久以前ubuntu等桌面版还不知道用什么刷到优盘的时候，有个opensusu的小工具也是刷优盘镜像的。主要需要对磁盘的二进制读写能力，才能写出启动盘。 最近装了一次win10，以前装win7还会用用ultraISO的写入硬盘镜像到优盘，现在它已经落后变得垃圾了，写入不是卡死就是不能启动，现在用rufus-3.6p.exe这个小巧的程序特别强。装系统的时候才了解到难道uefi已经支持ntfs了吗 已经是第二次不能从sd卡启动了。。。是不是uefi歧视sd卡。。。只能用优盘，也不知道是不是驱动不一样。</p>
+<h2 id="journalctl">journalctl</h2>
+<p>直接执行，进行日志的查看 参数： -n 3 查看最近三条记录 -perr 查看错误日志 -overbose 查看日志的详细参数 --since 查看从什么时候开始的日志 --until 查看什么时候截止的日志</p>
+<p>这条命令主要是因为我之前用手机充电器，这里会报低电压警告 最近买了新电源，用这个命令来看看还会不会警告。果然换了电源就看不到了</p>
+<h2 id="电源管理">电源管理</h2>
+<p>sudo iw dev wlan0 set power_save on|off 这条命令关闭wifi的电源管理，否则wifi不稳，我以前通过wifi进行ssh不可靠就是因为这个和电源</p>
+<h2 id="安装无线网卡驱动">安装无线网卡驱动</h2>
+<p>手头有一块垃圾的tenda U6，是rtl8192eu的，还有一张rtl8812au https://github.com/Mange/rtl8192eu-linux-driver https://github.com/aircrack-ng/rtl8812au 按照github的readme进行设置， 我有一次只是安装rtl8192eu的dkms模块，没有进行教程接下来的设置操作，就开不了机，只能重刷系统😭。 开机就可以执行 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git raspberrypi-kernel-headers build-essential dkms;</span><br></pre></td></tr></table></figure> 让它慢慢下载</p>
+<h2 id="networkmanager">networkManager</h2>
+<p>这里我需要给树莓派固定的ip，但是发现这次树莓派每次启动wifi网卡mac地址都随机化，每次一个新ip，还查不出这个网卡是哪个厂商的。。。 但是图形化界面没有设置的地方，还是ubuntu的network-manager-gnome友好，里面有这个选项。 于是试图使用network-manager-gnome管理无线网 本来以为network-manager-gnome是gnome桌面专用的东西，后来装了才发现lxde照用不误，有桌面环境就行。 sudo apt-get install network-manager-gnome 这里安装后菜单就出现了advanced network Configuration 修改配置文件 sudo nano /etc/NetworkManager/NetworkManager.conf <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">plugins&#x3D;ifupdown,keyfile</span><br><span class="line"></span><br><span class="line">[ifupdown]</span><br><span class="line">managed&#x3D;false</span><br></pre></td></tr></table></figure> 把false改成true #注：managed这里表示是否管理/etc/network/interfaces里配置了的网络接口 修改/etc/network/interfaces，在末尾加上如下内容 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug wlan0</span><br><span class="line">iface wlan0 inet dhcp</span><br><span class="line">        hwaddress b8:27:eb:00:00:00</span><br></pre></td></tr></table></figure> 相关原理： 下面基于2019年7月31日下载的raspbian系统 树莓派的这个发行版的网络组件和其他发行版不一样。一般linux首先读取/etc/network/interfaces，剩下没有被管理的网络接口被network-manager管理。 树莓派的网络也使用了networkmanager，而不使用interfaces文件，下面是树莓派默认的/etc/network/interfaces <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># interfaces(5) file used by ifup(8) and ifdown(8)</span><br><span class="line"></span><br><span class="line"># Please note that this file is written to be used with dhcpcd</span><br><span class="line"># For static IP, consult &#x2F;etc&#x2F;dhcpcd.conf and &#39;man dhcpcd.conf&#39;</span><br><span class="line"></span><br><span class="line"># Include files from &#x2F;etc&#x2F;network&#x2F;interfaces.d:</span><br><span class="line">source-directory &#x2F;etc&#x2F;network&#x2F;interfaces.d</span><br><span class="line"></span><br></pre></td></tr></table></figure> 而它include的/etc/network/interfaces.d是一个空文件夹，所以raspbian是不用interfaces的。 任何修改/etc/network/interfaces的教程现在都已经过时了，修改该文件会造成兼容性问题，具体表现在桌面右上角的图标失灵，不能正常管理网络。 桌面右上角的网络管理的图标比较简陋，软件包名称是lxplug-network，根据名字可以知道，这个应该是lxde的插件，不过肯定是用在raspbian的pixel桌面上的，而且lxplug- 还是一个系列，还包括蓝牙什么的，它在github上的链接是 https://github.com/raspberrypi-ui/lxplug-network 听说原开发者已经退休了。。。 当右上角的图标失灵时，显示Connection to dhcpcd lost. 点击显示No wireless interface found. 这里可以看出它管理网络使用的是dhcpcd，c代表client，d是deamon守护进程。 下面这个帖子在小白互助的时候，一位大神出来说了一句技术内幕。看来有关树莓派的问题还是到官方论坛搜索比较好，接触全球的帖子。 https://www.raspberrypi.org/forums/viewtopic.php?f=28&amp;t=242721&amp;p=1482723&amp;hilit=%2Fetc%2Fnetwork%2Finterfaces+mac+random#p1482723 其中关键的一句： dhcpcd has a wpa_supplicant hook in Stretch. Stretch是Debian9的代号现在都到debian10 buster了。 也就是说，这个管理程序还是用的是wpasupplicant，不是让你去interfaces里点名用wpasupplicant，而是它在dhcpcd里面它自己调用！用wpagui也可以管理到！ 至于静态ip，树莓派的桌面环境可以设置。而且如果想在配置文件配置也是在dhcpcd.conf里配置。 https://www.jianshu.com/p/bd918ef98a4d</p>
+<p>其他相关页面 https://wiki.lxde.org/en/LXNM https://wiki.lxde.org/en/LXDE-Qt</p>
+<h2 id="换tuna源">换tuna源</h2>
+<p>虽然树莓派基金会的镜像也能用，但是还是清华的快一些。 https://mirrors.tuna.tsinghua.edu.cn/help/raspbian/</p>
+<h2 id="dump镜像">dump镜像</h2>
+<p>树莓派还是不要用太大的sd卡，完全没必要。现在因为不想以后换系统的时候重新配置文件，现在打算直接把整个sd卡做个镜像压缩一下。8g其实完全足够了。我用的32g的卡，为了省空间，打算先压缩分区大小再dump出来。</p>
+<ol type="1">
+<li>fsck磁盘检查 要把树莓派关机，把卡拿下来，去别的linux系统上检查 sudo fsck /dev/sda2 -f 使用-f强制检查但是我检查了，还是后面报有node不对，忘了之前是怎么搞的了</li>
+<li>使用diskgenius压缩分区。 gparted还真的不容易做压缩分区，看来还是diskgenius好啊</li>
+</ol>
+<p>一不小心用了这个感觉挺危险的办法： https://access.redhat.com/articles/1196333 https://askubuntu.com/questions/780284/shrinking-ext4-partition-on-command-line 还要删除分区再建立。。。</p>
+<p>之后构建img文件还是使用win32diskimager，没办法，没什么其他好软件。 不过可以勾选只备份已有分区，挺好，没想到小工具能做到这么实用，我要是也能写出这样的工具就好了。</p>
+<h2 id="samba">samba</h2>
+<p>windows 清除登录密码 加上选项 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">min protocol &#x3D; SMB3</span><br><span class="line">security &#x3D; user</span><br></pre></td></tr></table></figure></p>
+<p>debug samba <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo service smbd stop</span><br><span class="line">sudo smbd -F -S -d&#x3D;10</span><br></pre></td></tr></table></figure> 此时再连接, 就可以看到debug信息了.</p>
+<p>关键配置1 要加密或者签名 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server signing &#x3D; mandatory</span><br><span class="line">smb encrypt &#x3D; mandatory</span><br></pre></td></tr></table></figure> 关键配置2 guest account 要手动设置</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/" data-id="ckm6g0ddr00083ktrbbqx7lav" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/%E5%A4%A9%E6%9E%A2%E7%9A%84%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%20Q&A/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          天枢的新手入门指南 Q&amp;A
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/Java%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Java复习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/COM%E4%B8%8ERPC/">COM与RPC</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 am009<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>K210开发板相关外设学习 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="K210开发板相关外设学习 这篇文章是我买了Widora AIRV R3这个K210芯片的开发板。这时候刚好看了一些Python内部实现的书，并且Maixpy（一个移植Micropython到K210开发板上的项目）对这块开发版支持还不完善，于是就克隆下来，试图修改移植。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K210开发板相关外设学习">
+<meta property="og:url" content="https://wjk.moe/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/">
+<meta property="og:site_name">
+<meta property="og:description" content="K210开发板相关外设学习 这篇文章是我买了Widora AIRV R3这个K210芯片的开发板。这时候刚好看了一些Python内部实现的书，并且Maixpy（一个移植Micropython到K210开发板上的项目）对这块开发版支持还不完善，于是就克隆下来，试图修改移植。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2020-06-01T03:11:11.000Z">
+<meta property="article:modified_time" content="2021-03-12T13:32:52.185Z">
+<meta property="article:author" content="am009">
+<meta property="article:tag" content="Embedded">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2020/K210开发板相关外设学习" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" class="article-date">
+  <time datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      K210开发板相关外设学习
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="k210开发板相关外设学习">K210开发板相关外设学习</h1>
+<p>这篇文章是我买了<code>Widora AIRV R3</code>这个<code>K210</code>芯片的开发板。这时候刚好看了一些Python内部实现的书，并且Maixpy（一个移植Micropython到K210开发板上的项目）对这块开发版支持还不完善，于是就克隆下来，试图修改移植。</p>
+<span id="more"></span>
+<p>这只是最初的想法，希望能做成一个项目。虽然确实群里很多人也都需要这样的固件，但是一方面群主不太待见这种使用python的行为，另一方面，我发现我做的一些工作都是非常浅层的，真的就是修改一下引脚号，而且随着Maixpy的发展，现在已经支持配置文件修改引脚号了，导致完全不需要代码上的修改就可以适配这个开发板。</p>
+<p>中间曾经出现了python导致摄像头刷新率太低的问题，rebase到最新的Maixpy就解决了。</p>
+<h2 id="前言">前言</h2>
+<p>看到推荐就买了, 毕竟板载的传感器太全了, 一个小板子就什么都有了, 而且便宜. 导致我走上了这条路. 希望能静下心来. 学到什么. 我经常为了像这样做到些什么而学习, 但往往走偏, 后期只想着想要做到的事情, 完全抛弃了学习, 瞎试, 就是不去继续学.</p>
+<h2 id="spi总线">spi总线</h2>
+<p>maixpy支持其他板子, 经测试, 无法驱动本板子屏幕. 怀疑是接线有问题. 找来板子的接线图, 和各种硬件资料.</p>
+<p>中景园1.14寸屏幕用的是TODO的芯片. 支持各种SPI通讯方式. 主要看屏幕控制芯片的手册.</p>
+<p>SPI总线可以只靠一条线(3线接口), 或者控制/数据的电平信号线 + 真正的数据线(4线接口). 控制/数据的电平信号线为(高/低)的时候表示发送的这个字节是命令, 否则表示是数据(命令的参数). 另外, 这些传输都有时钟信号的同步.</p>
+<p>片选信号变低, 选择芯片, 芯片准备接受数据. 不带(控制/数据的电平信号线)的时候传输9个bit, 第一个bit表示是控制还是数据. 带的时候连续传输8个bit, 传输第8个bit结束的时候对控制/数据信号进行采样, 判断是控制还是数据.</p>
+<p>k210芯片带有fpio, 能够软件控制输出引脚和对应芯片内真正引脚的映射关系!! 可能类似fpga, 这个功能真是绝了, 可能是我见识太浅. 接spi线的时候, 一般spi接口的数据线还是直连, 其他复位, 控制/数据选择, 片选都可以直接在GPIO或者高速GPIO里面随便选一个. 因此不同板子要调整这些映射.</p>
+<p>SPI总线也可以多条线, 4条,8条甚至16条等并行连接, 这个屏幕是典型的4线. 该板子可以外接的另外那个大屏幕似乎就是8数据线的spi.</p>
+<p>4-line serial interface Ⅱ</p>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 85%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pin Name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CSX/CS</td>
+<td>Chip selection signal</td>
+</tr>
+<tr class="even">
+<td>SCL</td>
+<td>Clock signal</td>
+</tr>
+<tr class="odd">
+<td>SDA</td>
+<td>Serial data input data</td>
+</tr>
+<tr class="even">
+<td>WRX/RS</td>
+<td>Data is regarded as a command when WRX is low. Data is regarded as a parameter or data when WRX is high</td>
+</tr>
+<tr class="odd">
+<td>DCX</td>
+<td>Clock signal</td>
+</tr>
+<tr class="even">
+<td>SDO</td>
+<td>serial output data</td>
+</tr>
+</tbody>
+</table>
+<p>3 line interface Ⅰ spi 只有片选CSX, DCX时钟, SDA 输入输出 3 line interface Ⅱ 多了 SDO, 输入和输出引脚分开了. 4 line interface Ⅰ 只有片选CSX, WRX控制/数据(参数)选择, DCX时钟, SDA 输入输出 . 4 line interface Ⅱ同理.</p>
+<p>DCX有时说是WRX一样的控制/数据选择. 可能是叫法的问题还是理解的问题???TODO</p>
+<p>SCL --&gt; LCD_WR WRX/RS --&gt; LCD_DC</p>
+<p>LCD_WR是时钟 GPIOHS30在maixpy代表LCD复位 GPIOHS31代表控制/数据选择</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fm.unregister(36, fm.fpioa.SPI0_SS3)</span><br><span class="line">fm.register(37, fm.fpioa.SPI0_SS3)</span><br><span class="line"></span><br><span class="line">fm.unregister(37, fm.fpioa.SPI0_SCLK)</span><br><span class="line">fm.register(39, fm.fpioa.SPI0_SCLK)</span><br><span class="line"></span><br><span class="line">fm.unregister(38, fm.fpioa.GPIOHS30)</span><br><span class="line">fm.unregister(39, fm.fpioa.GPIOHS31)</span><br><span class="line">fm.register(38, fm.fpioa.GPIOHS31)</span><br></pre></td></tr></table></figure>
+<p>LCD是片选3 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+----------|-----------------------+</span><br><span class="line">|   36     |     LCD_CS            |</span><br><span class="line">+----------|-----------------------+</span><br><span class="line">|   37     |     LCD_RST           |</span><br><span class="line">+----------|-----------------------+</span><br><span class="line">|   38     |     LCD_DC            |</span><br><span class="line">+----------|-----------------------+</span><br><span class="line">|   39     |     LCD_WR            |</span><br><span class="line">+----------|-----------------------+</span><br></pre></td></tr></table></figure> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fm.unregister(36, fm.fpioa.SPI0_SS3)</span><br><span class="line">fm.unregister(37, fm.fpioa.SPI0_SCLK)</span><br><span class="line"></span><br><span class="line">fm.register(37, fm.fpioa.SPI0_SS3)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fpioa_set_function(37, FUNC_GPIOHS0 + RST_GPIONUM);</span><br><span class="line">fpioa_set_function(38, FUNC_GPIOHS0 + DCX_GPIONUM);</span><br><span class="line">fpioa_set_function(36, FUNC_SPI0_SS0+LCD_SPI_SLAVE_SELECT);</span><br><span class="line">fpioa_set_function(39, FUNC_SPI0_SCLK);</span><br></pre></td></tr></table></figure>
+<p>SPI_FF_STANDARD： 标准 ​ SPI_FF_DUAL： 双线 ​ SPI_FF_QUAD： 四线 ​ SPI_FF_OCTAL： 八线（SPI3 不支持）</p>
+<h2 id="屏幕控制芯片todo">屏幕控制芯片TODO</h2>
+<p>和芯片的交互基于SPI之后, 就是发送各种控制和数据. 芯片一般有nt35310和我现在的这个st7789. 首先是各种初始化的命令, 后面就是发送数据了. 显示的数据是一个个像素传送的, 有RGB565和SUV等颜色模式.</p>
+<p>初始化首先发送SOFTWARE_RESET -(睡100ms 后面同理)-&gt; SLEEP_OFF --&gt; PIXEL_FORMAT_SET= 0x55 (表示是TODO模式) --&gt; DISPALY_ON</p>
+<h2 id="屏幕定位">屏幕定位</h2>
+<p>横着是x, 竖着是y方向</p>
+<p>控制芯片的大小是<code>320x240</code>, 当设置屏幕大小是这个值的时候. 屏幕的大小是<code>240x135</code>, 刚好在中间. 左右空出40, 上下空出53/52左右 左上角大概在(40, 52), 右下角在(280, 187)左右. 发现代码中可以设置偏移, 把偏移设置成50 40(横屏模式), 和 40 52(竖屏模式) 就好了. 基本完美. 而且反色了... 和代码中写的颜色是反的, 代码中初始化是背景色红色, 白色的字. 不知道是不是有意为之, 或者有的屏幕就是这样. 反色之后的背景白里透蓝, 黑色的字. 那我就默认反色吧, 就和代码里的颜色一致了.</p>
+<p>可以设置默认的屏幕大小. 按照保证允许软件传参更改的同时, 设置好能用的默认值的这个方针.</p>
+<h2 id="摄像头">摄像头</h2>
+<p>引脚接的都是对的. 可以直接用, 但是不稳. 不知道为什么例程很稳, 而当前的maixpy经常会报错</p>
+<h2 id="ov2640-摄像头模块">ov2640 摄像头模块</h2>
+<p>关键在于学习如何操作寄存器 k210的dvp datasheet:</p>
+<blockquote>
+<p>3.9 数字视频接口(DVP) DVP 是摄像头接口模块，特性如下： * 支持DVP接口的摄像头 * 支持SCCB协议配置摄像头寄存器 * 最大支持640X480 及以下分辨率，每帧大小可配置 * 支持YUV422 和RGB565 格式的图像输入 * 支持图像同时输出到KPU和显示屏: * 输出到KPU 的格式可选RGB888，或YUV422输入时的Y分量 * 输出到显示屏的格式为RGB565 * 检测到一帧开始或一帧图像传输完成时可向CPU发送中断</p>
+</blockquote>
+<h3 id="接口">接口</h3>
+<p>PCLK,即像素时钟,一个PCLK时钟,输出一个(或半个)像素。</p>
+<p>VSYNC,即帧同步信号。</p>
+<p>HREF/ HSYNC,即行同步信号。</p>
+<h3 id="颜色格式-rgb-yuv-ycbcr">颜色格式 RGB, YUV, YCbCr</h3>
+<h4 id="sccb">sccb</h4>
+<p>SCCB 特性都与 I2C 无区别, 可以直接用I2C控制器去通信</p>
+<h3 id="dvp">dvp</h3>
+<p>各种大大小小的时钟, 最终形成了同步的信号. 一个帧同步信号的有效时间内有很多个行同步信号, 每个行同步信号的有效时间内有很多像素时钟.</p>
+<h3 id="输出格式">输出格式</h3>
+<p>SVGA: 800 x 600 摄像头也可以配置缩放. 没写怎么配置的缩放的.</p>
+<h3 id="图形翻转">图形翻转</h3>
+<p>0xFF=1的时候, 04寄存器最高两位分别是水平镜像和垂直翻转. widora的ov2640例程中, 注释了airv r3 back的地方是 d8 也就是这两位都有. maixpy则是只有水平镜像(0xa8). 在去掉水平镜像之后, 也就是两个bit都不设置的时候(0x28), 后置摄像头显示刚好正常. (怀疑是)两边lcd的方向设置不一致, maixpy暂时调整摄像头这边.</p>
+<h3 id="代码对比阅读">代码对比阅读</h3>
+<p>linux的ov2640代码可能是发源地, 也是最完善的吧. 接着是openmv的代码, 比maixpy的整齐很多, 不乱. 接着就是kendryte的代码, 也许是参照openmv的,对比一下widora的例程. 最后是maixpy的代码.</p>
+<h3 id="widora对比kentryte">widora对比kentryte</h3>
+<p>代码的对比最好先format后diff. 这样即使widora他们声明数组是好几个一行, 也能迅速展平方便对比</p>
+<p>经过对比发现, 除了多设置了一个翻转bit之外, 只有这两个不同. 官方是 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;0x5a, 0xc8&#125;,</span><br><span class="line">&#123;0x5b, 0x96&#125;,</span><br></pre></td></tr></table></figure> widora是 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;0x5a, 0x50&#125;,</span><br><span class="line">&#123;0x5b, 0x3C&#125;,</span><br></pre></td></tr></table></figure> 搜索ov2640和zmow, 找到了Android的相关驱动代码!!! Android它们相关驱动可能比linux还完善.</p>
+<p>#define ZMOW 0x5A /* Zoom: Out Width OUTW[7:0] (real/4) <em>/ #define ZMOW_OUTW_SET(x) VAL_SET(x, 0xFF, 2, 0) #define ZMOH 0x5B /</em> Zoom: Out Height OUTH[7:0] (real/4) */</p>
+<p>这样看的话, widora是: 320*240分辨率. 官方是800*600, 修改这里确实说得过去, 不过也不注释一下...</p>
+<p>没想到这样的例程都用到了ai加速器? <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置允许导流到AI模型</span></span><br><span class="line">dvp_set_output_enable(<span class="number">0</span>, <span class="number">1</span>);    <span class="comment">//enable to ai</span></span><br><span class="line"><span class="comment">// DVP不直接导流到LCD</span></span><br><span class="line">dvp_set_output_enable(<span class="number">1</span>, <span class="number">1</span>);    <span class="comment">//disable to lcd</span></span><br></pre></td></tr></table></figure> dvp_set_ai_addr设置AI 存放图像的地址，供AI 模块进行算法处理。 void dvp_set_ai_addr(uint32_tr_addr, uint32_tg_addr, uint32_tb_addr)设置采集图像在内存中的存放地址，可以用来显示。 dvp_clear_interrupt(DVP_STS_FRAME_START | DVP_STS_FRAME_FINISH); 一般表示当前的这种中断处理完了, 可以来新的中断了. 算是是中断的pending位?. dvp_config_interrupt(DVP_CFG_START_INT_ENABLE | DVP_CFG_FINISH_INT_ENABLE, 1); 打开中断开关 dvp_start_convert() 在开始采集图像的时候调用 表示开始采集图像 dvp_disable_auto() 禁用自动接收图像模式。</p>
+<p>总结起来, 就是开启dvp中断. k210的dvp会提供开始采集和停止采集的两种中断. 开始采集的时候, 在中断处理中调用start_convert. 结束采集的时候, 设置标志位. 当中断退出的时候, 忙等的处理器就会注意到标志位, 清零并设置切换buffer的标志, 向屏幕发送数据. 另外就是中断处理的时候根据buffer标志设置buffer. 根据需要切换buffer是在结束采集的时候?? 不应该啊, 切换buffer不是为了让采集和输出不在同一个buffer吗.</p>
+<p>根据LCD的需求来切换dvp数据放到哪个缓存，目的是保证把图像传给LCD的时候, dvp不是正好输出到这个buf。</p>
+<p>buf大小上, ai为什么要给三个RGB的buf? 我修改了zoom出来的大小是否相关的buf大小也需要变化? 查看发现widora和官方的main函数一直, buf大小相同. RGB565是2字节一个像素. 这里是320*240*2 = 38400个uint32 (widora的dvp buffer大小.) 而AI的buffer大小是3*12c00 = 38400 这是怎么回事? RGB怎么可能均分呢? 这可是RGB565.</p>
+<p>set_framesize在设置QVGA的时候不仅设置了dvp_set_image_size, 也设置了摄像头那边的zoom寄存器.</p>
+<h3 id="ov2640-帧率">ov2640 帧率</h3>
+<p>分析software application notes的帧率设置案例. 下面的寄存器都在0xff=1的情况下 首先是0x11寄存器, 最低4位为clock dividor. 寄存器的值高帧率的时候为0, 低的时候为1, 可能divide了就帧率减半吗? 0x12寄存器的(低到高)第三位, zoom mode. svga的时候设为1, uxga的时候为0 0x2a寄存器, 大家都设置为0 line interval adjust value的高四位, Hsync start/end point adjustment MSB. 0x2b也为0, line interval adjust value的低8位. 帧率会被这个12bit的值微调. 0x46为低位, 0x47为高位, 组成了frame length adjustment. 这个值每多1, 就在帧中增加了1个水平线的时间. 0x47大家也都设置为0. 这个值是调整帧率的关键. 0x3d寄存器很神秘, 在手册的保留寄存器的范围内. svga设置为了0x38, uxga设置成了0x34</p>
+<p>SVGA 800×600来看的话, 高度是600. frame length adjustment为0时的刷新率是30fps. 而增加了clock dividor, 帧率减半得到15fps. 如果只frame length adjustment设置为了0x87=135, 那么帧率就乘上了缩放倍数(600/600+135), 得到25fps.</p>
+<p>总之关键在于寄存器0x11和寄存器0x46 0x47.</p>
+<table>
+<thead>
+<tr class="header">
+<th>type</th>
+<th>clock dividor</th>
+<th>frame length adjustment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>widora/kendryte</td>
+<td>0</td>
+<td>0x22</td>
+</tr>
+<tr class="even">
+<td>maixpy</td>
+<td>0</td>
+<td>0x22</td>
+</tr>
+</tbody>
+</table>
+<p>当前maixpy的帧率, 30fps * (600/600+34) = 28.4帧... 为什么是这种奇怪的帧数? 难道是我哪里理解错了? 或者为了凑什么倍数??</p>
+<h3 id="ov2460-颜色">ov2460 颜色</h3>
+<p>0xff= CTRL0 = 0xC2寄存器 最低四位由低到高依次为RAW_EN, RGB_EN, YUV_EN, YUV422. 默认和maixpy的配置都是0x0C=1100 0xDA寄存器的名字是IMAGE_MODE, bit0 byte swap for DVP(low/high byte first), bit[3:2] 00-&gt;yuv422, 01-&gt;raw10, 10-&gt; RGB565, 11-&gt;Reserved kendryte是0x08, 也就是RGB565, maixpy是0x01, 也就是YUV422+byte swap</p>
+<p>这边寄存器的设置要和那边dvp的接收设置匹配起来. 而调用picformat只是设置dvp的接收的格式.</p>
+<h3 id="maixpy和openmv的代码解析">maixpy和openmv的代码解析</h3>
+<p>openmv的代码更大型一些, 功能更多. 对摄像头相关的寄存器使用得更灵活. 前面的配置一般还是svga, 但是最后zoom出来分辨率不会那么大.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import sensor    </span><br><span class="line">import lcd</span><br><span class="line"></span><br><span class="line">lcd.init()</span><br><span class="line"></span><br><span class="line">sensor.reset()</span><br><span class="line">sensor.set_pixformat(sensor.RGB565)</span><br><span class="line">sensor.set_framesize(sensor.QVGA)</span><br><span class="line">sensor.run(1)</span><br><span class="line"></span><br><span class="line">while True:</span><br><span class="line">    img &#x3D; sensor.snapshot()</span><br><span class="line">    lcd.display(img)</span><br></pre></td></tr></table></figure>
+<p>先在这个典型的例程里, 依次分析一下各个函数. 代码结构依次是py_sensor.c -&gt; sensor.c -&gt; ov2460.c 首先是探测过程, 读取厂家和型号id. ov2460_init函数会填写sensor结构体, 暴露出内部函数. 设置frame_size的时候, 也会设置摄像头的zoom相关寄存器. set_pixformat似乎没有用了, 而且似乎是yuv. 设置成其他的格式会花屏. 也许是方便直接输入模型吧. set_framerate也无法设置, ov2460.c中直接返回-1了.</p>
+<p>sensor和lcd没有直接的关联或者相互调用, snapshot函数则是传过去的关键. snapshot函数甚至还对buf做了什么jpeg压缩处理, 考虑了连接ide的情况.</p>
+<p>超时不一定是摄像头配置问题. 也可能是中断处理问题. 试了下去掉双buf选项编译还是不行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    #ifdef CONFIG_BOARD_AIRVR3</span><br><span class="line">	&#123;0x5a, 0x50&#125;,</span><br><span class="line">	&#123;0x5b, 0x3c&#125;,</span><br><span class="line">    #else</span><br><span class="line">	&#123;0x5a, 0xc8&#125;,</span><br><span class="line">	&#123;0x5b, 0x96&#125;,</span><br><span class="line">    #endif</span><br><span class="line">	&#123;0x5c, 0x00&#125;,</span><br><span class="line">	&#123;0xc3, 0xed&#125;,</span><br><span class="line">	&#123;0x7f, 0x00&#125;,</span><br><span class="line">	&#123;0xe5, 0x1f&#125;,</span><br><span class="line">	&#123;0xdd, 0x7f&#125;,</span><br><span class="line">	&#123;0x05, 0x00&#125;,</span><br><span class="line">#if 1	&#x2F;&#x2F;color bar</span><br><span class="line">	&#123;0xff, 0x01&#125;,</span><br><span class="line">	&#123;0x12, 0x02&#125;,</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+<h3 id="尝试log">尝试log</h3>
+<p>reduced the clock to 11MHz, 似乎能提高帧率</p>
+<p>图像格式的问题, 搞清楚是怎么设置的. 八成不是中断的问题... 把RGB关掉试试, 用YUV也是好的</p>
+<p>测试情况: 使用airv配置 不注释svga, 有时花屏有时正常显示, 图像也上下左右反了 使用maixpy配置有时无法显示, 有时正常</p>
+<p>不会显示异常的关键是选对dvp的颜色格式和摄像头配置的颜色格式</p>
+<p>maixpy的摄像头相关还是不太行, 可能有bug. 这里如果不设置framesize就直接snapshot, 会报错Not init. 之后居然就崩了...</p>
+<p>这就是软件工程的困境吗?</p>
+<p>等一波新版本发布, github watch了</p>
+<p>不会是供电问题吧... 只有程序小的时候才能正常显示</p>
+<h3 id="总结">总结</h3>
+<p>今天添加散热片发现, k210在dvp2lcd的时候发热还是非常大的. 而当我把k210吹冷了之后, 摄像头就又能用了. 可能摄像头本身就是好的吧, 一个是摄像头的参数不如官方的例程调教得好, 有一些彩色条纹. 看电脑屏幕有波纹(可能是正常现象.) 另外就是Back的时候, 需要额外设置hmirror(1)的时候才是正确的, 之后可以把这个设置搞成默认.</p>
+<p>也可能是摄像头发热严重(更可能了, 因为我CPU降频了还是不太稳.) 这个还不好贴散热片 降频试试, 改代码增加了个clock devidor, 帧率减半, 看看会不会好一点</p>
+<p>最后发现帧率减半确实稳定了一些, 没有显示的时候手动按下reset也容易来显示. 另外修改main.py, 利用time的计时器, 计算了一下调用sensor.snapshot和lcd.display消耗的时间 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">while True:</span><br><span class="line">    img&#x3D;sensor.snapshot()</span><br><span class="line">    print(&#39;sensor time consume:&#39;)</span><br><span class="line">    print(time.ticks_diff(time.ticks_us(), last))</span><br><span class="line">    last &#x3D; time.ticks_us()</span><br><span class="line">    lcd.display(img)</span><br><span class="line">    print(&#39;display time consume:&#39;)</span><br><span class="line">    print(time.ticks_diff(time.ticks_us(), last))</span><br><span class="line">    last &#x3D; time.ticks_us()</span><br></pre></td></tr></table></figure> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">sensor time consume:</span><br><span class="line">64081</span><br><span class="line">display time consume:</span><br><span class="line">158648</span><br><span class="line">sensor time consume:</span><br><span class="line">64122</span><br><span class="line">display time consume:</span><br><span class="line">158715</span><br><span class="line">sensor time consume:</span><br><span class="line">64022</span><br><span class="line">display time consume:</span><br><span class="line">158769</span><br><span class="line">sensor time consume:</span><br><span class="line">63994</span><br><span class="line">display time consume:</span><br><span class="line">158708</span><br><span class="line">sensor time consume:</span><br><span class="line">64098</span><br><span class="line">display time consume:</span><br><span class="line">158698</span><br></pre></td></tr></table></figure> 可能拖后腿的还是这个小屏吧? 毕竟只有一根线的spi? 或者说是maixpy的display太消耗时间了?</p>
+<p>看了看那边widora例程的频率确实高一些, 设置<code>lcd.freq(20000000)</code>和那边相同之后帧率感觉高了一些, 不知道是不是错觉 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">sensor time consume:</span><br><span class="line">73897</span><br><span class="line">display time consume:</span><br><span class="line">148786</span><br><span class="line">sensor time consume:</span><br><span class="line">74002</span><br><span class="line">display time consume:</span><br><span class="line">148886</span><br><span class="line">sensor time consume:</span><br><span class="line">73860</span><br><span class="line">display time consume:</span><br><span class="line">148909</span><br><span class="line">sensor time consume:</span><br><span class="line">73860</span><br><span class="line">display time consume:</span><br><span class="line">148867</span><br></pre></td></tr></table></figure> 把这个帧率也搞成默认吧. 直接在makefile里面设置就可以. 帧率就先不考虑, 主要考虑摄像头的稳定性, 不会重启用不了就好</p>
+<p>我以为freq.conf是自己改的, 没想到是设置之后自动保存的, 我们不用改...</p>
+<p>希望maixpy越来越好.</p>
+<h2 id="i2s学习与maixpy麦克风">i2s学习与maixpy麦克风</h2>
+<p>看怎么用上面的麦克风.</p>
+<p>https://www.allaboutcircuits.com/technical-articles/introduction-to-the-i2s-interface/</p>
+<p>https://hackaday.com/2019/04/18/all-you-need-to-know-about-i2s/</p>
+<p>https://www.jianshu.com/p/e4f07bcd9df4</p>
+<p>https://www.cnblogs.com/schips/p/12305649.html</p>
+<table>
+<thead>
+<tr class="header">
+<th>引脚</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SCK/BLCK/SLCK</td>
+<td>clock</td>
+</tr>
+<tr class="even">
+<td>WS/LRCK</td>
+<td>word select</td>
+</tr>
+<tr class="odd">
+<td>SD/SDATA</td>
+<td>data</td>
+</tr>
+<tr class="even">
+<td>NC</td>
+<td>(悬空)</td>
+</tr>
+<tr class="odd">
+<td>EN</td>
+<td>片选/启用? 直接接到了3v3</td>
+</tr>
+<tr class="even">
+<td>LR</td>
+<td>左右选择</td>
+</tr>
+</tbody>
+</table>
+<p>I2S就是被设计来传送音频数据的, 其他的数据都是之后的hacky玩法. 它用一条线区分左右声道, 一条时钟线同步信号, 和一条真正的线传送数据. 在我们板子的receiver=master的情况下, 时钟和WS是接收方发送给麦克风的, 发送方通过SD发送数据给接收方.</p>
+<p>I2S允许两个声道的数据在一条线上传送. 因此有了左右声道的选择线. 采样的时候要交替左右轮流读一个字, 导致这个选择线的信号也类似于时钟. 麦克风的规格书里推荐的就是两个麦克风的三条I2S线相连, 一个L/R接地, 一个L/R接电源, 这样就成为了一个立体麦克风.</p>
+<p>板子的L/R是接地的, 因此音频要在左声道接受, 需要给出WS为低的时候才有数据, 否则为0. 这是使用的左对齐标准, 24bit的采样数据包装在32位中. 最右边8bit固定为0. Phillips标准则在WS高的时候发送左声道数据.</p>
+<p>MSB优先发送. 变化WS之后要等一个时钟周期再开始接受数据. SCLK的频率=2×采样频率×采样位数, LRCK的频率等于采样频率, 这样就刚好能完整收集左右声道的采样数据了.</p>
+<p>下面这段来自麦克风的规格书 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">I²S DATA INTERFACE</span><br><span class="line">  The serial data is in slave mode I²S format, which has 24‐bit depth in a 32 bit word. In a stereo frame there are 64 SCK cycles, or 32 SCK cycles per data‐word. When L&#x2F;R&#x3D;0, the output data in the left channel, while L&#x2F;R&#x3D;Vdd, data in the right channel. The output data pin (SD) is tristated after the LSB is output so that another microphone can drive the common data line.</span><br><span class="line">Data Word Length</span><br><span class="line">  The output data‐word length is 24 bits per channel. The Mic must always have 64 clock cycles for every stereo data‐word (fSCK &#x3D; 64 × fWS).</span><br><span class="line">Data‐Word Format</span><br><span class="line">  The default data format is I²S, MSB‐first. In this format, the MSB of each word is delayed by one SCK cycle from the start of each half‐frame.</span><br></pre></td></tr></table></figure></p>
+<h2 id="k210的i2s">k210的I2S</h2>
+<p>k210有3个I2S, 因此说它能接6麦克风阵列.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">其中I²S0 支持可配置连接语音处理模块，实现语音增强和声源定向的功能。</span><br><span class="line">• 总线宽度可配置为8，16，和32 位</span><br><span class="line">• 每个接口最多支持4个立体声通道</span><br><span class="line">• 由于发送器和接收器的独立性，所以支持全双工通讯</span><br><span class="line">• APB 总线和I²S SCLK 的异步时钟</span><br><span class="line">• 音频数据分辨率为12,16,20,24 和32 位</span><br><span class="line">• I²S0 发送FIFO 深度为64 字节, 接收为8 字节，I²S1 和I²S2 的发送和接收FIFO 深度都为8字节</span><br><span class="line">• 支持DMA 传输</span><br><span class="line">• 可编程FIFO 阈值</span><br></pre></td></tr></table></figure>
+<p>k210使用的是4通道的I2S.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[MAIXPY]: numchannels &#x3D; 2</span><br><span class="line">[MAIXPY]: samplerate &#x3D; 22050</span><br><span class="line">[MAIXPY]: byterate &#x3D; 88200</span><br><span class="line">[MAIXPY]: blockalign &#x3D; 4</span><br><span class="line">[MAIXPY]: bitspersample &#x3D; 16</span><br></pre></td></tr></table></figure>
+<p>目前还是没声音, 需要学习I2S的FIFO是什么意思. 深度是什么意思, 然后就是怎么处理ws的, 为什么每个I2S有4个输入,4个输出引脚, 采样率怎么设置</p>
+<p>4个输入和4个输出应该是对应4个channel, 可能方便切换吧?? 接受数据的时候, 一个每次传送数据的cycle. 每次传送的数据的bit数</p>
+<table>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>word_length/RESOLUTION</td>
+<td>每个word的长度. 12/16/20/24/32选24</td>
+</tr>
+<tr class="even">
+<td>word_select_size/SCLK_CYCLES</td>
+<td>16/24/32选32. 大概是指在WS不变化的时候的cycle数, 也就是WS周期的一半.</td>
+</tr>
+<tr class="odd">
+<td>word_mode</td>
+<td>选左对齐.</td>
+</tr>
+</tbody>
+</table>
+<p>有声音了, 关键是上面列举的参数选择. I2S学习先告一段落.</p>
+<p>i2s_set_dma_divide_16 函数能设置让DMA的时候自动把32 比特INT32 数据分成两个16 比特的左右声道数据。 那么这32bit的数据从哪来的?</p>
+<p>I2S要不要设置时钟周期??</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" data-id="ckm6g0ddu000e3ktr6bme2l2s" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/COM%E4%B8%8ERPC/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          COM与RPC
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/heap/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">堆复习</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
+          </li>
+        
+          <li>
+            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/COM%E4%B8%8ERPC/">COM与RPC</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 am009<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
