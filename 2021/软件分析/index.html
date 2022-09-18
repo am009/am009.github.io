@@ -41,13 +41,11 @@
 <meta property="og:image" content="https://wjk.moe/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/image-20210128165511145.png">
 <meta property="og:image" content="https://wjk.moe/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/image-20210128165817475.png">
 <meta property="article:published_time" content="2021-02-01T03:11:11.000Z">
-<meta property="article:modified_time" content="2021-03-12T14:50:48.091Z">
-<meta property="article:author" content="am009">
+<meta property="article:modified_time" content="2022-09-13T05:09:05.514Z">
+<meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="PL">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wjk.moe/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/image-20210117213246480.png">
-  
-    <link rel="alternate" href="/atom.xml" title="" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -58,7 +56,7 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
-<meta name="generator" content="Hexo 5.4.0"></head>
+<meta name="generator" content="Hexo 6.3.0"></head>
 
 <body>
   <div id="container">
@@ -80,10 +78,10 @@
         
           <a class="main-nav-link" href="/archives">Archives</a>
         
+          <a class="main-nav-link" target="_blank" rel="noopener" href="https://github.com/am009">Author&#39;s Github</a>
+        
       </nav>
       <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
@@ -138,7 +136,7 @@
 <h3 id="实际的ir-soot的3ac">实际的IR-Soot的3AC</h3>
 <p>Soot能分析Java程序，它就是产生typed 3AC.</p>
 <p>(Soot？JVM) 中常见的invoke指令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">invokespecial: call constructor, call superclass methods, call private methods</span><br><span class="line">invokevirtual: instance method call (virtual dispatch)</span><br><span class="line">invokeinterface: cannot optimization, checking interface implementation.</span><br><span class="line">invokestatic: call static methods</span><br><span class="line"></span><br><span class="line">Java 7: invoke dynamic -&gt; Java static typing, dynamic language on JVM</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">invokespecial: call constructor, call superclass methods, call private methods</span><br><span class="line">invokevirtual: instance method call (virtual dispatch)</span><br><span class="line">invokeinterface: cannot optimization, checking interface implementation.</span><br><span class="line">invokestatic: call static methods</span><br><span class="line"></span><br><span class="line">Java 7: invoke dynamic -&gt; Java static typing, dynamic language on JVM</span><br></pre></td></tr></table></figure>
 <p>多个字符串相加会实例化新的StringBuilder，依次对每个字符串调用append，最后toString。</p>
 <p>Java的class，静态成员初始化（静态代码块？）会在生成的<code>&lt;clinit&gt;</code>函数中，比如给static final double pi = 3.14这样的成员赋值。</p>
 <h3 id="ssa">SSA</h3>
@@ -348,7 +346,7 @@ f^{i}(\bot) \sqsubseteq f^{i}(x) = x, i \in N^+
 MOP[S_i]=\mathop{\sqcup/\sqcap}\limits_{A\ path\ P\ from\ Entry\ to\ S_i} (F_P(OUT[Entry]))
 \]</span> 而有一些Path可能是真实情况下不会被执行到的，所以我们的结果不是完全精确的，不是truth。而有一些循环是可能无数次的，不可枚举的，枚举所有情况是不可能的。</p>
 <h5 id="我们的迭代方法-vs-mop的方法">我们的迭代方法 vs MOP的方法</h5>
-<p>我们的方法和MOP的方法的明显区别在于，MOP的meet是在最后进行的，而我们可能会提前meet结果在待入下一步的转换函数。</p>
+<p>我们的方法和MOP的方法的明显区别在于，MOP的meet是在最后进行的，而我们可能会提前meet结果在带入下一步的转换函数。</p>
 <figure>
 <img src="image-20210117220047438.png" alt="image-20210117220047438" /><figcaption aria-hidden="true">image-20210117220047438</figcaption>
 </figure>
@@ -477,7 +475,7 @@ c&#39;是c的父类
 <h3 id="class-hieracy-analysis">Class hieracy analysis</h3>
 <p><code>A a = ...;a.foo()</code>既然我们不知道会调用到哪个子类的方法，那就假设可能会调用到任何一个子类中的对应方法。</p>
 <p>分析情景：假设我们在Soot中遇到了一个invoke称为cs，参数有一个"signature"称为m：<code>&lt;C: T foo(P,Q,R)&gt;</code>，如果是virtual call还会多一个Receiver object。Class hieracy analysis的Call Resilution算法描述如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Resole(cs) &#123;</span><br><span class="line">    T = &#123;&#125;;</span><br><span class="line">	m = cs指令的“signature”参数;</span><br><span class="line">    <span class="keyword">if</span> cs is a <span class="keyword">static</span> call &#123;</span><br><span class="line">        T = &#123; m &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> cs is a special call &#123;</span><br><span class="line">        定义C^m为m的<span class="class"><span class="keyword">class</span>信息;</span></span><br><span class="line">        T = &#123; Dispatch(c^m,m) &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> cs is a <span class="keyword">virtual</span> call &#123;</span><br><span class="line">        c = cs的receiver object在声明的时候的类型;</span><br><span class="line">        对c的每个子类 c<span class="number">&#x27;</span>（包括c自己） &#123;</span><br><span class="line">        	往T添加Dispatch(c<span class="number">&#x27;</span>,m);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Resole(cs) &#123;</span><br><span class="line">    T = &#123;&#125;;</span><br><span class="line">	m = cs指令的“signature”参数;</span><br><span class="line">    <span class="keyword">if</span> cs is a <span class="type">static</span> call &#123;</span><br><span class="line">        T = &#123; m &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> cs is a special call &#123;</span><br><span class="line">        定义C^m为m的<span class="class"><span class="keyword">class</span>信息;</span></span><br><span class="line">        T = &#123; Dispatch(c^m,m) &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> cs is a virtual call &#123;</span><br><span class="line">        c = cs的receiver object在声明的时候的类型;</span><br><span class="line">        对c的每个子类 c<span class="number">&#x27;</span>（包括c自己） &#123;</span><br><span class="line">        	往T添加Dispatch(c<span class="number">&#x27;</span>,m);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果是static call，则直接可以找到对应的方法。如果是special call有三种情况，其中私有方法，自己的构造函数，则就是签名中的m，第三种情况是父类的方法（super关键字），这种情况需要不断回溯，因此我们统一也使用Dispatch函数来处理。（这里可以发现Dispatch的参数c^m是编译器确定的，因此返回的结果也是编译期能够确定的。）</p>
 <p>这里是从那个变量声明时的类型向下找每个子类可能调用到的方法，而jvm运行的时候使用dispatch是从当前真正的类型向上找定义的方法，这就说明了对声明为C的类型的变量调用virtual call，那么被调用的函数所在的类，在继承树上最高不会超过C，最低不会低于变量真正的类型。错了，可能会高过C，但是此时C肯定也“有”这个方法，结果会等于Dispatch(C,m)。</p>
 <p>CHA的优点：速度快，只考虑声明时的信息，但是忽略了数据和控制流的信息。缺点：不精确。很容易引入过多的目标函数。之后会通过指针分析的方法改善。</p>
@@ -496,15 +494,15 @@ c&#39;是c的父类
 <p>那要不要考虑subinterface？？</p>
 <h3 id="从invokeexpr中获取调用出变量的class">从InvokeExpr中获取调用出变量的class</h3>
 <p>原本是</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SootClass current = method.getDeclaringClass()</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SootClass</span> <span class="variable">current</span> <span class="operator">=</span> method.getDeclaringClass()</span><br></pre></td></tr></table></figure>
 <p>表示该方法定义所在的class。但是在下面这个例子里，返回的是A。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class VirtualCall &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        B b &#x3D; new B();</span><br><span class="line">        b.foo();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class A &#123;</span><br><span class="line">    void foo() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class B extends A &#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class VirtualCall &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        B b = new B();</span><br><span class="line">        b.foo();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class A &#123;</span><br><span class="line">    void foo() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class B extends A &#123;&#125;</span><br></pre></td></tr></table></figure>
 <p>但是其实b的定义处的类型是B，我想要从B开始向下遍历类，通过调试搞出了下面这样的代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SootClass current = ((RefType)((InstanceInvokeExpr)invoke).getBase().getType()).getSootClass();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SootClass</span> <span class="variable">current</span> <span class="operator">=</span> ((RefType)((InstanceInvokeExpr)invoke).getBase().getType()).getSootClass();</span><br></pre></td></tr></table></figure>
 <p>VirtualInvokeExpr和InterfaceInvokeExpr这两个interface都是InstanceInvokeExpr的subInterface。多了getBase这个方法获取Local类型的变量（b），然后用getType，强转为RefType，调用getSootClass得到类型（b的类型B）。</p>
 <p>但是这真的是正确的答案吗？感觉不应该这么复杂的。。。如果是从A开始遍历子类确实容易遍历到是A的子类而不是B的子类的类型。</p>
 <h3 id="观察intra-和interprocedural-constant-propagation">观察Intra-和Interprocedural constant propagation</h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    int a, b, c;</span><br><span class="line">    CHACP x &#x3D; new CHACP();</span><br><span class="line">    a &#x3D; 6;</span><br><span class="line">    b &#x3D; x.addOne(a);</span><br><span class="line">    c &#x3D; b - 3;</span><br><span class="line">    b &#x3D; x.ten();</span><br><span class="line">    c &#x3D; a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    int a, b, c;</span><br><span class="line">    CHACP x = new CHACP();</span><br><span class="line">    a = 6;</span><br><span class="line">    b = x.addOne(a);</span><br><span class="line">    c = b - 3;</span><br><span class="line">    b = x.ten();</span><br><span class="line">    c = a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>确实能够优化到addOne函数和ten函数。</p>
 <h2 id="指针分析">08-指针分析</h2>
 <p>CHA的一个重大问题就是如果是interface，则所有implement了这个interface的类都可能是目标。OO中的指针分析分析的就是某个类的变量，指向的到达是什么实例。指针分析的是指向的对象的性质，更应该叫指向分析。指针分析几乎是静态程序分析的基础。Dagstuhl Seminar 2013的对指针分析的研讨会里这么说。</p>
@@ -791,7 +789,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <h2 id="实验五">实验五</h2>
 <p>Cloning-Based Context Sensitivity具体在代码中如何体现？在heap model和调用时生成标签中，返回了不同的object，则会在PFG和最终的pt上产生不同的节点，从而增加精确性。</p>
 <p>指针分析的类实例化后，通过下面的方式设置了heap model和contex selector。我们需要的就是返回合适的context标记</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pta.setHeapModel(<span class="keyword">new</span> AllocationSiteBasedModel());</span><br><span class="line">pta.setContextSelector(<span class="keyword">new</span> ContextInsensitiveSelector());</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pta.setHeapModel(<span class="keyword">new</span> <span class="title class_">AllocationSiteBasedModel</span>());</span><br><span class="line">pta.setContextSelector(<span class="keyword">new</span> <span class="title class_">ContextInsensitiveSelector</span>());</span><br></pre></td></tr></table></figure>
 <p>谁应该被包裹在context里面？根据实验指导，是Callsite、Obj、Type(Method.getClassType)。另外还有两点需要注意，call-site sensitivity对静态方法的处理和成员方法的处理相同。而对Object和Type sensitivity来说则是不额外处理，直接传递context。</p>
 <p>例如实现k=2的情况，当context没有那么多的时候，还是需要实验DefaultContext和OneContext。</p>
 <p>初始化entry函数的时候，当前的Context就是default context。</p>
@@ -831,11 +829,11 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <p>Atoms 是Datalog中最基本的元素，形如<code>P(X1,X2,...,Xn)</code>的称为relational atom。如果<code>(“Xiaoming”,18)</code>在表中，则<code>Age(“Xiaoming”,18)</code>为真。还有arithmetic atoms，如<code>age &gt;= 18</code>这种变量判断。</p>
 <p>Datalog Rules形如<code>H &lt;-B1,B2,…,Bn.</code>，由Head，箭头，Body组成。意思是当body为true的时候Head也为true。其中<code>,</code>为与逻辑，<code>;</code>为或逻辑，<code>!</code>为非逻辑，复杂逻辑最好多加加括号。</p>
 <p>考虑如下规则：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Adult(person) &lt;- Age(person,age), age &gt;&#x3D; 18.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Adult(person) &lt;- Age(person,age), age &gt;= 18.</span><br></pre></td></tr></table></figure>
 <p>Datalog可能会遍历Age表赋值person和age变量，然后推导，得到每个Person的Adult是否为true。</p>
 <p>谓词分为EDB（extensional database）、IDB（intensional database）。EDB为给定的数据，IDB是推导出的数据。</p>
 <p>Datalog最关键的是支持递归：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Reach(from, to) &lt;- Edge(from, to).</span><br><span class="line">Reach(from, to) &lt;- Reach(from, node), Edge(node, to).</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Reach(from, to) &lt;- Edge(from, to).</span><br><span class="line">Reach(from, to) &lt;- Reach(from, node), Edge(node, to).</span><br></pre></td></tr></table></figure>
 <h3 id="规则安全性">规则安全性</h3>
 <p>A rule is safeif every variable appears in at least one non-negatedrelationalatom</p>
 <p>每个变量至少要出现在右侧relational atom一次，被取反的不算。</p>
@@ -891,7 +889,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <h3 id="函数调用流匹配">函数调用流匹配</h3>
 <p>回忆Meet-Over-all-path，是将所有可能的路径找出，依次计算每个路径，再合并。在函数调用过程中的调用边和return边匹配，导致走return边的时候只有一条真正路径<code>RealizablePaths</code>，其他的并不是真正可执行的路径。</p>
 <p>这种调用边导致的问题，可以通过类似括号匹配的算法识别不对的路径并避免。这里引入context-free language，若某路径在该语言中，称为有CFL-Reachability。调用边作为左括号，加上特有标号，只和同样标号的return边匹配。中间可以有任意的普通边。这里识别的是任意点到任意点的路径，不一定是完整的路径，因此可能会留下待之后被匹配的左括号。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">realizable -&gt; matched realizable</span><br><span class="line">-&gt; (_i realizable</span><br><span class="line">-&gt; ε</span><br><span class="line">matched -&gt; (_i matched )_i</span><br><span class="line">-&gt; e</span><br><span class="line">-&gt; ε</span><br><span class="line">-&gt; matched matched</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">realizable -&gt; matched realizable</span><br><span class="line">-&gt; (_i realizable</span><br><span class="line">-&gt; ε</span><br><span class="line">matched -&gt; (_i matched )_i</span><br><span class="line">-&gt; e</span><br><span class="line">-&gt; ε</span><br><span class="line">-&gt; matched matched</span><br></pre></td></tr></table></figure>
 <h3 id="ifdsinterproceduralfinitedistributivesubset-problem">IFDS(Interprocedural,Finite,Distributive,Subset Problem)</h3>
 <p>IFDS处理跨函数的数据流分析，在有限域上，基于distributive的flow function。提供meet-over-all-realizable-paths(MRP)的结果。主要步骤：</p>
 <ol type="1">
@@ -972,7 +970,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 </ol>
 <h3 id="distributivity">Distributivity</h3>
 <ol type="1">
-<li><p>能否做常数传用（constant propagation）？它是之前那个比较特殊的，域是无限的。那我只考虑有限的常量可以吗？NO</p>
+<li><p>能否做常数传播（constant propagation）？它是之前那个比较特殊的，域是无限的。那我只考虑有限的常量可以吗？NO</p>
 <p>TODO</p></li>
 <li><p>能否做指针分析？NO</p></li>
 </ol>
@@ -1034,7 +1032,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
   </div>
 
@@ -1044,7 +1042,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
   </div>
 
@@ -1054,7 +1052,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/CTF/" style="font-size: 17.5px;">CTF</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12.5px;">ucore</a>
+      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.67px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 13.33px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.67px;">StaticAnalysis</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
     </div>
   </div>
 
@@ -1063,7 +1061,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -1076,23 +1074,23 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
       <ul>
         
           <li>
-            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
+            <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/">反编译-代码混淆-程序分析与编译优化</a>
           </li>
         
           <li>
-            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
+            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理中级修炼与备战编译系统赛</a>
           </li>
         
           <li>
-            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
+            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">聊聊WebAssembly程序分析与混淆</a>
           </li>
         
           <li>
-            <a href="/2020/UAC-bypass%E7%AC%94%E8%AE%B0/">UAC-bypass 笔记</a>
+            <a href="/2022/NativeSummary-intro/">NativeSummary简介</a>
           </li>
         
           <li>
-            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
+            <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/">静态分析学习资源分享</a>
           </li>
         
       </ul>
@@ -1107,7 +1105,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2021 am009<br>
+      &copy; 2022 am009@github.com<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -1118,6 +1116,8 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
     <a href="/" class="mobile-nav-link">Home</a>
   
     <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/am009" class="mobile-nav-link">Author&#39;s Github</a>
   
 </nav>
     

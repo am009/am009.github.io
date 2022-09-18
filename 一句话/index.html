@@ -15,11 +15,9 @@
 <meta property="og:description" content="一句话的问题 很多问题的解决方案，虽然非常有用，但是概括起来不需要多少字，都汇总在这里。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-03-01T03:11:11.000Z">
-<meta property="article:modified_time" content="2021-03-12T13:47:25.118Z">
-<meta property="article:author" content="am009">
+<meta property="article:modified_time" content="2022-09-13T05:06:13.004Z">
+<meta property="article:author" content="am009@github.com">
 <meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/atom.xml" title="" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -30,7 +28,7 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
-<meta name="generator" content="Hexo 5.4.0"></head>
+<meta name="generator" content="Hexo 6.3.0"></head>
 
 <body>
   <div id="container">
@@ -52,10 +50,10 @@
         
           <a class="main-nav-link" href="/archives">Archives</a>
         
+          <a class="main-nav-link" target="_blank" rel="noopener" href="https://github.com/am009">Author&#39;s Github</a>
+        
       </nav>
       <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
@@ -98,8 +96,10 @@
 <p>[toc]</p>
 <h2 id="最稳定的给自己的推送接口">最稳定的给自己的推送接口</h2>
 <p>通过qq邮箱SMTP，发给自己（同一个邮箱），通过qq的QQ邮箱提醒接收</p>
-<h2 id="最方便地换硬盘重装系统">最方便地换硬盘重装系统</h2>
-<p>利用win10自带的 <code>备份与恢复（win7）</code> 借来一个大容量移动硬盘先备份，换硬盘之后恢复。</p>
+<h2 id="方便地换硬盘重装系统">方便地换硬盘重装系统</h2>
+<p>2022年9月13日 直接用DiskGenius的系统迁移功能，直接下免费版也能用。体验下来比<code>备份与恢复（win7）</code>好很多。但是<code>备份与恢复（win7）</code>用来给电脑做全盘备份还是不错的。</p>
+<p><del>利用win10自带的 <code>备份与恢复（win7）</code> 借来一个大容量移动硬盘先备份，换硬盘之后恢复。</del></p>
+<p>2021年12月19日 这个其实还是有很多槽点的。一旦你用usb安装盘进入恢复过程，它给你报个错，你就完全没有任何办法。。。之前成功过两次，但也遇到了几次没办法的情况。今天尝试DiskGenius的系统迁移功能，新硬盘通过硬盘盒，usb连接电脑，然后热迁移过去。</p>
 <h2 id="将旧电脑系统连带硬盘迁移到新电脑">将旧电脑系统连带硬盘迁移到新电脑</h2>
 <p>使用下面命令准备系统：然后直接移动硬盘过去。</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">%windir%</span>\system32\sysprep\sysprep.exe /generalize /oobe /shutdown</span><br></pre></td></tr></table></figure>
@@ -111,7 +111,7 @@
 </ol>
 <h2 id="ida出现import-site-failed">ida出现import site failed</h2>
 <p>清空自己的PYTHONHOME才行 或者通过bat启动</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set PYTHONHOME&#x3D;</span><br><span class="line">set PYTHONPATH&#x3D;</span><br><span class="line">start C:\Users\warren\my_programs\IDA_Pro_v7.0_Portable\ida.exe</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set PYTHONHOME=</span><br><span class="line">set PYTHONPATH=</span><br><span class="line">start C:\Users\warren\my_programs\IDA_Pro_v7.0_Portable\ida.exe</span><br></pre></td></tr></table></figure>
 <h2 id="sd卡作为内部存储">SD卡作为内部存储</h2>
 <p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/38044532/how-to-turn-a-portable-sd-card-into-internal-storage-via-adb-command">stackoverflow</a></p>
 <p>不需要改initrd，或者什么vold.fstab了。现在的安卓系统内置支持了。害的我还折腾，root手机。 <code>sm set-force-adoptable true</code>大法， <code>sm partition disk:179,64 mixed 60</code>表示留下60%的空间，将SD卡40%的空间用作内部存储。<code>sm partition disk:179,64 private</code>表示将整个SD卡用作内部存储。</p>
@@ -122,13 +122,14 @@
 <p>三星手机似乎非常复杂。</p>
 <h2 id="git从commit中提取patch">git从commit中提取patch</h2>
 <p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/6658313/how-to-generate-a-git-patch-for-a-specific-commit">这里</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git format-patch -1 HEAD</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git format-patch -1 HEAD</span><br></pre></td></tr></table></figure>
 <p>想要把多个commit放到一个patch里，就先check out新branch，然后squash成一个，最后提取patch。</p>
 <h2 id="screen让ssh退出还能运行命令">screen让ssh退出还能运行命令</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen</span><br></pre></td></tr></table></figure>
 <p>启动screen然后运行自己的命令，然后Ctrl-a, d就可以detach，安全离开ssh</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen -r</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen -r</span><br></pre></td></tr></table></figure>
 <p>恢复之前的screen</p>
+<p>如果报错<code>Cannot make directory '/run/screen': Permission denied</code>执行<code>sudo /etc/init.d/screen-cleanup start</code> 。</p>
 <h2 id="移动硬盘被占用">移动硬盘被占用</h2>
 <ol type="1">
 <li>任务管理器-资源监视器-CPU-句柄-搜索盘符</li>
@@ -137,7 +138,7 @@
 <h2 id="cmd启动uwp程序">cmd启动UWP程序</h2>
 <p>例如<code>Microsoft.WindowsTerminal_8wekyb3d8bbwe!App</code></p>
 <p>用管理员cmd，cd到<code>C:\ProgramData\Microsoft\Windows\AppRepository\Packages</code> 然后dir看目录名字就可以了。或者everything搜。或者先pin到开始菜单再拖到桌面得到快捷方式，在看属性。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">explorer shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">explorer shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App</span><br></pre></td></tr></table></figure>
 <h2 id="diff导出单个文件的patch">diff导出单个文件的patch</h2>
 <p><a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/162131/is-this-a-good-way-to-create-a-patch">单个文件或文件夹</a></p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;diff.exe&quot; -Naru --strip-trailing-cr orig-file-<span class="built_in">path</span> new-file-<span class="built_in">path</span> &gt; result.patch</span><br></pre></td></tr></table></figure>
@@ -151,6 +152,55 @@
 <p>TODO: locale和chcp 、code page和setmode什么关系。</p>
 <p>：涉及 <code>setlocale(LC_ALL, "chinese");</code> <code>_setmode(_fileno(stdout), _O_U16TEXT);</code> 等操作</p>
 <p>https://stackoverflow.com/questions/2492077/output-unicode-strings-in-windows-console-app</p>
+<h2 id="gdb如何断点自动执行命令并继续">gdb如何断点自动执行命令并继续？</h2>
+<p>在使用hook-stop里使用continue会出现问题。但是使用<a target="_blank" rel="noopener" href="https://sourceware.org/gdb/current/onlinedocs/gdb/Break-Commands.html"><code>break command</code></a>就可以了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def hook-stop</span><br><span class="line">end</span><br><span class="line">b usb_packet_copy</span><br><span class="line">commands</span><br><span class="line">  print $rdx</span><br><span class="line">  continue</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<h2 id="linux-目录的可执行权限">Linux 目录的可执行权限</h2>
+<p>https://unix.stackexchange.com/questions/21251/execute-vs-read-bit-how-do-directory-permissions-in-linux-work</p>
+<p>有点复杂，有机会再总结吧。</p>
+<h2 id="life-tips">Life Tips</h2>
+<ol type="1">
+<li>刷牙重在时长，不需要追求刷得特别干净。因为主要是氟元素的化学反应。所以不如刷着牙做点别的。另外晚上睡前刷牙最重要。</li>
+<li>和近视相关度最大的是自然光时间。多晒晒太阳吧。</li>
+<li>合理的饮食应当以淀粉为主，淀粉在肚子里慢慢水解，为身体提供持续的能量。</li>
+<li>剧烈运动能促进肠胃活动。如果肠胃有溃疡，应当尽早除幽门螺杆菌，虽然不会治疗溃疡，但是会没那么难受一些。</li>
+<li>便秘考虑吃些纤维素补充剂。似乎木耳主要成分都是纤维素？但是木耳含水有90%，吃起来效率太低。</li>
+</ol>
+<h2 id="chroot-环境下debug">chroot 环境下Debug</h2>
+<p>主要问题是在chroot的环境下debug，没有proc文件系统。网上下了一个静态编译的gdb放进去。结果启动gdb 的时候出现了unable to disable address ramdonmization和不能跟随fork，set folllow-fork-mode child解决。gdb最开始调的时候还没有符号信息，好像是开了PIE而不能读取到mapping，关闭PIE好像就行了。。。。</p>
+<p>最后发现是DNS的问题。。。在chroot的文件夹里新建etc，里面新建resolv.conf，里面写nameserver 8.8.8.8就可以了。</p>
+<p>以后考虑看看chroot环境下能不能搞出procfs，这样可能就方便很多。</p>
+<p>https://superuser.com/questions/165116/mount-dev-proc-sys-in-a-chroot-environment</p>
+<h2 id="影响程序堆布局的因素">影响程序堆布局的因素</h2>
+<ol type="1">
+<li>程序自身的输入，如标准输入，打开的socket等等。</li>
+<li>程序文件名，参数，<strong>环境变量</strong>。</li>
+</ol>
+<h2 id="如何带库移植elf文件">如何带库移植ELF文件</h2>
+<ol type="1">
+<li><p>ldd copy dependencies脚本复制所有用到的依赖</p></li>
+<li><p>patchelf修改rpath</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> ./*; <span class="keyword">do</span></span><br><span class="line">	patchelf --set-rpath /home/wjk/raw/reallib2 <span class="variable">$f</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>比较坑的一点是，<code>patchelf $f --set-rpath /home/wjk/raw/reallib2</code>这样不行，文件一定要放到set-rpath后面。。。有时间去patchelf看看是不是确实有这个问题，提个PR。</p></li>
+<li><p>拿出<code>libc</code>，<code>ld</code>，<code>libpthread</code> <code>librt.so</code>，<code>libdl</code>。不要忘了<code>libdl</code>。这次就是因为没有使用系统的<code>libdl</code>而执行<code>dlopen</code>函数的时候崩了。这些库都用目标系统的。如果还是崩就用下面这条检查检查文件访问，看看缺了什么文件，用gdb debug看看是不是加载什么库的时候崩的。</p></li>
+</ol>
+<h2 id="如何strace脚本的文件访问">如何strace脚本的文件访问</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace -f bash ./run.sh 2&gt;&amp;1 | grep bios</span><br></pre></td></tr></table></figure>
+<p>strace 的<code>-f</code>能够trace fork。一般访问文件的时候是<code>openat</code>系统调用，或者<code>access</code>。</p>
+<h2 id="codimd-slide放映模式-调整格式">Codimd slide放映模式 调整格式</h2>
+<p>图片：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://xxx.png&quot;</span> <span class="attr">style</span>=<span class="string">&quot;height: 60%; width: 60%&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其他： 注意在列表和html标签前后留空行</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">style</span>=<span class="string">&quot;font-size: 80%&quot;</span>&gt;</span> </span><br><span class="line"></span><br><span class="line">- A</span><br><span class="line">- B</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>换行使用<code>&lt;br&gt;</code>。</p>
+<h2 id="快速解决编译的exe的闪退问题">快速解决编译的exe的闪退问题</h2>
+<p>首先按住alt，拖动exe到当前目录，从而创建快捷方式。</p>
+<p>然后编辑快捷方式的目标，在前面加上<code>cmd[空格]/k[空格]</code> 执行完exe就会回到cmd了，不会闪退了。</p>
+<h2 id="在ubuntu中找到文件属于什么包">在Ubuntu中找到文件属于什么包</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dpkg -S &quot;*/libclangBasic.a&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="手机电脑传文件">手机电脑传文件</h2>
+<p>MT管理器的远程管理可以选择目录（局域网FTP）。</p>
+<p>电脑可以开启一个https://github.com/filebrowser/filebrowser</p>
 
       
     </div>
@@ -163,6 +213,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2022/NativeSummary/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          NativeSummary：Java/C安卓应用无源码污点分析。
+        
+      </div>
+    </a>
   
   
     <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/" id="article-nav-older" class="article-nav-link-wrap">
@@ -183,7 +242,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
   </div>
 
@@ -193,7 +252,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
   </div>
 
@@ -203,7 +262,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/CTF/" style="font-size: 17.5px;">CTF</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12.5px;">ucore</a>
+      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.67px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 13.33px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.67px;">StaticAnalysis</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
     </div>
   </div>
 
@@ -212,7 +271,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -225,23 +284,23 @@
       <ul>
         
           <li>
-            <a href="/%E4%B8%80%E5%8F%A5%E8%AF%9D/">一句话的问题</a>
+            <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/">反编译-代码混淆-程序分析与编译优化</a>
           </li>
         
           <li>
-            <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/">换电脑-2021</a>
+            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理中级修炼与备战编译系统赛</a>
           </li>
         
           <li>
-            <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/">南京大学《软件分析》课程笔记</a>
+            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">聊聊WebAssembly程序分析与混淆</a>
           </li>
         
           <li>
-            <a href="/2020/UAC-bypass%E7%AC%94%E8%AE%B0/">UAC-bypass 笔记</a>
+            <a href="/2022/NativeSummary-intro/">NativeSummary简介</a>
           </li>
         
           <li>
-            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
+            <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/">静态分析学习资源分享</a>
           </li>
         
       </ul>
@@ -256,7 +315,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2021 am009<br>
+      &copy; 2022 am009@github.com<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
@@ -267,6 +326,8 @@
     <a href="/" class="mobile-nav-link">Home</a>
   
     <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/am009" class="mobile-nav-link">Author&#39;s Github</a>
   
 </nav>
     

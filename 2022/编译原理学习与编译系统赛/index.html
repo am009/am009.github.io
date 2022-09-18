@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>编译原理中级修炼与备战编译系统赛 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="暑假参加了编译系统设计赛，受益匪浅。在比赛初期，拖延症严重，同时经常感觉学习资源匮乏，而且也还在摸黑阶段，心理压力下经常就会高估学习的困难，觉得是不可逾越的大山。尤其是编译器后端，这方面相关的学习资源感觉非常匮乏。现在看来，前期确实没能重视一些重要的学习资源，后面走弯路学会了已经晚了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编译原理中级修炼与备战编译系统赛">
+<meta property="og:url" content="https://wjk.moe/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">
+<meta property="og:site_name">
+<meta property="og:description" content="暑假参加了编译系统设计赛，受益匪浅。在比赛初期，拖延症严重，同时经常感觉学习资源匮乏，而且也还在摸黑阶段，心理压力下经常就会高估学习的困难，觉得是不可逾越的大山。尤其是编译器后端，这方面相关的学习资源感觉非常匮乏。现在看来，前期确实没能重视一些重要的学习资源，后面走弯路学会了已经晚了。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-09-18T03:11:11.000Z">
+<meta property="article:modified_time" content="2022-09-18T12:31:08.278Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Compiler">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" target="_blank" rel="noopener" href="https://github.com/am009">Author&#39;s Github</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2022/编译原理学习与编译系统赛" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/" class="article-date">
+  <time datetime="2022-09-18T03:11:11.000Z" itemprop="datePublished">2022-09-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      编译原理中级修炼与备战编译系统赛
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>暑假参加了编译系统设计赛，受益匪浅。在比赛初期，拖延症严重，同时经常感觉学习资源匮乏，而且也还在摸黑阶段，心理压力下经常就会高估学习的困难，觉得是不可逾越的大山。尤其是编译器后端，这方面相关的学习资源感觉非常匮乏。现在看来，前期确实没能重视一些重要的学习资源，后面走弯路学会了已经晚了。</p>
+<span id="more"></span>
+<p>不得不说，学了理论还是要实践才能有更深的理解。从最早的操作系统开始，到现在编译原理，真正自己完成一个小型的编译器，操作系统之后，那种感觉是之前反复看书看视频学理论完全没有的。不仅掌握得更深，知道了相关的东西是如何落地的，知道和其他东西的联系，更重要的是有一种能够把握知识体系，一览全局的感觉。就好像去一个位置的地域探索，当你把主干道都走了一遍之后，即使有的地方没去过，它在什么方位也能知道。</p>
+<p>编译器学习大概有这几个主线</p>
+<ol type="1">
+<li>前端：从零开始，学习自动机理论，词法分析，语法分析。然后可以实践语法分析，尝试写parser，使用ANTLR等。更进阶的可以看看《parsing technique》，光是当作科普书也挺有意思的。曾经看到老旧的编译器教材说，之后的中间表示有什么三地址码什么的。反正我学到现在是没有那些东西的，直接LLVM IR吧。</li>
+<li>中端：开始接触LLVM IR，开始接触SSA相关理论。更深入地学SSA construction，学SSA destruction。然后接触一些SSA上的优化算法，比如GVN等。</li>
+<li>后端：开始了解指令选择和寄存器分配理论。指令选择的话，我们手写简单的编译器应该是难以做到那种给每个指令写配置然后自动生成什么的。然后实践一些图着色的寄存器分配算法。后端寄存器分配这里，如果你觉得线性扫描可能会简单一点的话，那还真不一定。建议直接实现图着色。 大致的经历是，</li>
+</ol>
+<p>对于参加编译器比赛来说，手把手的实验教程是真的救星：</p>
+<ol type="1">
+<li><p>北航mini-sysY实验教程：https://github.com/BUAA-SE-Compiling https://buaa-se-compiling.github.io/miniSysY-tutorial/ 这个教程依然是偏前端的，时候早期学习完词法分析，语法分析后实践加深理解。</p></li>
+<li><p>北大编译课实践教程：这个是参加比赛时久仰大名的 邢其正 大佬的教程。https://github.com/pku-minic/online-doc https://pku-minic.github.io/online-doc/ 在当时大量教程止步于前端到中端就结束的时候，只有这个教程讲到了后端。</p></li>
+</ol>
+<p>除了传统的龙书虎书鲸书之外，还有一本书不得不说，《Engineering a compiler》中文版是《编译器设计》 https://book.douban.com/subject/20436488/ 。讲得浅显易懂。建议优先于龙书虎书鲸书看。9.3章非常好，对SSA介绍也比较详细。</p>
+<p>《SSA book》挺有名的，之前学程序分析就听说了。但是我个人其实看得不多。甚至ssa构建都是“偷懒”用的《simple and efficient ssa construction》里的简单算法，不需要折腾支配边界的计算什么的。</p>
+<p>后端的书有： 1. 《Instruction selection: Principles, Methods, and Applications》。顶着英文看。这本书我之前看起来还是有点费劲的，但是没必要完全看懂不是吗，看下来算是对指令选择这一块有了总体的印象。最后实践上（参加编译器比赛）来说，可能最后还是采取“宏展开”（其实就是对每个IR单独写分支生成机器指令），然后加上一些窥孔优化的思路。里面的一些高级思路基本没用起来。没想到在后端指令选择这里居然也和前端学到的语法分析能扯上关系。</p>
+<p>寄存器分配的书看后文</p>
+<h3 id="ssa构建与gvn的强大优化能力">SSA构建与GVN的强大优化能力</h3>
+<p>我之前一直挺疑惑，编译器的优化到底具体在哪里。甚至之前编译器写了一半还是不太知道。就比如我随便找一个C语言代码，想不清楚编译器具体是怎么优化出来的。比如下面这个例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// test if-else-if</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">ifElseIf</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> a;</span><br><span class="line">  a = <span class="number">5</span>;</span><br><span class="line">  <span class="type">int</span> b;</span><br><span class="line">  b = <span class="number">10</span>;</span><br><span class="line">  <span class="keyword">if</span>(a == <span class="number">6</span> || b == <span class="number">0xb</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (b == <span class="number">10</span> &amp;&amp; a == <span class="number">1</span>)</span><br><span class="line">      a = <span class="number">25</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (b == <span class="number">10</span> &amp;&amp; a == <span class="number">-5</span>)</span><br><span class="line">      a = a + <span class="number">15</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      a = -+a;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译器比赛的时候先追求功能测试，所以没有搞任何ssa的东西。那时候也还是不知道这种该怎么优化。生成出来的IR是下面这样的。</p>
+<p>直观感觉，很多条件判断可以搞出来优化掉。但是之前听说的优化，都是什么常量表达式给计算一下，公共子表达式消除一下，都是这种比较浅的。看下面的IR可以看到也没什么可以直接优化的啊，因为你获取变量都还是load加载出来的，但是好像没看到什么分析能够直接追踪你load到底加载了什么东西，然后去优化。所以当时就感觉自己不太懂。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line">define i32 @ifElseIf()&#123;</span><br><span class="line">entry:</span><br><span class="line">  %a_0 = alloca i32 </span><br><span class="line">  %b_1 = alloca i32 </span><br><span class="line">  store i32 5, i32* %a_0</span><br><span class="line">  store i32 10, i32* %b_1</span><br><span class="line">  %0 = load i32, i32* %a_0</span><br><span class="line">  %1 = icmp eq i32 %0, 6</span><br><span class="line">  %2 = zext i1 %1 to i32</span><br><span class="line">  %3 = icmp ne i32 0, %2</span><br><span class="line">  br i1 %3, label %if_true_0, label %or_right_1</span><br><span class="line"></span><br><span class="line">or_right_1:</span><br><span class="line">  %4 = load i32, i32* %b_1</span><br><span class="line">  %5 = icmp eq i32 %4, 11</span><br><span class="line">  %6 = zext i1 %5 to i32</span><br><span class="line">  %7 = icmp ne i32 0, %6</span><br><span class="line">  br i1 %7, label %if_true_0, label %if_false_0</span><br><span class="line"></span><br><span class="line">if_true_0:</span><br><span class="line">  %8 = load i32, i32* %a_0</span><br><span class="line">  ret i32 %8</span><br><span class="line"></span><br><span class="line">tmp_2:</span><br><span class="line">  br label %if_end_0</span><br><span class="line"></span><br><span class="line">if_false_0:</span><br><span class="line">  %9 = load i32, i32* %b_1</span><br><span class="line">  %10 = icmp eq i32 %9, 10</span><br><span class="line">  %11 = zext i1 %10 to i32</span><br><span class="line">  %12 = icmp ne i32 0, %11</span><br><span class="line">  br i1 %12, label %and_right_4, label %if_false_3</span><br><span class="line"></span><br><span class="line">and_right_4:</span><br><span class="line">  %13 = load i32, i32* %a_0</span><br><span class="line">  %14 = icmp eq i32 %13, 1</span><br><span class="line">  %15 = zext i1 %14 to i32</span><br><span class="line">  %16 = icmp ne i32 0, %15</span><br><span class="line">  br i1 %16, label %if_true_3, label %if_false_3</span><br><span class="line"></span><br><span class="line">if_true_3:</span><br><span class="line">  store i32 25, i32* %a_0</span><br><span class="line">  br label %if_end_3</span><br><span class="line"></span><br><span class="line">if_false_3:</span><br><span class="line">  %17 = load i32, i32* %b_1</span><br><span class="line">  %18 = icmp eq i32 %17, 10</span><br><span class="line">  %19 = zext i1 %18 to i32</span><br><span class="line">  %20 = icmp ne i32 0, %19</span><br><span class="line">  br i1 %20, label %and_right_6, label %if_false_5</span><br><span class="line"></span><br><span class="line">and_right_6:</span><br><span class="line">  %21 = load i32, i32* %a_0</span><br><span class="line">  %22 = sub i32 0, 5</span><br><span class="line">  %23 = icmp eq i32 %21, %22</span><br><span class="line">  %24 = zext i1 %23 to i32</span><br><span class="line">  %25 = icmp ne i32 0, %24</span><br><span class="line">  br i1 %25, label %if_true_5, label %if_false_5</span><br><span class="line"></span><br><span class="line">if_true_5:</span><br><span class="line">  %26 = load i32, i32* %a_0</span><br><span class="line">  %27 = add i32 %26, 15</span><br><span class="line">  store i32 %27, i32* %a_0</span><br><span class="line">  br label %if_end_5</span><br><span class="line"></span><br><span class="line">if_false_5:</span><br><span class="line">  %28 = load i32, i32* %a_0</span><br><span class="line">  %29 = sub i32 0, %28</span><br><span class="line">  store i32 %29, i32* %a_0</span><br><span class="line">  br label %if_end_5</span><br><span class="line"></span><br><span class="line">if_end_5:</span><br><span class="line">  br label %if_end_3</span><br><span class="line"></span><br><span class="line">if_end_3:</span><br><span class="line">  br label %if_end_0</span><br><span class="line"></span><br><span class="line">if_end_0:</span><br><span class="line">  %30 = load i32, i32* %a_0</span><br><span class="line">  ret i32 %30</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后面搞了SSA构建，学了挺久的。搞出来之后发现优化的机会立马出来了。下面是ssa构建后的IR。SSA构建的原理就是，本来变量都是直接load的，使用LLVM的伪ssa形式。SSA构建负责在每个load的地方，确定你到底load是之前store的谁，然后把之前store进去的东西直接拿过来。即load和store都没了，值直接传递到了它该有的地方。明显可以看到，只需要搞一下常量表达式计算，优化一下必定跳转某个分支的条件跳转就可以了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">define i32 @ifElseIf()&#123;</span><br><span class="line">entry:</span><br><span class="line">  %0 = icmp eq i32 5, 6</span><br><span class="line">  br i1 %0, label %if_true_0, label %or_right_1</span><br><span class="line"></span><br><span class="line">or_right_1:</span><br><span class="line">  %1 = icmp eq i32 10, 11</span><br><span class="line">  br i1 %1, label %if_true_0, label %if_false_0</span><br><span class="line"></span><br><span class="line">if_true_0:</span><br><span class="line">  ret i32 5</span><br><span class="line"></span><br><span class="line">if_false_0:</span><br><span class="line">  %2 = icmp eq i32 10, 10</span><br><span class="line">  br i1 %2, label %and_right_4, label %if_false_3</span><br><span class="line"></span><br><span class="line">and_right_4:</span><br><span class="line">  %3 = icmp eq i32 5, 1</span><br><span class="line">  br i1 %3, label %if_true_3, label %if_false_3</span><br><span class="line"></span><br><span class="line">if_true_3:</span><br><span class="line">  br label %if_end_3</span><br><span class="line"></span><br><span class="line">if_false_3:</span><br><span class="line">  %4 = icmp eq i32 10, 10</span><br><span class="line">  br i1 %4, label %and_right_6, label %if_false_5</span><br><span class="line"></span><br><span class="line">and_right_6:</span><br><span class="line">  %5 = sub i32 0, 5</span><br><span class="line">  %6 = icmp eq i32 5, %5</span><br><span class="line">  br i1 %6, label %if_true_5, label %if_false_5</span><br><span class="line"></span><br><span class="line">if_true_5:</span><br><span class="line">  %7 = add i32 5, 15</span><br><span class="line">  br label %if_end_5</span><br><span class="line"></span><br><span class="line">if_false_5:</span><br><span class="line">  %8 = sub i32 0, 5</span><br><span class="line">  br label %if_end_5</span><br><span class="line"></span><br><span class="line">if_end_5:</span><br><span class="line">  %a_0_5 = phi i32 [ %7, %if_true_5 ], [ %8, %if_false_5 ]</span><br><span class="line">  br label %if_end_3</span><br><span class="line"></span><br><span class="line">if_end_3:</span><br><span class="line">  %a_0_4 = phi i32 [ 25, %if_true_3 ], [ %a_0_5, %if_end_5 ]</span><br><span class="line">  ret i32 %a_0_4</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后面我们继续想怎么实现基于SSA的优化。之前理论学习的时候虽然听说过什么常量表达式计算啊，公共子表达式什么的这种简单优化，但是看他们往届参赛队员的经验分享的时候，好像都没怎么提到。但是他们都提到了一个叫GVN GCM的优化。《Global Code Motion Global Value Numbering》这篇论文。刚学完SSA构建看这篇论文感觉挺容易看懂的。推荐去看，直接获取一手资料。</p>
+<p>简单介绍一下，GCM能够把计算的代码放到尽可能少被执行到的地方，比如很深的分支判断里。或者放到循环外面，同时保证语义正确。这里我们主要关注GVN。它是一个强大的优化，涵盖了公共子表达式消除，常量计算，控制流优化等等优化手段，即只用这一个就够了。而且还非常系统，通用，直接从之前那些小优化要不要实现，怎么组合的问题里解脱。基本的思路是，程序的任何计算都给他生成一个哈希值，然后每次要做什么计算都去查表，保证不会重复计算。然后放入表前做好常量计算等优化。这里不详细讲了。</p>
+<p>GVN和控制流优化迭代优化后的IR如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">define i32 @ifElseIf()&#123;</span><br><span class="line">entry:</span><br><span class="line">  ret i32 -5</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接全给优化没了！！！这时候我才彻底明白编译器到底是怎么优化代码的。总结：SSA构建本身（某种意义上）就有很强的优化能力，加上GVN这样的“高级”优化算法，让编译器有了非常强大的通用优化能力。</p>
+<h3 id="ssa-构建">SSA 构建</h3>
+<p>《Simple and Efficient Construction of Static Single》这篇论文真的是强。感觉ssa这种理论上也比较简洁的东西也应该有简洁的构建算法。一方面网上大家都说的是最早的那个构建算法，SSA book里面也只提到了那个初始的构建算法，导致这个算法感觉比较先进，而且采用新的算法也可以让自己学新的东西，因为不太会去抄。所以我直接上了这个算法。</p>
+<p>（虽然后面还是出现了bug，我对着那个论文里的伪代码实现算法，好像是说，那个replaceBy函数用一个值替换掉某个trivial的Phi指令的时候，在currentDef这个map里可能有些变量还指向这个phi，然后导致了问题。论文里也没细说要replaceBy要怎么实现，感觉就是直接在指令层面replace all use with，没有提到map的问题。直接替换map感觉复杂度太高了。。。我后面是用之前OJ做并查集题目那边的灵感，额外用一个map表示原来被替代的phi被谁替换了，然后readVariable函数查map的时候额外查一下这个表。最后算是解决了问题。。。</p>
+<h3 id="寄存器分配与调用约定约束">寄存器分配与调用约定约束</h3>
+<p>最开始的时候没怎么学寄存器分配，导致一直有一个疑问：调用约定会规定比如返回值放到r0，参数放到r0-r3，那我寄存器分配怎么考虑这种约束呢？而且如果有这样的场景<code>&#123; int x1 = func1(); func2(0, x1) &#125;</code>那么这个x1因为是func1的返回值，在call指令后会放在r0，那么在冲突图上，就有一个预着色节点x1必须着色为r0，然后我又要传给func2的第二个参数，x1就要放到寄存器r1，那么在冲突图x1作为预着色节点又应该被着色为r1。然后论文里说，预着色节点是必须遵守的，那我这不就完全冲突了吗？怎么回事？预着色节点真的必须遵守？</p>
+<p>后面才知道原来有一个阶段叫register coalescing，就是解决这种调用约定约束带来的问题的。当生成冲突图的时候，如果遇到这种调用约定的约束，比如x1作为函数返回值会在call指令后被放到r0，其实会生成两个节点，一个节点代表r0，是预着色节点，然后同时生成一个没有着色节点代表x1，同时会立刻生成一个mov指令，把r0的值mov到x1，使用mov指令解除了x1和r0的绑定关系。。。这个着色了的r0节点才是真正的不可更改颜色的。然后后面register coalescing阶段就是用来尽可能地消除move指令的。。。</p>
+<h3 id="我们的编译器">我们的编译器</h3>
+<p>毕竟为了答辩都花那么多时间准备PPT了，为什么不水一篇博客让更多人看到呢？我们是2022年的无色透明队，在比赛最后几个小时大佬们的“屯flag”（CTF界说法）的冲击下，最后算是保住了一个三等奖。</p>
+
+
+	<div class="row">
+    <embed src="/2022.assets/编译系统设计赛-答辩.pdf" width="100%" height="550" type="application/pdf">
+	</div>
+
+
+
+<h3 id="参加编译系统设计赛---架构选型">参加编译系统设计赛 - 架构选型</h3>
+<h4 id="前中端">前中端</h4>
+<p>不得不说Java应该还是比C++好用的。我们用Java写编译器感觉挺好的。设计IR的时候没这么想，直接对着LLVM IR specification的文本格式，设计成员域，直接toString方法转成LLVM IR。这样直接可以先写前端，然后用clang直接验证我们的正确性。这也是他们经验分享推荐的做法。</p>
+<p>唯一可以变的地方可能是，现在流行Basic Block Argument替代Phi节点（<a target="_blank" rel="noopener" href="https://mlir.llvm.org/docs/Rationale/Rationale/#block-arguments-vs-phi-nodes">MLIR</a>和北大的那个教程都提到了）。我们最开始的时候完全不熟SSA，所以也不敢乱动，既不知道phi是什么，也不知道如果改用basic block argument了，那些SSA上的算法该怎么改。现在看来，本来Phi指令也必须放在基本块开头，basic block argument也差不多的意思，只不过如果你想从Phi找到Phi指令的操作数的时候，得去前驱基本块那边找它传过来的argument罢了。差别还是不大的。而且确实简化了结构，不用维护Phi指令操作数和前驱基本块的对应关系了。</p>
+<h4 id="后端---寄存器分配">后端 - 寄存器分配</h4>
+<h5 id="ssa解构后寄存器分配">SSA解构后寄存器分配</h5>
+<p>不可能没有走弯路的。我们一开始不熟悉后端，寄存器分配不知道怎么做，于是就参照Engineering a compiler那边实现了一个local寄存器分配（后面被证明是最大的性能瓶颈）。队友他觉得lsra比图着色简单，开始看Java的寄存器分配算法，结果说写了几百行也不太缺点最后能不能写完，同时看到其他队伍也有从lsra转型图着色的。我们最后看了之前“燃烧我的编译器”队的图着色，惊讶他们怎么这么一点代码就实现了图着色分配，有了迅速实现的灵感。他们的做法其实算是，保留两到三个寄存器用于修复一切问题，然后剩余的寄存器直接构建冲突图，然后给每个节点计算权重，然后直接分配。省去了原本反复迭代的复杂步骤。</p>
+<p>总之，寄存器分配这边先实现一个简单的寄存器分配还是必要的。我之前看<a target="_blank" rel="noopener" href="https://pku-minic.github.io/online-doc/#/lv9p-reincarnation/reg-alloc">北大的那个教程</a>的时候，完全不理解，什么叫不分配寄存器。后面浪费大量时间在我的垃圾Local寄存器分配上之后，才明白。不分配寄存器并不是说真的不分配，而是说，只用最少的寄存器完成分配，每个指令在开始前从栈上把东西加载出来，结束后把东西保存会栈上，即使用最少的寄存器（一般两个寄存器就可以了），把其他的寄存器空出来。</p>
+<p>详细来说，是有一个映射表保存已经完成的寄存器分配，然后我们用两个额外留出来的寄存器，完成“修复”工作。也就是说无论你前面怎么分配，甚至完全不分配，我后面只用两个寄存器都可以给你修好。这样不仅实现了一个简单的寄存器分配算法，后面还可以通过增加前置的分配阶段完成简单图着色分配。</p>
+<h5 id="基于ssa的寄存器分配">基于SSA的寄存器分配</h5>
+<p>寄存器分配方面，（从我看过的里）推荐下面的资料：</p>
+<ol type="1">
+<li>《Iterated Register Coalescing》这个是传统的思路。学习还是要学的。介绍了基础的迭代式寄存器分配策略，有多个阶段，每个阶段可能会做出一些决策导致又要从头开始分析（毕竟要找最佳的分配），但是往往并不会迭代太多次。编译器比赛里面大多数队伍都是采用的这种策略（或它的简化版）。</li>
+<li>基于SSA的（图着色）寄存器分配系列：
+<ol type="1">
+<li>《SSA Elimination after Register Allocation》</li>
+<li>《Register Allocation for Programs in SSA Form》https://publikationen.bibliothek.kit.edu/1000007166/6532 看着像一本书，其实好像是学位论文。写得非常好。里面不仅仅是讲SSA寄存器分配，而是各种都有涉及，而且讲得挺好（浅显易懂）的。强烈推荐，即使不打算用基于SSA的寄存器分配的人也应该看看。</li>
+</ol></li>
+</ol>
+<p>为什么要用基于SSA的（图着色）寄存器分配呢？想象这样的场景，当你苦苦地一天天加班加点写寄存器分配写了很长，比赛结束发现隔壁队伍大佬居然就用了极少的代码量就完成了这一部分，而且性能还比你好很多，这不得直接气晕过去。而基于SSA的寄存器分配可能就是这种神器（虽然我们因为时间原因并没有写出来，不过ayame他们好像就是用了SSA的寄存器分配）。</p>
+<p>基于SSA的寄存器分配指的是，在寄存器分配的时候依然保持SSA形式，在分配结束后才解构SSA。先解构SSA再寄存器分配更容易，因为你如果先分配，再去直接解构，往往会发现，我寄存器都没了，但是解构SSA需要做变量复制，我没有寄存器作为中介无法挪动值了。但同样，如果能解决这一问题，那么同样会很好地简化寄存器分配的实现。</p>
+<p>更重要的是，基于SSA的寄存器分配在理论上也更优雅。传统的寄存器分配往往会告诉你，寄存器分配已经是NP完全问题了，因为冲突图的图着色是NP完全的。然而，当你在SSA形式上进行寄存器分配时，它构建出的冲突图有特殊的性质，能够在多项式时间内找到解！！！也就是说，传统的思路你先SSA解构然后再寄存器分配，其实SSA解构这一步是增大了寄存器分配的难度的！！完全不需要那种迭代式的解构，整个图着色分配架构直接是线性的！！不仅效率上优于传统方法，代码量也明显可以感觉可以降下来！！唯一需要的就是额外的理论学习，里面有一些图算法需要好好学一下。</p>
+<p>总结：现在回顾，寄存器分配在编译器比赛的开发上其实是可以渐进完成的：从最开始的只用两个寄存器去分配，到后面构建冲突图，计算权重，优先分配权重高的，后面分配不了就不分配，让前面只用两个寄存器分配的逻辑去修复，到最后SSA的寄存器分配。我们之前花太多时间在Local寄存器分配还是太亏了。又复杂性能又差</p>
+<h3 id="其他资源">其他资源</h3>
+<p>优质的（浅显易懂的）学习资源是学习前期永远稀缺的资源。有时候你想找都不知道怎么找。所以这里列出我记下来的所有资源：</p>
+<p><a target="_blank" rel="noopener" href="http://c9x.me/compile/bib/">The Compiler Writer Resource Page (c9x.me)</a> 一个人的资源分享</p>
+<p>针对arm的优化算法：乘法转移位：Division by invariant integers using multiplication. CPU文档，乘法是6-8周期，除法是10-12周期</p>
+<p>ARM手册看Cortex-A72 software Optimization Guide.</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Lf4y1y78n?vd_source=e9f223609ade8d8a4012f354190eda15">C＃C++17系列+动手编写编译器与虚拟机项目（原版共400小时）_哔哩哔哩_bilibili</a></p>
+<p><a target="_blank" rel="noopener" href="https://tobyho.com/video-series/Live-Code-LLVM-Tutorial-Walkthrough.html">Series: Live Code: LLVM Tutorial Walkthrough (tobyho.com)</a></p>
+<p>https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/README.html</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/elvin-du/tinyscript">elvin-du/tinyscript: 自制的一个编译器， 用于学习，完整实现了词法分析，语法分析，中间代码（SSA）生成，机器码生成，和基于寄存器的虚拟机 (github.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/111635473">编译器资料3 关于编译器和静态分析的一些课程 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/people/rednaxelafx/answers">RednaxelaFX - 知乎 (zhihu.com)</a> 这人是编译器大佬，他的回答能帮我们节省很多时间：包括什么技术需要看什么论文，有哪些实现</p>
+<p>book of runtime</p>
+<p>对于LLVM之类的编译器是如何实现在构造 SSA 形式的 IR 的时候，计算出 def-use 链？ - RednaxelaFX的回答 - 知乎 https://www.zhihu.com/question/41999500/answer/93243408</p>
+<p>Phi node 是如何实现它的功能的？ - RednaxelaFX的回答 - 知乎 https://www.zhihu.com/question/24992774/answer/29740949</p>
+<p><a target="_blank" rel="noopener" href="https://buaa-se-compiling.github.io/miniSysY-tutorial/challenge/mem2reg/help.html">mem2reg 实验指导 · GitBook (buaa-se-compiling.github.io)</a></p>
+<h3 id="培训经验分享时我的笔记">培训经验分享时我的笔记</h3>
+<p>于剑 小林家的编译器队，分享参赛经验</p>
+<p>怎样赶紧搭一个能跑的框架：中端优化空着，后端寄存器分配不太能跳过，寄存器不够的时候用栈空间的逻辑还是得写，但是分配可以写简单的版本。</p>
+<p>约定IR，前端要比较完整的功能，终端后端优化pass都可以不要，寄存器分配写个简单版本</p>
+<p>后端还是要写很多东西才能跑起来，他们那时候就进度有点落后了。</p>
+<p><strong>前端</strong> 不是重点，但是却是正确性问题出现最多的地方。隐藏的功能测例：看名字猜内容。</p>
+<p>sys-Y里的const的规则，必须是一个编译期常量。当const类型出现在数组长度里，需要它的值才能知道具体大小，尤其是生成数组访存的时候需要知道上一维的长度。处理字面量的时候小心-2147483628，本来是合法的，如果分成一个负号运算和正数就不合法了。</p>
+<p>短路运算。变量初始化。全零放入bss，不全零放入data段。如果有运行期计算的值，生成运算代码放在main前执行。数组的变量初始化比较玄妙。</p>
+<p><strong>IR</strong> 他们也是先生成load/store然后mem2reg pass变成SSA。前年给的建议：直接用LLVM IR。中间转LLVM IR，可以查哪里的bug，可以对比后端性能。</p>
+<p>比较重要的pass：mem2reg、function inline、global value numbering、global code motion、dead code elimination。</p>
+<p><strong>后端</strong> 读ARM指令集文档，庞大，先了解整体结构，整数寄存器，调用约定，控制流转移。多写一点汇编代码确认自己的理解，可以调用libc里面的函数。多用godbolt.org，如果不知道怎么做一个算术运算什么的。</p>
+<p>后端首先遍历IR，生成机器指令组成的控制流图。一条IR语句不止一条机器指令。SSA destruction要处理Phi指令，前置块点的mov。</p>
+<p>寄存器分配之前由于还有接近SSA的性质，有的优化会非常方便，指令合并，常量传播。spill，就是指放不下放到栈上，对spill估价的算法调了非常长的时间。寄存器分配好了可以消除mov，条件码也可以消除一些分支。</p>
+<p><strong>自动化测试</strong></p>
+<p>还是要搭建自动化测试，push上去等一段时间就可以回来看了。非常方便，甚至可以和gcc、llvm做对比。</p>
+<p>触发：特点分支发生更新、手动触发web hook，指定commit id和命令行参数。</p>
+<p>结果：一堆json，写个脚本对比效果。</p>
+<p>考虑到树莓派性能，不建议把编译编译器和展示结果放到树莓派上。</p>
+<p><strong>自动并行化</strong></p>
+<p>把循环静态分成num_threads段，每段一个线程来跑。用汇编实现__create_threads和__join_threads函数，使用了clone、waittid、exit三个系统调用。</p>
+<p>为了共用栈，所以也不能调用syscall的包装函数，所以要inline syscall。而且还要安排比较奇怪的栈布局。所以不推荐实现为公用栈。</p>
+<p><strong>时间</strong> 差不多18号开始写代码，差不多写了两个月。第一个月的时候才基本能完全跑起来，前端在各种功能测试用例调通了。</p>
+<h3 id="其他经验分享的笔记">其他经验分享的笔记</h3>
+<p><strong>第一次分享：</strong></p>
+<p>最后是反思和建议。</p>
+<p>IR里最好加一层分析循环的信息。转IR后循环信息可能丢失。重视循环，循环是很重要的部分。非常需要注意循环的优化。</p>
+<p>比赛前期以通过功能点为追求。复杂的寄存器分配可以先放一放，跑通为第一追求。跑通修好各种bug再去做寄存器分配。有的优化做起来非常困难，效果也不一定好。做优化之前可以先尝试手写优化后的汇编，然后运行测试一下之后的结果。本来打算做SIMD，跳转表。预期效果不是很好。</p>
+<p>做好版本管理。并行化调通了，最后提交的代码没有合并进去。测试的分支上有公共bug，忘了有一个bug的修复没有合进去，忘了在哪里修的。</p>
+<p>本地CI不用排队，对开发进度影响很大。JDK编译编译器，和生成文件还是要在高性能的地方跑，生成后再发给树莓派。有的测试点生成的样例特别大，最好树莓派和电脑要网线连接。1分钟编译，5分钟跑完性能。</p>
+<p>GCC比LLVM复杂。他们也学习了第一届清华的Trivial compiler的设计，也学习了中科大的特等奖的设计。</p>
+<p>https://www.bilibili.com/video/BV17g411d7wj</p>
+<p>窥孔优化：融合乘加，临近load store指令对。复制传播，指令调度（效果不是很好），向量化（只对于非常简单的样例，效果不理想）。</p>
+<p>测试和调试方面，自动化测试脚本，显示编程错误汇编错误还是执行错误。。。clang测试中间代码的正确性。。。直接生成LLVM。。。gdb调试比较重要。决赛的时候他们创建太多分支了。小组每周两次组会，交流讨论。。。</p>
+<p>帮助很大的资料，engeneering a compiler，ssa book，先学习了龙书第九章。然后从虎书，鲸书学习了。</p>
+<p>第二个人（ayame作者）比第一个人好多了，第一个人太水了。</p>
+<p>通用向量化太难，所以还是放弃。乱序多发射的，所以想搞调度还是算了，效果不是很好。</p>
+<p>有些用例是隐藏的，寄存器分配，带来了很多困难。线性扫描最后被放弃了，太复杂了，而且还没有图着色好。图着色调试起来非常困难。推荐同时写一个trivial的分配方式，比如引用计数。codegen后面保证没有bug后再调试寄存器分配。</p>
+<p>虚空debug很痛苦。总结在这两个方面。gvn gcm的pass容易出错。AST翻译到中间表示的时候，选择语句if-else结构连接，写不好容易产生bug，循环控制语句，break和continue，多层嵌套翻译的时候要注意对应的是那个循环。短路运算也是问题。不规则数组初始化的时候的问题。</p>
+<p>决赛两天通宵的。。。这两天主要就是尝试自动并行化。通用的很难做，后面发现可以针对常见模式的并行化，循环之间没有依赖。通宵调出来，开启之后导致其他部分又错了。。最后决赛阶段也没开启。决赛的本地CI很重要，评测卡死，要自己搭建自己的评测机子。两三个小时才能提交一次。比赛也就两天。</p>
+<p>最后分享学习路线。翻译IR的时候用visitor模式，类似递归下降。用antlr的时候要改下文法，比如左递归。中层IR采用SSA，了解什么是SSA，engeneering a compiler 9.3章。SSA构建算法参考LLVM博客和代码。采用LLVM的方案，先生成mem ssa，然后mem2reg。一篇论文：simple and efficient ssa form 13年的。然后构建完会进行一些优化。最后转换成汇编，也参考engeneering a compiler 9.3章，介绍了会遇到的问题。除了转换部分，SSA的一个重点是优化算法，看论文：global code motion global code numbering. 非常强大的优化算法。采用SSA的话，看ssa-book。最后是在底层上面的一些优化，首先是armv7直接读文档，参考。armv7的坑在功能测试点会遇到，比如立即数范围不连续。代码寻址长度有限制。。。这一点在功能测试点会遇到。</p>
+<p>寄存器分配会极大影响性能，通常来说，图着色和线扫。图着色可以参考一些论文，我们去年参考的是 iterator register allocating。llvm的是线性扫描的算法，有博客和youtube视频。SSA可以采取面向SSA的算法，图特殊，相比于普通的更快，效率更高。后端窥孔优化主要是人看生成的汇编，哪里可以优化，可以采取一些数据流分析。可以用GCC o3和llvm o3对比。看看他们采取了什么优化模式。</p>
+<p>比赛分工：一个人负责HIR和MIR构建。两三个人负责中间代码优化。他们直接用LLVM的MIR。一到两人负责体系结构方面。体系结构上能做的优化不太多。中层优化比较多。CI搭建的问题：一个人兼职。推荐调研阶段搭好。</p>
+<p>时间安排：4-5月报名，开始调研工作，完成CI。6-7月初期末考试，做些简单的东西，开始写visitor，设计中层底层架构。7月是主要工作的时间，10天完成visitor，同时完成后端翻译，寄存器分配，中间先不做，争取导出汇编，过一部分功能测试点。下旬做优化。有一些极端的场景，一个代码里几千行代码，大量debug工作。同时做优化。如果这个时候有时间还可以调研更复杂的优化。自动并行化和自动向量化。按照去年的经验特等奖需要尝试自动并行化的。决赛阶段能做的不多，主要是debug，之前没完成的优化紧急突击。</p>
+<p>代码管理，非常重要，分出branch不能太多。commit 1000多次。搞好软件工程。要规范好代码提交。明确分支代表的含义。master稳定版本，develop开发版本，日常开发汇总，feature和fix。</p>
+<p>合理利用tag标记版本，rebase和pull request保证history。git的常用操作，stash blame。指定命名规范。善于利用issue，发现了bug可以记录一下，修复了直接关掉非常方便。</p>
+<p>自动测试的问题。测试流程分为三个部分。官方提供的gitlab平台，高性能x86服务器，运行测试用例的树莓派集群。高性能x86服务器发现CI测所有功能样例，性能样例有很长时间。尤其是编译花的时间长。编译测试半个小时。高性能服务器可以缩短为10几分钟。</p>
+<p>gitlab可以触发CI，可以手动指定。gitlab runner，编译测试样例，发送到树莓派终端。树莓派结果反馈回来也给服务器给gitlab。测试数据非常大，直接放到树莓派里面，不要每次传输。好复杂。。。</p>
+<p>调试的方法：去年ayami，antlr生成parser，中端翻译成LLVM IR，可以用解释器去调试。后端转LIR，寄存器分配，汇编代码gdb调试，发挥了很大作用。后端调试都是靠gdb。自动并行化，gdb可以调多线程。</p>
+<p>最后是参考资料。几篇论文。</p>
+<p>对性能不是很关注的测试点可以qemu进行调试。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/" data-id="cl87bh7u8000cqgtrg60dba92" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          反编译-代码混淆-程序分析与编译优化
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">聊聊WebAssembly程序分析与混淆</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.67px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 13.33px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/OS/" style="font-size: 16.67px;">OS</a> <a href="/tags/PL/" style="font-size: 10px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.67px;">StaticAnalysis</a> <a href="/tags/Windows/" style="font-size: 20px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 13.33px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/">反编译-代码混淆-程序分析与编译优化</a>
+          </li>
+        
+          <li>
+            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理中级修炼与备战编译系统赛</a>
+          </li>
+        
+          <li>
+            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">聊聊WebAssembly程序分析与混淆</a>
+          </li>
+        
+          <li>
+            <a href="/2022/NativeSummary-intro/">NativeSummary简介</a>
+          </li>
+        
+          <li>
+            <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/">静态分析学习资源分享</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 am009@github.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/am009" class="mobile-nav-link">Author&#39;s Github</a>
+  
+</nav>
+    
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -9,8 +9,10 @@
 <p>[toc]</p>
 <h2 id="最稳定的给自己的推送接口">最稳定的给自己的推送接口</h2>
 <p>通过qq邮箱SMTP，发给自己（同一个邮箱），通过qq的QQ邮箱提醒接收</p>
-<h2 id="最方便地换硬盘重装系统">最方便地换硬盘重装系统</h2>
-<p>利用win10自带的 <code>备份与恢复（win7）</code> 借来一个大容量移动硬盘先备份，换硬盘之后恢复。</p>
+<h2 id="方便地换硬盘重装系统">方便地换硬盘重装系统</h2>
+<p>2022年9月13日 直接用DiskGenius的系统迁移功能，直接下免费版也能用。体验下来比<code>备份与恢复（win7）</code>好很多。但是<code>备份与恢复（win7）</code>用来给电脑做全盘备份还是不错的。</p>
+<p><del>利用win10自带的 <code>备份与恢复（win7）</code> 借来一个大容量移动硬盘先备份，换硬盘之后恢复。</del></p>
+<p>2021年12月19日 这个其实还是有很多槽点的。一旦你用usb安装盘进入恢复过程，它给你报个错，你就完全没有任何办法。。。之前成功过两次，但也遇到了几次没办法的情况。今天尝试DiskGenius的系统迁移功能，新硬盘通过硬盘盒，usb连接电脑，然后热迁移过去。</p>
 <h2 id="将旧电脑系统连带硬盘迁移到新电脑">将旧电脑系统连带硬盘迁移到新电脑</h2>
 <p>使用下面命令准备系统：然后直接移动硬盘过去。</p>
 <figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line"><span class="variable">%windir%</span>\system32\sysprep\sysprep.exe /generalize /oobe /shutdown</span><br></pre></td></tr></table></figure>
@@ -22,7 +24,7 @@
 </ol>
 <h2 id="ida出现import-site-failed">ida出现import site failed</h2>
 <p>清空自己的PYTHONHOME才行 或者通过bat启动</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set PYTHONHOME&#x3D;</span><br><span class="line">set PYTHONPATH&#x3D;</span><br><span class="line">start C:\Users\warren\my_programs\IDA_Pro_v7.0_Portable\ida.exe</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set PYTHONHOME=</span><br><span class="line">set PYTHONPATH=</span><br><span class="line">start C:\Users\warren\my_programs\IDA_Pro_v7.0_Portable\ida.exe</span><br></pre></td></tr></table></figure>
 <h2 id="sd卡作为内部存储">SD卡作为内部存储</h2>
 <p><a href="https://stackoverflow.com/questions/38044532/how-to-turn-a-portable-sd-card-into-internal-storage-via-adb-command">stackoverflow</a></p>
 <p>不需要改initrd，或者什么vold.fstab了。现在的安卓系统内置支持了。害的我还折腾，root手机。 <code>sm set-force-adoptable true</code>大法， <code>sm partition disk:179,64 mixed 60</code>表示留下60%的空间，将SD卡40%的空间用作内部存储。<code>sm partition disk:179,64 private</code>表示将整个SD卡用作内部存储。</p>
@@ -33,13 +35,14 @@
 <p>三星手机似乎非常复杂。</p>
 <h2 id="git从commit中提取patch">git从commit中提取patch</h2>
 <p><a href="https://stackoverflow.com/questions/6658313/how-to-generate-a-git-patch-for-a-specific-commit">这里</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git format-patch -1 HEAD</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git format-patch -1 HEAD</span><br></pre></td></tr></table></figure>
 <p>想要把多个commit放到一个patch里，就先check out新branch，然后squash成一个，最后提取patch。</p>
 <h2 id="screen让ssh退出还能运行命令">screen让ssh退出还能运行命令</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">screen</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">screen</span><br></pre></td></tr></table></figure>
 <p>启动screen然后运行自己的命令，然后Ctrl-a, d就可以detach，安全离开ssh</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">screen -r</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">screen -r</span><br></pre></td></tr></table></figure>
 <p>恢复之前的screen</p>
+<p>如果报错<code>Cannot make directory '/run/screen': Permission denied</code>执行<code>sudo /etc/init.d/screen-cleanup start</code> 。</p>
 <h2 id="移动硬盘被占用">移动硬盘被占用</h2>
 <ol type="1">
 <li>任务管理器-资源监视器-CPU-句柄-搜索盘符</li>
@@ -48,7 +51,7 @@
 <h2 id="cmd启动uwp程序">cmd启动UWP程序</h2>
 <p>例如<code>Microsoft.WindowsTerminal_8wekyb3d8bbwe!App</code></p>
 <p>用管理员cmd，cd到<code>C:\ProgramData\Microsoft\Windows\AppRepository\Packages</code> 然后dir看目录名字就可以了。或者everything搜。或者先pin到开始菜单再拖到桌面得到快捷方式，在看属性。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">explorer shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">explorer shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App</span><br></pre></td></tr></table></figure>
 <h2 id="diff导出单个文件的patch">diff导出单个文件的patch</h2>
 <p><a href="https://unix.stackexchange.com/questions/162131/is-this-a-good-way-to-create-a-patch">单个文件或文件夹</a></p>
 <figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">&quot;diff.exe&quot; -Naru --strip-trailing-cr orig-file-<span class="built_in">path</span> new-file-<span class="built_in">path</span> &gt; result.patch</span><br></pre></td></tr></table></figure>
@@ -62,6 +65,55 @@
 <p>TODO: locale和chcp 、code page和setmode什么关系。</p>
 <p>：涉及 <code>setlocale(LC_ALL, "chinese");</code> <code>_setmode(_fileno(stdout), _O_U16TEXT);</code> 等操作</p>
 <p>https://stackoverflow.com/questions/2492077/output-unicode-strings-in-windows-console-app</p>
+<h2 id="gdb如何断点自动执行命令并继续">gdb如何断点自动执行命令并继续？</h2>
+<p>在使用hook-stop里使用continue会出现问题。但是使用<a href="https://sourceware.org/gdb/current/onlinedocs/gdb/Break-Commands.html"><code>break command</code></a>就可以了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def hook-stop</span><br><span class="line">end</span><br><span class="line">b usb_packet_copy</span><br><span class="line">commands</span><br><span class="line">  print $rdx</span><br><span class="line">  continue</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<h2 id="linux-目录的可执行权限">Linux 目录的可执行权限</h2>
+<p>https://unix.stackexchange.com/questions/21251/execute-vs-read-bit-how-do-directory-permissions-in-linux-work</p>
+<p>有点复杂，有机会再总结吧。</p>
+<h2 id="life-tips">Life Tips</h2>
+<ol type="1">
+<li>刷牙重在时长，不需要追求刷得特别干净。因为主要是氟元素的化学反应。所以不如刷着牙做点别的。另外晚上睡前刷牙最重要。</li>
+<li>和近视相关度最大的是自然光时间。多晒晒太阳吧。</li>
+<li>合理的饮食应当以淀粉为主，淀粉在肚子里慢慢水解，为身体提供持续的能量。</li>
+<li>剧烈运动能促进肠胃活动。如果肠胃有溃疡，应当尽早除幽门螺杆菌，虽然不会治疗溃疡，但是会没那么难受一些。</li>
+<li>便秘考虑吃些纤维素补充剂。似乎木耳主要成分都是纤维素？但是木耳含水有90%，吃起来效率太低。</li>
+</ol>
+<h2 id="chroot-环境下debug">chroot 环境下Debug</h2>
+<p>主要问题是在chroot的环境下debug，没有proc文件系统。网上下了一个静态编译的gdb放进去。结果启动gdb 的时候出现了unable to disable address ramdonmization和不能跟随fork，set folllow-fork-mode child解决。gdb最开始调的时候还没有符号信息，好像是开了PIE而不能读取到mapping，关闭PIE好像就行了。。。。</p>
+<p>最后发现是DNS的问题。。。在chroot的文件夹里新建etc，里面新建resolv.conf，里面写nameserver 8.8.8.8就可以了。</p>
+<p>以后考虑看看chroot环境下能不能搞出procfs，这样可能就方便很多。</p>
+<p>https://superuser.com/questions/165116/mount-dev-proc-sys-in-a-chroot-environment</p>
+<h2 id="影响程序堆布局的因素">影响程序堆布局的因素</h2>
+<ol type="1">
+<li>程序自身的输入，如标准输入，打开的socket等等。</li>
+<li>程序文件名，参数，<strong>环境变量</strong>。</li>
+</ol>
+<h2 id="如何带库移植elf文件">如何带库移植ELF文件</h2>
+<ol type="1">
+<li><p>ldd copy dependencies脚本复制所有用到的依赖</p></li>
+<li><p>patchelf修改rpath</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> ./*; <span class="keyword">do</span></span><br><span class="line">	patchelf --set-rpath /home/wjk/raw/reallib2 <span class="variable">$f</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>比较坑的一点是，<code>patchelf $f --set-rpath /home/wjk/raw/reallib2</code>这样不行，文件一定要放到set-rpath后面。。。有时间去patchelf看看是不是确实有这个问题，提个PR。</p></li>
+<li><p>拿出<code>libc</code>，<code>ld</code>，<code>libpthread</code> <code>librt.so</code>，<code>libdl</code>。不要忘了<code>libdl</code>。这次就是因为没有使用系统的<code>libdl</code>而执行<code>dlopen</code>函数的时候崩了。这些库都用目标系统的。如果还是崩就用下面这条检查检查文件访问，看看缺了什么文件，用gdb debug看看是不是加载什么库的时候崩的。</p></li>
+</ol>
+<h2 id="如何strace脚本的文件访问">如何strace脚本的文件访问</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">strace -f bash ./run.sh 2&gt;&amp;1 | grep bios</span><br></pre></td></tr></table></figure>
+<p>strace 的<code>-f</code>能够trace fork。一般访问文件的时候是<code>openat</code>系统调用，或者<code>access</code>。</p>
+<h2 id="codimd-slide放映模式-调整格式">Codimd slide放映模式 调整格式</h2>
+<p>图片：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://xxx.png&quot;</span> <span class="attr">style</span>=<span class="string">&quot;height: 60%; width: 60%&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其他： 注意在列表和html标签前后留空行</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">style</span>=<span class="string">&quot;font-size: 80%&quot;</span>&gt;</span> </span><br><span class="line"></span><br><span class="line">- A</span><br><span class="line">- B</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>换行使用<code>&lt;br&gt;</code>。</p>
+<h2 id="快速解决编译的exe的闪退问题">快速解决编译的exe的闪退问题</h2>
+<p>首先按住alt，拖动exe到当前目录，从而创建快捷方式。</p>
+<p>然后编辑快捷方式的目标，在前面加上<code>cmd[空格]/k[空格]</code> 执行完exe就会回到cmd了，不会闪退了。</p>
+<h2 id="在ubuntu中找到文件属于什么包">在Ubuntu中找到文件属于什么包</h2>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">dpkg -S &quot;*/libclangBasic.a&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="手机电脑传文件">手机电脑传文件</h2>
+<p>MT管理器的远程管理可以选择目录（局域网FTP）。</p>
+<p>电脑可以开启一个https://github.com/filebrowser/filebrowser</p>
 ]]></content>
       <categories>
         <category>Notes</category>
@@ -1416,33 +1468,33 @@
 <span id="more"></span>
 <p>现在回头看，总感觉微软只关注了那种公司内使用了域控服务器管理了大量主机，从而可以相互认证的情况，而不关心我们这种笔记本用户的“孤岛”情况，导致<code>"默认"</code>并不是无密码，而是当前用户的账号密码。无密码访问挺不容易的。</p>
 <h2 id="关键配置1-加密和签名">关键配置1 加密和签名</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">	server signing &#x3D; mandatory</span><br><span class="line">#	smb encrypt &#x3D; mandatory</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">	server signing = mandatory</span><br><span class="line">#	smb encrypt = mandatory</span><br></pre></td></tr></table></figure>
 <p>查看日志发现, 新版本的win10(还是samba服务器??)对没有加密也没有签名的连接会拒绝. 所以需要这两个选项.</p>
 <p>加密必须要用户名和密码, 因为加密的会话密钥就是和用户名关联的. 因此为了guest用户, 需要注释掉加密的选项.</p>
 <p>来自<a href="https://serverfault.com/questions/874423/how-to-enable-samba-encryption-and-do-not-require-user-authentication">How to enable SAMBA encryption and do not require user authentication</a></p>
 <h2 id="关键配置2">关键配置2</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#	min protocol &#x3D; SMB2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#	min protocol = SMB2</span><br></pre></td></tr></table></figure>
 <p>自从win10开始, 默认使用的就是SMB3_11了, 在 <code>启用或关闭windows功能</code> 里开启SMB1/CIFS, 访问时就可能会使用SMB2. 这里调试的时候可以考虑强制改成SMB3. 发现关键问题之后为了兼容性注释掉了</p>
 <h2 id="关键配置3">关键配置3</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">guest account &#x3D; guest</span><br><span class="line">null passwords &#x3D; yes</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">guest account = guest</span><br><span class="line">null passwords = yes</span><br></pre></td></tr></table></figure>
 <p>默认是<code>guest account = nobody</code>. #TODO 第二个参数 <code>null passwords</code> 不加上, 使用空密码登录的时候就会被拒绝.</p>
 <h2 id="关键配置4-ntlm-auth">关键配置4 ntlm auth</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ntlm auth &#x3D; ntlmv1-permitted</span><br><span class="line">lanman auth &#x3D; yes</span><br><span class="line">raw NTLMv2 auth &#x3D; yes</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ntlm auth = ntlmv1-permitted</span><br><span class="line">lanman auth = yes</span><br><span class="line">raw NTLMv2 auth = yes</span><br></pre></td></tr></table></figure>
 <p>win10可能会使用ntlmv1, 而经过永恒之蓝事件之后samba默认只接受ntlmv2了. 关键的只是第一条, 后面的两条是逛的时候发现的, 加了可以增加兼容性.</p>
 <p><a href="https://bgstack15.wordpress.com/2017/10/01/samba-and-ntlm-for-windows-clients/">Samba and ntlm for Windows clients</a></p>
 <p><a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#NTLMAUTH">samba config ntlmauth</a></p>
 <h2 id="关键配置5-passdb-backend">关键配置5 passdb backend</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">passdb backend &#x3D; smbpasswd:&#x2F;etc&#x2F;samba&#x2F;smbpasswd</span><br><span class="line">smb passwd file &#x3D; &#x2F;etc&#x2F;samba&#x2F;smbpasswd</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">passdb backend = smbpasswd:/etc/samba/smbpasswd</span><br><span class="line">smb passwd file = /etc/samba/smbpasswd</span><br></pre></td></tr></table></figure>
 <p>新版本默认使用的不是smbpasswd, 默认的数据库位置更不是 <code>/etc/samba/smbpasswd</code>. 新版本似乎用的是 <code>pdbedit</code>?</p>
 <p>指定数据库文件位置似乎是用第一行的方式了, 第二行似乎没有效果了?</p>
 <h2 id="关键配置6-force-user">关键配置6 force user</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">force user &#x3D; pi</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">force user = pi</span><br></pre></td></tr></table></figure>
 <p>强制用户了之后上传的文件的所有者就都是一样的了</p>
 <h2 id="总体配置">总体配置:</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">    map to guest &#x3D; Bad User</span><br><span class="line">	server signing &#x3D; mandatory</span><br><span class="line">#	smb encrypt &#x3D; mandatory</span><br><span class="line">#	min protocol &#x3D; SMB2</span><br><span class="line">	passdb backend &#x3D; smbpasswd:&#x2F;etc&#x2F;samba&#x2F;smbpasswd</span><br><span class="line">	smb passwd file &#x3D; &#x2F;etc&#x2F;samba&#x2F;smbpasswd</span><br><span class="line">	guest account &#x3D; guest</span><br><span class="line">	null passwords &#x3D; yes</span><br><span class="line">	security&#x3D;user</span><br><span class="line">	ntlm auth &#x3D; ntlmv1-permitted</span><br><span class="line">	lanman auth &#x3D; yes</span><br><span class="line">	raw NTLMv2 auth &#x3D; yes</span><br><span class="line"></span><br><span class="line">[ro]</span><br><span class="line">        # This share allows anonymous (guest) access</span><br><span class="line">        # without authentication!</span><br><span class="line">        path &#x3D; &#x2F;home&#x2F;pi&#x2F;</span><br><span class="line">#	force user &#x3D; pi</span><br><span class="line">        read only &#x3D; yes</span><br><span class="line">        guest ok &#x3D; yes</span><br><span class="line">#        guest only &#x3D; yes</span><br><span class="line"></span><br><span class="line">[rw]</span><br><span class="line">	path &#x3D; &#x2F;home&#x2F;pi&#x2F;</span><br><span class="line">	read only &#x3D; no</span><br><span class="line">	valid users &#x3D; pi</span><br><span class="line">	force user &#x3D; pi</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">    map to guest = Bad User</span><br><span class="line">	server signing = mandatory</span><br><span class="line">#	smb encrypt = mandatory</span><br><span class="line">#	min protocol = SMB2</span><br><span class="line">	passdb backend = smbpasswd:/etc/samba/smbpasswd</span><br><span class="line">	smb passwd file = /etc/samba/smbpasswd</span><br><span class="line">	guest account = guest</span><br><span class="line">	null passwords = yes</span><br><span class="line">	security=user</span><br><span class="line">	ntlm auth = ntlmv1-permitted</span><br><span class="line">	lanman auth = yes</span><br><span class="line">	raw NTLMv2 auth = yes</span><br><span class="line"></span><br><span class="line">[ro]</span><br><span class="line">        # This share allows anonymous (guest) access</span><br><span class="line">        # without authentication!</span><br><span class="line">        path = /home/pi/</span><br><span class="line">#	force user = pi</span><br><span class="line">        read only = yes</span><br><span class="line">        guest ok = yes</span><br><span class="line">#        guest only = yes</span><br><span class="line"></span><br><span class="line">[rw]</span><br><span class="line">	path = /home/pi/</span><br><span class="line">	read only = no</span><br><span class="line">	valid users = pi</span><br><span class="line">	force user = pi</span><br></pre></td></tr></table></figure>
 <h2 id="debug方法">debug方法</h2>
 <p>windows 清除登录密码首先要凭据管理器删除 接着我任务管理器关闭explorer再启动, 没有用, 只有重启</p>
-<p>debug samba 的方法 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo service smbd stop</span><br><span class="line">sudo smbd -F -S -d&#x3D;10</span><br></pre></td></tr></table></figure> 此时再连接, 就可以看到debug信息了. -d指定的loglevel从1到10. <code>-d=5</code>的时候的log就已经很多了, <code>-d=3</code> 的时候log不是很多.平时一般先使用 <code>-d=3</code></p>
+<p>debug samba 的方法 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo service smbd stop</span><br><span class="line">sudo smbd -F -S -d=10</span><br></pre></td></tr></table></figure> 此时再连接, 就可以看到debug信息了. -d指定的loglevel从1到10. <code>-d=5</code>的时候的log就已经很多了, <code>-d=3</code> 的时候log不是很多.平时一般先使用 <code>-d=3</code></p>
 ]]></content>
       <categories>
         <category>Dev</category>
@@ -2168,6 +2220,19 @@
 <li>设置网卡的DNS地址</li>
 </ol>
 <p>另外现在ipv4已经耗尽，可以拿到完整的ipv4-地区数据。</p>
+<h3 id="hp-audio-自动安装chrome插件">hp audio 自动安装chrome插件</h3>
+<p>chrome显示被组织管理了。在chrome://policy/页面可以看到，是设置了对应位置的注册表导致的。</p>
+<ol type="1">
+<li><p>在https://4sysops.com/archives/audit-changes-in-the-windows-registry/#activate-registry-auditing 如何监控注册表的修改 添加审计规则。在event viewer里的security里filter事件id：4657,4660</p>
+<p><code>Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">A registry value was modified.</span><br><span class="line"></span><br><span class="line">Subject:</span><br><span class="line">	Security ID:		SYSTEM</span><br><span class="line">	Account Name:		DESKTOP-BDMA890$</span><br><span class="line">	Account Domain:		WORKGROUP</span><br><span class="line">	Logon ID:		0x3E7</span><br><span class="line"></span><br><span class="line">Object:</span><br><span class="line">	Object Name:		\REGISTRY\MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist</span><br><span class="line">	Object Value Name:	317</span><br><span class="line">	Handle ID:		0x240</span><br><span class="line">	Operation Type:		New registry value created</span><br><span class="line"></span><br><span class="line">Process Information:</span><br><span class="line">	Process ID:		0x169c</span><br><span class="line">	Process Name:		C:\Windows\System32\SECOMN64.exe</span><br><span class="line"></span><br><span class="line">Change Information:</span><br><span class="line">	Old Value Type:		-</span><br><span class="line">	Old Value:		-</span><br><span class="line">	New Value Type:		REG_SZ</span><br><span class="line">	New Value:		jjnlfodbdchgijlheopgehgnmekbndmf;https://clients2.google.com/service/update2/crx</span><br></pre></td></tr></table></figure>
+<p>everything搜索exe发现是驱动附带的程序，在任务管理器里看是SECOMNService 服务的。</p>
+<p><code>C:\Windows\System32\DriverStore\FileRepository\seapo64.inf_amd64_057f6b28338feed1</code></p></li>
+<li><p>psexec64.exe -s cmd.exe</p>
+<p>sc config SECOMNService start= disabled</p>
+<p>先禁用看看会不会影响什么。</p>
+<p>看了看这个exe，没看到相关的设置逻辑啊，只有一个SEMISCAPI_IsBrowserExtensionInstalled的字符串。。。但是找不到引用。。。</p></li>
+</ol>
 ]]></content>
       <categories>
         <category>Digi</category>
@@ -2206,10 +2271,10 @@
 <p>-m64 选项生成64位的代码，但是int还是32位大小的。long才是64位大小的。似乎没有选项能让int变成64位大小的。而main函数的返回值因此也是32位的</p>
 <p>读取函数的Annotation上，ollvm可能还是比较猛的？搜<code>llvm readAnnotate</code> 炸出一大片分析ollvm的。</p>
 <h2 id="常用的命令">常用的命令</h2>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opt -load lib&#x2F;LLVMHello.so -help</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opt -load lib&#x2F;LLVMHello.so -hello &lt; hello.bc &gt; out.bc</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">clang -Xclang -load -Xclang Obfuscation.dll</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">clang -c -emit-llvm $1.c #生成bc</span><br><span class="line">clang -S -emit-llvm $1.c #生成.ll的文本形式</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opt -load lib/LLVMHello.so -help</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">opt -load lib/LLVMHello.so -hello &lt; hello.bc &gt; out.bc</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">clang -Xclang -load -Xclang Obfuscation.dll</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">clang -c -emit-llvm $1.c #生成bc</span><br><span class="line">clang -S -emit-llvm $1.c #生成.ll的文本形式</span><br></pre></td></tr></table></figure>
 <h2 id="如何编写pass">如何编写pass</h2>
 <p>要运行的代码是 https://github.com/LeadroyaL/llvm-pass-tutorial , 这里每个项目是单独的文件夹. 三个项目合在一起, 共用外面的cmake文件. 为了明白这个移植怎么跑起来, 学习源码外的pass项目的建立. 先学下面的项目, 配置好路径. <a href="https://github.com/abenkhadra/llvm-pass-tutorial">pass-skeleton</a></p>
 <p><a href="https://llvm.org/docs/WritingAnLLVMPass.html">如何写一个pass llvm.org</a> 确实, 写一个pass就真的是一个pass, 出来一个so文件, 在passmanager里过一遍llvm bytecode. pass的加载和运行暴露在命令行选项.</p>
@@ -2225,33 +2290,33 @@
 <h3 id="源码外的pass">源码外的pass</h3>
 <p><a href="http://llvm.org/docs/CMake.html#developing-llvm-passes-out-of-source">Developing LLVM passes out of source</a></p>
 <p>LLVM_HOME 应该是 <code>/usr/lib/llvm-10</code>, 这样就会设置LLVM_DIR为 <code>/usr/lib/llvm-10/lib/cmake/llvm</code> LLVM_DIR里面有LLVMConfig.cmake, 设置了这个环境变量, cmake中调用 <code>find_package(LLVM REQUIRED CONFIG)</code> 就可以找到llvm作为一个cmake的library</p>
-<p>为了构建源码外的pass, 重要的cmake语句有 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.4)</span><br><span class="line">project(llvm-pass-tutorial)</span><br><span class="line"></span><br><span class="line">find_package(LLVM REQUIRED CONFIG)</span><br><span class="line">add_definitions($&#123;LLVM_DEFINITIONS&#125;)</span><br><span class="line">include_directories($&#123;LLVM_INCLUDE_DIRS&#125;)</span><br><span class="line">link_directories($&#123;LLVM_LIBRARY_DIRS&#125;)</span><br><span class="line"></span><br><span class="line">add_subdirectory(skeleton)  # Use your pass name here.</span><br><span class="line">add_subdirectory(ollvm)  # ollvm</span><br><span class="line">add_subdirectory(Hikari)  # Hikari</span><br><span class="line">add_subdirectory(Armariris)  # Armariris</span><br></pre></td></tr></table></figure> 在每个文件夹内的CMakeList里调用 <code>add_library</code> <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">add_library(Armariris MODULE</span><br><span class="line">        # List your source files here.</span><br><span class="line">        CryptoUtils.cpp</span><br><span class="line">        StringObfuscation.cpp</span><br><span class="line">        Substitution.cpp</span><br><span class="line">        Flattening.cpp</span><br><span class="line">        Utils.cpp</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Flattening.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;StringObfuscation.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Substitution.h</span><br><span class="line">        include&#x2F;Transforms&#x2F;Obfuscation&#x2F;Utils.h</span><br><span class="line">        Enter.cpp</span><br><span class="line">        )</span><br></pre></td></tr></table></figure></p>
+<p>为了构建源码外的pass, 重要的cmake语句有 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.4)</span><br><span class="line">project(llvm-pass-tutorial)</span><br><span class="line"></span><br><span class="line">find_package(LLVM REQUIRED CONFIG)</span><br><span class="line">add_definitions($&#123;LLVM_DEFINITIONS&#125;)</span><br><span class="line">include_directories($&#123;LLVM_INCLUDE_DIRS&#125;)</span><br><span class="line">link_directories($&#123;LLVM_LIBRARY_DIRS&#125;)</span><br><span class="line"></span><br><span class="line">add_subdirectory(skeleton)  # Use your pass name here.</span><br><span class="line">add_subdirectory(ollvm)  # ollvm</span><br><span class="line">add_subdirectory(Hikari)  # Hikari</span><br><span class="line">add_subdirectory(Armariris)  # Armariris</span><br></pre></td></tr></table></figure> 在每个文件夹内的CMakeList里调用 <code>add_library</code> <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">add_library(Armariris MODULE</span><br><span class="line">        # List your source files here.</span><br><span class="line">        CryptoUtils.cpp</span><br><span class="line">        StringObfuscation.cpp</span><br><span class="line">        Substitution.cpp</span><br><span class="line">        Flattening.cpp</span><br><span class="line">        Utils.cpp</span><br><span class="line">        include/Transforms/Obfuscation/Flattening.h</span><br><span class="line">        include/Transforms/Obfuscation/StringObfuscation.h</span><br><span class="line">        include/Transforms/Obfuscation/Substitution.h</span><br><span class="line">        include/Transforms/Obfuscation/Utils.h</span><br><span class="line">        Enter.cpp</span><br><span class="line">        )</span><br></pre></td></tr></table></figure></p>
 <h3 id="行动">行动</h3>
 <p>为了避免编译llvm. 我采用直接apt安装的方式安装llvm, 源码外建立pass项目. 好像安装了llvm-dev 安装后在 <code>/usr/lib/llvm-10</code> 附近有各种编译头文件</p>
 <p>在<code>project(llvm-pass-tutorial)</code>之后加上</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">set(ENV&#123;LLVM_HOME&#125; &#x2F;usr&#x2F;lib&#x2F;llvm-10)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set(ENV&#123;LLVM_HOME&#125; /usr/lib/llvm-10)</span><br></pre></td></tr></table></figure>
 <h3 id="pass的集成">pass的集成</h3>
 <p>我想知道如何无缝集成到clang。</p>
 <p>新的passmanager能更细粒度地控制Pass之间的互斥关系。每一个函数都返回了对应invalidate了的其他pass。还没迁移过去。所以可能还是legacy的PM多一些，clang应该还是吧。而legacy的PM，这两种注册方法中</p>
 <ol type="1">
 <li><p>要有一个ID，初始值不重要，因为是根据ID的地址区别各个函数的。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">char Hello::ID &#x3D; 0;</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">char Hello::ID = 0;</span><br></pre></td></tr></table></figure></li>
 <li><p>注册pass，得到一个命令行。这里是通过构造函数注册的，我们只需要初始化一个类。这种方法似乎只对opt有效？？当有这个选项的时候我们的pass才会被加载</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static RegisterPass&lt;Hello&gt; X(&quot;hello&quot;, &quot;Hello World Pass&quot;,</span><br><span class="line">                             false &#x2F;* not modify CFG *&#x2F;,</span><br><span class="line">                             false &#x2F;* pure Analysis Pass *&#x2F;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">static RegisterPass&lt;Hello&gt; X(&quot;hello&quot;, &quot;Hello World Pass&quot;,</span><br><span class="line">                             false /* not modify CFG */,</span><br><span class="line">                             false /* pure Analysis Pass */);</span><br></pre></td></tr></table></figure>
 <p>这种方法会注册到全局的passRegistry里面。TODO：探索何时被注册了命令行选项。</p></li>
 <li><p>加载时自动注册，这里用的是匿名函数，我们可以写一个函数。这种方法对opt无效。对<code>clang -Xclang -load -Xclang Obfuscation.dll</code> 有效。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static RegisterStandardPasses Y(</span><br><span class="line">    PassManagerBuilder::EP_EarlyAsPossible,</span><br><span class="line">    [](const PassManagerBuilder &amp;Builder,</span><br><span class="line">       legacy::PassManagerBase &amp;PM) &#123; PM.add(new Hello()); &#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">static RegisterStandardPasses Y(</span><br><span class="line">    PassManagerBuilder::EP_EarlyAsPossible,</span><br><span class="line">    [](const PassManagerBuilder &amp;Builder,</span><br><span class="line">       legacy::PassManagerBase &amp;PM) &#123; PM.add(new Hello()); &#125;);</span><br></pre></td></tr></table></figure>
 <p>TODO：研究原理。它会先调用PassManagerBuilder::addGlobalExtension，这个函数则是Transform/IPO里的，它把<code>std::make_tuple(Ty, std::move(Fn), ExtensionID)</code> 放到GlobalExtensions这个static全局Vector里面。最终是populateFunctionPassManager这里把注册的这些东西放进FPM的</p>
 <p>怀疑可能这里把我们的Pass放进内部统一的“Pass数据库”里了，opt根据数据库生成命令行选项，每个选项对应一个Pass的启用和关闭。</p></li>
 <li><p>命令行选项，加载后通过参数更详细地控制pass</p>
 <p>https://stackoverflow.com/questions/13626993/is-it-possible-to-add-arguments-for-user-defined-passes-in-llvm</p>
 <p>https://llvm.org/docs/CommandLine.html#commandline-2-0-library-manual</p>
 <p>使用commandline api: ​cl::opt。这个工具是完全独立于llvm的，可以拿出来自己用。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  cl::ParseCommandLineOptions(argc, argv);</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> </span>&#123;</span><br><span class="line">  cl::<span class="built_in">ParseCommandLineOptions</span>(argc, argv);</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>它负责初始化全局变量，选项都反映在全局变量里。因此和opt、clang是否加载使用我们的pass没有关系。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static cl::opt&lt;int&gt;</span><br><span class="line">ObfProbRate(&quot;bcf_prob&quot;, cl::desc(&quot;Choose the probability [%] each basic blocks will be obfuscated by the -bcf pass&quot;), cl::value_desc(&quot;probability rate&quot;), cl::init(defaultObfRate), cl::Optional);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">static cl::opt&lt;int&gt;</span><br><span class="line">ObfProbRate(&quot;bcf_prob&quot;, cl::desc(&quot;Choose the probability [%] each basic blocks will be obfuscated by the -bcf pass&quot;), cl::value_desc(&quot;probability rate&quot;), cl::init(defaultObfRate), cl::Optional);</span><br></pre></td></tr></table></figure>
 <p>表示解析一个int类型的命令行</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">cl::opt&lt;RegisterMyPasses::FunctionPassCtor, <span class="literal">false</span>,</span><br><span class="line">        RegisterPassParser&lt;RegisterMyPasses&gt; &gt;</span><br><span class="line">MyPassOpt(<span class="string">&quot;mypass&quot;</span>,</span><br><span class="line">          cl::init(&amp;createDefaultMyPass),</span><br><span class="line">          cl::desc(<span class="string">&quot;my pass option help&quot;</span>));</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">cl::opt&lt;RegisterMyPasses::FunctionPassCtor, <span class="literal">false</span>,</span><br><span class="line">        RegisterPassParser&lt;RegisterMyPasses&gt; &gt;</span><br><span class="line"><span class="built_in">MyPassOpt</span>(<span class="string">&quot;mypass&quot;</span>,</span><br><span class="line">          cl::<span class="built_in">init</span>(&amp;createDefaultMyPass),</span><br><span class="line">          cl::<span class="built_in">desc</span>(<span class="string">&quot;my pass option help&quot;</span>));</span><br></pre></td></tr></table></figure>
 <p><strong>llvm::cl::opt&lt; DataType, ExternalStorage, ParserClass &gt;</strong> 这里的cl初始化，声明了一个自定义parser，parser返回的结果是RegisterMyPasses类型的命令行选项。</p></li>
 <li><p><a href="https://llvm.org/docs/WritingAnLLVMPass.html#id47">Registering dynamically loaded passes</a></p></li>
 <li></li>
@@ -2272,23 +2337,23 @@
 <p>数组类型为<code>&#123; i8*, i8*, i8*, i32 &#125;</code>，类似于<code>&#123;char*, char*, char*, int&#125;</code> 依次为 函数地址、annotation字符串地址、源码文件名、源码内的行号。</p>
 <p>对参数的annotate会转化为有内存空间的局部变量，然后对内存空间annotate。此外，因为每个函数的局部空间是通过alloca指令分配的，所以llvm.var.annotation的第一个参数会指向分配的内存空间内部。局部变量的变量名会丢失。</p>
 <p>可能通过Debug_info能够找回局部变量名？增加-g选项后生成的ll文件内确实会增加dwarf4信息。会通过<code>call void @llvm.dbg.declare(metadata i32* %2, metadata !14, metadata !DIExpression()), !dbg !15</code>的方式声明局部变量，需要分析一下变量。通过<code>!llvm.module.flags</code> 可以判断是否开启了debug。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Annotation.c</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a __attribute__((annotate((<span class="string">&quot;hello1&quot;</span>)))) = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">b</span><span class="params">(<span class="keyword">int</span> __attribute__((annotate((<span class="string">&quot;hello2&quot;</span>)))) c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> c + <span class="number">41</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">d</span><span class="params">(<span class="keyword">int</span> e)</span> __<span class="title">attribute__</span><span class="params">((annotate((<span class="string">&quot;hello&quot;</span>))))</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> e + <span class="number">42</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight llvm"><table><tr><td class="code"><pre><span class="line"><span class="comment">; ModuleID = &#x27;Annotation.c&#x27;</span></span><br><span class="line">source_filename <span class="operator">=</span> <span class="string">&quot;Annotation.c&quot;</span></span><br><span class="line"><span class="keyword">target</span> <span class="keyword">datalayout</span> <span class="operator">=</span> <span class="string">&quot;e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128&quot;</span></span><br><span class="line"><span class="keyword">target</span> <span class="keyword">triple</span> <span class="operator">=</span> <span class="string">&quot;x86_64-pc-linux-gnu&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="title">@a</span> <span class="operator">=</span> dso_local <span class="keyword">global</span> <span class="type">i32</span> <span class="number">3</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line"><span class="title">@.str</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello1\00&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.1</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;Annotation.c\00&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.2</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello2\00&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.3</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello\00&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@llvm.global.annotations</span> <span class="operator">=</span> <span class="keyword">appending</span> <span class="keyword">global</span> [<span class="number">2</span> <span class="keyword">x</span> &#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125;] [&#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125; &#123; <span class="type">i8</span>* <span class="keyword">bitcast</span> (<span class="type">i32</span>* <span class="title">@a</span> <span class="keyword">to</span> <span class="type">i8</span>*)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">3</span> &#125;<span class="punctuation">,</span> &#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125; &#123; <span class="type">i8</span>* <span class="keyword">bitcast</span> (<span class="type">i32</span> (<span class="type">i32</span>)* <span class="title">@d</span> <span class="keyword">to</span> <span class="type">i8</span>*)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.3</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">10</span> &#125;]<span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: noinline nounwind optnone uwtable</span></span><br><span class="line"><span class="keyword">define</span> dso_local <span class="type">i32</span> <span class="title">@b</span>(<span class="type">i32</span> <span class="variable">%0</span>) <span class="variable">#0</span> &#123;</span><br><span class="line">  <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">alloca</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="keyword">store</span> <span class="type">i32</span> <span class="variable">%0</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">bitcast</span> <span class="type">i32</span>* <span class="variable">%2</span> <span class="keyword">to</span> <span class="type">i8</span>*</span><br><span class="line">  <span class="keyword">call</span> void <span class="title">@llvm.var.annotation</span>(<span class="type">i8</span>* <span class="variable">%3</span><span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.2</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">5</span>)</span><br><span class="line">  <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%5</span> <span class="operator">=</span> <span class="keyword">add</span> <span class="keyword">nsw</span> <span class="type">i32</span> <span class="variable">%4</span><span class="punctuation">,</span> <span class="number">41</span></span><br><span class="line">  <span class="keyword">ret</span> <span class="type">i32</span> <span class="variable">%5</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: nounwind willreturn</span></span><br><span class="line"><span class="keyword">declare</span> void <span class="title">@llvm.var.annotation</span>(<span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span>) <span class="variable">#1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: noinline nounwind optnone uwtable</span></span><br><span class="line"><span class="keyword">define</span> dso_local <span class="type">i32</span> <span class="title">@d</span>(<span class="type">i32</span> <span class="variable">%0</span>) <span class="variable">#0</span> &#123;</span><br><span class="line">  <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">alloca</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="keyword">store</span> <span class="type">i32</span> <span class="variable">%0</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">add</span> <span class="keyword">nsw</span> <span class="type">i32</span> <span class="variable">%3</span><span class="punctuation">,</span> <span class="number">42</span></span><br><span class="line">  <span class="keyword">ret</span> <span class="type">i32</span> <span class="variable">%4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Annotation.c</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> a __attribute__((annotate((<span class="string">&quot;hello1&quot;</span>)))) = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">b</span><span class="params">(<span class="type">int</span> __attribute__((annotate((<span class="string">&quot;hello2&quot;</span>)))) c)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">return</span> c + <span class="number">41</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">d</span><span class="params">(<span class="type">int</span> e)</span> __<span class="title function_">attribute__</span><span class="params">((annotate((<span class="string">&quot;hello&quot;</span>))))</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">return</span> e + <span class="number">42</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight llvm"><table><tr><td class="code"><pre><span class="line"><span class="comment">; ModuleID = &#x27;Annotation.c&#x27;</span></span><br><span class="line">source_filename <span class="operator">=</span> <span class="string">&quot;Annotation.c&quot;</span></span><br><span class="line"><span class="keyword">target</span> <span class="keyword">datalayout</span> <span class="operator">=</span> <span class="string">&quot;e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128&quot;</span></span><br><span class="line"><span class="keyword">target</span> <span class="keyword">triple</span> <span class="operator">=</span> <span class="string">&quot;x86_64-pc-linux-gnu&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="title">@a</span> <span class="operator">=</span> dso_local <span class="keyword">global</span> <span class="type">i32</span> <span class="number">3</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line"><span class="title">@.str</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello1<span class="char escape_">\00</span>&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.1</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;Annotation.c<span class="char escape_">\00</span>&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.2</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello2<span class="char escape_">\00</span>&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@.str.3</span> <span class="operator">=</span> <span class="keyword">private</span> <span class="keyword">unnamed_addr</span> <span class="keyword">constant</span> [<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>] <span class="keyword">c</span><span class="string">&quot;hello<span class="char escape_">\00</span>&quot;</span><span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"><span class="title">@llvm.global.annotations</span> <span class="operator">=</span> <span class="keyword">appending</span> <span class="keyword">global</span> [<span class="number">2</span> <span class="keyword">x</span> &#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125;] [&#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125; &#123; <span class="type">i8</span>* <span class="keyword">bitcast</span> (<span class="type">i32</span>* <span class="title">@a</span> <span class="keyword">to</span> <span class="type">i8</span>*)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">3</span> &#125;<span class="punctuation">,</span> &#123; <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span> &#125; &#123; <span class="type">i8</span>* <span class="keyword">bitcast</span> (<span class="type">i32</span> (<span class="type">i32</span>)* <span class="title">@d</span> <span class="keyword">to</span> <span class="type">i8</span>*)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">6</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.3</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">10</span> &#125;]<span class="punctuation">,</span> <span class="keyword">section</span> <span class="string">&quot;llvm.metadata&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: noinline nounwind optnone uwtable</span></span><br><span class="line"><span class="keyword">define</span> dso_local <span class="type">i32</span> <span class="title">@b</span>(<span class="type">i32</span> <span class="variable">%0</span>) <span class="variable">#0</span> &#123;</span><br><span class="line">  <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">alloca</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="keyword">store</span> <span class="type">i32</span> <span class="variable">%0</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">bitcast</span> <span class="type">i32</span>* <span class="variable">%2</span> <span class="keyword">to</span> <span class="type">i8</span>*</span><br><span class="line">  <span class="keyword">call</span> void <span class="title">@llvm.var.annotation</span>(<span class="type">i8</span>* <span class="variable">%3</span><span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">7</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.2</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i8</span>* <span class="keyword">getelementptr</span> <span class="keyword">inbounds</span> ([<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]<span class="punctuation">,</span> [<span class="number">13</span> <span class="keyword">x</span> <span class="type">i8</span>]* <span class="title">@.str.1</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span>)<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">5</span>)</span><br><span class="line">  <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%5</span> <span class="operator">=</span> <span class="keyword">add</span> <span class="keyword">nsw</span> <span class="type">i32</span> <span class="variable">%4</span><span class="punctuation">,</span> <span class="number">41</span></span><br><span class="line">  <span class="keyword">ret</span> <span class="type">i32</span> <span class="variable">%5</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: nounwind willreturn</span></span><br><span class="line"><span class="keyword">declare</span> void <span class="title">@llvm.var.annotation</span>(<span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span>) <span class="variable">#1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; Function Attrs: noinline nounwind optnone uwtable</span></span><br><span class="line"><span class="keyword">define</span> dso_local <span class="type">i32</span> <span class="title">@d</span>(<span class="type">i32</span> <span class="variable">%0</span>) <span class="variable">#0</span> &#123;</span><br><span class="line">  <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">alloca</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="keyword">store</span> <span class="type">i32</span> <span class="variable">%0</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">align</span> <span class="number">4</span></span><br><span class="line">  <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">add</span> <span class="keyword">nsw</span> <span class="type">i32</span> <span class="variable">%3</span><span class="punctuation">,</span> <span class="number">42</span></span><br><span class="line">  <span class="keyword">ret</span> <span class="type">i32</span> <span class="variable">%4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>llvm.global.annotations的声明中，最开头的<code>[2 x &#123; i8*, i8*, i8*, i32 &#125;]</code>是类型，紧接着的是主体，ConstantExpr，最末尾是section说明<code>, section "llvm.metadata"</code>。</p>
 <p>而ConstantExpr部分就利用bitcast把函数类型转换成i8*类型<code>bitcast (i32* @a to i8*)</code>，再<code>getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0)</code>。</p>
 <h3 id="pass中的解析方法">Pass中的解析方法</h3>
-<p>首先获取Module级别的全局变量llvm.global.annotations</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">GlobalVariable *glob &#x3D;</span><br><span class="line">      f-&gt;getParent()-&gt;getGlobalVariable(&quot;llvm.global.annotations&quot;);</span><br></pre></td></tr></table></figure>
+<p>首先获取Module级别的全局变量 llvm.global.annotations</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GlobalVariable *glob =</span><br><span class="line">      f-&gt;getParent()-&gt;getGlobalVariable(&quot;llvm.global.annotations&quot;);</span><br></pre></td></tr></table></figure>
 <p>得到全局变量的初始值</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ConstantArray *ca &#x3D; dyn_cast&lt;ConstantArray&gt;(glob-&gt;getInitializer())</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ConstantArray *ca = dyn_cast&lt;ConstantArray&gt;(glob-&gt;getInitializer())</span><br></pre></td></tr></table></figure>
 <p>这是一个数组类型，先进行遍历，长度是<code>ca-&gt;getNumOperands()</code>，取下标使用<code>ca-&gt;getOperand(i)</code>。取了后得到ConstantStruct。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ConstantStruct *structAn &#x3D; dyn_cast&lt;ConstantStruct&gt;(ca-&gt;getOperand(i))</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ConstantStruct *structAn = dyn_cast&lt;ConstantStruct&gt;(ca-&gt;getOperand(i))</span><br></pre></td></tr></table></figure>
 <p>这就是<code>&#123; i8*, i8*, i8*, i32 &#125;</code>结构体，使用<code>structAn-&gt;getOperand(0)</code>这样的方法取0-3的下标得到成员。其中前三个取出来都是ConstantExpr：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ConstantExpr *expr &#x3D; dyn_cast&lt;ConstantExpr&gt;(structAn-&gt;getOperand(0))</span><br><span class="line">ConstantExpr *note &#x3D; cast&lt;ConstantExpr&gt;(structAn-&gt;getOperand(1));</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ConstantExpr *expr = dyn_cast&lt;ConstantExpr&gt;(structAn-&gt;getOperand(0))</span><br><span class="line">ConstantExpr *note = cast&lt;ConstantExpr&gt;(structAn-&gt;getOperand(1));</span><br></pre></td></tr></table></figure>
 <p>第一个基本上都是bitcast</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">expr-&gt;getOpcode() &#x3D;&#x3D; Instruction::BitCast </span><br><span class="line">expr-&gt;getOperand(0)是Function类型</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">expr-&gt;getOpcode() == Instruction::BitCast </span><br><span class="line">expr-&gt;getOperand(0)是Function类型</span><br></pre></td></tr></table></figure>
 <p>第二第三个都是getElementPtr，然后先获取GlobalVariable类型的字符串，再获取Initializer得到真正的字符串内容。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">note-&gt;getOpcode() &#x3D;&#x3D; Instruction::GetElementPtr</span><br><span class="line">GlobalVariable *annoteStr &#x3D; dyn_cast&lt;GlobalVariable&gt;(note-&gt;getOperand(0))</span><br><span class="line">ConstantDataSequential *data &#x3D; dyn_cast&lt;ConstantDataSequential&gt;(annoteStr-&gt;getInitializer())</span><br><span class="line">if (data-&gt;isString()) &#123; annotation +&#x3D; data-&gt;getAsString().lower() + &quot; &quot;; &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">note-&gt;getOpcode() == Instruction::GetElementPtr</span><br><span class="line">GlobalVariable *annoteStr = dyn_cast&lt;GlobalVariable&gt;(note-&gt;getOperand(0))</span><br><span class="line">ConstantDataSequential *data = dyn_cast&lt;ConstantDataSequential&gt;(annoteStr-&gt;getInitializer())</span><br><span class="line">if (data-&gt;isString()) &#123; annotation += data-&gt;getAsString().lower() + &quot; &quot;; &#125;</span><br></pre></td></tr></table></figure>
 <h3 id="annotationhello-在pass中读取annotation实例">AnnotationHello 在Pass中读取Annotation实例</h3>
 <p>继承一个ModulePass，对每个模块解析一次Annotation。</p>
 <p>继承一个FunctionPass函数，在第一个基本块内解析Annotation。</p>
@@ -2296,13 +2361,12 @@
 <h2 id="windows平台下的混淆visual-studio-配置使用pass">Windows平台下的混淆：visual studio 配置使用pass</h2>
 <p>经过查阅资料, 没找到, 不能android一样, <a href="https://stackoverflow.com/questions/48947973/use-llvm-in-a-cmake-build">重新编译才能得到cmake库</a> 编译后将build文</p>
 <p>在Windows平台编译不是一个简单的问题，需要各种支持。现在虽然难，但似乎有人成功了。</p>
-<p>安装</p>
-<p>了tdm-Gcc之后用如下的选项编译</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cmake -G Ninja -DLLVM_ENABLE_PROJECTS&#x3D;&quot;clang&quot; -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS&#x3D;On ..\llvm</span><br></pre></td></tr></table></figure>
+<p>安装了tdm-Gcc之后用如下的选项编译</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cmake -G Ninja -DLLVM_ENABLE_PROJECTS=&quot;clang&quot; -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS=On ..\llvm</span><br></pre></td></tr></table></figure>
 <p>出现报错，说</p>
 <p>cant close file too big</p>
 <p>改设置上一些其他的选项试试，看看能不能好一点。可能只能编译release版本的</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cmake -G Ninja -DLLVM_ENABLE_PROJECTS&#x3D;&quot;clang&quot; -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS&#x3D;On -DLLVM_INCLUDE_TESTS&#x3D;Off DLLVM_TARGETS_TO_BUILD&#x3D;&quot;X86&quot; -DCMAKE_BUILD_TYPE&#x3D;Release ..\llvm</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cmake -G Ninja -DLLVM_ENABLE_PROJECTS=&quot;clang&quot; -DLLVM_EXPORT_SYMBOLS_FOR_PLUGINS=On -DLLVM_INCLUDE_TESTS=Off DLLVM_TARGETS_TO_BUILD=&quot;X86&quot; -DCMAKE_BUILD_TYPE=Release ..\llvm</span><br></pre></td></tr></table></figure>
 <p>时间过于漫长，我把环境变量里面的clang提前了，不行的话看看能不能clang自己编译自己。</p>
 <p>TODO 描述编译经历</p>
 <ol type="1">
@@ -2332,14 +2396,14 @@
 <p><a href="https://medium.com/@mshockwave/writing-llvm-pass-in-2018-part-iv-d69dac57171d">内置的方法</a></p></li>
 <li><p>bytecode转可执行文件？</p>
 <p>可以直接clang编译成可执行文件 <a href="https://blog.csdn.net/pc153262603/article/details/89553688">来源</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">clang a.o.bc -o struct</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">clang a.o.bc -o struct</span><br></pre></td></tr></table></figure>
 <p>首先llc编译成S的汇编文件，再用gcc什么的生成可执行文件 <a href="https://stackoverflow.com/questions/32523847/how-to-make-llvm-bc-file-executable">来自</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">llc -filetype&#x3D;obj hello.bc -o hello.o</span><br><span class="line">llc hello.bc -o hello.s</span><br><span class="line">gcc hello.o&#x2F;s -o hello</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">llc -filetype=obj hello.bc -o hello.o</span><br><span class="line">llc hello.bc -o hello.s</span><br><span class="line">gcc hello.o/s -o hello</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h2 id="pass与clang的集成">PASS与Clang的集成</h2>
 <h3 id="案例-ollvm做出的修改">案例: ollvm做出的修改</h3>
 <p>以下是ollvm4.0和llvm4.0进行对比的不同的文件. 来自<a href="https://magic-king.net/2020/02/27/ollvm-learning/">这里</a> 使用<a href="https://truehumandesign.se/s_diffinity.php">Diffinity</a>.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.&#x2F;include&#x2F;llvm&#x2F;Transforms&#x2F;Obfuscation&#x2F; # obfuscation的头文件</span><br><span class="line">.&#x2F;include&#x2F;llvm&#x2F;Transforms&#x2F;CryptoUtils.h # obfuscation的头文件</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;IPO&#x2F;LLVMBuild.txt</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;IPO&#x2F;PassManagerBuilder.cpp # Pass注册</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;Obfuscation&#x2F; # obfuscation source code</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;CMakeLists.txt</span><br><span class="line">.&#x2F;lib&#x2F;Transforms&#x2F;LLVMBuild.txt</span><br><span class="line">.&#x2F;tools&#x2F;clang # 集成clang,要在gitignore里取消clang的注释</span><br><span class="line">.&#x2F;.gitignore</span><br><span class="line">.&#x2F;CMakeLists.txt</span><br><span class="line">.&#x2F;CODE_OWNERS.TXT</span><br><span class="line">.&#x2F;LICENSE.TXT</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./include/llvm/Transforms/Obfuscation/ # obfuscation的头文件</span><br><span class="line">./include/llvm/Transforms/CryptoUtils.h # obfuscation的头文件</span><br><span class="line">./lib/Transforms/IPO/LLVMBuild.txt</span><br><span class="line">./lib/Transforms/IPO/PassManagerBuilder.cpp # Pass注册</span><br><span class="line">./lib/Transforms/Obfuscation/ # obfuscation source code</span><br><span class="line">./lib/Transforms/CMakeLists.txt</span><br><span class="line">./lib/Transforms/LLVMBuild.txt</span><br><span class="line">./tools/clang # 集成clang,要在gitignore里取消clang的注释</span><br><span class="line">./.gitignore</span><br><span class="line">./CMakeLists.txt</span><br><span class="line">./CODE_OWNERS.TXT</span><br><span class="line">./LICENSE.TXT</span><br></pre></td></tr></table></figure>
 <h2 id="ollvm-实现分析">OLLVM 实现分析</h2>
 <h3 id="概述">概述</h3>
 <ol type="1">
@@ -2355,7 +2419,7 @@
 <p>指令替换是最简单的。对于加减与或 异或这五种运算，分别有多种替换方法，ollvm随机选一个替换。增加的命令行选项是每个函数替换多少遍。第一遍替换的是原始的指令，后面每次替换的就是混淆后的指令了，通过反复替换增加复杂度。</p>
 <p>这个pass明显需要放在优化pass之后。如何让自己的pass在优化后运行？ 可以考虑opt过了pass之后，编译的时候就用 -O0 ?</p>
 <p>继承Funcpass的Substitution有几个函数指针数组，在初始化的时候把自己的成员函数填进去，之后通过随机数产生器随机调用。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (Function::iterator bb = tmp-&gt;begin(); bb != tmp-&gt;end(); ++bb) &#123;</span><br><span class="line">  <span class="keyword">for</span> (BasicBlock::iterator inst = bb-&gt;begin(); inst != bb-&gt;end(); ++inst) &#123;</span><br><span class="line">    <span class="keyword">if</span> (inst-&gt;isBinaryOp()) &#123;</span><br><span class="line">      <span class="keyword">switch</span> (inst-&gt;getOpcode()) &#123;</span><br><span class="line">      <span class="keyword">case</span> BinaryOperator::Add:</span><br><span class="line">                  <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> BinaryOperator::Sub:</span><br><span class="line">      ...</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (Function::iterator bb = tmp-&gt;<span class="built_in">begin</span>(); bb != tmp-&gt;<span class="built_in">end</span>(); ++bb) &#123;</span><br><span class="line">  <span class="keyword">for</span> (BasicBlock::iterator inst = bb-&gt;<span class="built_in">begin</span>(); inst != bb-&gt;<span class="built_in">end</span>(); ++inst) &#123;</span><br><span class="line">    <span class="keyword">if</span> (inst-&gt;<span class="built_in">isBinaryOp</span>()) &#123;</span><br><span class="line">      <span class="keyword">switch</span> (inst-&gt;<span class="built_in">getOpcode</span>()) &#123;</span><br><span class="line">      <span class="keyword">case</span> BinaryOperator::Add:</span><br><span class="line">                  <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> BinaryOperator::Sub:</span><br><span class="line">      ...</span><br></pre></td></tr></table></figure>
 <p>真正核心的替换函数，参数只是那个指令<code>BinaryOperator *bo</code>。</p>
 <figure>
 <img src="image-20200928135000792.png" alt="image-20200928135000792" /><figcaption aria-hidden="true">image-20200928135000792</figcaption>
@@ -2363,9 +2427,9 @@
 <p>addNeg：增加一个Neg指令，把加法变成减法。addDoubleNeg同理。</p>
 <p>精髓在于BinaryOperator::Create的方法的最后一个参数是InsertBefore，这样按顺序插入到那个指令前面，最后的时候再对原来的指令调用replaceAllUsesWith，用最后生成的指令去替换它就好了。意味着用最后一个指令产生的值去替换它产生的值。</p>
 <p>binaryOperator成员如下，rem是取余数的运算符 <a href="https://llvm.org/docs/LangRef.html#binary-operations">多找找llvm手册</a> 。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; Standard binary operators...</span><br><span class="line"> FIRST_BINARY_INST(13)</span><br><span class="line">HANDLE_BINARY_INST(13, Add  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(14, FAdd , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(15, Sub  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(16, FSub , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(17, Mul  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(18, FMul , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(19, UDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(20, SDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(21, FDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(22, URem , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(23, SRem , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(24, FRem , BinaryOperator)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// Standard binary operators...</span><br><span class="line"> FIRST_BINARY_INST(13)</span><br><span class="line">HANDLE_BINARY_INST(13, Add  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(14, FAdd , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(15, Sub  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(16, FSub , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(17, Mul  , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(18, FMul , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(19, UDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(20, SDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(21, FDiv , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(22, URem , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(23, SRem , BinaryOperator)</span><br><span class="line">HANDLE_BINARY_INST(24, FRem , BinaryOperator)</span><br></pre></td></tr></table></figure>
 <p>TODO 确实会留下原来被代替的指令。需要在合适的时候调用<code>bo-&gt;eraseFromParent();</code>直接调用会导致iterator出现问题。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">i &#x3D; vec.erase(i); </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">i = vec.erase(i); </span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Dev</category>
@@ -2395,7 +2459,7 @@
 <h3 id="实际的ir-soot的3ac">实际的IR-Soot的3AC</h3>
 <p>Soot能分析Java程序，它就是产生typed 3AC.</p>
 <p>(Soot？JVM) 中常见的invoke指令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">invokespecial: call constructor, call superclass methods, call private methods</span><br><span class="line">invokevirtual: instance method call (virtual dispatch)</span><br><span class="line">invokeinterface: cannot optimization, checking interface implementation.</span><br><span class="line">invokestatic: call static methods</span><br><span class="line"></span><br><span class="line">Java 7: invoke dynamic -&gt; Java static typing, dynamic language on JVM</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">invokespecial: call constructor, call superclass methods, call private methods</span><br><span class="line">invokevirtual: instance method call (virtual dispatch)</span><br><span class="line">invokeinterface: cannot optimization, checking interface implementation.</span><br><span class="line">invokestatic: call static methods</span><br><span class="line"></span><br><span class="line">Java 7: invoke dynamic -&gt; Java static typing, dynamic language on JVM</span><br></pre></td></tr></table></figure>
 <p>多个字符串相加会实例化新的StringBuilder，依次对每个字符串调用append，最后toString。</p>
 <p>Java的class，静态成员初始化（静态代码块？）会在生成的<code>&lt;clinit&gt;</code>函数中，比如给static final double pi = 3.14这样的成员赋值。</p>
 <h3 id="ssa">SSA</h3>
@@ -2605,7 +2669,7 @@ f^{i}(\bot) \sqsubseteq f^{i}(x) = x, i \in N^+
 MOP[S_i]=\mathop{\sqcup/\sqcap}\limits_{A\ path\ P\ from\ Entry\ to\ S_i} (F_P(OUT[Entry]))
 \]</span> 而有一些Path可能是真实情况下不会被执行到的，所以我们的结果不是完全精确的，不是truth。而有一些循环是可能无数次的，不可枚举的，枚举所有情况是不可能的。</p>
 <h5 id="我们的迭代方法-vs-mop的方法">我们的迭代方法 vs MOP的方法</h5>
-<p>我们的方法和MOP的方法的明显区别在于，MOP的meet是在最后进行的，而我们可能会提前meet结果在待入下一步的转换函数。</p>
+<p>我们的方法和MOP的方法的明显区别在于，MOP的meet是在最后进行的，而我们可能会提前meet结果在带入下一步的转换函数。</p>
 <figure>
 <img src="image-20210117220047438.png" alt="image-20210117220047438" /><figcaption aria-hidden="true">image-20210117220047438</figcaption>
 </figure>
@@ -2734,7 +2798,7 @@ c&#39;是c的父类
 <h3 id="class-hieracy-analysis">Class hieracy analysis</h3>
 <p><code>A a = ...;a.foo()</code>既然我们不知道会调用到哪个子类的方法，那就假设可能会调用到任何一个子类中的对应方法。</p>
 <p>分析情景：假设我们在Soot中遇到了一个invoke称为cs，参数有一个"signature"称为m：<code>&lt;C: T foo(P,Q,R)&gt;</code>，如果是virtual call还会多一个Receiver object。Class hieracy analysis的Call Resilution算法描述如下：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Resole(cs) &#123;</span><br><span class="line">    T = &#123;&#125;;</span><br><span class="line">	m = cs指令的“signature”参数;</span><br><span class="line">    <span class="keyword">if</span> cs is a <span class="keyword">static</span> call &#123;</span><br><span class="line">        T = &#123; m &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> cs is a special call &#123;</span><br><span class="line">        定义C^m为m的<span class="class"><span class="keyword">class</span>信息;</span></span><br><span class="line">        T = &#123; Dispatch(c^m,m) &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> cs is a <span class="keyword">virtual</span> call &#123;</span><br><span class="line">        c = cs的receiver object在声明的时候的类型;</span><br><span class="line">        对c的每个子类 c<span class="number">&#x27;</span>（包括c自己） &#123;</span><br><span class="line">        	往T添加Dispatch(c<span class="number">&#x27;</span>,m);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Resole(cs) &#123;</span><br><span class="line">    T = &#123;&#125;;</span><br><span class="line">	m = cs指令的“signature”参数;</span><br><span class="line">    <span class="keyword">if</span> cs is a <span class="type">static</span> call &#123;</span><br><span class="line">        T = &#123; m &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> cs is a special call &#123;</span><br><span class="line">        定义C^m为m的<span class="class"><span class="keyword">class</span>信息;</span></span><br><span class="line">        T = &#123; Dispatch(c^m,m) &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> cs is a virtual call &#123;</span><br><span class="line">        c = cs的receiver object在声明的时候的类型;</span><br><span class="line">        对c的每个子类 c<span class="number">&#x27;</span>（包括c自己） &#123;</span><br><span class="line">        	往T添加Dispatch(c<span class="number">&#x27;</span>,m);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果是static call，则直接可以找到对应的方法。如果是special call有三种情况，其中私有方法，自己的构造函数，则就是签名中的m，第三种情况是父类的方法（super关键字），这种情况需要不断回溯，因此我们统一也使用Dispatch函数来处理。（这里可以发现Dispatch的参数c^m是编译器确定的，因此返回的结果也是编译期能够确定的。）</p>
 <p>这里是从那个变量声明时的类型向下找每个子类可能调用到的方法，而jvm运行的时候使用dispatch是从当前真正的类型向上找定义的方法，这就说明了对声明为C的类型的变量调用virtual call，那么被调用的函数所在的类，在继承树上最高不会超过C，最低不会低于变量真正的类型。错了，可能会高过C，但是此时C肯定也“有”这个方法，结果会等于Dispatch(C,m)。</p>
 <p>CHA的优点：速度快，只考虑声明时的信息，但是忽略了数据和控制流的信息。缺点：不精确。很容易引入过多的目标函数。之后会通过指针分析的方法改善。</p>
@@ -2753,15 +2817,15 @@ c&#39;是c的父类
 <p>那要不要考虑subinterface？？</p>
 <h3 id="从invokeexpr中获取调用出变量的class">从InvokeExpr中获取调用出变量的class</h3>
 <p>原本是</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">SootClass current = method.getDeclaringClass()</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">SootClass</span> <span class="variable">current</span> <span class="operator">=</span> method.getDeclaringClass()</span><br></pre></td></tr></table></figure>
 <p>表示该方法定义所在的class。但是在下面这个例子里，返回的是A。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class VirtualCall &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        B b &#x3D; new B();</span><br><span class="line">        b.foo();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class A &#123;</span><br><span class="line">    void foo() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class B extends A &#123;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public class VirtualCall &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        B b = new B();</span><br><span class="line">        b.foo();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class A &#123;</span><br><span class="line">    void foo() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class B extends A &#123;&#125;</span><br></pre></td></tr></table></figure>
 <p>但是其实b的定义处的类型是B，我想要从B开始向下遍历类，通过调试搞出了下面这样的代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">SootClass current = ((RefType)((InstanceInvokeExpr)invoke).getBase().getType()).getSootClass();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">SootClass</span> <span class="variable">current</span> <span class="operator">=</span> ((RefType)((InstanceInvokeExpr)invoke).getBase().getType()).getSootClass();</span><br></pre></td></tr></table></figure>
 <p>VirtualInvokeExpr和InterfaceInvokeExpr这两个interface都是InstanceInvokeExpr的subInterface。多了getBase这个方法获取Local类型的变量（b），然后用getType，强转为RefType，调用getSootClass得到类型（b的类型B）。</p>
 <p>但是这真的是正确的答案吗？感觉不应该这么复杂的。。。如果是从A开始遍历子类确实容易遍历到是A的子类而不是B的子类的类型。</p>
 <h3 id="观察intra-和interprocedural-constant-propagation">观察Intra-和Interprocedural constant propagation</h3>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    int a, b, c;</span><br><span class="line">    CHACP x &#x3D; new CHACP();</span><br><span class="line">    a &#x3D; 6;</span><br><span class="line">    b &#x3D; x.addOne(a);</span><br><span class="line">    c &#x3D; b - 3;</span><br><span class="line">    b &#x3D; x.ten();</span><br><span class="line">    c &#x3D; a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    int a, b, c;</span><br><span class="line">    CHACP x = new CHACP();</span><br><span class="line">    a = 6;</span><br><span class="line">    b = x.addOne(a);</span><br><span class="line">    c = b - 3;</span><br><span class="line">    b = x.ten();</span><br><span class="line">    c = a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>确实能够优化到addOne函数和ten函数。</p>
 <h2 id="指针分析">08-指针分析</h2>
 <p>CHA的一个重大问题就是如果是interface，则所有implement了这个interface的类都可能是目标。OO中的指针分析分析的就是某个类的变量，指向的到达是什么实例。指针分析的是指向的对象的性质，更应该叫指向分析。指针分析几乎是静态程序分析的基础。Dagstuhl Seminar 2013的对指针分析的研讨会里这么说。</p>
@@ -3048,7 +3112,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <h2 id="实验五">实验五</h2>
 <p>Cloning-Based Context Sensitivity具体在代码中如何体现？在heap model和调用时生成标签中，返回了不同的object，则会在PFG和最终的pt上产生不同的节点，从而增加精确性。</p>
 <p>指针分析的类实例化后，通过下面的方式设置了heap model和contex selector。我们需要的就是返回合适的context标记</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">pta.setHeapModel(<span class="keyword">new</span> AllocationSiteBasedModel());</span><br><span class="line">pta.setContextSelector(<span class="keyword">new</span> ContextInsensitiveSelector());</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">pta.setHeapModel(<span class="keyword">new</span> <span class="title class_">AllocationSiteBasedModel</span>());</span><br><span class="line">pta.setContextSelector(<span class="keyword">new</span> <span class="title class_">ContextInsensitiveSelector</span>());</span><br></pre></td></tr></table></figure>
 <p>谁应该被包裹在context里面？根据实验指导，是Callsite、Obj、Type(Method.getClassType)。另外还有两点需要注意，call-site sensitivity对静态方法的处理和成员方法的处理相同。而对Object和Type sensitivity来说则是不额外处理，直接传递context。</p>
 <p>例如实现k=2的情况，当context没有那么多的时候，还是需要实验DefaultContext和OneContext。</p>
 <p>初始化entry函数的时候，当前的Context就是default context。</p>
@@ -3088,11 +3152,11 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <p>Atoms 是Datalog中最基本的元素，形如<code>P(X1,X2,...,Xn)</code>的称为relational atom。如果<code>(“Xiaoming”,18)</code>在表中，则<code>Age(“Xiaoming”,18)</code>为真。还有arithmetic atoms，如<code>age &gt;= 18</code>这种变量判断。</p>
 <p>Datalog Rules形如<code>H &lt;-B1,B2,…,Bn.</code>，由Head，箭头，Body组成。意思是当body为true的时候Head也为true。其中<code>,</code>为与逻辑，<code>;</code>为或逻辑，<code>!</code>为非逻辑，复杂逻辑最好多加加括号。</p>
 <p>考虑如下规则：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Adult(person) &lt;- Age(person,age), age &gt;&#x3D; 18.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Adult(person) &lt;- Age(person,age), age &gt;= 18.</span><br></pre></td></tr></table></figure>
 <p>Datalog可能会遍历Age表赋值person和age变量，然后推导，得到每个Person的Adult是否为true。</p>
 <p>谓词分为EDB（extensional database）、IDB（intensional database）。EDB为给定的数据，IDB是推导出的数据。</p>
 <p>Datalog最关键的是支持递归：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Reach(from, to) &lt;- Edge(from, to).</span><br><span class="line">Reach(from, to) &lt;- Reach(from, node), Edge(node, to).</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Reach(from, to) &lt;- Edge(from, to).</span><br><span class="line">Reach(from, to) &lt;- Reach(from, node), Edge(node, to).</span><br></pre></td></tr></table></figure>
 <h3 id="规则安全性">规则安全性</h3>
 <p>A rule is safeif every variable appears in at least one non-negatedrelationalatom</p>
 <p>每个变量至少要出现在右侧relational atom一次，被取反的不算。</p>
@@ -3148,7 +3212,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <h3 id="函数调用流匹配">函数调用流匹配</h3>
 <p>回忆Meet-Over-all-path，是将所有可能的路径找出，依次计算每个路径，再合并。在函数调用过程中的调用边和return边匹配，导致走return边的时候只有一条真正路径<code>RealizablePaths</code>，其他的并不是真正可执行的路径。</p>
 <p>这种调用边导致的问题，可以通过类似括号匹配的算法识别不对的路径并避免。这里引入context-free language，若某路径在该语言中，称为有CFL-Reachability。调用边作为左括号，加上特有标号，只和同样标号的return边匹配。中间可以有任意的普通边。这里识别的是任意点到任意点的路径，不一定是完整的路径，因此可能会留下待之后被匹配的左括号。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">realizable -&gt; matched realizable</span><br><span class="line">-&gt; (_i realizable</span><br><span class="line">-&gt; ε</span><br><span class="line">matched -&gt; (_i matched )_i</span><br><span class="line">-&gt; e</span><br><span class="line">-&gt; ε</span><br><span class="line">-&gt; matched matched</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">realizable -&gt; matched realizable</span><br><span class="line">-&gt; (_i realizable</span><br><span class="line">-&gt; ε</span><br><span class="line">matched -&gt; (_i matched )_i</span><br><span class="line">-&gt; e</span><br><span class="line">-&gt; ε</span><br><span class="line">-&gt; matched matched</span><br></pre></td></tr></table></figure>
 <h3 id="ifdsinterproceduralfinitedistributivesubset-problem">IFDS(Interprocedural,Finite,Distributive,Subset Problem)</h3>
 <p>IFDS处理跨函数的数据流分析，在有限域上，基于distributive的flow function。提供meet-over-all-realizable-paths(MRP)的结果。主要步骤：</p>
 <ol type="1">
@@ -3229,7 +3293,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 </ol>
 <h3 id="distributivity">Distributivity</h3>
 <ol type="1">
-<li><p>能否做常数传用（constant propagation）？它是之前那个比较特殊的，域是无限的。那我只考虑有限的常量可以吗？NO</p>
+<li><p>能否做常数传播（constant propagation）？它是之前那个比较特殊的，域是无限的。那我只考虑有限的常量可以吗？NO</p>
 <p>TODO</p></li>
 <li><p>能否做指针分析？NO</p></li>
 </ol>
@@ -3254,6 +3318,343 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
       </categories>
       <tags>
         <tag>PL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>静态分析学习资源分享</title>
+    <url>/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/</url>
+    <content><![CDATA[<p>静态分析学习资源分享。</p>
+<span id="more"></span>
+<p>不得不说，在学习资源上，书 &gt; 课程 &gt; 论文/博客。对于论文，更早发表的更容易看懂。书则要找中文的，最新出版的。</p>
+<p>静态分析方面中文书目前应该还没出来，因此最好和国际接轨，学好英语看英文书。英文书其实也不多，有如下几本：</p>
+<ol type="1">
+<li><p>《Introduction to Static Analysis An Abstract Interpretation Perspective (Xavier Rival, Kwangkeun Yi) 》 MIT Press 2020</p>
+<p>极力推荐。新出版的书整体水平和可读性就是高很多。</p></li>
+<li><p>《Principles of Program Analysis》 第二版 2005</p></li>
+</ol>
+<p>学习资源拿到手看一下，如果讲的都是已经会了的可以扔，如果讲的太难可以记下来，以后回来再看，最后目的都是找到刚好符合自己水平的。</p>
+<p>还有各种开源项目的publications</p>
+<ol type="1">
+<li>SVF http://svf-tools.github.io/SVF/</li>
+<li>Frama-C https://frama-c.com/html/publications.html</li>
+<li>Python和C跨语言的Mopsa https://mopsa.lip6.fr/</li>
+</ol>
+<h2 id="之前的总结">之前的总结</h2>
+
+
+	<div class="row">
+    <embed src="/2022.assets/程序静态分析学习资料分享-wjk.pdf" width="100%" height="550" type="application/pdf">
+	</div>
+
+
+
+]]></content>
+      <categories>
+        <category>Read</category>
+      </categories>
+      <tags>
+        <tag>StaticAnalysis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NativeSummary简介</title>
+    <url>/2022/NativeSummary-intro/</url>
+    <content><![CDATA[<p>本文是对NativeSummary的介绍。配有配套slides。</p>
+<span id="more"></span>
+<p>直觉是，很多JNI接口很多对应着Java语句的操作。支持的JNI调用：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Throw,  ThrowNew</span><br><span class="line">NewObject、Call[Nonvirtual/Static]XXXMethod</span><br><span class="line">Get/Set[Static]ObjectField</span><br><span class="line">不太好处理，先不管的：</span><br><span class="line">NewXXXArray、Get/ReleaseXXXArrayElements</span><br><span class="line">ExceptionCheck</span><br></pre></td></tr></table></figure>
+<p>当拿到一个APK文件，解包得到dex文件-Java代码，<code>.so</code>文件代表C语言编译后的二进制代码。</p>
+<ol type="1">
+<li><p>JNI绑定部分：找到分析入口</p>
+<ul>
+<li><p>最简单的模式，静态块内的System.LoadLibrary，so侧通过导出函数直接绑定。我们则扫描so侧的导出函数作为入口。这些都发生在大部分代码之前。</p></li>
+<li><p>动态绑定与JNI_OnLoad：System.LoadLibrary -&gt; JNI_OnLoad(.so库内的C语言函数) -&gt; DynamicRegister函数。也就是说依赖于对函数的分析，如果没有分析成功，直接无法找到函数入口点。但是一般的应用这个函数都是一个比较简单的编程模式的。</p></li>
+<li><p>Java动态选择二进制库：Java类在静态块内往往调用System.loadLibrary，去加载不同的库。例如，有的APK会有两个名字类似，功能重复但稍有差别的二进制库，如<code>libxxx.so</code>和<code>libxxx_ssl.so</code>。这个有点麻烦，目前直接假设都会加载。</p></li>
+</ul>
+<p>还有各种其他小问题：</p>
+<ul>
+<li>分析的函数调用了其他so库内的函数：需要给分析器加上动态链接功能，加载并解析好。</li>
+</ul></li>
+<li><p>分析部分</p>
+<ul>
+<li><p>现在分析的现状：VSA的开源实现效果都不佳。介绍一下心路历程。</p></li>
+<li><p>介绍BAI的原理。用一个实例。讲得复杂点。假设一个函数，被不同的context调用。然后有混合的情况。</p></li>
+<li><p>介绍如何从AbsEnv里面提取对应到Java语句。同时介绍IR定义。</p></li>
+<li><p>介绍如何才能</p></li>
+</ul></li>
+<li><p>更好地集成：</p>
+<ul>
+<li>架构设计：（其实之所以分开是因为上一个是Python的Angr和Soot的Java语言不一样。但是现在都是Java，但由于是插件的架构，虽然合并还是有点麻烦，但是理论上是可以的。而且可以更多地合作交互。</li>
+<li>集成FlowDroid其实也行，但是不能把Flowdroid作为一个maven依赖使用。。。</li>
+<li>最后看来重打包还是挺好的，而且有优点。</li>
+</ul></li>
+</ol>
+<h3 id="callee-saved-register">callee saved register</h3>
+<p>打一个形象的比方：假如有两个人（函数）洗衣服和修洗衣机，洗衣服函数会先把衣服放在旁边，然后操作洗衣机。首先判断是否洗衣机是坏的，是则要调用修洗衣机的函数。但是修洗衣机的那个人（函数）需要很大的位置（寄存器），所以需要把衣服挪开，修洗衣机，然后再把衣服放回去。有人可能问，为什么不让洗衣服函数在调用函数前把位置都空出来呢？因为有可能调用的函数是不太需要位置的，比如买洗衣粉函数。所以一般都会有部分位置作为随便用的，部分位置规定是要恢复的。比如这里采取了折中的方案，位置1是随便用的，位置2是要给原来的人保留的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">约定：位置1是随便用的(caller saved)，位置2的要给原来的人放回去（callee saved）</span><br><span class="line"></span><br><span class="line">func 洗衣服</span><br><span class="line">  衣服放到位置1，衣服放到位置2</span><br><span class="line">  if 洗衣机坏了</span><br><span class="line">    把位置1的东西挪到自己的仓库位置1</span><br><span class="line">    修洗衣机()</span><br><span class="line">    把自己的仓库位置1的东西放回位置1</span><br><span class="line">  if 没有洗衣服</span><br><span class="line">    买洗衣粉()</span><br><span class="line"></span><br><span class="line">func 修洗衣机 (需要两个位置)</span><br><span class="line">  把位置2的东西挪到自己的仓库位置1</span><br><span class="line">  在位置1，位置2修洗衣机</span><br><span class="line">  把自己的仓库位置1的东西放回位置2</span><br><span class="line"></span><br><span class="line">func 买洗衣服 (不需要位置)</span><br><span class="line">  买来洗衣粉</span><br><span class="line">  返回</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Project</category>
+      </categories>
+      <tags>
+        <tag>StaticAnalysis</tag>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NativeSummary：Java/C安卓应用无源码污点分析。</title>
+    <url>/2022/NativeSummary/</url>
+    <content><![CDATA[<p>让原有的安卓污点分析工具（如FlowDroid），支持通过JNI接口调用的汇编代码（C语言代码）的分析。</p>
+<p>不使用符号执行等动态分析技术，而是使用二进制静态分析技术。</p>
+<span id="more"></span>
+<p>这是我本科毕设。最初选题其实我非常不喜欢这个题目的，现在只能说选都选了，还是继续搞吧，因为后面发现也没有想象中那么差。</p>
+<p>这个题目可以分为两个部分 1. 逆向部分：将APK中的二进制库拿出来，分析基于JNI接口的汇编代码在干什么。 2. 跨语言部分：C语言和Java语言的差异摆在那里，如何污点分析。</p>
+<p>通过探索得到了下面的方案：</p>
+<ol type="1">
+<li>首先分析Java部分找到native函数。然后对应到二进制库中的导出函数，即找到二进制的入口点。</li>
+<li>依次分析每个JNI函数。至少把JNI API的调用提取出来。</li>
+<li>基于观察，部分JNI函数还是非常接近Java里面的一些操作的。比如<code>SetObjectField</code>对应Java里面设置对象的成员，<code>CallObjectMethod</code>对应Java里面调用函数。基于这个思想，把相关的调用转换成Java语句。</li>
+<li>为了兼容现有的框架，将生成的Java语句重打包到应用里。因为现有的（只支持Java虚拟机部分代码）的APK污点分析工具，除了都输入一个APK，也没什么额外的拓展接口了。所以通过重打包实现兼容。</li>
+</ol>
+
+
+	<div class="row">
+    <embed src="/2022.assets/毕设论文-2022年5月17日-王纪开.pdf" width="100%" height="550" type="application/pdf">
+	</div>
+
+
+
+]]></content>
+      <categories>
+        <category>Read</category>
+      </categories>
+      <tags>
+        <tag>StaticAnalysis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>反编译-代码混淆-程序分析与编译优化</title>
+    <url>/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/</url>
+    <content><![CDATA[<p>这个暑假参加了那个编译系统设计赛，经历“磨难”后，不得不说确实视野开阔了很多。曾经CTF比赛中拿各种代码混淆完全没有办法，曾经下定决心想要学反编译却完全不知道从何下手。曾经自己搞代码混淆，看见LLVM IR也是一头雾水。</p>
+<p>而现在，视野终于开阔了许多，能够有一些这几个领域的全局的视野了。</p>
+<span id="more"></span>
+<h3 id="推荐的学习路线">推荐的学习路线</h3>
+<p>不得不说，编译器中后端的知识，包括SSA构建，SSA上的GVN等优化算法。和反编译密切相关。</p>
+<ol type="1">
+<li>《Static Single Assignment for Decompilation》 强烈推荐！！！之前看了很多反编译的论文，讲的都是类型恢复，或者怎么从IR恢复到上层控制流语句。完全没有提底层寄存器分配之类的问题。是这本书让我知道了到底反编译是怎么解决各种寄存器分配导致的问题的！！但是需要一些SSA相关的前置知识</li>
+<li>各大反编译器的publication
+<ol type="1">
+<li>Retdec https://github.com/avast/retdec/tree/master/publications</li>
+</ol></li>
+<li>《How Far We Have Come: Testing Decompilation Correctness of C Decompilers》这篇论文挺好的，虽然没有直接讲反编译的原理。不仅特别新，而且给我们搞反编译的人带来了信心。</li>
+</ol>
+<p>关于编译原理的学习资源与路线，参考另外一篇文章。</p>
+<h3 id="其他学习资源">其他学习资源</h3>
+<p>最开始有一段时间真的是一点资源都没有。。但是现在看来，怎么着我也应该想想是不是又逆向相关的会议。确实，有了下面这些会议，起码逆向方面的论文是不愁看不完了。</p>
+<p>Working Conference on Reverse Engineering (WCRE) https://ieeexplore.ieee.org/xpl/conhome/1000635/all-proceedings WCRE Working Conference on Reverse Engineering PPREW-5: Proceedings of the 5th Program Protection and Reverse Engineering Workshop 这个期刊好啊。 https://dl.acm.org/conference/pprew SSPREW: Software Security, Protection, and Reverse Engineering Workshop https://dl.acm.org/conference/ssprew</p>
+<p><strong>其他我收藏的链接</strong></p>
+<p>Github的两个list https://github.com/yasong/Awesome-Info-Inferring-Binary https://github.com/SystemSecurityStorm/Awesome-Binary-Rewriting</p>
+<p>https://news.ycombinator.com/item?id=11218138 两个人的讨论。里面推荐对两篇文章的逆向引用搜索：https://scholar.google.com/scholar?as_ylo=2018&amp;hl=en&amp;as_sdt=2005&amp;sciodt=0,5&amp;cites=1148004013363547510&amp;scipsc=</p>
+<p>https://scholar.google.com/scholar?cites=7322807636381891759&amp;as_sdt=2005&amp;sciodt=0,5&amp;hl=en</p>
+<p>https://github.com/toor-de-force/Ghidra-to-LLVM https://uwspace.uwaterloo.ca/bitstream/handle/10012/17976/Toor_Tejvinder.pdf?sequence=3&amp;isAllowed=y Ghidra Pcode编译到IR。代码太简单了。。栈内存好像是alloca出来的，可能还是想保持语义想运行。</p>
+<p>https://github.com/decomp/decomp 这人也想基于LLVM IR然后去优化。https://github.com/decomp/doc 相关文档 https://github.com/avast/retdec/blob/05c9b11351d3e82012d823fa3709f940033768cf/publications/README.md RetDec的publication</p>
+<p>The Decompilation Wiki. http://www.program-transformation.org/Transform/DeCompilation</p>
+<p>dagger主要讲的是反编译到IR上，找到语义等价的LLVM IR的指令的过程。感觉有点像编译器后端的Instruction Selection，可能能用上利用DAG（有向无环图）选择指令的技术。它是作为llvm的fork编写的，2017后就没有维护了。和llvm耦合好严重啊，都不知道哪里是它的代码。好像好复杂。</p>
+<p>https://github.com/repzret/dagger 反编译到LLVM IR。aarch64还在开发过程中。https://llvm.org/devmtg/2013-04/bougacha-slides.pdf 介绍的slides</p>
+<p>https://github.com/JuliaComputingOSS/llvm-cbe 曾经IR到C有一个backend，2016年被移除了。现在有人接手</p>
+<p>https://corescholar.libraries.wright.edu/cgi/viewcontent.cgi?article=3277&amp;context=etd_all LLVM IR based decompilation。</p>
+<p>https://github.com/lifting-bits/sleigh sleigh作为Ghidra的反编译器，是用C++写的，而且汇编到pcode的lift部分也是它负责的。所以用Ghidra可能也只要用这个就可以了。</p>
+<p>https://github.com/cmu-sei/pharos 涉及到很多反编译技术</p>
+<h3 id="看论文的一些笔记">看论文的一些笔记</h3>
+<p>2022年9月18日</p>
+<p>很多都是借用现有的type recovery，重点去讲structure recovery。</p>
+<p>C Decompilation : Is It Possible ? 2009的一个: http://web.archive.org/web/20180517094139/http://decompilation.info/sites/all/files/articles/C%20decompilation.pdf 第二章相关工作里面有不少引用 structural analysis：[4–6]，这个也用在了编译器：[8]。 unification-based algorithm for recovery of types：Mycroft [9]</p>
+<p>现有反编译器：DCC decompiler [7]. Boomerang [11], REC [12] and Hex-Rays plug-in [13]</p>
+<p>【Phoenix】Native x86 Decompilation Using Semantics-Preserving Structural Analysis and Iterative Control-Flow Structuring https://kapravelos.com/teaching/csc591-s20/readings/decompilation.pdf Edward Schwartz's PhD thesis (<a href="https://users.ece.cmu.edu/~ejschwar/papers/arthesis14.pdf" class="uri">https://users.ece.cmu.edu/~ejschwar/papers/arthesis14.pdf</a>) covers in detail the Phoenix decompiler, which is another good jumping-off point. 这篇论文关注控制结构的恢复。控制结构的恢复最早是基于interval analysis的？这是什么得学一学。后面才被细化为structural analysis</p>
+<p>【Dream】No More Gotos: Decompilation Using Pattern-Independent Control-Flow Structuring and Semantics-Preserving Transformations https://www.ndss-symposium.org/wp-content/uploads/2017/09/11_4_2.pdf slides： https://www.ndss-symposium.org/wp-content/uploads/2017/09/11NoMoreGotos.slide_.pdf code?： https://github.com/USECAP/dream</p>
+<p>【DecFuzzer】How far we have come: testing decompilation correctness of C decompilers https://dl.acm.org/doi/abs/10.1145/3395363.3397370 香港科技大学的综述 代码在：https://github.com/monkbai/DecFuzzer 论文下载不到，SCI hub太强了。https://sci-hubtw.hkvisa.net/https://dl.acm.org/doi/10.1145/3395363.3397370 functionality-preserving disassembling and C style control structure recovery [17, 31, 47, 64, 65, 67] 变量恢复static analysis and inference techniques [10, 12, 13, 30, 54]. fool-proof techniques for binary disassembling and decompilation [17, 31, 64-67]. EMI编译器测试看了下是插入了不影响语义的代码之后去开编译优化，发现优化器做出的错误决定而导致的crash。比如把一个不该执行的循环内操作提到外面。错误判断一些分支恒为真或假。 是设置Csmith的输出使得只生成一个函数？？ 本来Csmith生成的代码很多全局变量的使用。如果全局变量改变了，很难手动找到是哪个函数？它是生成了局部变量，然后把对全局变量的使用全替换成了局部变量，函数结束的时候把局部变量的值update到全局变量，这样如果全局变量变了，就肯定是在最后update的时候改变的。那手动看的时候不要继续找内部怎么使用？这样做有什么好处吗。。。可能是方便找到这个函数到底涉及到了哪些全局变量，然后方便只提取这些到反编译结果的全局变量？？ 这篇论文可以研究一下重编译的技术。怎么单独提取出一个文件。怎么合并两个C语言文件。这样我想要用别人的汇编代码也可以用了。</p>
+<p>【RetDec】没有论文好像。slides: https://2018.pass-the-salt.org/files/talks/04-retdec.pdf 中端用到了LLVM IR，但是最开始生成的IR也是那种全局变量表示寄存器的形式，不知道最后的时候有没有好一点。也许只是用LLVM IR去做一些控制流的pattern matching？不过有变量识别的Pass。有机会研究一下IR和变量识别的情况。</p>
+<p>Evolving Exact Decompilation https://www.cs.unm.edu/~eschulte/data/bed.pdf</p>
+<p>【rev.ng】rev.ng: A Multi-Architecture Framework for Reverse Engineering and Vulnerability Discovery. https://www.rev.ng/downloads/iccst-18-paper.pdf 这个反编译器开源了lifter：先转到Qemu IR然后转到LLVM IR。这个好像也不太和反编译相关，也只是搞插桩、fuzzing的。</p>
+<p>类型恢复 【TIE】Principled Reverse Engineering of Types in Binary Programs. http://users.ece.cmu.edu/~aavgerin/papers/tie-ndss-2011.pdf 这篇搞了自己的DVSA，主要区别是SI里可以放除esp外的变量符号？。重点主要在后面的约束求解部分。后面的类型系统和求解部分也非常复杂TODO。</p>
+<p>【SecondWrite】https://user.eng.umd.edu/~barua/elwazeer-PLDI-2013.pdf</p>
+<p>【DIVINE】: DIscovering Variables IN Executables 这篇还是VSA系列的那些人写的。讲先用最简单的semi naïve方法鉴别变量，跑VSA，然后拿VSA结果去生成约束跑ASI。迭代几次得到最好的结果。 里面说如果变量是8字节大小，那VSA直接无法处理，值总是Top（32位程序）。那就不能直接把内存最大切分粒度搞成4字节？？</p>
+<p>【REWARDS】Automatic Reverse Engineering of Data Structures from Binary Execution https://www.cs.purdue.edu/homes/xyzhang/Comp/ndss10.pdf TODO</p>
+<p>【retypd】https://arxiv.org/pdf/1603.05495.pdf 需要进一步学习subtyping TODO。它不仅开源，而且不需要VSA的指针信息。可以与之前需要VSA的结合？</p>
+]]></content>
+      <categories>
+        <category>Read</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Compiler</tag>
+        <tag>Decompile</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编译原理中级修炼与备战编译系统赛</title>
+    <url>/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/</url>
+    <content><![CDATA[<p>暑假参加了编译系统设计赛，受益匪浅。在比赛初期，拖延症严重，同时经常感觉学习资源匮乏，而且也还在摸黑阶段，心理压力下经常就会高估学习的困难，觉得是不可逾越的大山。尤其是编译器后端，这方面相关的学习资源感觉非常匮乏。现在看来，前期确实没能重视一些重要的学习资源，后面走弯路学会了已经晚了。</p>
+<span id="more"></span>
+<p>不得不说，学了理论还是要实践才能有更深的理解。从最早的操作系统开始，到现在编译原理，真正自己完成一个小型的编译器，操作系统之后，那种感觉是之前反复看书看视频学理论完全没有的。不仅掌握得更深，知道了相关的东西是如何落地的，知道和其他东西的联系，更重要的是有一种能够把握知识体系，一览全局的感觉。就好像去一个位置的地域探索，当你把主干道都走了一遍之后，即使有的地方没去过，它在什么方位也能知道。</p>
+<p>编译器学习大概有这几个主线</p>
+<ol type="1">
+<li>前端：从零开始，学习自动机理论，词法分析，语法分析。然后可以实践语法分析，尝试写parser，使用ANTLR等。更进阶的可以看看《parsing technique》，光是当作科普书也挺有意思的。曾经看到老旧的编译器教材说，之后的中间表示有什么三地址码什么的。反正我学到现在是没有那些东西的，直接LLVM IR吧。</li>
+<li>中端：开始接触LLVM IR，开始接触SSA相关理论。更深入地学SSA construction，学SSA destruction。然后接触一些SSA上的优化算法，比如GVN等。</li>
+<li>后端：开始了解指令选择和寄存器分配理论。指令选择的话，我们手写简单的编译器应该是难以做到那种给每个指令写配置然后自动生成什么的。然后实践一些图着色的寄存器分配算法。后端寄存器分配这里，如果你觉得线性扫描可能会简单一点的话，那还真不一定。建议直接实现图着色。 大致的经历是，</li>
+</ol>
+<p>对于参加编译器比赛来说，手把手的实验教程是真的救星：</p>
+<ol type="1">
+<li><p>北航mini-sysY实验教程：https://github.com/BUAA-SE-Compiling https://buaa-se-compiling.github.io/miniSysY-tutorial/ 这个教程依然是偏前端的，时候早期学习完词法分析，语法分析后实践加深理解。</p></li>
+<li><p>北大编译课实践教程：这个是参加比赛时久仰大名的 邢其正 大佬的教程。https://github.com/pku-minic/online-doc https://pku-minic.github.io/online-doc/ 在当时大量教程止步于前端到中端就结束的时候，只有这个教程讲到了后端。</p></li>
+</ol>
+<p>除了传统的龙书虎书鲸书之外，还有一本书不得不说，《Engineering a compiler》中文版是《编译器设计》 https://book.douban.com/subject/20436488/ 。讲得浅显易懂。建议优先于龙书虎书鲸书看。9.3章非常好，对SSA介绍也比较详细。</p>
+<p>《SSA book》挺有名的，之前学程序分析就听说了。但是我个人其实看得不多。甚至ssa构建都是“偷懒”用的《simple and efficient ssa construction》里的简单算法，不需要折腾支配边界的计算什么的。</p>
+<p>后端的书有： 1. 《Instruction selection: Principles, Methods, and Applications》。顶着英文看。这本书我之前看起来还是有点费劲的，但是没必要完全看懂不是吗，看下来算是对指令选择这一块有了总体的印象。最后实践上（参加编译器比赛）来说，可能最后还是采取“宏展开”（其实就是对每个IR单独写分支生成机器指令），然后加上一些窥孔优化的思路。里面的一些高级思路基本没用起来。没想到在后端指令选择这里居然也和前端学到的语法分析能扯上关系。</p>
+<p>寄存器分配的书看后文</p>
+<h3 id="ssa构建与gvn的强大优化能力">SSA构建与GVN的强大优化能力</h3>
+<p>我之前一直挺疑惑，编译器的优化到底具体在哪里。甚至之前编译器写了一半还是不太知道。就比如我随便找一个C语言代码，想不清楚编译器具体是怎么优化出来的。比如下面这个例子：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// test if-else-if</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">ifElseIf</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> a;</span><br><span class="line">  a = <span class="number">5</span>;</span><br><span class="line">  <span class="type">int</span> b;</span><br><span class="line">  b = <span class="number">10</span>;</span><br><span class="line">  <span class="keyword">if</span>(a == <span class="number">6</span> || b == <span class="number">0xb</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (b == <span class="number">10</span> &amp;&amp; a == <span class="number">1</span>)</span><br><span class="line">      a = <span class="number">25</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (b == <span class="number">10</span> &amp;&amp; a == <span class="number">-5</span>)</span><br><span class="line">      a = a + <span class="number">15</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      a = -+a;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译器比赛的时候先追求功能测试，所以没有搞任何ssa的东西。那时候也还是不知道这种该怎么优化。生成出来的IR是下面这样的。</p>
+<p>直观感觉，很多条件判断可以搞出来优化掉。但是之前听说的优化，都是什么常量表达式给计算一下，公共子表达式消除一下，都是这种比较浅的。看下面的IR可以看到也没什么可以直接优化的啊，因为你获取变量都还是load加载出来的，但是好像没看到什么分析能够直接追踪你load到底加载了什么东西，然后去优化。所以当时就感觉自己不太懂。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">define i32 @ifElseIf()&#123;</span><br><span class="line">entry:</span><br><span class="line">  %a_0 = alloca i32 </span><br><span class="line">  %b_1 = alloca i32 </span><br><span class="line">  store i32 5, i32* %a_0</span><br><span class="line">  store i32 10, i32* %b_1</span><br><span class="line">  %0 = load i32, i32* %a_0</span><br><span class="line">  %1 = icmp eq i32 %0, 6</span><br><span class="line">  %2 = zext i1 %1 to i32</span><br><span class="line">  %3 = icmp ne i32 0, %2</span><br><span class="line">  br i1 %3, label %if_true_0, label %or_right_1</span><br><span class="line"></span><br><span class="line">or_right_1:</span><br><span class="line">  %4 = load i32, i32* %b_1</span><br><span class="line">  %5 = icmp eq i32 %4, 11</span><br><span class="line">  %6 = zext i1 %5 to i32</span><br><span class="line">  %7 = icmp ne i32 0, %6</span><br><span class="line">  br i1 %7, label %if_true_0, label %if_false_0</span><br><span class="line"></span><br><span class="line">if_true_0:</span><br><span class="line">  %8 = load i32, i32* %a_0</span><br><span class="line">  ret i32 %8</span><br><span class="line"></span><br><span class="line">tmp_2:</span><br><span class="line">  br label %if_end_0</span><br><span class="line"></span><br><span class="line">if_false_0:</span><br><span class="line">  %9 = load i32, i32* %b_1</span><br><span class="line">  %10 = icmp eq i32 %9, 10</span><br><span class="line">  %11 = zext i1 %10 to i32</span><br><span class="line">  %12 = icmp ne i32 0, %11</span><br><span class="line">  br i1 %12, label %and_right_4, label %if_false_3</span><br><span class="line"></span><br><span class="line">and_right_4:</span><br><span class="line">  %13 = load i32, i32* %a_0</span><br><span class="line">  %14 = icmp eq i32 %13, 1</span><br><span class="line">  %15 = zext i1 %14 to i32</span><br><span class="line">  %16 = icmp ne i32 0, %15</span><br><span class="line">  br i1 %16, label %if_true_3, label %if_false_3</span><br><span class="line"></span><br><span class="line">if_true_3:</span><br><span class="line">  store i32 25, i32* %a_0</span><br><span class="line">  br label %if_end_3</span><br><span class="line"></span><br><span class="line">if_false_3:</span><br><span class="line">  %17 = load i32, i32* %b_1</span><br><span class="line">  %18 = icmp eq i32 %17, 10</span><br><span class="line">  %19 = zext i1 %18 to i32</span><br><span class="line">  %20 = icmp ne i32 0, %19</span><br><span class="line">  br i1 %20, label %and_right_6, label %if_false_5</span><br><span class="line"></span><br><span class="line">and_right_6:</span><br><span class="line">  %21 = load i32, i32* %a_0</span><br><span class="line">  %22 = sub i32 0, 5</span><br><span class="line">  %23 = icmp eq i32 %21, %22</span><br><span class="line">  %24 = zext i1 %23 to i32</span><br><span class="line">  %25 = icmp ne i32 0, %24</span><br><span class="line">  br i1 %25, label %if_true_5, label %if_false_5</span><br><span class="line"></span><br><span class="line">if_true_5:</span><br><span class="line">  %26 = load i32, i32* %a_0</span><br><span class="line">  %27 = add i32 %26, 15</span><br><span class="line">  store i32 %27, i32* %a_0</span><br><span class="line">  br label %if_end_5</span><br><span class="line"></span><br><span class="line">if_false_5:</span><br><span class="line">  %28 = load i32, i32* %a_0</span><br><span class="line">  %29 = sub i32 0, %28</span><br><span class="line">  store i32 %29, i32* %a_0</span><br><span class="line">  br label %if_end_5</span><br><span class="line"></span><br><span class="line">if_end_5:</span><br><span class="line">  br label %if_end_3</span><br><span class="line"></span><br><span class="line">if_end_3:</span><br><span class="line">  br label %if_end_0</span><br><span class="line"></span><br><span class="line">if_end_0:</span><br><span class="line">  %30 = load i32, i32* %a_0</span><br><span class="line">  ret i32 %30</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后面搞了SSA构建，学了挺久的。搞出来之后发现优化的机会立马出来了。下面是ssa构建后的IR。SSA构建的原理就是，本来变量都是直接load的，使用LLVM的伪ssa形式。SSA构建负责在每个load的地方，确定你到底load是之前store的谁，然后把之前store进去的东西直接拿过来。即load和store都没了，值直接传递到了它该有的地方。明显可以看到，只需要搞一下常量表达式计算，优化一下必定跳转某个分支的条件跳转就可以了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">define i32 @ifElseIf()&#123;</span><br><span class="line">entry:</span><br><span class="line">  %0 = icmp eq i32 5, 6</span><br><span class="line">  br i1 %0, label %if_true_0, label %or_right_1</span><br><span class="line"></span><br><span class="line">or_right_1:</span><br><span class="line">  %1 = icmp eq i32 10, 11</span><br><span class="line">  br i1 %1, label %if_true_0, label %if_false_0</span><br><span class="line"></span><br><span class="line">if_true_0:</span><br><span class="line">  ret i32 5</span><br><span class="line"></span><br><span class="line">if_false_0:</span><br><span class="line">  %2 = icmp eq i32 10, 10</span><br><span class="line">  br i1 %2, label %and_right_4, label %if_false_3</span><br><span class="line"></span><br><span class="line">and_right_4:</span><br><span class="line">  %3 = icmp eq i32 5, 1</span><br><span class="line">  br i1 %3, label %if_true_3, label %if_false_3</span><br><span class="line"></span><br><span class="line">if_true_3:</span><br><span class="line">  br label %if_end_3</span><br><span class="line"></span><br><span class="line">if_false_3:</span><br><span class="line">  %4 = icmp eq i32 10, 10</span><br><span class="line">  br i1 %4, label %and_right_6, label %if_false_5</span><br><span class="line"></span><br><span class="line">and_right_6:</span><br><span class="line">  %5 = sub i32 0, 5</span><br><span class="line">  %6 = icmp eq i32 5, %5</span><br><span class="line">  br i1 %6, label %if_true_5, label %if_false_5</span><br><span class="line"></span><br><span class="line">if_true_5:</span><br><span class="line">  %7 = add i32 5, 15</span><br><span class="line">  br label %if_end_5</span><br><span class="line"></span><br><span class="line">if_false_5:</span><br><span class="line">  %8 = sub i32 0, 5</span><br><span class="line">  br label %if_end_5</span><br><span class="line"></span><br><span class="line">if_end_5:</span><br><span class="line">  %a_0_5 = phi i32 [ %7, %if_true_5 ], [ %8, %if_false_5 ]</span><br><span class="line">  br label %if_end_3</span><br><span class="line"></span><br><span class="line">if_end_3:</span><br><span class="line">  %a_0_4 = phi i32 [ 25, %if_true_3 ], [ %a_0_5, %if_end_5 ]</span><br><span class="line">  ret i32 %a_0_4</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后面我们继续想怎么实现基于SSA的优化。之前理论学习的时候虽然听说过什么常量表达式计算啊，公共子表达式什么的这种简单优化，但是看他们往届参赛队员的经验分享的时候，好像都没怎么提到。但是他们都提到了一个叫GVN GCM的优化。《Global Code Motion Global Value Numbering》这篇论文。刚学完SSA构建看这篇论文感觉挺容易看懂的。推荐去看，直接获取一手资料。</p>
+<p>简单介绍一下，GCM能够把计算的代码放到尽可能少被执行到的地方，比如很深的分支判断里。或者放到循环外面，同时保证语义正确。这里我们主要关注GVN。它是一个强大的优化，涵盖了公共子表达式消除，常量计算，控制流优化等等优化手段，即只用这一个就够了。而且还非常系统，通用，直接从之前那些小优化要不要实现，怎么组合的问题里解脱。基本的思路是，程序的任何计算都给他生成一个哈希值，然后每次要做什么计算都去查表，保证不会重复计算。然后放入表前做好常量计算等优化。这里不详细讲了。</p>
+<p>GVN和控制流优化迭代优化后的IR如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">define i32 @ifElseIf()&#123;</span><br><span class="line">entry:</span><br><span class="line">  ret i32 -5</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接全给优化没了！！！这时候我才彻底明白编译器到底是怎么优化代码的。总结：SSA构建本身（某种意义上）就有很强的优化能力，加上GVN这样的“高级”优化算法，让编译器有了非常强大的通用优化能力。</p>
+<h3 id="ssa-构建">SSA 构建</h3>
+<p>《Simple and Efficient Construction of Static Single》这篇论文真的是强。感觉ssa这种理论上也比较简洁的东西也应该有简洁的构建算法。一方面网上大家都说的是最早的那个构建算法，SSA book里面也只提到了那个初始的构建算法，导致这个算法感觉比较先进，而且采用新的算法也可以让自己学新的东西，因为不太会去抄。所以我直接上了这个算法。</p>
+<p>（虽然后面还是出现了bug，我对着那个论文里的伪代码实现算法，好像是说，那个replaceBy函数用一个值替换掉某个trivial的Phi指令的时候，在currentDef这个map里可能有些变量还指向这个phi，然后导致了问题。论文里也没细说要replaceBy要怎么实现，感觉就是直接在指令层面replace all use with，没有提到map的问题。直接替换map感觉复杂度太高了。。。我后面是用之前OJ做并查集题目那边的灵感，额外用一个map表示原来被替代的phi被谁替换了，然后readVariable函数查map的时候额外查一下这个表。最后算是解决了问题。。。</p>
+<h3 id="寄存器分配与调用约定约束">寄存器分配与调用约定约束</h3>
+<p>最开始的时候没怎么学寄存器分配，导致一直有一个疑问：调用约定会规定比如返回值放到r0，参数放到r0-r3，那我寄存器分配怎么考虑这种约束呢？而且如果有这样的场景<code>&#123; int x1 = func1(); func2(0, x1) &#125;</code>那么这个x1因为是func1的返回值，在call指令后会放在r0，那么在冲突图上，就有一个预着色节点x1必须着色为r0，然后我又要传给func2的第二个参数，x1就要放到寄存器r1，那么在冲突图x1作为预着色节点又应该被着色为r1。然后论文里说，预着色节点是必须遵守的，那我这不就完全冲突了吗？怎么回事？预着色节点真的必须遵守？</p>
+<p>后面才知道原来有一个阶段叫register coalescing，就是解决这种调用约定约束带来的问题的。当生成冲突图的时候，如果遇到这种调用约定的约束，比如x1作为函数返回值会在call指令后被放到r0，其实会生成两个节点，一个节点代表r0，是预着色节点，然后同时生成一个没有着色节点代表x1，同时会立刻生成一个mov指令，把r0的值mov到x1，使用mov指令解除了x1和r0的绑定关系。。。这个着色了的r0节点才是真正的不可更改颜色的。然后后面register coalescing阶段就是用来尽可能地消除move指令的。。。</p>
+<h3 id="我们的编译器">我们的编译器</h3>
+<p>毕竟为了答辩都花那么多时间准备PPT了，为什么不水一篇博客让更多人看到呢？我们是2022年的无色透明队，在比赛最后几个小时大佬们的“屯flag”（CTF界说法）的冲击下，最后算是保住了一个三等奖。</p>
+
+
+	<div class="row">
+    <embed src="/2022.assets/编译系统设计赛-答辩.pdf" width="100%" height="550" type="application/pdf">
+	</div>
+
+
+
+<h3 id="参加编译系统设计赛---架构选型">参加编译系统设计赛 - 架构选型</h3>
+<h4 id="前中端">前中端</h4>
+<p>不得不说Java应该还是比C++好用的。我们用Java写编译器感觉挺好的。设计IR的时候没这么想，直接对着LLVM IR specification的文本格式，设计成员域，直接toString方法转成LLVM IR。这样直接可以先写前端，然后用clang直接验证我们的正确性。这也是他们经验分享推荐的做法。</p>
+<p>唯一可以变的地方可能是，现在流行Basic Block Argument替代Phi节点（<a href="https://mlir.llvm.org/docs/Rationale/Rationale/#block-arguments-vs-phi-nodes">MLIR</a>和北大的那个教程都提到了）。我们最开始的时候完全不熟SSA，所以也不敢乱动，既不知道phi是什么，也不知道如果改用basic block argument了，那些SSA上的算法该怎么改。现在看来，本来Phi指令也必须放在基本块开头，basic block argument也差不多的意思，只不过如果你想从Phi找到Phi指令的操作数的时候，得去前驱基本块那边找它传过来的argument罢了。差别还是不大的。而且确实简化了结构，不用维护Phi指令操作数和前驱基本块的对应关系了。</p>
+<h4 id="后端---寄存器分配">后端 - 寄存器分配</h4>
+<h5 id="ssa解构后寄存器分配">SSA解构后寄存器分配</h5>
+<p>不可能没有走弯路的。我们一开始不熟悉后端，寄存器分配不知道怎么做，于是就参照Engineering a compiler那边实现了一个local寄存器分配（后面被证明是最大的性能瓶颈）。队友他觉得lsra比图着色简单，开始看Java的寄存器分配算法，结果说写了几百行也不太缺点最后能不能写完，同时看到其他队伍也有从lsra转型图着色的。我们最后看了之前“燃烧我的编译器”队的图着色，惊讶他们怎么这么一点代码就实现了图着色分配，有了迅速实现的灵感。他们的做法其实算是，保留两到三个寄存器用于修复一切问题，然后剩余的寄存器直接构建冲突图，然后给每个节点计算权重，然后直接分配。省去了原本反复迭代的复杂步骤。</p>
+<p>总之，寄存器分配这边先实现一个简单的寄存器分配还是必要的。我之前看<a href="https://pku-minic.github.io/online-doc/#/lv9p-reincarnation/reg-alloc">北大的那个教程</a>的时候，完全不理解，什么叫不分配寄存器。后面浪费大量时间在我的垃圾Local寄存器分配上之后，才明白。不分配寄存器并不是说真的不分配，而是说，只用最少的寄存器完成分配，每个指令在开始前从栈上把东西加载出来，结束后把东西保存会栈上，即使用最少的寄存器（一般两个寄存器就可以了），把其他的寄存器空出来。</p>
+<p>详细来说，是有一个映射表保存已经完成的寄存器分配，然后我们用两个额外留出来的寄存器，完成“修复”工作。也就是说无论你前面怎么分配，甚至完全不分配，我后面只用两个寄存器都可以给你修好。这样不仅实现了一个简单的寄存器分配算法，后面还可以通过增加前置的分配阶段完成简单图着色分配。</p>
+<h5 id="基于ssa的寄存器分配">基于SSA的寄存器分配</h5>
+<p>寄存器分配方面，（从我看过的里）推荐下面的资料：</p>
+<ol type="1">
+<li>《Iterated Register Coalescing》这个是传统的思路。学习还是要学的。介绍了基础的迭代式寄存器分配策略，有多个阶段，每个阶段可能会做出一些决策导致又要从头开始分析（毕竟要找最佳的分配），但是往往并不会迭代太多次。编译器比赛里面大多数队伍都是采用的这种策略（或它的简化版）。</li>
+<li>基于SSA的（图着色）寄存器分配系列：
+<ol type="1">
+<li>《SSA Elimination after Register Allocation》</li>
+<li>《Register Allocation for Programs in SSA Form》https://publikationen.bibliothek.kit.edu/1000007166/6532 看着像一本书，其实好像是学位论文。写得非常好。里面不仅仅是讲SSA寄存器分配，而是各种都有涉及，而且讲得挺好（浅显易懂）的。强烈推荐，即使不打算用基于SSA的寄存器分配的人也应该看看。</li>
+</ol></li>
+</ol>
+<p>为什么要用基于SSA的（图着色）寄存器分配呢？想象这样的场景，当你苦苦地一天天加班加点写寄存器分配写了很长，比赛结束发现隔壁队伍大佬居然就用了极少的代码量就完成了这一部分，而且性能还比你好很多，这不得直接气晕过去。而基于SSA的寄存器分配可能就是这种神器（虽然我们因为时间原因并没有写出来，不过ayame他们好像就是用了SSA的寄存器分配）。</p>
+<p>基于SSA的寄存器分配指的是，在寄存器分配的时候依然保持SSA形式，在分配结束后才解构SSA。先解构SSA再寄存器分配更容易，因为你如果先分配，再去直接解构，往往会发现，我寄存器都没了，但是解构SSA需要做变量复制，我没有寄存器作为中介无法挪动值了。但同样，如果能解决这一问题，那么同样会很好地简化寄存器分配的实现。</p>
+<p>更重要的是，基于SSA的寄存器分配在理论上也更优雅。传统的寄存器分配往往会告诉你，寄存器分配已经是NP完全问题了，因为冲突图的图着色是NP完全的。然而，当你在SSA形式上进行寄存器分配时，它构建出的冲突图有特殊的性质，能够在多项式时间内找到解！！！也就是说，传统的思路你先SSA解构然后再寄存器分配，其实SSA解构这一步是增大了寄存器分配的难度的！！完全不需要那种迭代式的解构，整个图着色分配架构直接是线性的！！不仅效率上优于传统方法，代码量也明显可以感觉可以降下来！！唯一需要的就是额外的理论学习，里面有一些图算法需要好好学一下。</p>
+<p>总结：现在回顾，寄存器分配在编译器比赛的开发上其实是可以渐进完成的：从最开始的只用两个寄存器去分配，到后面构建冲突图，计算权重，优先分配权重高的，后面分配不了就不分配，让前面只用两个寄存器分配的逻辑去修复，到最后SSA的寄存器分配。我们之前花太多时间在Local寄存器分配还是太亏了。又复杂性能又差</p>
+<h3 id="其他资源">其他资源</h3>
+<p>优质的（浅显易懂的）学习资源是学习前期永远稀缺的资源。有时候你想找都不知道怎么找。所以这里列出我记下来的所有资源：</p>
+<p><a href="http://c9x.me/compile/bib/">The Compiler Writer Resource Page (c9x.me)</a> 一个人的资源分享</p>
+<p>针对arm的优化算法：乘法转移位：Division by invariant integers using multiplication. CPU文档，乘法是6-8周期，除法是10-12周期</p>
+<p>ARM手册看Cortex-A72 software Optimization Guide.</p>
+<p><a href="https://www.bilibili.com/video/BV1Lf4y1y78n?vd_source=e9f223609ade8d8a4012f354190eda15">C＃C++17系列+动手编写编译器与虚拟机项目（原版共400小时）_哔哩哔哩_bilibili</a></p>
+<p><a href="https://tobyho.com/video-series/Live-Code-LLVM-Tutorial-Walkthrough.html">Series: Live Code: LLVM Tutorial Walkthrough (tobyho.com)</a></p>
+<p>https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/README.html</p>
+<p><a href="https://github.com/elvin-du/tinyscript">elvin-du/tinyscript: 自制的一个编译器， 用于学习，完整实现了词法分析，语法分析，中间代码（SSA）生成，机器码生成，和基于寄存器的虚拟机 (github.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/111635473">编译器资料3 关于编译器和静态分析的一些课程 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://www.zhihu.com/people/rednaxelafx/answers">RednaxelaFX - 知乎 (zhihu.com)</a> 这人是编译器大佬，他的回答能帮我们节省很多时间：包括什么技术需要看什么论文，有哪些实现</p>
+<p>book of runtime</p>
+<p>对于LLVM之类的编译器是如何实现在构造 SSA 形式的 IR 的时候，计算出 def-use 链？ - RednaxelaFX的回答 - 知乎 https://www.zhihu.com/question/41999500/answer/93243408</p>
+<p>Phi node 是如何实现它的功能的？ - RednaxelaFX的回答 - 知乎 https://www.zhihu.com/question/24992774/answer/29740949</p>
+<p><a href="https://buaa-se-compiling.github.io/miniSysY-tutorial/challenge/mem2reg/help.html">mem2reg 实验指导 · GitBook (buaa-se-compiling.github.io)</a></p>
+<h3 id="培训经验分享时我的笔记">培训经验分享时我的笔记</h3>
+<p>于剑 小林家的编译器队，分享参赛经验</p>
+<p>怎样赶紧搭一个能跑的框架：中端优化空着，后端寄存器分配不太能跳过，寄存器不够的时候用栈空间的逻辑还是得写，但是分配可以写简单的版本。</p>
+<p>约定IR，前端要比较完整的功能，终端后端优化pass都可以不要，寄存器分配写个简单版本</p>
+<p>后端还是要写很多东西才能跑起来，他们那时候就进度有点落后了。</p>
+<p><strong>前端</strong> 不是重点，但是却是正确性问题出现最多的地方。隐藏的功能测例：看名字猜内容。</p>
+<p>sys-Y里的const的规则，必须是一个编译期常量。当const类型出现在数组长度里，需要它的值才能知道具体大小，尤其是生成数组访存的时候需要知道上一维的长度。处理字面量的时候小心-2147483628，本来是合法的，如果分成一个负号运算和正数就不合法了。</p>
+<p>短路运算。变量初始化。全零放入bss，不全零放入data段。如果有运行期计算的值，生成运算代码放在main前执行。数组的变量初始化比较玄妙。</p>
+<p><strong>IR</strong> 他们也是先生成load/store然后mem2reg pass变成SSA。前年给的建议：直接用LLVM IR。中间转LLVM IR，可以查哪里的bug，可以对比后端性能。</p>
+<p>比较重要的pass：mem2reg、function inline、global value numbering、global code motion、dead code elimination。</p>
+<p><strong>后端</strong> 读ARM指令集文档，庞大，先了解整体结构，整数寄存器，调用约定，控制流转移。多写一点汇编代码确认自己的理解，可以调用libc里面的函数。多用godbolt.org，如果不知道怎么做一个算术运算什么的。</p>
+<p>后端首先遍历IR，生成机器指令组成的控制流图。一条IR语句不止一条机器指令。SSA destruction要处理Phi指令，前置块点的mov。</p>
+<p>寄存器分配之前由于还有接近SSA的性质，有的优化会非常方便，指令合并，常量传播。spill，就是指放不下放到栈上，对spill估价的算法调了非常长的时间。寄存器分配好了可以消除mov，条件码也可以消除一些分支。</p>
+<p><strong>自动化测试</strong></p>
+<p>还是要搭建自动化测试，push上去等一段时间就可以回来看了。非常方便，甚至可以和gcc、llvm做对比。</p>
+<p>触发：特点分支发生更新、手动触发web hook，指定commit id和命令行参数。</p>
+<p>结果：一堆json，写个脚本对比效果。</p>
+<p>考虑到树莓派性能，不建议把编译编译器和展示结果放到树莓派上。</p>
+<p><strong>自动并行化</strong></p>
+<p>把循环静态分成num_threads段，每段一个线程来跑。用汇编实现__create_threads和__join_threads函数，使用了clone、waittid、exit三个系统调用。</p>
+<p>为了共用栈，所以也不能调用syscall的包装函数，所以要inline syscall。而且还要安排比较奇怪的栈布局。所以不推荐实现为公用栈。</p>
+<p><strong>时间</strong> 差不多18号开始写代码，差不多写了两个月。第一个月的时候才基本能完全跑起来，前端在各种功能测试用例调通了。</p>
+<h3 id="其他经验分享的笔记">其他经验分享的笔记</h3>
+<p><strong>第一次分享：</strong></p>
+<p>最后是反思和建议。</p>
+<p>IR里最好加一层分析循环的信息。转IR后循环信息可能丢失。重视循环，循环是很重要的部分。非常需要注意循环的优化。</p>
+<p>比赛前期以通过功能点为追求。复杂的寄存器分配可以先放一放，跑通为第一追求。跑通修好各种bug再去做寄存器分配。有的优化做起来非常困难，效果也不一定好。做优化之前可以先尝试手写优化后的汇编，然后运行测试一下之后的结果。本来打算做SIMD，跳转表。预期效果不是很好。</p>
+<p>做好版本管理。并行化调通了，最后提交的代码没有合并进去。测试的分支上有公共bug，忘了有一个bug的修复没有合进去，忘了在哪里修的。</p>
+<p>本地CI不用排队，对开发进度影响很大。JDK编译编译器，和生成文件还是要在高性能的地方跑，生成后再发给树莓派。有的测试点生成的样例特别大，最好树莓派和电脑要网线连接。1分钟编译，5分钟跑完性能。</p>
+<p>GCC比LLVM复杂。他们也学习了第一届清华的Trivial compiler的设计，也学习了中科大的特等奖的设计。</p>
+<p>https://www.bilibili.com/video/BV17g411d7wj</p>
+<p>窥孔优化：融合乘加，临近load store指令对。复制传播，指令调度（效果不是很好），向量化（只对于非常简单的样例，效果不理想）。</p>
+<p>测试和调试方面，自动化测试脚本，显示编程错误汇编错误还是执行错误。。。clang测试中间代码的正确性。。。直接生成LLVM。。。gdb调试比较重要。决赛的时候他们创建太多分支了。小组每周两次组会，交流讨论。。。</p>
+<p>帮助很大的资料，engeneering a compiler，ssa book，先学习了龙书第九章。然后从虎书，鲸书学习了。</p>
+<p>第二个人（ayame作者）比第一个人好多了，第一个人太水了。</p>
+<p>通用向量化太难，所以还是放弃。乱序多发射的，所以想搞调度还是算了，效果不是很好。</p>
+<p>有些用例是隐藏的，寄存器分配，带来了很多困难。线性扫描最后被放弃了，太复杂了，而且还没有图着色好。图着色调试起来非常困难。推荐同时写一个trivial的分配方式，比如引用计数。codegen后面保证没有bug后再调试寄存器分配。</p>
+<p>虚空debug很痛苦。总结在这两个方面。gvn gcm的pass容易出错。AST翻译到中间表示的时候，选择语句if-else结构连接，写不好容易产生bug，循环控制语句，break和continue，多层嵌套翻译的时候要注意对应的是那个循环。短路运算也是问题。不规则数组初始化的时候的问题。</p>
+<p>决赛两天通宵的。。。这两天主要就是尝试自动并行化。通用的很难做，后面发现可以针对常见模式的并行化，循环之间没有依赖。通宵调出来，开启之后导致其他部分又错了。。最后决赛阶段也没开启。决赛的本地CI很重要，评测卡死，要自己搭建自己的评测机子。两三个小时才能提交一次。比赛也就两天。</p>
+<p>最后分享学习路线。翻译IR的时候用visitor模式，类似递归下降。用antlr的时候要改下文法，比如左递归。中层IR采用SSA，了解什么是SSA，engeneering a compiler 9.3章。SSA构建算法参考LLVM博客和代码。采用LLVM的方案，先生成mem ssa，然后mem2reg。一篇论文：simple and efficient ssa form 13年的。然后构建完会进行一些优化。最后转换成汇编，也参考engeneering a compiler 9.3章，介绍了会遇到的问题。除了转换部分，SSA的一个重点是优化算法，看论文：global code motion global code numbering. 非常强大的优化算法。采用SSA的话，看ssa-book。最后是在底层上面的一些优化，首先是armv7直接读文档，参考。armv7的坑在功能测试点会遇到，比如立即数范围不连续。代码寻址长度有限制。。。这一点在功能测试点会遇到。</p>
+<p>寄存器分配会极大影响性能，通常来说，图着色和线扫。图着色可以参考一些论文，我们去年参考的是 iterator register allocating。llvm的是线性扫描的算法，有博客和youtube视频。SSA可以采取面向SSA的算法，图特殊，相比于普通的更快，效率更高。后端窥孔优化主要是人看生成的汇编，哪里可以优化，可以采取一些数据流分析。可以用GCC o3和llvm o3对比。看看他们采取了什么优化模式。</p>
+<p>比赛分工：一个人负责HIR和MIR构建。两三个人负责中间代码优化。他们直接用LLVM的MIR。一到两人负责体系结构方面。体系结构上能做的优化不太多。中层优化比较多。CI搭建的问题：一个人兼职。推荐调研阶段搭好。</p>
+<p>时间安排：4-5月报名，开始调研工作，完成CI。6-7月初期末考试，做些简单的东西，开始写visitor，设计中层底层架构。7月是主要工作的时间，10天完成visitor，同时完成后端翻译，寄存器分配，中间先不做，争取导出汇编，过一部分功能测试点。下旬做优化。有一些极端的场景，一个代码里几千行代码，大量debug工作。同时做优化。如果这个时候有时间还可以调研更复杂的优化。自动并行化和自动向量化。按照去年的经验特等奖需要尝试自动并行化的。决赛阶段能做的不多，主要是debug，之前没完成的优化紧急突击。</p>
+<p>代码管理，非常重要，分出branch不能太多。commit 1000多次。搞好软件工程。要规范好代码提交。明确分支代表的含义。master稳定版本，develop开发版本，日常开发汇总，feature和fix。</p>
+<p>合理利用tag标记版本，rebase和pull request保证history。git的常用操作，stash blame。指定命名规范。善于利用issue，发现了bug可以记录一下，修复了直接关掉非常方便。</p>
+<p>自动测试的问题。测试流程分为三个部分。官方提供的gitlab平台，高性能x86服务器，运行测试用例的树莓派集群。高性能x86服务器发现CI测所有功能样例，性能样例有很长时间。尤其是编译花的时间长。编译测试半个小时。高性能服务器可以缩短为10几分钟。</p>
+<p>gitlab可以触发CI，可以手动指定。gitlab runner，编译测试样例，发送到树莓派终端。树莓派结果反馈回来也给服务器给gitlab。测试数据非常大，直接放到树莓派里面，不要每次传输。好复杂。。。</p>
+<p>调试的方法：去年ayami，antlr生成parser，中端翻译成LLVM IR，可以用解释器去调试。后端转LIR，寄存器分配，汇编代码gdb调试，发挥了很大作用。后端调试都是靠gdb。自动并行化，gdb可以调多线程。</p>
+<p>最后是参考资料。几篇论文。</p>
+<p>对性能不是很关注的测试点可以qemu进行调试。</p>
+]]></content>
+      <categories>
+        <category>Read</category>
+      </categories>
+      <tags>
+        <tag>Compiler</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>聊聊WebAssembly程序分析与混淆</title>
+    <url>/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/</url>
+    <content><![CDATA[<p>聊聊WebAssembly混淆。</p>
+<span id="more"></span>
+<p>wasm有一套独特的栈机制和结构化控制流。wasm混淆可能会遇到怎么平衡栈的问题。为了发扬“程序分析和程序变换相结合”的思想，我想说，wasm字节码可能本身就不适合分析（或者混淆），应当先将wasm通过解码搞到一个SSA的IR上（混淆可能不用ssa），然后再去分析或者混淆，最后再通过算法转换回wasm。</p>
+<figure>
+<img src="wasm-design-rationale.png" alt="wasm设计时就考虑了解码为ssa" /><figcaption aria-hidden="true">wasm设计时就考虑了解码为ssa</figcaption>
+</figure>
+<p>其实底层看，wasm的栈机制和结构化控制流，和一个东西很像。在SSA形式的IR中，用于替换Phi指令的语义等价的另一种表示形式是basic block argument。<a href="https://mlir.llvm.org/docs/Rationale/Rationale/#block-arguments-vs-phi-nodes">MLIR</a>也提到了。所以其实wasm字节码的栈部分其实应该可以直接转成SSA形式。</p>
+<p>搜了一下，wasm相关的IR有bineryen，和Cranelift。他们内部都有SSA相关的表示。</p>
+]]></content>
+      <categories>
+        <category>Read</category>
+      </categories>
+      <tags>
+        <tag>Compiler</tag>
+        <tag>Decompile</tag>
       </tags>
   </entry>
 </search>
