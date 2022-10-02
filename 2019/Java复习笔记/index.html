@@ -113,7 +113,7 @@
 <li><p>数组的数组 <code>int[ ][ ] myArray = new int[3][5] ;</code> 我之前错误的理解方式是int[3]作为一个类型，int[3][5]就是5个长3的数组。 但是还是python的理解方式对 <code>myArray = [int[5],int[5],int[5]]</code> 所以无论是new后面的int[3][5],还是取值时的myArray[2][4],都表示取出。int[3]表示第一次可以取三个，从0到2，myArray[2][4]表示先取第三个再取第五个。 现在回首发现好像所有的语言数组都是这样的，行优先</p></li>
 <li><p>switch switch-expression、常量值value1到valueN必须是整形或字符型 但是最近好像增加了对string的支持</p></li>
 <li><p>逗号 java里不用逗号符，但是可以用于for语句里面的分隔</p></li>
-<li><p>可变长参数 • 可变长参数使用省略号表示，其实质是数组。 • 例如，“String … s”表示“String[] s” 。 • 对于具有可变长参数的方法，传递给可变长参数的实际参数可以是 零个到多个对象。 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">static double maxArea(Circle c, Rectangle... varRec) &#123;</span><br><span class="line">Rectangle[] rec &#x3D; varRec;</span><br><span class="line">for (Rectangle r : rec) &#123;</span><br><span class="line">&#x2F;&#x2F;…</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p></li>
+<li><p>可变长参数 • 可变长参数使用省略号表示，其实质是数组。 • 例如，“String … s”表示“String[] s” 。 • 对于具有可变长参数的方法，传递给可变长参数的实际参数可以是 零个到多个对象。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">static double maxArea(Circle c, Rectangle... varRec) &#123;</span><br><span class="line">Rectangle[] rec = varRec;</span><br><span class="line">for (Rectangle r : rec) &#123;</span><br><span class="line">//…</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p></li>
 <li><p>包 一个包可以包含若干个类文件，还可包含若干个包</p></li>
 <li><p>编译单元 • 一个Java源代码文件称为一个编译单元，由三部分组成： ▫ 所属包的声明（省略，则属于默认包）； ▫ Import （引入）包的声明，用于导入外部的类； ▫ 类和接口的声明。 • 一个编译单元中只能有一个public类，该类名与文件名相同，编译 单元中的其他类往往是public类的辅助类，经过编译，每个类都会 产一个class文件。</p></li>
 </ol>
@@ -123,8 +123,8 @@
 <li><p>构造方法内的this关键字 • 可以使用this关键字在一个构造方法中调用另外的构造方法； • 代码更简洁，维护起来也更容易； • 通常用参数个数比较少的构造方法调用参数个数最多的构造方法。</p></li>
 <li><p>对象的自动回收 • 无用对象 ▫ 离开了作用域的对象； ▫ 无引用指向对象。 • Java运行时系统通过垃圾收集器周期性地释放无用对象所使用的内存。 • Java运行时系统会在对对象进行自动垃圾回收前，自动调用对象的finalize()方法。</p></li>
 <li><p>finalize()方法 • 在类java.lang.Object中声明，因此 Java中的每一 个类都有该方法： protected void finalize() throws throwable • 用于释放资源。 • 类可以覆盖（重写）finalize()方法。 • finalize()方法有可能在任何时机以任何次序执行。</p></li>
-<li><p>枚举类 特点： 一、 只有有限个实例化的对象 --&gt;可以用==判断 所有枚举类型都隐含继承（扩展）自java.lang.Enum，因此枚举类型不能再继承其他任何类 枚举类型的构造方法必须是包内私有或者私有的。定义在枚举开头的常量会被自动创建，不能显式地调用枚举类的构造方法。 例子： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public enum Planet &#123;</span><br><span class="line">MERCURY (3.303e+23, 2.4397e6),</span><br><span class="line">VENUS (4.869e+24, 6.0518e6),</span><br><span class="line">EARTH (5.976e+24, 6.37814e6),</span><br><span class="line">MARS (6.421e+23, 3.3972e6),</span><br><span class="line">JUPITER (1.9e+27, 7.1492e7),</span><br><span class="line">SATURN (5.688e+26, 6.0268e7),</span><br><span class="line">URANUS (8.686e+25, 2.5559e7),</span><br><span class="line">NEPTUNE (1.024e+26, 2.4746e7);</span><br><span class="line">private final double mass; &#x2F;&#x2F; in kilograms</span><br><span class="line">private final double radius; &#x2F;&#x2F; in meters</span><br><span class="line">Planet(double mass, double radius) &#123;</span><br><span class="line">this.mass &#x3D; mass;</span><br><span class="line">this.radius &#x3D; radius;</span><br><span class="line">&#125;</span><br><span class="line">private double mass() &#123; return mass; &#125;</span><br><span class="line">private double radius() &#123; return radius; &#125;</span><br><span class="line">&#x2F;&#x2F; universal gravitational constant (m3 kg-1 s-2)</span><br><span class="line">public static final double G &#x3D; 6.67300E-11;</span><br><span class="line">double surfaceGravity() &#123;</span><br><span class="line">return G * mass &#x2F; (radius * radius);</span><br><span class="line">&#125;</span><br><span class="line">double surfaceWeight(double otherMass) &#123;</span><br><span class="line">return otherMass * surfaceGravity();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 枚举型变量可以带自己的操作方法，甚至构造方法，但是只能在声明时调用构造方法，从而只有有限个实例对象。</p></li>
-<li><p>通配符泛型 •使用通配符 可以使程序更为通用 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class ShowType &#123;</span><br><span class="line">public void show (GeneralType&lt;?&gt; o)&#123;</span><br><span class="line">    System.out.println(o.getObj().getClass().getName());</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p></li>
+<li><p>枚举类 特点： 一、 只有有限个实例化的对象 --&gt;可以用==判断 所有枚举类型都隐含继承（扩展）自java.lang.Enum，因此枚举类型不能再继承其他任何类 枚举类型的构造方法必须是包内私有或者私有的。定义在枚举开头的常量会被自动创建，不能显式地调用枚举类的构造方法。 例子： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public enum Planet &#123;</span><br><span class="line">MERCURY (3.303e+23, 2.4397e6),</span><br><span class="line">VENUS (4.869e+24, 6.0518e6),</span><br><span class="line">EARTH (5.976e+24, 6.37814e6),</span><br><span class="line">MARS (6.421e+23, 3.3972e6),</span><br><span class="line">JUPITER (1.9e+27, 7.1492e7),</span><br><span class="line">SATURN (5.688e+26, 6.0268e7),</span><br><span class="line">URANUS (8.686e+25, 2.5559e7),</span><br><span class="line">NEPTUNE (1.024e+26, 2.4746e7);</span><br><span class="line">private final double mass; // in kilograms</span><br><span class="line">private final double radius; // in meters</span><br><span class="line">Planet(double mass, double radius) &#123;</span><br><span class="line">this.mass = mass;</span><br><span class="line">this.radius = radius;</span><br><span class="line">&#125;</span><br><span class="line">private double mass() &#123; return mass; &#125;</span><br><span class="line">private double radius() &#123; return radius; &#125;</span><br><span class="line">// universal gravitational constant (m3 kg-1 s-2)</span><br><span class="line">public static final double G = 6.67300E-11;</span><br><span class="line">double surfaceGravity() &#123;</span><br><span class="line">return G * mass / (radius * radius);</span><br><span class="line">&#125;</span><br><span class="line">double surfaceWeight(double otherMass) &#123;</span><br><span class="line">return otherMass * surfaceGravity();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 枚举型变量可以带自己的操作方法，甚至构造方法，但是只能在声明时调用构造方法，从而只有有限个实例对象。</p></li>
+<li><p>通配符泛型 •使用通配符 可以使程序更为通用 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class ShowType &#123;</span><br><span class="line">public void show (GeneralType&lt;?&gt; o)&#123;</span><br><span class="line">    System.out.println(o.getObj().getClass().getName());</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p></li>
 <li><p>有限制的泛型 •在参数“ Type” 后面使用“ extends” 关键字并加上类名或接口名，表明参数所代表的类型必须是该类的子类或者实现了该接口 ▫注意，对于实现了某接口的有限制泛型，也是使用 extends 关键字，而不是 implements 关键字</p></li>
 <li><p>构造方法中调用多态方法 •在构造方法内调用准备构造的那个对象的动态绑定方法 ▫被调用方法要操纵的成员可能尚未得到正确的初始化 ▫可能造成一些难于发现的程序错误 所以要注意 •用尽可能少的动作把对象的状态设置好； •如果可以避免，不要调用任何方法； •在构造方法内唯一能够安全调用的是在超类中具有 final 属性的那些方法（也适用于 private 方法，它们自动具有 final 属性）。这些方法不能被覆盖，所以不会出现前述的潜在问题。</p></li>
 </ol>
@@ -132,7 +132,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2019/Java%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="ckmkpef7m0003uktr5y9nds2i" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2019/Java%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="cl8qok3h8000zvstr5waqh86f" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
@@ -143,11 +143,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/%E5%A4%A9%E6%9E%A2%E7%9A%84%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%20Q&A/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          树莓派与resbian
+          天枢的新手入门指南 Q&amp;A
         
       </div>
     </a>
@@ -213,15 +213,15 @@
       <ul>
         
           <li>
+            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">WebAssembly程序分析与混淆</a>
+          </li>
+        
+          <li>
             <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/">反编译-代码混淆-程序分析与编译优化</a>
           </li>
         
           <li>
-            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理中级修炼与备战编译系统赛</a>
-          </li>
-        
-          <li>
-            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">聊聊WebAssembly程序分析与混淆</a>
+            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理学习与编译系统赛</a>
           </li>
         
           <li>
@@ -229,7 +229,7 @@
           </li>
         
           <li>
-            <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/">静态分析学习资源分享</a>
+            <a href="/2022/NativeSummary/">NativeSummary：Java/C安卓应用无源码污点分析。</a>
           </li>
         
       </ul>

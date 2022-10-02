@@ -15,7 +15,7 @@
 <meta property="og:description" content="一句话的问题 很多问题的解决方案，虽然非常有用，但是概括起来不需要多少字，都汇总在这里。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-03-01T03:11:11.000Z">
-<meta property="article:modified_time" content="2022-09-13T05:06:13.004Z">
+<meta property="article:modified_time" content="2022-09-25T15:18:17.529Z">
 <meta property="article:author" content="am009@github.com">
 <meta name="twitter:card" content="summary">
   
@@ -94,7 +94,14 @@
 <p>很多问题的解决方案，虽然非常有用，但是概括起来不需要多少字，都汇总在这里。</p>
 <span id="more"></span>
 <p>[toc]</p>
-<h2 id="最稳定的给自己的推送接口">最稳定的给自己的推送接口</h2>
+<h3 id="windows下稳定的挂起执行">Windows下稳定的挂起执行</h3>
+<p>https://github.com/winsw/winsw 不得不说比windows自带的task scheduler（任务计划程序）好太多。下面盘点一下task scheduler的坑点</p>
+<ol type="1">
+<li><p>启动失败后多久重新启动任务的选项，对于启动失败的定义完全不是返回值是否不为零，而是他有没有正常启动你的程序。也就是说完全不管你的返回值的。</p></li>
+<li><p>从某个时间点后周期性重复的触发器，如果你设置无限重复，但是开始时间是过去，即使你选了那个错过了时间立刻启动也不管用。可以看到下次执行时间是几分钟后，但是几分钟后就是不给你执行。必须要把开始时间设置在几分钟后，正常触发一次。</p>
+<p>https://superuser.com/questions/1676539/scheduled-task-does-not-run-after-being-re-enabled-again</p></li>
+</ol>
+<h2 id="稳定的给自己的推送接口">稳定的给自己的推送接口</h2>
 <p>通过qq邮箱SMTP，发给自己（同一个邮箱），通过qq的QQ邮箱提醒接收</p>
 <h2 id="方便地换硬盘重装系统">方便地换硬盘重装系统</h2>
 <p>2022年9月13日 直接用DiskGenius的系统迁移功能，直接下免费版也能用。体验下来比<code>备份与恢复（win7）</code>好很多。但是<code>备份与恢复（win7）</code>用来给电脑做全盘备份还是不错的。</p>
@@ -160,6 +167,7 @@
 <p>有点复杂，有机会再总结吧。</p>
 <h2 id="life-tips">Life Tips</h2>
 <ol type="1">
+<li>熬夜后头痛很可能是缺钾，可以通过香蕉和土豆补充。</li>
 <li>刷牙重在时长，不需要追求刷得特别干净。因为主要是氟元素的化学反应。所以不如刷着牙做点别的。另外晚上睡前刷牙最重要。</li>
 <li>和近视相关度最大的是自然光时间。多晒晒太阳吧。</li>
 <li>合理的饮食应当以淀粉为主，淀粉在肚子里慢慢水解，为身体提供持续的能量。</li>
@@ -205,7 +213,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/%E4%B8%80%E5%8F%A5%E8%AF%9D/" data-id="ckmkpef7h0000uktr57p79uwn" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/%E4%B8%80%E5%8F%A5%E8%AF%9D/" data-id="cl8qok3gm0000vstrgb1id1sd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -214,11 +222,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2022/NativeSummary/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          NativeSummary：Java/C安卓应用无源码污点分析。
+          静态分析学习资源分享
         
       </div>
     </a>
@@ -284,15 +292,15 @@
       <ul>
         
           <li>
+            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">WebAssembly程序分析与混淆</a>
+          </li>
+        
+          <li>
             <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/">反编译-代码混淆-程序分析与编译优化</a>
           </li>
         
           <li>
-            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理中级修炼与备战编译系统赛</a>
-          </li>
-        
-          <li>
-            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">聊聊WebAssembly程序分析与混淆</a>
+            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理学习与编译系统赛</a>
           </li>
         
           <li>
@@ -300,7 +308,7 @@
           </li>
         
           <li>
-            <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/">静态分析学习资源分享</a>
+            <a href="/2022/NativeSummary/">NativeSummary：Java/C安卓应用无源码污点分析。</a>
           </li>
         
       </ul>

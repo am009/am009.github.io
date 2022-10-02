@@ -113,14 +113,14 @@
 </ol>
 <p>我编译了算是2.5次，一次是编译的动态库，顺便也发出来吧，后面又觉得要选宽字符。大概率不会遇到什么其他的报错了。 跑起来挺快的。不包括解决报错的时间只花了半小时不到。</p>
 <p>--------光猫的samba------- ps一下就可以看到运行的smbd的路径，也可以找到改密码的smbpasswd。这里的用户好像要和linux系统中的用户对应，但是不好创建用户，所以推荐使用root用户，好像是smbpasswd-aroot然后就可以设置密码。然后在配置文件里面允许下root登录。因为感觉不设密码还是不安全</p>
-<p>下面贴出我光猫samba的配置文件。之前配的时候看日志发现不能设置charset，因为编译的时候就不支持其他charset。我也不记得改了哪里了，应该能用吧 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">smbpasswdfile&#x3D;&#x2F;flash&#x2F;cfg&#x2F;app_conf&#x2F;samba&#x2F;smbpasswd</span><br><span class="line">workgroup&#x3D;WORKGROUP</span><br><span class="line">guestaccount&#x3D;root</span><br><span class="line">netbiosname&#x3D;Fiberhome-samba_test</span><br><span class="line">serverstring&#x3D;SambaServer</span><br><span class="line">dnsproxy&#x3D;no</span><br><span class="line">#displaycharset&#x3D;cp936</span><br><span class="line">#unixcharset&#x3D;UTF-8</span><br><span class="line">#doscharset&#x3D;cp936</span><br><span class="line">loglevel&#x3D;0</span><br><span class="line">logfile&#x3D;&#x2F;dev&#x2F;null</span><br><span class="line">interfaces&#x3D;0.0.0.0&#x2F;0[::]&#x2F;0</span><br><span class="line">loadprinters&#x3D;no</span><br><span class="line">security&#x3D;user</span><br><span class="line">socketoptions&#x3D;TCP_NODELAYSO_RCVBUF&#x3D;65536SO_SNDBUF&#x3D;65536</span><br><span class="line">usesendfile&#x3D;yes</span><br><span class="line">deadtime&#x3D;5</span><br><span class="line">[usbshare]</span><br><span class="line">comment&#x3D;AllStoragedevices</span><br><span class="line">forceuser&#x3D;root</span><br><span class="line">forcegroup&#x3D;root</span><br><span class="line">public&#x3D;no</span><br><span class="line">writable&#x3D;yes</span><br><span class="line">browseable&#x3D;yes</span><br></pre></td></tr></table></figure></p>
+<p>下面贴出我光猫samba的配置文件。之前配的时候看日志发现不能设置charset，因为编译的时候就不支持其他charset。我也不记得改了哪里了，应该能用吧 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">smbpasswdfile=/flash/cfg/app_conf/samba/smbpasswd</span><br><span class="line">workgroup=WORKGROUP</span><br><span class="line">guestaccount=root</span><br><span class="line">netbiosname=Fiberhome-samba_test</span><br><span class="line">serverstring=SambaServer</span><br><span class="line">dnsproxy=no</span><br><span class="line">#displaycharset=cp936</span><br><span class="line">#unixcharset=UTF-8</span><br><span class="line">#doscharset=cp936</span><br><span class="line">loglevel=0</span><br><span class="line">logfile=/dev/null</span><br><span class="line">interfaces=0.0.0.0/0[::]/0</span><br><span class="line">loadprinters=no</span><br><span class="line">security=user</span><br><span class="line">socketoptions=TCP_NODELAYSO_RCVBUF=65536SO_SNDBUF=65536</span><br><span class="line">usesendfile=yes</span><br><span class="line">deadtime=5</span><br><span class="line">[usbshare]</span><br><span class="line">comment=AllStoragedevices</span><br><span class="line">forceuser=root</span><br><span class="line">forcegroup=root</span><br><span class="line">public=no</span><br><span class="line">writable=yes</span><br><span class="line">browseable=yes</span><br></pre></td></tr></table></figure></p>
 <hr />
 <p>其实这些编译的东西我没有全部测试，毕竟已经买了openwrt做NAS，我就用了下curl是正常的，使用https需要设置-cacert到旁边的etc/ssl/certs/ca-certificates.crt。感觉应该能用，不会真的打脸翻车，又报invalid instruction吧，不过跑transmission需要自己搞一个配置文件，启动的时候设置好配置文件夹的路径。 顺便还编译了nginx 建议使用前做好备份，万一误删了什么就不好了。 这里都是静态编译的，直接把想要的复制出来放到优盘里，再插上光猫，开启telnet进去启动。比如transmission-daemon复制出来，在旁边的文件夹放好配置文件，启动的时候加上参数。 可以加上自己的开机启动脚本。开机自动启动一下transmission，然后再自己写个ddns脚本更新ipv6地址。参考：https://hotfeel.me/?p=119</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2019/HG6201m%E5%85%89%E7%8C%AB%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/" data-id="ckmkpef7k0001uktrda0zgd1v" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2019/HG6201m%E5%85%89%E7%8C%AB%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/" data-id="cl8qok3h4000lvstrgp2rgzoz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li></ul>
@@ -196,15 +196,15 @@
       <ul>
         
           <li>
+            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">WebAssembly程序分析与混淆</a>
+          </li>
+        
+          <li>
             <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/">反编译-代码混淆-程序分析与编译优化</a>
           </li>
         
           <li>
-            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理中级修炼与备战编译系统赛</a>
-          </li>
-        
-          <li>
-            <a href="/2022/WebAssembly%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E6%B7%B7%E6%B7%86/">聊聊WebAssembly程序分析与混淆</a>
+            <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/">编译原理学习与编译系统赛</a>
           </li>
         
           <li>
@@ -212,7 +212,7 @@
           </li>
         
           <li>
-            <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/">静态分析学习资源分享</a>
+            <a href="/2022/NativeSummary/">NativeSummary：Java/C安卓应用无源码污点分析。</a>
           </li>
         
       </ul>
