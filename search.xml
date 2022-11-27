@@ -3608,8 +3608,8 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <li><p>北大编译课实践教程：这个是参加比赛时久仰大名的 邢其正 大佬的教程。https://github.com/pku-minic/online-doc https://pku-minic.github.io/online-doc/ 在当时大量教程止步于前端到中端就结束的时候，只有这个教程讲到了后端。</p></li>
 </ol>
 <p>除了传统的龙书虎书鲸书之外，还有一本书不得不说，《Engineering a compiler》中文版是《编译器设计》 https://book.douban.com/subject/20436488/ 。讲得浅显易懂。建议优先于龙书虎书鲸书看。9.3章非常好，对SSA介绍也比较详细。</p>
-<p>《SSA book》挺有名的，之前学程序分析就听说了。但是我个人其实看得不多。甚至ssa构建都是“偷懒”用的《simple and efficient ssa construction》里的简单算法，不需要折腾支配边界的计算什么的。</p>
-<p>后端的书有： 1. 《Instruction selection: Principles, Methods, and Applications》。顶着英文看。这本书我之前看起来还是有点费劲的，但是没必要完全看懂不是吗，看下来算是对指令选择这一块有了总体的印象。最后实践上（参加编译器比赛）来说，可能最后还是采取“宏展开”（其实就是对每个IR单独写分支生成机器指令），然后加上一些窥孔优化的思路。里面的一些高级思路基本没用起来。没想到在后端指令选择这里居然也和前端学到的语法分析能扯上关系。</p>
+<p><a href="https://pfalcon.github.io/ssabook/latest/book-v1.pdf">《SSA book》</a>挺有名的，之前学程序分析就听说了。但是我个人其实看得不多。甚至ssa构建都是“偷懒”用的<a href="https://pp.info.uni-karlsruhe.de/uploads/publikationen/braun13cc.pdf">《simple and efficient ssa construction》</a>里的简单算法，不需要折腾支配边界的计算什么的。</p>
+<p>后端的书有： 1. 《Instruction selection: Principles, Methods, and Applications》。顶着英文看。这本书我之前看起来还是有点费劲的，但是没必要完全看懂不是吗，看下来算是对指令选择这一块有了总体的印象。最后实践上（参加编译器比赛）来说，可能最后还是采取“宏展开”（其实就是对每个IR单独写分支生成机器指令），然后加上一些窥孔优化的思路。里面的一些高级思路基本没用起来。没想到在后端指令选择这里居然也和前端学到的语法分析能扯上关系。 1. <a href="https://publikationen.bibliothek.kit.edu/1000007166/6532">《Register Allocation for Programs in SSA Form》</a> 新一代寄存器分配</p>
 <p>寄存器分配的书看后文</p>
 <p>LLVM相关的书有：</p>
 <ol type="1">
@@ -3619,14 +3619,15 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 </ol>
 <p>LLVM在Youtube上也有很多视频</p>
 <ol type="1">
-<li>《2019 EuroLLVM Developers’ Meeting: V. Bridgers &amp; F. Piovezan “LLVM IR Tutorial - Phis, GEPs and other things, oh my! - Vince Bridgers (Intel Corporation)”》 https://www.youtube.com/watch?v=m8G_S5LwlTo https://llvm.org/devmtg/2019-04/slides/Tutorial-Bridgers-LLVM_IR_tutorial.pdf 这个视频用来学习GetElementPtr指令非常好</li>
-<li>2019 LLVM Developers’ Meeting: A. Warzynski “Writing an LLVM Pass: 101” https://www.youtube.com/watch?v=ar7cJl2aBuU 源码外的Pass：不和LLVM代码放在一起，不需要重新编译LLVM 基于NewPassManager：新版PassManager API，即将成为默认PM</li>
-<li>2019 LLVM Developers’ Meeting: J. Paquette &amp; F. Hahn “Getting Started With LLVM: Basics” https://www.youtube.com/watch?v=3QQuhL-dSys 前半部分 讲了LLVM IR Pass需要考虑到的一些东西，users的概念，讲了移除基本块和指令时需要注意的。</li>
-<li>《2019 LLVM Developers’ Meeting: S. Haastregt &amp; A. Stulova “An overview of Clang ”》 https://www.youtube.com/watch?v=5kkMpJpIGYU</li>
-<li>2019 LLVM Developers’ Meeting: J. Paquette &amp; F. Hahn “Getting Started With LLVM: Basics” https://www.youtube.com/watch?v=3QQuhL-dSys 介绍了后端</li>
+<li><a href="https://www.youtube.com/watch?v=m8G_S5LwlTo">《2019 EuroLLVM Developers’ Meeting: V. Bridgers &amp; F. Piovezan “LLVM IR Tutorial - Phis, GEPs and other things, oh my! - Vince Bridgers (Intel Corporation)”》</a> <a href="https://llvm.org/devmtg/2019-04/slides/Tutorial-Bridgers-LLVM_IR_tutorial.pdf">配套PPT</a> 这个视频用来学习GetElementPtr指令非常好</li>
+<li><a href="https://www.youtube.com/watch?v=ar7cJl2aBuU">2019 LLVM Developers’ Meeting: A. Warzynski “Writing an LLVM Pass: 101”</a> 源码外的Pass：不和LLVM代码放在一起，不需要重新编译LLVM 基于NewPassManager：新版PassManager API，即将成为默认PM</li>
+<li><a href="https://www.youtube.com/watch?v=3QQuhL-dSys">2019 LLVM Developers’ Meeting: J. Paquette &amp; F. Hahn “Getting Started With LLVM: Basics”</a> 前半部分 讲了LLVM IR Pass需要考虑到的一些东西，users的概念，讲了移除基本块和指令时需要注意的。</li>
+<li><a href="https://www.youtube.com/watch?v=5kkMpJpIGYU">《2019 LLVM Developers’ Meeting: S. Haastregt &amp; A. Stulova “An overview of Clang ”》</a></li>
+<li><a href="https://www.youtube.com/watch?v=3QQuhL-dSys">2019 LLVM Developers’ Meeting: J. Paquette &amp; F. Hahn “Getting Started With LLVM: Basics”</a> 介绍了后端</li>
 </ol>
 <h3 id="其他资源">其他资源</h3>
 <p>优质的（浅显易懂的）学习资源是学习前期永远稀缺的资源。有时候你想找都不知道怎么找。所以这里列出我记下来的所有资源：</p>
+<p><a href="https://buaa-se-compiling.github.io/miniSysY-tutorial/challenge/mem2reg/help.html">mem2reg 实验指导 · GitBook (buaa-se-compiling.github.io)</a></p>
 <p><a href="http://c9x.me/compile/bib/">The Compiler Writer Resource Page (c9x.me)</a> 一个人的资源分享</p>
 <p>针对arm的优化算法：乘法转移位：Division by invariant integers using multiplication. CPU文档，乘法是6-8周期，除法是10-12周期</p>
 <p>ARM手册看Cortex-A72 software Optimization Guide.</p>
@@ -3639,7 +3640,6 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <p>book of runtime</p>
 <p>对于LLVM之类的编译器是如何实现在构造 SSA 形式的 IR 的时候，计算出 def-use 链？ - RednaxelaFX的回答 - 知乎 https://www.zhihu.com/question/41999500/answer/93243408</p>
 <p>Phi node 是如何实现它的功能的？ - RednaxelaFX的回答 - 知乎 https://www.zhihu.com/question/24992774/answer/29740949</p>
-<p><a href="https://buaa-se-compiling.github.io/miniSysY-tutorial/challenge/mem2reg/help.html">mem2reg 实验指导 · GitBook (buaa-se-compiling.github.io)</a></p>
 <h3 id="ssa构建与gvn的强大优化能力">SSA构建与GVN的强大优化能力</h3>
 <p>我之前一直挺疑惑，编译器的优化到底具体在哪里。甚至之前编译器写了一半还是不太知道。就比如我随便找一个C语言代码，想不清楚编译器具体是怎么优化出来的。比如下面这个例子：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// test if-else-if</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">ifElseIf</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">int</span> a;</span><br><span class="line">  a = <span class="number">5</span>;</span><br><span class="line">  <span class="type">int</span> b;</span><br><span class="line">  b = <span class="number">10</span>;</span><br><span class="line">  <span class="keyword">if</span>(a == <span class="number">6</span> || b == <span class="number">0xb</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (b == <span class="number">10</span> &amp;&amp; a == <span class="number">1</span>)</span><br><span class="line">      a = <span class="number">25</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (b == <span class="number">10</span> &amp;&amp; a == <span class="number">-5</span>)</span><br><span class="line">      a = a + <span class="number">15</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      a = -+a;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -3685,7 +3685,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <li>基于SSA的（图着色）寄存器分配系列：
 <ol type="1">
 <li>《SSA Elimination after Register Allocation》</li>
-<li>《Register Allocation for Programs in SSA Form》https://publikationen.bibliothek.kit.edu/1000007166/6532 看着像一本书，其实好像是学位论文。写得非常好。里面不仅仅是讲SSA寄存器分配，而是各种都有涉及，而且讲得挺好（浅显易懂）的。强烈推荐，即使不打算用基于SSA的寄存器分配的人也应该看看。</li>
+<li><a href="https://publikationen.bibliothek.kit.edu/1000007166/6532">《Register Allocation for Programs in SSA Form》</a> 看着像一本书，其实好像是学位论文。写得非常好。里面不仅仅是讲SSA寄存器分配，而是各种都有涉及，而且讲得挺好（浅显易懂）的。强烈推荐，即使不打算用基于SSA的寄存器分配的人也应该看看。</li>
 </ol></li>
 </ol>
 <p>为什么要用基于SSA的（图着色）寄存器分配呢？想象这样的场景，当你苦苦地一天天加班加点写寄存器分配写了很长，比赛结束发现隔壁队伍大佬居然就用了极少的代码量就完成了这一部分，而且性能还比你好很多，这不得直接气晕过去。而基于SSA的寄存器分配可能就是这种神器（虽然我们因为时间原因并没有写出来，不过ayame他们好像就是用了SSA的寄存器分配）。</p>
@@ -3806,8 +3806,8 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <p>NDP，这里主要关注NS和NA，可以想象成是IPv4的ARP。即，我知道包要从这个接口发出去了，但是我要填以太网的mac地址，那我填谁的mac地址呢？解决的是这个问题。这时，需要发送NS请求，询问某个ip地址（网关或者包的目的ip）的机器的mac地址是什么。这时，对面就会发NA响应回来，通告mac地址。</p>
 <p>而NDP proxy就是用来解决这种情况的，无论是odhcpd，还是ndppd，都支持在wan监听，发现NS转发进来，如果里面主机响应了，就会增加内核中ipv6的neighbor的缓存表，此时如果开启了对应选项，odhcpd和ndppd都会增加一条/128的专门针对这个主机的路由。从而解决路由问题。</p>
 <h4 id="ndp-proxy的落败">ndp proxy的落败</h4>
-<p>https://forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt/107157/6 （似乎ndppd更好些？然而并不是）</p>
-<p>https://github.com/DanielAdolfsson/ndppd/issues/71</p>
+<p><a href="https://forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt/107157/6">forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt</a> （似乎ndppd更好些？然而并不是）</p>
+<p><a href="https://github.com/DanielAdolfsson/ndppd/issues/71">ndppd/issues/71</a> 不支持转发主机主动发出去的包</p>
 <p><a href="https://blog.icpz.dev/articles/notes/odhcpd-relay-mode-discuss/#中继模式的局限性以及可能的解决方法">odhcpd 中继模式原理、局限以及解决方案 | Silent Blog (icpz.dev)</a> 正如这篇文章里工作条件里提到的5个步骤，为什么需要5个步骤呢？就是因为现在的ndp proxy有一个非常离谱的缺陷，即只能转发别人发的NS，不能转发路由器自己发出的NS到lan里。这可能是内核的设计问题。内核其实给了什么socket机制，让你只监听NS包，但是这里只能监听到外面来的，不包括自己发出去的。</p>
 <p>比如我内网机子有一个<code>::aaaa</code>的IP，接入我自己的路由器，然后再接入学校路由器。只有学校路由器发NS请求问<code>::aaaa</code>的mac地址是什么的时候，这个包才能被转发到lan内，触发NA响应，然后触发上述的ndp proxy的增加路由机制。</p>
 <p>然而经过测试，学校的路由器完全不会发这个NS请求，不知道是缓存了还是什么情况。导致还是最开始的那个问题，缺一条路由。有响应包直接到路由器，但是路由器不会往内网转。非常讽刺的是，其实路由器自身会不断发NS包问内网谁是<code>::aaaa</code>，但是经过路由之后，这个NS包还是往wan口发走了。。。也就是说，路由器一直在往wan口找人，却不知道人其实就在自己背后的lan口那边。</p>
@@ -3851,7 +3851,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 </ol>
 <h4 id="dhcpv6方案">dhcpv6方案</h4>
 <p>折腾了这么久，也是非常的累。想到了之前有一篇文章里，那个人也放弃了ndp proxy。</p>
-<p>https://quantum5.ca/2019/03/08/ndp-proxy-route-ipv6-vpn-addresses/</p>
+<p><a href="https://quantum5.ca/2019/03/08/ndp-proxy-route-ipv6-vpn-addresses/">ndp-proxy-route-ipv6-vpn-addresses</a></p>
 <p>本质上就是要知道lan那边有哪些ip，从而加路由。dhcp不就是用来分发IP的吗，让内网机器直接通过dhcp要地址，然后通过dnsmasq的hook加ndp proxy。</p>
 <p>更进一步，可以直接用dhcpv6给内网分发一个小网段，然后直接加静态路由，让这个小网段的包进入lan。</p>
 <p>累了，本来还想着说自己搞一个包嗅探，然后加一条路由的程序。这个dhcpv6方案也不错，能用就行。（缺点是，别人一看就知道你这个IP不对劲，肯定是自己配的）</p>
@@ -3860,7 +3860,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <ol type="1">
 <li>lan的ipv6 setting里，开启dhcpv6 server，RA server。RA里面关闭slaac，开启Manage的flag。</li>
 <li>关闭lan接口Advanced Setting里的IPv6 assignment length然后把wan的/64地址复制一份到那边lan接口。此时客户端就可以分到这个/64段的地址</li>
-<li>注意odhcpd的这个选项：dhcpv6_hostidlength默认值是12 https://openwrt.org/docs/techref/odhcpd 即客户端地址除了低12位，其他会是全零（https://github.com/openwrt/odhcpd/issues/84）。</li>
+<li>注意odhcpd的这个选项：dhcpv6_hostidlength默认值是12 <a href="https://openwrt.org/docs/techref/odhcpd">openwrt.org/docs/techref/odhcpd</a> 即客户端地址除了低12位，其他会是全零（<a href="https://github.com/openwrt/odhcpd/issues/84">https://github.com/openwrt/odhcpd/issues/84</a>）。</li>
 <li>再加一个/116的静态路由即可。</li>
 </ol></li>
 <li><p>自己起一个dnsmasq，可以手选一个IP段。RA的发送还是可以交给odhcpd，毕竟有图形界面。</p>
@@ -3875,12 +3875,11 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <h4 id="tc-traffic-control-qdisc">tc traffic control qdisc</h4>
 <p>[<a href="https://arthurchiao.art/blog/lartc-qdisc-zh/">译] 《Linux 高级路由与流量控制手册（2012）》第九章：用 tc qdisc 管理 Linux 网络带宽 (arthurchiao.art)</a></p>
 <p><a href="https://tonydeng.github.io/sdn-handbook/linux/tc.html">流量控制 · GitBook (tonydeng.github.io)</a></p>
-<p>https://openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler#actions</p>
+<p><a href="https://openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler#actions">openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler</a></p>
 <h4 id="ipv6">IPv6</h4>
 <p>《IPv6技术精要》（美）格拉齐亚尼 著</p>
 <h4 id="其他">其他</h4>
-<p>最后分享一下我的v2ray透明代理配置：</p>
-<p>https://forum.openwrt.org/t/solved-usr-share-nftables-d-table-post-not-in-the-right-place/142961/6</p>
+<p>最后分享一下我的<a href="https://forum.openwrt.org/t/solved-usr-share-nftables-d-table-post-not-in-the-right-place/142961/6">v2ray透明代理配置</a></p>
 ]]></content>
       <categories>
         <category>Hack</category>

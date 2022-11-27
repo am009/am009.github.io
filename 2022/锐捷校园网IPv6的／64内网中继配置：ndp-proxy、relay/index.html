@@ -15,7 +15,7 @@
 <meta property="og:description" content="锐捷校园网IPv6的／64内网中继配置：ndp-proxy、relay">
 <meta property="og:locale">
 <meta property="article:published_time" content="2022-11-23T03:11:12.000Z">
-<meta property="article:modified_time" content="2022-11-23T07:32:46.295Z">
+<meta property="article:modified_time" content="2022-11-23T07:36:32.194Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Embedded">
 <meta property="article:tag" content="Openwrt">
@@ -110,8 +110,8 @@
 <p>NDP，这里主要关注NS和NA，可以想象成是IPv4的ARP。即，我知道包要从这个接口发出去了，但是我要填以太网的mac地址，那我填谁的mac地址呢？解决的是这个问题。这时，需要发送NS请求，询问某个ip地址（网关或者包的目的ip）的机器的mac地址是什么。这时，对面就会发NA响应回来，通告mac地址。</p>
 <p>而NDP proxy就是用来解决这种情况的，无论是odhcpd，还是ndppd，都支持在wan监听，发现NS转发进来，如果里面主机响应了，就会增加内核中ipv6的neighbor的缓存表，此时如果开启了对应选项，odhcpd和ndppd都会增加一条/128的专门针对这个主机的路由。从而解决路由问题。</p>
 <h4 id="ndp-proxy的落败">ndp proxy的落败</h4>
-<p>https://forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt/107157/6 （似乎ndppd更好些？然而并不是）</p>
-<p>https://github.com/DanielAdolfsson/ndppd/issues/71</p>
+<p><a target="_blank" rel="noopener" href="https://forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt/107157/6">forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt</a> （似乎ndppd更好些？然而并不是）</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/DanielAdolfsson/ndppd/issues/71">ndppd/issues/71</a> 不支持转发主机主动发出去的包</p>
 <p><a target="_blank" rel="noopener" href="https://blog.icpz.dev/articles/notes/odhcpd-relay-mode-discuss/#中继模式的局限性以及可能的解决方法">odhcpd 中继模式原理、局限以及解决方案 | Silent Blog (icpz.dev)</a> 正如这篇文章里工作条件里提到的5个步骤，为什么需要5个步骤呢？就是因为现在的ndp proxy有一个非常离谱的缺陷，即只能转发别人发的NS，不能转发路由器自己发出的NS到lan里。这可能是内核的设计问题。内核其实给了什么socket机制，让你只监听NS包，但是这里只能监听到外面来的，不包括自己发出去的。</p>
 <p>比如我内网机子有一个<code>::aaaa</code>的IP，接入我自己的路由器，然后再接入学校路由器。只有学校路由器发NS请求问<code>::aaaa</code>的mac地址是什么的时候，这个包才能被转发到lan内，触发NA响应，然后触发上述的ndp proxy的增加路由机制。</p>
 <p>然而经过测试，学校的路由器完全不会发这个NS请求，不知道是缓存了还是什么情况。导致还是最开始的那个问题，缺一条路由。有响应包直接到路由器，但是路由器不会往内网转。非常讽刺的是，其实路由器自身会不断发NS包问内网谁是<code>::aaaa</code>，但是经过路由之后，这个NS包还是往wan口发走了。。。也就是说，路由器一直在往wan口找人，却不知道人其实就在自己背后的lan口那边。</p>
@@ -155,7 +155,7 @@
 </ol>
 <h4 id="dhcpv6方案">dhcpv6方案</h4>
 <p>折腾了这么久，也是非常的累。想到了之前有一篇文章里，那个人也放弃了ndp proxy。</p>
-<p>https://quantum5.ca/2019/03/08/ndp-proxy-route-ipv6-vpn-addresses/</p>
+<p><a target="_blank" rel="noopener" href="https://quantum5.ca/2019/03/08/ndp-proxy-route-ipv6-vpn-addresses/">ndp-proxy-route-ipv6-vpn-addresses</a></p>
 <p>本质上就是要知道lan那边有哪些ip，从而加路由。dhcp不就是用来分发IP的吗，让内网机器直接通过dhcp要地址，然后通过dnsmasq的hook加ndp proxy。</p>
 <p>更进一步，可以直接用dhcpv6给内网分发一个小网段，然后直接加静态路由，让这个小网段的包进入lan。</p>
 <p>累了，本来还想着说自己搞一个包嗅探，然后加一条路由的程序。这个dhcpv6方案也不错，能用就行。（缺点是，别人一看就知道你这个IP不对劲，肯定是自己配的）</p>
@@ -164,7 +164,7 @@
 <ol type="1">
 <li>lan的ipv6 setting里，开启dhcpv6 server，RA server。RA里面关闭slaac，开启Manage的flag。</li>
 <li>关闭lan接口Advanced Setting里的IPv6 assignment length然后把wan的/64地址复制一份到那边lan接口。此时客户端就可以分到这个/64段的地址</li>
-<li>注意odhcpd的这个选项：dhcpv6_hostidlength默认值是12 https://openwrt.org/docs/techref/odhcpd 即客户端地址除了低12位，其他会是全零（https://github.com/openwrt/odhcpd/issues/84）。</li>
+<li>注意odhcpd的这个选项：dhcpv6_hostidlength默认值是12 <a target="_blank" rel="noopener" href="https://openwrt.org/docs/techref/odhcpd">openwrt.org/docs/techref/odhcpd</a> 即客户端地址除了低12位，其他会是全零（<a target="_blank" rel="noopener" href="https://github.com/openwrt/odhcpd/issues/84">https://github.com/openwrt/odhcpd/issues/84</a>）。</li>
 <li>再加一个/116的静态路由即可。</li>
 </ol></li>
 <li><p>自己起一个dnsmasq，可以手选一个IP段。RA的发送还是可以交给odhcpd，毕竟有图形界面。</p>
@@ -179,12 +179,11 @@
 <h4 id="tc-traffic-control-qdisc">tc traffic control qdisc</h4>
 <p>[<a target="_blank" rel="noopener" href="https://arthurchiao.art/blog/lartc-qdisc-zh/">译] 《Linux 高级路由与流量控制手册（2012）》第九章：用 tc qdisc 管理 Linux 网络带宽 (arthurchiao.art)</a></p>
 <p><a target="_blank" rel="noopener" href="https://tonydeng.github.io/sdn-handbook/linux/tc.html">流量控制 · GitBook (tonydeng.github.io)</a></p>
-<p>https://openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler#actions</p>
+<p><a target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler#actions">openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler</a></p>
 <h4 id="ipv6">IPv6</h4>
 <p>《IPv6技术精要》（美）格拉齐亚尼 著</p>
 <h4 id="其他">其他</h4>
-<p>最后分享一下我的v2ray透明代理配置：</p>
-<p>https://forum.openwrt.org/t/solved-usr-share-nftables-d-table-post-not-in-the-right-place/142961/6</p>
+<p>最后分享一下我的<a target="_blank" rel="noopener" href="https://forum.openwrt.org/t/solved-usr-share-nftables-d-table-post-not-in-the-right-place/142961/6">v2ray透明代理配置</a></p>
 
       
     </div>
