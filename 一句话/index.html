@@ -15,7 +15,7 @@
 <meta property="og:description" content="一句话的问题 很多问题的解决方案，虽然非常有用，但是概括起来不需要多少字，都汇总在这里。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-03-01T03:11:11.000Z">
-<meta property="article:modified_time" content="2023-02-07T09:55:31.795Z">
+<meta property="article:modified_time" content="2023-06-16T12:01:19.019Z">
 <meta property="article:author" content="am009@github.com">
 <meta name="twitter:card" content="summary">
   
@@ -94,6 +94,21 @@
 <p>很多问题的解决方案，虽然非常有用，但是概括起来不需要多少字，都汇总在这里。</p>
 <span id="more"></span>
 <p>[toc]</p>
+<h2 id="linux下限制进程cpu和内存使用率">Linux下限制进程CPU和内存使用率</h2>
+<ul>
+<li><code>CPUQuota=100%</code>: 强制限制CPU使用，100%表示单核的100%，即上限不是100%，比如我有256核，则上限是25600%</li>
+<li><code>CPUWeight=idle</code> 或<code>CPUWeight=1</code> 仅使用空闲的CPU。</li>
+<li><code>MemoryMax=32G</code> 限制最大内存占用</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemd-run --scope --same-dir --collect -p MemoryMax=32G -p CPUQuota=100% bash -c <span class="string">&quot;xxx&quot;</span> <span class="comment"># 限制内存和强制单核</span></span><br><span class="line">systemd-run --scope --same-dir -p CPUWeight=idle bash -c <span class="string">&quot;xxx&quot;</span></span><br></pre></td></tr></table></figure>
+<p>默认需要root权限，加上<code>--user</code> 则不需要root权限了。但是现在好像有点问题，限制不住CPU和内存。</p>
+<p>https://github.com/systemd/systemd/issues/10581</p>
+<p>测试是否支持user模式：运行这个</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemd-run --user --scope --same-dir -p CPUQuota=50% bash -c <span class="string">&#x27;python -c &quot;while True: i=1&quot;&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>然后用htop观察CPU占用，看是否生效：看CPU占用是100还是50</p>
+<p>进一步调试：https://github.com/systemd/systemd/issues/9502</p>
+<p><strong>相关系统配置：</strong>（仅使用的话不用管这一部分）</p>
+<p>https://unix.stackexchange.com/questions/624428/cgroups-v2-cgroup-controllers-not-delegated-to-non-privileged-users-on-centos-s （里面的EOF应该不用写进文件）</p>
 <h2 id="windows下稳定的挂起执行">Windows下稳定的挂起执行</h2>
 <p>https://github.com/winsw/winsw 不得不说比windows自带的task scheduler（任务计划程序）好太多。下面盘点一下task scheduler的坑点</p>
 <ol type="1">
@@ -109,13 +124,14 @@
 <h2 id="方便地换硬盘重装系统">方便地换硬盘重装系统</h2>
 <p>2022年9月13日 直接用DiskGenius的系统迁移功能，直接下免费版也能用。体验下来比<code>备份与恢复（win7）</code>好很多。但是<code>备份与恢复（win7）</code>用来给电脑做全盘备份还是不错的。</p>
 <p><del>利用win10自带的 <code>备份与恢复（win7）</code> 借来一个大容量移动硬盘先备份，换硬盘之后恢复。</del></p>
-<p>2021年12月19日 这个其实还是有很多槽点的。一旦你用usb安装盘进入恢复过程，它给你报个错，你就完全没有任何办法。。。之前成功过两次，但也遇到了几次没办法的情况。今天尝试DiskGenius的系统迁移功能，新硬盘通过硬盘盒，usb连接电脑，然后热迁移过去。</p>
+<p>2021年12月19日 这个<code>备份与恢复（win7）</code> 其实还是有很多槽点的。一旦你用usb安装盘进入恢复过程，它给你报个错，你就完全没有任何办法。。。之前成功过两次，但也遇到了几次没办法的情况。今天尝试DiskGenius的系统迁移功能，新硬盘通过硬盘盒，usb连接电脑，然后热迁移过去。</p>
 <h2 id="将旧电脑系统连带硬盘迁移到新电脑">将旧电脑系统连带硬盘迁移到新电脑</h2>
+<p>首先关bitLocker。其次是WSL导出并unregister。</p>
 <p>使用下面命令准备系统：然后直接移动硬盘过去。</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">%windir%</span>\system32\sysprep\sysprep.exe /generalize /oobe /shutdown</span><br></pre></td></tr></table></figure>
 <p>出现问题：</p>
 <ol type="1">
-<li>为单个用户安装的appx会造成问题，先卸载</li>
+<li>为单个用户安装的appx会造成问题，先卸载。用dism++</li>
 <li>千万要先把微软账户退出改用本地账号啊！！！不然被微软联网登录卡得进不去账号</li>
 <li>电脑真的第一次开机要保证不能换任何配件！才能激活。激活之后再换硬盘。</li>
 </ol>
@@ -348,15 +364,6 @@
     
 
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-<script type="text/javascript">
-  window.MathJax = {
-    tex2jax: {
-      inlineMath: [ ['$','$'] ],
-      displayMath: [ ['$$','$$'] ],
-      processEscapes: true
-    }
-  };
-</script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 
