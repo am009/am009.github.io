@@ -45,7 +45,7 @@
 <meta property="og:image" content="https://wjk.moe/2023/SSA-for-decompilation-5/image-20230519103918965.png">
 <meta property="og:image" content="https://wjk.moe/2023/SSA-for-decompilation-5/image-20230519104959738.png">
 <meta property="article:published_time" content="2023-05-12T03:11:12.000Z">
-<meta property="article:modified_time" content="2023-08-21T12:45:49.968Z">
+<meta property="article:modified_time" content="2023-08-21T13:37:49.376Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Decompile">
 <meta name="twitter:card" content="summary">
@@ -60,7 +60,8 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
-<meta name="generator" content="Hexo 6.3.0"></head>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+</head>
 
 <body>
   <div id="container">
@@ -132,7 +133,7 @@
 <p>反编译器的类型分析问题是将每条数据与一个高级类型相关联。可以合理地期望该程序没有类型错误，即使某些语言（例如 C）允许从一种类型转换为几乎任何其他类型。各种不同的数据需要分析类型：已初始化和未初始化的全局数据、局部变量、堆分配变量和常量。</p>
 <p>类型分析在概念上是在数据流分析之后和控制流分析之前进行的，如图5.1所示。</p>
 <figure>
-<img src="image-20230516151123785.png" alt="image-20230516151123785" /><figcaption aria-hidden="true">image-20230516151123785</figcaption>
+<img src="image-20230516151123785.png" alt="" /><figcaption>image-20230516151123785</figcaption>
 </figure>
 <p>从编译器的角度来看，（编译器那边的）类型分析甚至比数据流分析在文献中的讨论要多得多。此处详细考虑了机器代码程序中类型的性质，以及反编译器输出中类型的要求。</p>
 <p>机器代码程序中存在的类型信息可以看作是一组要解决的约束，或者是一组要处理的操作，类似于数据流分析。本章介绍了基于静态单一赋值形式（SSA 形式）的稀疏数据流类型分析。由于类型信息可以与每个定义（和常量）一起存储，因此每次使用一个位置时都可以随时访问当前类型。（因为只需要为每个定义存储类型而不是为每个程序点存储？）这种稀疏表示节省的内存是相当可观的。</p>
@@ -181,7 +182,7 @@
 <p>聚合类型通常在机器代码级别一次处理一个元素。处理聚合类型的少数机器指令，例如块移动或块设置指令，可以在循环中分解为更基本的指令。虽然机器指令语义通常会确定基本数据项的类型，但聚合类型通常只能从基本指令的上下文中发现，例如在循环中执行的基本操作，或在指针的固定偏移处执行的一些基本操作。</p>
 <p>图 5.3 显示了使用基本类型和聚合类型的源代码和机器代码。请注意在 Intel x86 等复杂指令集上，基本类型的对象如何使用简单的寻址模式（如 m[r1）访问，而聚合类型使用更复杂的寻址模式，如 <code>m[r1+r2*S]</code>（寻址模式 (r1,r2,S)） 和 <code>m[r1+K]</code>（r1 和 r2 是寄存器，S 和 K 是常量）。</p>
 <figure>
-<img src="image-20230516164938196.png" alt="image-20230516164938196" /><figcaption aria-hidden="true">image-20230516164938196</figcaption>
+<img src="image-20230516164938196.png" alt="" /><figcaption>image-20230516164938196</figcaption>
 </figure>
 <h3 id="变化的指针running-pointer">变化的指针（Running Pointer）</h3>
 <p>虽然变化的指针和数组索引在大多数情况下是等效的，但运行指针在初始化数组的情况下会产生问题。</p>
@@ -189,12 +190,12 @@
 <p>在数组上使用运行指针对于恢复预初始化数组具有重要意义。期望看到数组索引语义的简单类型分析（例如 [Myc99]）可能会正确地反编译程序的代码部分，但无法恢复数组的初始值。图 5.4 说明了这个问题。</p>
 <p>在图5.4(a)中，类型分析发现了一个数组，为了正确声明数组，提示分析数组的大小。如果它在二进制文件的只读部分中，它的大小和类型可用于声明数组的初始值（示例中未显示）。在图5.4(b)中，p的类型是char<em>，常量的类型也是char</em>。地址 10 000 用作 char 的事实可能会提示将一个 char 声明为字符，并且如果在二进制文件的只读部分中，它可能会被赋予一个初始值。请注意，没有提示将其他九个值声明为 char 类型。更糟糕的是，常量 10 010 被用作 char* 类型，可能提示类型分析将地址 10010 处的对象声明为 char 类型，而实际上这只是数据段中数组 a 之后的下一个数据项。该对象可以是任何类型，也可以是未使用的。这表明每当常量 K 与类型 Y* 一起使用时，它并不总是遵循位置 K*（即 m[K]）与类型 Y 一起使用。</p>
 <figure>
-<img src="image-20230516165158780.png" alt="image-20230516165158780" /><figcaption aria-hidden="true">image-20230516165158780</figcaption>
+<img src="image-20230516165158780.png" alt="" /><figcaption>image-20230516165158780</figcaption>
 </figure>
 <p>以 5.4(a) 风格编写的程序可以由编译器转换为 5.4(b) 风格的机器代码程序。</p>
 <p>图 5.4(a) 中数组的大小比较容易确定。在其他情况下，可能很难或不可能确定数组的长度。例如，可以使用一个特殊值来终止循环。循环终止条件可以任意复杂，实际上需要执行程序才能找到终止条件。即使执行程序也可能无法确定数组的完整大小，因为对于每次执行，可能只会访问数组的一部分。在这些情况下，类型分析可能会确定存在已初始化的数组，但无法计算数组的长度。</p>
 <figure>
-<img src="image-20230516165337787.png" alt="image-20230516165337787" /><figcaption aria-hidden="true">image-20230516165337787</figcaption>
+<img src="image-20230516165337787.png" alt="" /><figcaption>image-20230516165337787</figcaption>
 </figure>
 <p>图 5.5：从同一指针引用两种不同类型的程序。</p>
 <p>另一种情况是使用运行指针遍历结构数组，如图 5.5(a) 所示。这里的结构包含一个整数和一个浮点数；在循环内部，指针交替引用一个整数和一个浮点数。原始编译器重新安排了代码，在每次引用后将指针递增整数的大小和浮点数的大小，从而使机器代码更加紧凑和高效。如图 5.5(b) 所示，指针的类型现在是 void*，因为它被用作两个不兼容的指针类型。</p>
@@ -214,11 +215,11 @@
 <p>类型分析被认为是一个双向问题 [KDM03]。换句话说，如果实现为数据流问题，则流图的正向或反向遍历都不会显着提高性能。双向性的根源在于大多数类型定义操作都会影响目的地（定义）和一些操作数（使用）。定义的类型效果会影响该定义的使用；用途的类型影响回溯到这些用途的定义。库函数调用同样具有双向效果。按值调用库调用的实际参数是对先前定义的位置的使用（类型信息向后流动）。返回值类型和引用参数调用是类型向前影响的定义。因此，类型分析是少数可以用数据流术语表达的问题之一，并且是真正双向的。</p>
 <p>比较操作导致可能不直观的类型约束。相等关系运算符（= 和 !=）仅表示被比较的变量的类型是可比较的。 （如果两个类型是可比较的，则意味着它们在 C 意义上是兼容的；int 和 char* 不兼容，因此无法比较它们。）任一操作数的类型都可以大于或等于操作数的类型另一个操作数，因为等式关系是可交换的，如图 5.6 所示。</p>
 <figure>
-<img src="image-20230516165932660.png" alt="image-20230516165932660" /><figcaption aria-hidden="true">image-20230516165932660</figcaption>
+<img src="image-20230516165932660.png" alt="" /><figcaption>image-20230516165932660</figcaption>
 </figure>
 <p>相比之下，诸如 ≤ 之类的非交换关系运算符表示统一类型对象的数组，因为高级语言不允许假设其他对象的相对地址。图 5.7(b) 显示了一个示例，其中常量 a+10 的类型应为 int*，即使相同的数字常量可能是在其他地方被用作浮点数 f 的地址。因此，这些运算符意味着操作数的类型是相等的。</p>
 <figure>
-<img src="image-20230516170012790.png" alt="image-20230516170012790" /><figcaption aria-hidden="true">image-20230516170012790</figcaption>
+<img src="image-20230516170012790.png" alt="" /><figcaption>image-20230516170012790</figcaption>
 </figure>
 <p>一些关系运算符暗示操作数的符号性（例如，符号小于或等于）。编译器通常会忽略整数操作数的符号不匹配，因此不应将有符号整数、无符号整数和未知符号的整数视为不同类型。相反，整数类型的符号是一种属性，变量的最终声明符号可以通过启发式方法确定，例如统计上最常用的类型（ the statically most commonly used variant）。</p>
 <p>通常，在比较整数和浮点数时会使用不同的比较运算符，因此这些运算符隐含了基本类型。定点数通常由整数运算符（例如比较运算符、加法和减法）进行操作，只有少数操作（例如固定点乘法）将操作数识别为固定点。因此，可以将整数提升为固定点数，即<span class="math inline">\(fixpoint \sqsubset integer\)</span>。</p>
@@ -266,11 +267,11 @@ t2a = int, t1b = int, t1c = int
 <p>基于约束的类型分析需要额外的规则才能正确处理数组。</p>
 <p>Mycroft 提出了一种基于约束的类型分析系统，用于反编译机器代码程序（以寄存器传输语言形式或 RTL）[Myc99]。他为单个指令生成约束，并解决约束以给被反编译程序的变量创建类型。他假定双寄存器寻址模式指令的可用性和使用来指示数组的使用。例如，在他论文的第 4 节中，</p>
 <figure>
-<img src="image-20230516172844425.png" alt="image-20230516172844425" /><figcaption aria-hidden="true">image-20230516172844425</figcaption>
+<img src="image-20230516172844425.png" alt="" /><figcaption>image-20230516172844425</figcaption>
 </figure>
 <p>但是，某些机器架构不支持双寄存器索引，即使支持，编译器也可能出于各种原因决定对加载或存储指令单独执行加法。因此，上述指令可以作为两条指令发出，具有如图 5.9 所示的约束。</p>
 <figure>
-<img src="image-20230516172857092.png" alt="image-20230516172857092" /><figcaption aria-hidden="true">image-20230516172857092</figcaption>
+<img src="image-20230516172857092.png" alt="" /><figcaption>image-20230516172857092</figcaption>
 </figure>
 <p>图 5.9：上述两个指令版本的约束。来自 [Myc99] 的示例。</p>
 <p>由于 r1 在第二条指令中用作指针，因此立即删除第一条指令的最后一个（带下划线的）条件句。最终约束现在是根据 ptr (t3)，而不是 ptr (array(t3))。这些在 C 意义上是等价的，但涉及数组的事实并不明显。换句话说，仅考虑单个指令本身（至少在某些情况下）不足以分析聚合类型。要么必须在约束系统之外添加一些辅助规则，要么可以将表达式传播与高级类型模式结合使用。 （在他论文的第 4.3 节中，Mycroft 似乎建议成对地考虑指令来解决这个问题。）这是另一个可以使用第 3 章和第 4 章中描述的表达式传播和简化的领域。</p>
@@ -278,28 +279,28 @@ t2a = int, t1b = int, t1c = int
 <p>编译器隐式地使用指针大小的加法指令来访问结构成员，这导致将一个整数与 α* 类型的指针相加会产生另一个 α* 类型的指针的一般规则出现异常。</p>
 <p>指针大小的加法和减法指令是类型分析的一种特殊情况，因为它们可以用于指针或整数。 Mycroft [Myc99] 将指令 add a,b,c（其中 c 是目的地，即 c := a + b）的类型约束声明为：</p>
 <figure>
-<img src="image-20230516174842091.png" alt="image-20230516174842091" /><figcaption aria-hidden="true">image-20230516174842091</figcaption>
+<img src="image-20230516174842091.png" alt="" /><figcaption>image-20230516174842091</figcaption>
 </figure>
 <p>其中 T (x) 再次表示 “x 的类型”（Mycroft 使用 tx ）并且 ptr(α) 表示指向任何类型的指针，类型变量 α 表示该类型。Mycroft 使用 C 指针算术规则，其中将整数与 α* 类型的变量相加将始终得到 α* 类型的指针。但是，C 定义并不总是适用于机器代码级别。编译器发出 add 指令以在源程序中实现加法运算符，但也用于其他两个目的：数组索引和结构成员访问。对于数组索引，C 指针规则适用。 α 类型元素数组的基是 α* 类型，（可能缩放的）索引是整数类型，结果是指向索引元素的指针，它是 α* 类型。</p>
 <p>但是，结构成员访问不遵循 C 规则。考虑一个类型为 Σ 的结构，其在偏移 K 的地方包含类型为 ε 的元素。结构的地址可以是类型 Σ*（指向结构的指针）或类型 ε0*（指向结构的第一个元素 0 的指针），具体取决于关于它是如何使用的。在机器代码级别，Σ 和 Σ.0 具有相同的地址并且除了它们的使用方式外无法区分。 K 被添加到这个指针以产生一个指向元素 的指针，它是类型 ε*，通常是与 Σ* 或 ε0* 不同的类型。</p>
 <p>不幸的是，在类型分析完成之前，不知道任何特定指针是否会变成结构指针。图 5.10 给出了一个例子。</p>
 <figure>
-<img src="image-20230516174950921.png" alt="image-20230516174950921" /><figcaption aria-hidden="true">image-20230516174950921</figcaption>
+<img src="image-20230516174950921.png" alt="" /><figcaption>image-20230516174950921</figcaption>
 </figure>
 <p>图 5.10：一个程序片段说明了指针如何最初看起来不是结构指针，但后来用作结构指针。</p>
 <p>最初，参数 p 仅被认为是一个指针。在处理完过程的第一条语句后，p 与类型 int* 一起使用，因此 T (p) 被设置为 int<em>。在第二个语句中（通常，任意时间之后），发现 p 指向一个结构，其中一个 int 位于 oset 0 处，一个 oat 位于 oset 4 处。如果使用 C 规则，则 p 的总和（然后type int</em>) 和 4 产生一个与 p 类型相同的指针，然后在第二个语句中 p 被有效地用作 int* 类型和 oat* 类型。这可能导致 p 被声明为 int* 和 oat* 的联合。</p>
 <p>请注意，其他通用 C 规则的例外仅涉及添加结构指针和常量整数；编译器知道结构成员的集合，并将此信息保存在结构的符号表中。因此，如果整数不是常量，则可以将结果类型和输入指针的类型限制为相等，即适用 Mycroft 的限制条件。</p>
 <p>为了避免这个问题，Mycroft 的约束可以重写如下：</p>
 <figure>
-<img src="image-20230516175122620.png" alt="image-20230516175122620" /><figcaption aria-hidden="true">image-20230516175122620</figcaption>
+<img src="image-20230516175122620.png" alt="" /><figcaption>image-20230516175122620</figcaption>
 </figure>
 <figure>
-<img src="image-20230516175132852.png" alt="image-20230516175132852" /><figcaption aria-hidden="true">image-20230516175132852</figcaption>
+<img src="image-20230516175132852.png" alt="" /><figcaption>image-20230516175132852</figcaption>
 </figure>
 <p>这里，void*，表示一个已知为指针的变量，但指向的类型未知（输出）或被忽略（输入）。如果 void* 和 α* 之间存在冲突，则优先使用 α*。请注意，这已经暗示了类型的层次结构，void* 优于无类型，但任何 α* 优于 void*。</p>
 <p>编译器不会隐式地执行指针减法或指针减法，因此可以导出指针大小减法运算的类似 Mycroft 的约束。对于 c := a - b:</p>
 <figure>
-<img src="image-20230516175205361.png" alt="image-20230516175205361" /><figcaption aria-hidden="true">image-20230516175205361</figcaption>
+<img src="image-20230516175205361.png" alt="" /><figcaption>image-20230516175205361</figcaption>
 </figure>
 <h2 id="基于数据流的类型分析">基于数据流的类型分析</h2>
 <p>对输出语言进行静态类型检查的反编译器的类型分析，由于使用了 SSA 形式，使得稀疏数据流算法变得可能。</p>
@@ -317,7 +318,7 @@ t2a = int, t1b = int, t1c = int
 <p>实际上，对于反编译，最好永远不要将值 ⊥ 分配给变量的类型；这相当于完全放弃分析这个位置的类型。相反，反编译器将保留当前类型 (int) 或分配新类型（指针），并且位置的冲突使用将以这样一种方式进行标记，即强制转换或联合将被体现到反编译输出中。 （如果在输出语言中不允许强制转换或联合，警告注释可能是最好的选择。某些语言比其他语言更适合作为反编译器的输出语言。）</p>
 <p>继续引用位置的示例三个指令，类型列表可以垂直表示，<span class="math inline">\(\top\)</span> 和类型 size32、pointer-or-int 和 int 依次向下延伸，如图 5.11(a) 所示。</p>
 <figure>
-<img src="image-20230518155630693.png" alt="image-20230518155630693" /><figcaption aria-hidden="true">image-20230518155630693</figcaption>
+<img src="image-20230518155630693.png" alt="" /><figcaption>image-20230518155630693</figcaption>
 </figure>
 <p>图 5.11：说明glb(the greatest lower bound)</p>
 <p>由于代替 add 指令的另一条指令（例如平方根指令）会确定该位置为 float 类型，因此有一条路径从size32到float，并且没有从 int 到 oat 的路径，因为它们是不兼容的。</p>
@@ -325,13 +326,13 @@ t2a = int, t1b = int, t1c = int
 <p>注意与集合交叉符号∩的相似性。满足类型 a 和 b 的结果基本上是 a ∩ b，其中 a、b 和结果被认为是可能值的集合。例如，如果当前类型是 ?signed-int（未知符号的整数），它可以被认为是集合 {sint, uint}。如果此类型遇到 unsigned-int ({uint})，则结果为 {sint, uint} ∩ {uint} = {uint} 或 unsigned-int。</p>
 <p>图 5.11(b) 显示了为什么它是所需的<strong>最大</strong>下界。当遇到类型 a 和 c 时，结果应该是 d 或 e，它们是 a 和 c 的下界。事实上，它应该是 d，最大的下界，因为没有理由（只考虑 a 和 c 的meet操作）选择更特殊的类型 e。例如，如果结果稍后遇到 b，则结果必须是 d，因为类型 b 和 e 在格中不可比较（这意味着它们在高级语言中是不兼容的类型）。</p>
 <figure>
-<img src="image-20230518160535675.png" alt="image-20230518160535675" /><figcaption aria-hidden="true">image-20230518160535675</figcaption>
+<img src="image-20230518160535675.png" alt="" /><figcaption>image-20230518160535675</figcaption>
 </figure>
 <p>图 5.12：用于反编译的简化类型格。</p>
 <p>图 5.12 显示了一个更实用的类型格，显示了数值的类型关系</p>
 <p>前面提到，在考虑程序中位置的类型时，类型并不总是在格中从上到下移动。这些例外涉及指向面向对象语言（如 C++）中的类对象的指针。</p>
 <figure>
-<img src="image-20230518160708098.png" alt="image-20230518160708098" /><figcaption aria-hidden="true">image-20230518160708098</figcaption>
+<img src="image-20230518160708098.png" alt="" /><figcaption>image-20230518160708098</figcaption>
 </figure>
 <p>图 5.13：类指针和引用</p>
 <p>考虑图 5.13 中显示的示例类层次结构和网格。类层次结构和指向这些类的指针层次结构之间的相似性是显而易见的。一个指针可以在程序的一部分中被分配为 Sender* 类型，而在另一部分中被分配为 Receiver* 类型。如果这两个部分存在控制流合并，则指针将同时用作 Sender* 和 Receiver*。到目前为止的规则将产生 Transceiver* 类型，它是一个指向从类 Sender 和 Receiver 多重继承的类型的指针。但是，如果程序仅引用Sender和 Receiver 共有的那些方法和/或成员，即共同祖先 Communicator 的方法和成员，则这可能有点矫枉过正。此外，多重继承相对不常见，因此在许多程序中没有继承自多个类的类，并且在反编译输出中生成一个是不正确的。</p>
@@ -349,7 +350,7 @@ t2a = int, t1b = int, t1c = int
 <p>在稀疏中间表示中，不存储子表达式的类型，因此必须根据表达式叶节点的需要，计算这些类型。</p>
 <p>在反编译过程的早期，赋值通常采用简单的形式，例如 c := a <span class="math inline">\(\odot\)</span> b，其中 <span class="math inline">\(\odot\)</span> 是二元运算符，c 是位置，a 和 b 是位置或常量。然而，有些指令比这更复杂，并且在传播之后，表达式可以变得任意复杂。图 5.14 显示了一个简单的例子。</p>
 <figure>
-<img src="image-20230518161755702.png" alt="image-20230518161755702" /><figcaption aria-hidden="true">image-20230518161755702</figcaption>
+<img src="image-20230518161755702.png" alt="" /><figcaption>image-20230518161755702</figcaption>
 </figure>
 <p>图 5.14：为一个简单的表达式创建类型。</p>
 <p>表达式树的叶子总是位置或常量（赋值的目的地除外，它总是一个位置）。在反编译器的稀疏类型分析系统中，位置和常量具有与其关联的类型变量。然而，没有地方可以存储子表达式的类型，例如 a[2000] 或 s.b，除非所有子表达式都存储一个类型并且失去了稀疏性。</p>
@@ -361,26 +362,27 @@ t2a = int, t1b = int, t1c = int
 <p>表 5.1 显示了各种运算符和常量的操作数和结果之间的类型关系。大多数运算符属于第一组，其中操作数和结果类型是固定的。对于其他不太常见的运算符和常量，需要 ascend-type 和 descend-type 的完整循环</p>
 <p>在图 5.14 的示例中，<code>a[2000]</code> 的类型被计算了两次；期间一次ascend-type，再次descend-type。对于更复杂的表达式，descend-type 可能会在表达式树的重要部分多次调用 ascend-type。图 5.15 (a) 显示了具有四级二元运算符的表达式的最坏情况示例。在叶子节点，检查位置的类型（如果存在）可以被认为是一个操作。这个表达式树有 16 个叶节点，总共有 16 个操作。在树的上一级，使用来自两个子节点的信息检查父节点的类型，总共进行了三个操作。有八个这样的父节点，在这个级别总共有 24 个操作。类似地，在顶层，31 个操作（将近 2h+1，其中 h 是表达式树的高度）由 descend-type 执行。</p>
 <figure>
-<img src="image-20230518162635863.png" alt="image-20230518162635863" /><figcaption aria-hidden="true">image-20230518162635863</figcaption>
+<img src="image-20230518162635863.png" alt="" /><figcaption>image-20230518162635863</figcaption>
 </figure>
 <p>表 5.1：表达式运算符和常量的类型关系。</p>
 <figure>
-<img src="image-20230518162656184.png" alt="image-20230518162656184" /><figcaption aria-hidden="true">image-20230518162656184</figcaption>
+<img src="image-20230518162656184.png" alt="" /><figcaption>image-20230518162656184</figcaption>
 </figure>
 <p>图 5.15：上升和下降类型算法的复杂性。</p>
 <p>图 5.15(b) 显示了一个包含所有三元运算符（例如 C 的 ?: 运算符）的树。这样的树在现实世界的例子中永远不会出现，但它说明了下降型算法在最坏情况下的复杂性。这里，执行了 3h+1 次操作。这种潜在的成本抵消了稀疏存储类型信息的空间节省（仅在定义时，而不是在使用时）。</p>
 <h3 id="加法和减法">5.7.4 加法和减法</h3>
 <p>从指针大小的加法和减法指令推断出的类型在基于数据流的类型分析中需要特殊的类型函数。</p>
-<p>5.6 节展示了 Mycroft 约束的修改，它考虑了将常量添加到结构指针所导致的异常。为了在基于数据流的分析中表示 Mycroft 的约束，需要一些额外的类型和运算符。让 π 在格子中为指针或整数或更高。希望所有出现的 π 最终都将被替换为更低（更精确）的类型，例如整数或特定的指针类型。整数被理解为与原始程序体系结构中的指针大小相同。在图 5.12 的格子中，π 的值可以是指针或整数、size32 或 &gt;。与 add a, b, c 相关的数据流方程（即 c=a+b），结构指针例外，可以重述为： <span class="math display">\[
+<p>5.6 节展示了 Mycroft 约束的修改，它考虑了将常量添加到结构指针所导致的异常。为了在基于数据流的分析中表示 Mycroft 的约束，需要一些额外的类型和运算符。让 π 在格中为指针或整数或更高。希望所有出现的 π 最终都将被替换为更低（更精确）的类型，例如整数或特定的指针类型。int被认为与指针大小相同。在图 5.12 的格中，π 的值可以是指针或整数、size32 或 &gt;。与 add a, b, c 相关的数据流方程（即 c=a+b），结构指针例外，可以重述为： <span class="math display">\[
 \begin{align}
 T (a) = Σ_a(T (c), T (b)) \qquad (5.1) \\
 T (b) = Σ_a(T (c), T (a)) \qquad (5.2) \\
 T (c) = Σ_s(T (a), T (b)) \qquad (5.3)
 \end{align}
-\]</span> 其中 Σa 和 Σs（a 代表加数或被加数，s 代表总和）是特殊函数，定义如下</p>
+\]</span> 其中 Σa 和 Σs（a 代表加数或被加数，s 代表总和）是特殊函数，定义如下（译者注：第一行代入运算结果c的类型，然后左边第一列代入其中一个运算数的类型。图中只标了一行或者一列，但是是这个意思。比如行那边标T(c) = xx 表示该行查找和的类型，在a+b=c这个等式中。）（注2：由于是数据流分析，所有格变量最开始都有初始类型π，代表不知道是数字还是指针，因此只要加法运算任意一方因为外部原因被更新，其他两个格变量都可以被更新。）</p>
 <figure>
-<img src="image-20230518163304404.png" alt="image-20230518163304404" /><figcaption aria-hidden="true">image-20230518163304404</figcaption>
+<img src="image-20230518163304404.png" alt="" /><figcaption>image-20230518163304404</figcaption>
 </figure>
+<p>（译者注：这里可以观察到，上边的表中，当运算结果(行)为指针，其中一个参与数（列）不知道类型(var-π)，此时结果依然为var-π。表示放弃了考虑这个约束。）</p>
 <p>为简洁起见，ptr(α) 记为 α*。如果操作数分别是位置或常量，则类型变量 T (a)、T (b) 和 T (c) 被初始化为 var-π 或 const-π。 178 反编译器的类型分析 例如，考虑 p = q+r，已知 q 的类型为 char*，并且需要 r 的类型。由于 p 的类型尚不清楚，因此 p 的类型保持其初始值 var-π。 p、q 和 r 分别代替等式 5.2 的 c、a 和 b。该等式使用上面左表中定义的函数 Σa。由于 T (c) = var-π，因此使用第三列，并且由于 T (other) = α* 其中 α = char，因此使用第一行。第三列和第一行的交集包含 var-int，因此 T (b) = T (r) = int。</p>
 <p>类似地，与sub a, b, c（即 c=a-b）相关的数据流方程可以重述为： <span class="math display">\[
 \begin{align}
@@ -390,13 +392,13 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 \end{align}
 \]</span> 其中，Δm、Δs 和 Δd（m 代表被减数（被减去的项目），s 代表减数（被减去的项目），d 代表差值（结果））是如下定义的特殊函数：</p>
 <figure>
-<img src="image-20230518163517707.png" alt="image-20230518163517707" /><figcaption aria-hidden="true">image-20230518163517707</figcaption>
+<img src="image-20230518163517707.png" alt="" /><figcaption>image-20230518163517707</figcaption>
 </figure>
 <p>如前所述，编译器不使用减法来引用结构成员，因此这次无需区分 var-int 和 const-int，或 var-π 和 const-π。</p>
 <h2 id="类型模式">5.8 类型模式</h2>
 <p>一小组高级模式可用于表示全局变量、局部变量和聚合元素访问。 5.8 类型模式 179 用于访问全局、局部或堆变量、数组元素或结构元素的一系列机器指令通常会产生一个内存表达式，该表达式可以用以下范式表示：</p>
 <figure>
-<img src="image-20230518163605241.png" alt="image-20230518163605241" /><figcaption aria-hidden="true">image-20230518163605241</figcaption>
+<img src="image-20230518163605241.png" alt="" /><figcaption>image-20230518163605241</figcaption>
 </figure>
 <p>其中：</p>
 <ul>
@@ -415,7 +417,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 <p>可以认为，由于 pl 或 K 可能为负，因此 sp0、pl 和 K 的所有三个可以同时存在，两个指针相互减去，得到一个常量。然而，这样的组合需要指针的相减，这在真实程序中从未出现</p>
 <p>最初，可能无法将 pl 与 <span class="math inline">\(S_j =1\)</span> 的 <span class="math inline">\(ie_j\)</span> 区分开来，因此可能需要临时表达式，例如 <span class="math inline">\(m[l_1 + K]\)</span> 或 <span class="math inline">\(m[l_1 + l_2 + K]\)</span>，直到弄清楚 <span class="math inline">\(l_1\)</span>、 <span class="math inline">\(l_2\)</span>和K中哪个是指针。如果存在，<span class="math inline">\(sp_0\)</span> 表示内存表达式表示堆栈分配的变量、数组元素或结构体元素。</p>
 <figure>
-<img src="image-20230518164428872.png" alt="image-20230518164428872" /><figcaption aria-hidden="true">image-20230518164428872</figcaption>
+<img src="image-20230518164428872.png" alt="" /><figcaption>image-20230518164428872</figcaption>
 </figure>
 <p>表 5.2：类型模式和讨论它们的命题。</p>
 <p>表 5.2 显示了在传播和死代码消除之后可以在中间表示中找到的一系列模式，以及在接下来的几页中讨论它们的命题。很明显，有很多可能的模式，区分它们并非易事。这种区分的大部分留作未来的工作。</p>
@@ -433,7 +435,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 <li>父结构内变量、数组或结构的结构成员集。在存在嵌套结构的情况下，可以将多个结构成员 offset 集中在一起，以生成从提供的对象的开始到所涉及的结构成员的开始的 offset。例如，在 <span class="math inline">\(s.t.u[i]\)</span> 中，K 将包括从 s 的开始到 u 的开始的 offsets，或者等效地从 s 的开始到 t 的开始以及 t 的开始以及从t的开始 到u的开始的offset。</li>
 </ol>
 <figure>
-<img src="image-20230518170122323.png" alt="image-20230518170122323" /><figcaption aria-hidden="true">image-20230518170122323</figcaption>
+<img src="image-20230518170122323.png" alt="" /><figcaption>image-20230518170122323</figcaption>
 </figure>
 <p>图 5.16：用于访问具有非零索引下限的数组的第一个元素的源代码。</p>
 <p>许多组合是可能的；例如如果在具有至少一个常量索引的结构中访问数组，则可以组合选项 (d) 和 (f)，例如s.a[5] 或 s.b[5, y] 其中 s 是一个结构体，a 是一个数组，b 是一个二维数组。</p>
@@ -451,7 +453,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 <p><strong>命题 5.15：</strong>m[pl + K] 表示具有常量索引的结构元素访问或数组元素访问。</p>
 <p>这里 pl 是指向数组或结构（全局、局部或堆分配）的指针，K 表示选项 5.9(c)-(f) 的总和。例如，m[pl + K] 可以表示 s.m，其中 s 是结构类型的变量（用 pl 表示），m 是 s 的成员（K 表示从 s 开始到 m 的偏移集）。它还可以表示 a[C]，其中 a 是数组类型的变量（用 pl 表示），C 是一个常量，其值为 <span class="math inline">\(\frac{K}{sizeof(a[0])}\)</span>。除非在别处发现非常量数组访问，否则无法区分这两种表示。</p>
 <figure>
-<img src="image-20230519101057542.png" alt="image-20230519101057542" /><figcaption aria-hidden="true">image-20230519101057542</figcaption>
+<img src="image-20230519101057542.png" alt="" /><figcaption>image-20230519101057542</figcaption>
 </figure>
 <p>图 5.17：使用表示法 m[pl + K] 的等价程序。</p>
 <p>m[pl + K] 的两种表示是等价的，如图 5.17 所示。因此，这两种表述都不正确。结构表示看起来更自然，因此可以将此模式视为结构引用，除非并且直到找到具有非常量索引的数组引用。在任何一种情况下，由于可以随时在其他地方找到具有非常量索引的数组引用，因此数组元素在某种意义上比结构元素更受约束。再次滥用术语，这可以表示为 ξ(array(α)) <span class="math inline">\(\sqsubseteq\)</span> ξ(structure containing α。</p>
@@ -460,7 +462,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 <p>这得到图 5.18 中所示的格片段。</p>
 <p>上面的例子说明了这一点，即用于反编译的类型格至少部分不是基于源语言或程序的编写方式，而是基于在类型分析过程中如何发现信息。</p>
 <figure>
-<img src="image-20230519101330101.png" alt="image-20230519101330101" /><figcaption aria-hidden="true">image-20230519101330101</figcaption>
+<img src="image-20230519101330101.png" alt="" /><figcaption>image-20230519101330101</figcaption>
 </figure>
 <p>图 5.18：与包含数组元素、数组元素、结构成员和普通变量的结构相关的类型格片段</p>
 <p><strong>命题5.17：</strong><span class="math inline">\(m[sp_0 + ie + K]\)</span>表示局部数组元素访问</p>
@@ -489,7 +491,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 <p>需要逃逸分析来确定分离共置变量的有效性。</p>
 <p>作为一种节省空间的优化，编译器可以将多个变量分配给同一地址。一旦确定这是安全的，这种托管对编译器来说就没有什么成本；它只是在符号表中有一些条目具有相同或重叠的数据地址值。然而，对于反编译器，问题要复杂得多。数据地址并不唯一标识数据映射条目，如图 5.19 所示。</p>
 <figure>
-<img src="image-20230519103443826.png" alt="image-20230519103443826" /><figcaption aria-hidden="true">image-20230519103443826</figcaption>
+<img src="image-20230519103443826.png" alt="" /><figcaption>image-20230519103443826</figcaption>
 </figure>
 <p>图 5.19：一个变量的活跃范围的各种可能</p>
 <p>在图5.19(a)和(b)中，虽然变量有多种定义，但变量的定义和使用是通过φ-functions统一起来的。在情况 (c) 和 (d) 中，变量有多个活跃范围，从一个活跃范围到下一个活跃范围的数据流间断可以证明这一点。如果一个变量有多个活跃期，并且生存期中变量的类型不同，则必须生成两个或更多变量，因为编译器显然已将不相关的变量并置，并且每个命名变量只能有一种类型。</p>
@@ -499,7 +501,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 <p>因此，这些模式在类型分析之后被应用，并且仅在类型分析显示模式（不包括 m[...]）是指针类型时使用。显然，第 5.8 节的模式带有 m[...] 保证内部表达式用作指针。</p>
 <p>获取变量地址时，会引用该变量，但不会直接定义或使用它。数据流信息最终来自定义或使用，但当引用传递给库函数时，使用信息通常被浓缩为指定类型的常量引用或非常量引用。常量引用意味着所引用的位置已使用但未定义。一个非常量引用可能意味着各种定义和使用场景，所以保守的总结是可以定义和可以使用。库函数的目的可能比其原型携带更多的数据流信息。例如，CString::CString() 的 this 参数（字符串类的构造函数过程）在定义它之前不使用引用位置 (*this)。这个额外的信息可以帮助分离变量的生命范围，这些变量的存储与其他对象位于同一位置。虽然使用类型来帮助分离位于同一位置的变量可能很诱人，但原始程序使用强制类型转换的可能性使得类型对于此目的的可靠性降低。在 CString 构造函数的情况下，总是会启动一个新的活跃范围，但构造函数过程的原型中并未捕获这一事实。</p>
 <figure>
-<img src="image-20230519103918965.png" alt="image-20230519103918965" /><figcaption aria-hidden="true">image-20230519103918965</figcaption>
+<img src="image-20230519103918965.png" alt="" /><figcaption>image-20230519103918965</figcaption>
 </figure>
 <p>图 5.20：带有并置变量并获取地址的程序。</p>
 <p>获取与其他变量位于同一位置的变量的地址可能会导致不清楚获取的是哪个对象的地址。例如，考虑图 5.20(a) 的机器码程序。位置 m[esp-16] 有三个独立的变量共享该位置。假设已知 proc1 和 proc2 保留且不使用 edi。用 proc2 的地址定义 m[esp-16] 完全杀死了整型变量的有效范围，但在程序早期获取的地址在程序的后期被使用，此时只有 char 定义是居住。 m[esp-16] 的定义不会终止单独变量 edi 的范围，它继续保持值 esp-16。 esp-16 代表什么的解释随着 m[esp-16] 的定义而改变，从 &amp;i 到 &amp;proc2 再到一个字符的地址。 edi的类型信息通过address taking操作链接到 m[esp-16]的数据流信息</p>
@@ -508,7 +510,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 <p>并置变量是一种原始程序地址代表多个原始变量的情况。第 20 页的图 1.6 显示了一个程序，其中使用相同的立即值（一个原始指针和两个偏移指针）在机器代码级别访问三个数组。这是一种不同的情况，尽管三个变量位于不同的地址，但使用相同的立即数常量来引用具有不同范围的索引的这些变量。它说明了公式 5.7 的常数 K 如何具有许多内部成分的问题，特别是命题 5.9(e) 的常数 K</p>
 <p>图 5.21 显示了三个嵌套结构的声明。第一个元素的地址可以引用 large、large.medium、large.medium.small 或 large.medium.small.a 中的任何一个。其中每一个的类型都是不同的，因此可以使用类型分析来决定需要哪些可能的引用。</p>
 <figure>
-<img src="image-20230519104959738.png" alt="image-20230519104959738" /><figcaption aria-hidden="true">image-20230519104959738</figcaption>
+<img src="image-20230519104959738.png" alt="" /><figcaption>image-20230519104959738</figcaption>
 </figure>
 <p>图 5.21：嵌套结构体</p>
 <h2 id="特殊类型">5.10 特殊类型</h2>
@@ -541,7 +543,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/SSA-for-decompilation-5/" data-id="clhu309lm004198tr6ix360uj" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2023/SSA-for-decompilation-5/" data-id="clpoxee3f004ew0uef6w88zmx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li></ul>
@@ -562,9 +564,9 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
     </a>
   
   
-    <a href="/2023/PL%E4%B8%8E%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99%E9%98%85%E8%AF%BB/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">PL与类型系统学习</div>
+      <div class="article-nav-title">反编译相关资料阅读</div>
     </a>
   
 </nav>
@@ -590,7 +592,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
   </div>
 
@@ -600,7 +602,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 12px;">Networking</a> <a href="/tags/OS/" style="font-size: 14px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/StaticAnalysis/" style="font-size: 16px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 10px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
     </div>
   </div>
 
@@ -609,7 +611,7 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -622,23 +624,23 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
       <ul>
         
           <li>
-            <a href="/2023/Docker%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99%E5%85%B1%E5%AD%98-UFW/">Docker与防火墙共存-UFW</a>
+            <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">Fuzz快速上手指南</a>
           </li>
         
           <li>
-            <a href="/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/">SSA-for-decompilation读后感</a>
+            <a href="/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/">如何写paper</a>
           </li>
         
           <li>
-            <a href="/2023/SSA-for-decompilation-5/">SSA-for-decompilation-5</a>
+            <a href="/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/">计算机专业入门应该做什么</a>
           </li>
         
           <li>
-            <a href="/2023/PL%E4%B8%8E%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0/">PL与类型系统学习</a>
+            <a href="/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/">Maven使用本地JAR文件</a>
           </li>
         
           <li>
-            <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99%E9%98%85%E8%AF%BB/">反编译相关资料阅读</a>
+            <a href="/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/">类型和程序设计语言</a>
           </li>
         
       </ul>

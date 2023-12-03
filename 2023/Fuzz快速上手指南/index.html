@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Fuzz快速上手指南 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Fuzz快速上手指南">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fuzz快速上手指南">
+<meta property="og:url" content="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">
+<meta property="og:site_name">
+<meta property="og:description" content="Fuzz快速上手指南">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-12-03T03:11:12.000Z">
+<meta property="article:modified_time" content="2023-12-03T03:28:24.881Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Fuzz">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" target="_blank" rel="noopener" href="https://github.com/am009">Author&#39;s Github</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2023/Fuzz快速上手指南" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/" class="article-date">
+  <time datetime="2023-12-03T03:11:12.000Z" itemprop="datePublished">2023-12-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Hack/">Hack</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Fuzz快速上手指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Fuzz快速上手指南</p>
+<span id="more"></span>
+<p>不得不说，学习使用LibAFL的过程，就是学习Fuzz架构的过程。基于LibAFL的baby fuzzer教程，就可以了解到fuzzer的架构。</p>
+<p>Fuzzing的很重要的一部分就是调试崩溃和修复漏洞。这个和fuzz本身一样重要。</p>
+<p>本文涵盖以下内容：</p>
+<ul>
+<li>AFL的coverage map设计
+<ul>
+<li>PCGUARD模式</li>
+<li>cmplog/input to state/redqueen</li>
+</ul></li>
+<li>Mutators</li>
+</ul>
+<h3 id="学习资源">学习资源</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/antonio-morales/Fuzzing101">fuzz101</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mykter/afl-training">AFL-TRAINING</a>。</li>
+</ul>
+<h2 id="fuzzer-架构">Fuzzer 架构</h2>
+<h3 id="afl的coverage-map设计">AFL的coverage map设计</h3>
+<p>即使是几年后的现在，最初<a target="_blank" rel="noopener" href="https://github.com/google/AFL/blob/master/docs/technical_details.txt">AFL的coverage map设计</a>依然被沿用。</p>
+<p>本质上AFL的coverage map还是衡量的边覆盖率。很自然会想到，通过插桩在运行时维护一个从每条边到它执行时经过的次数的map。然而这样做了之后可能占内存很多，也很慢。和Hash函数的思想类似，通过放弃可解释性，放弃追溯具体是那条边的能力，以增加效率。</p>
+<p>AFL在每个分支处插桩以下代码。每次fuzz执行前将对应coverage区域清零，执行结束后shared_mem（默认64 kB）被填充了每条边执行次数的信息。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cur_location = &lt;COMPILE_TIME_RANDOM&gt;;</span><br><span class="line">shared_mem[cur_location ^ prev_location]++; </span><br><span class="line">prev_location = cur_location &gt;&gt; <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>在执行时，每个分支处的随机数就代表了当前分支。每个随机数右移一位后就代表它作为prev_location时的值。异或操作得到的随机数代表具体的一条边。可以想象这些边作为下标均匀分布在数组的槽中，冲突概率较小，从而大致数组每个元素代表每个边经过的次数。</p>
+<p>这个方法有明显的几个优点</p>
+<ul>
+<li>插桩时只需要生成随机数，时间和内存效率高</li>
+<li>运行时仅对每个分支增加几条汇编指令的开销，时间效率高。</li>
+<li>shared_mem内存大小可调，内存效率高。</li>
+</ul>
+<p>对于fork server架构的fuzzer，这块内存可以直接作为共享内存，直接读取子进程的coverage map。对于in proc的fuzzer，则直接读取对应内存位置。此时该shared_mem区域可能作为一个全局数组/指针，在静态/动态链接时作为符号导出，fuzzer通过名字引用。</p>
+<p><strong>coverage map过小可能产生大量冲突？</strong>：确实有可能，而且这也是AFL++的<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/instrumentation/README.lto.md">lto模式的优化</a>之一。随机数的随机特性，肯定会没那么均匀，导致部分数组成员同时记录了多条边，然后有些数组成员没有代表任何边。</p>
+<p>LTO指link time optimization.平时编译是按照编译单元，一个文件一个文件直接转换为汇编，然后在汇编层链接。在LTO模式下，编译器每次编译一个文件会先不生成汇编，而是保留便于分析的IR到object文件。在链接到一起的时候，即生成可执行文件的时候，此时有了程序的所有IR代码，能做的优化也更多了。</p>
+<p>LTO允许部分优化推迟到链接后进行。之前（AFL-LLVM模式）是分文件生成汇编，此时每个编译单元内，插桩逻辑单独运行，为分支生成随机数。如果能把插桩推迟到最后一起做，则可以在生成随机数的时候相互协调，保证coverage map里每个数组成员都只代表一条边。</p>
+<p>LTO模式不仅代码优化更好，而且插桩也有无冲突的优点，因此它也是使用AFL++时推荐能开则开的模式。</p>
+<p><strong>coverage衡量指标的优化</strong></p>
+<p>AFL++也提供了很多<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/instrumentation/README.llvm.md#3-options">其他模式</a></p>
+<ul>
+<li>Context sensitive coverage：区分不同caller。比如函数A和B都调用了C，那么C里的同一条边，因为考虑的调用者，反馈的覆盖信息就会不同。 <code>map[current_location_ID ^ previous_location_ID &gt;&gt; 1 ^ hash_callstack_IDs] += 1</code></li>
+<li>n-gram branch coverage：根据之前从哪个边走过来的，区分不同的当前边：<code>map[current_location ^ prev_location[0] &gt;&gt; 1 ^ prev_location[1] &gt;&gt; 1 ^ ... up to n-1] += 1</code></li>
+</ul>
+<p><strong>其他</strong></p>
+<ul>
+<li>多线程并发修改coverage map时可能存在竞争问题：设置<code>AFL_LLVM_THREADSAFE_INST</code></li>
+</ul>
+<h3 id="边执行次数的bucket设计">边执行次数的bucket设计</h3>
+<p>coverage map的成员是1字节，即会记录这条边从0到255的执行次数。AFL进一步细分，把执行次数分为如下8类。即，在程序执行完后，对每个字节应用一个函数，从0-255映射到0-7。</p>
+<blockquote>
+<p>1, 2, 3, 4-7, 8-15, 16-31, 32-127, 128+</p>
+</blockquote>
+<p>虽然信息量减少了，但是这样能关注更重要的信息：从执行1次，到执行2次或三次，有可能就有了新的突破，对一个执行了很多次的循环的次数增加则不需要那么敏感。</p>
+<h3 id="afl的queue设计">AFL的Queue设计</h3>
+<p>除了每次程序执行的coverage map，AFL维护一个全局的coverage map，包含了之前执行时遇到的所有边。如果某次执行发现了新的边，则当前的输入就会认为是interesting的，放入队列中。</p>
+<p>另外，每次执行都会设置超时时间。背后的思想是，即使有些输入能增加1%的coverage，但是会花了上百倍的执行时间，从务实的角度考虑也要排除这种情况。说不定后面就有更高效的方式覆盖到相同的代码了。毕竟速度和效率是fuzzing的精髓之一。</p>
+<h3 id="什么是pcguard">什么是PCGUARD？</h3>
+<p>PCGUARD是AFL的默认模式，名字<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/68919788/13798540">可能源自插桩pass的名字</a>。它就是简单地在每个基本块前插桩。</p>
+<h3 id="什么是persistent-mode">什么是persistent mode？</h3>
+<p><a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/instrumentation/README.persistent_mode.md">AFL++的文档</a>介绍了，persistent mode是指在fork server架构下，每次fork会fuzz多次target。可以带来10-20x的速度提升。</p>
+<p>这里指，AFL会在运行二进制后，让程序停在main函数，然后每次fuzz前尝试复制这个进程去fuzz，以避免初始化的开销，有点类似fork。如果程序有复杂的初始化逻辑，还可以选择合适的位置，推迟这里“fork”的点。</p>
+<h3 id="cmploginput-to-stateredqueen"><code>cmplog</code>/<code>input to state</code>/<code>redqueen</code></h3>
+<p>当fuzzing遇到多字节比较的时候，很难通过随机变换生成对应的字节出来。<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/fuzzing_in_depth.md#b-selecting-instrumentation-options">AFL++的fuzzing_in_depth.md</a>里有一些简单的介绍。</p>
+<ul>
+<li><code>laf-intel</code>/<code>COMPCOV</code>：将多字节比较，拆分为很多单字节比较。</li>
+<li><code>cmplog</code>/<code>input to state</code>/<code>redqueen</code>：当出现这种多字节比较的时候，对应的字节会被反馈给AFL++，作为关键词用于mutate填充。这种方式比前一种更加高效。</li>
+</ul>
+<h2 id="mutators">Mutators</h2>
+<p><a target="_blank" rel="noopener" href="https://aflplus.plus/libafl-book/core_concepts/mutator.html">LibAFL里对Mutator的介绍</a>很简单。Mutator是一个<a target="_blank" rel="noopener" href="https://docs.rs/libafl/0.11.1/libafl/mutators/trait.Mutator.html">Trait</a>，包含两个函数，mutate和post_exec。同时，<a target="_blank" rel="noopener" href="https://aflplus.plus/libafl-book/core_concepts/stage.html">Stage</a>也很重要，Mutational Stage也会对语料库里的输入进行修改。</p>
+<h3 id="honggfuzz的mutator"><a target="_blank" rel="noopener" href="https://honggfuzz.dev/">honggfuzz</a>的mutator</h3>
+<p>honggfuzz的mutator就放在最外层的<code>honggfuzz/mangle.c</code>和<code>mangle.h</code>里。在mangle.c的最底部即可看到一个mangleFuncs数组。</p>
+<p>一个值得注意的是，里面的随机数有很多是用的选取函数<code>mangle_getLen</code>，会经常倾向于更小的数字。</p>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://github.com/google/honggfuzz/blob/88709ce60f45ee13666a2628f03467c57429c7db/mangle.c#L687">mangle_Shrink</a>：随机选取一个offset，然后选取一个长度（大部分情况是0-16随机选，1/16的可能性是0到<当前offset到末尾的距离>里选），然后删掉从这个offset到offset+len的数据。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/google/honggfuzz/blob/88709ce60f45ee13666a2628f03467c57429c7db/mangle.c#L675">mangle_Expand</a>：同上选取一个长度：（大部分情况是0-16随机选，1/16的可能性是当前offset到<程序最大输入长度>里选）。然后把从offset开始的数据向后搬运len个距离，如果要求了printable，则会把中间新增的字节填充为空格。</li>
+<li>mangle_Bit：修改某个bit</li>
+<li>mangle_IncByte、mangle_DecByte：将某个字节加1或者减1。如果要求是printable就麻烦一点，在printable范围内带模加减。</li>
+<li>mangle_NegByte：将某个字节取反。</li>
+<li>mangle_AddSub：随机选择1，2，4字节范围的值看作整数，然后生成一个范围内的，可正可负的值，加上去。</li>
+<li>mangle_MemSet：随机选择一个offset，然后从0到<当前offset到末尾的距离>里随机选一个长度，随机选一个byte，然后有50%概率memset，50%概率插入（此时类似Expand）。</li>
+<li>mangle_MemClr：同上，但是byte选0（printable的时候选空格）</li>
+<li>mangle_MemSwap：随机选择一个offset，然后从0到<当前offset到末尾的距离>里随机选一个长度。操作两次得到两个offset和长度，取较小的长度，然后交换内容。</li>
+<li>mangle_MemCopy：随机选择一个offset，然后从0到<当前offset到末尾的距离>里随机选一个长度，这样选出一块内容。随机找个offset，有50%概率覆盖，50%概率插入（此时类似Expand）。</li>
+<li>mangle_Bytes：在buf中随机插入或覆盖1-2个随机字节。</li>
+<li>mangle_ASCIINum：在buf中随机插入或覆盖一个十进制（可带负号）数字。</li>
+<li>mangle_ASCIINumChange：在buf中找到一个现有的十进制数字，然后修改。有8种可能：加1，减1，乘2，除2，覆盖为随机值，加减0-256的随机数，取反。</li>
+<li>mangle_ByteRepeat：选取一段范围，插入或者覆盖，重复随机offset里的某个字节。</li>
+<li>mangle_Magic：有220个magic值，随机选里面的插入或者覆盖。</li>
+<li>mangle_StaticDict：随机选dict里的值插入或者覆盖。</li>
+<li>mangle_ConstFeedbackDict：需要开启cmpFeedback模式，然后从cmp feedback数组里面随机选一个值出来。</li>
+<li>mangle_RandomBuf：随机选择一个offset，然后从0到<当前offset到末尾的距离>里随机选一个长度，这样选出一块内容。然后插入或者填充随机的字节。</li>
+</ol>
+<h3 id="afl中的splice和havoc">AFL中的splice和havoc</h3>
+<p>AFL的<a target="_blank" rel="noopener" href="https://afl-1.readthedocs.io/en/latest/user_guide.html">文档</a>里有下面的介绍：</p>
+<blockquote>
+<p>havoc - a sort-of-fixed-length cycle with stacked random tweaks. The operations attempted during this stage include bit flips, overwrites with random and “interesting” integers, block deletion, block duplication, plus assorted dictionary-related operations (if a dictionary is supplied in the first place).</p>
+</blockquote>
+<p>havoc是很多操作的叠加。</p>
+<blockquote>
+<p>splice - a last-resort strategy that kicks in after the first full queue cycle with no new paths. It is equivalent to ‘havoc’, except that it first splices together two random inputs from the queue at some arbitrarily selected midpoint.</p>
+</blockquote>
+<p>splice会选择两个输入，在某个位置把它们拼接起来。</p>
+<p>其他介绍：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.zrzz.site/posts/49460ecb/">AFL-变异策略</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/" data-id="clpoxee38002jw0ue6mwn6ivr" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">如何写paper</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 10px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">Fuzz快速上手指南</a>
+          </li>
+        
+          <li>
+            <a href="/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/">如何写paper</a>
+          </li>
+        
+          <li>
+            <a href="/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/">计算机专业入门应该做什么</a>
+          </li>
+        
+          <li>
+            <a href="/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/">Maven使用本地JAR文件</a>
+          </li>
+        
+          <li>
+            <a href="/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/">类型和程序设计语言</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 am009@github.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/am009" class="mobile-nav-link">Author&#39;s Github</a>
+  
+</nav>
+    
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

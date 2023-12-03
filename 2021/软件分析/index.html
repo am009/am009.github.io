@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://wjk.moe/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/image-20210128165511145.png">
 <meta property="og:image" content="https://wjk.moe/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/image-20210128165817475.png">
 <meta property="article:published_time" content="2021-02-01T03:11:11.000Z">
-<meta property="article:modified_time" content="2022-09-13T05:09:05.514Z">
+<meta property="article:modified_time" content="2023-09-03T13:26:44.179Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="PL">
 <meta name="twitter:card" content="summary">
@@ -56,7 +56,8 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
-<meta name="generator" content="Hexo 6.3.0"></head>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+</head>
 
 <body>
   <div id="container">
@@ -334,7 +335,7 @@ f^{i}(\bot) \sqsubseteq f^{i}(x) = x, i \in N^+
 <p>另外一种达到的一定的最小不动点的解释：状态转换函数是固定的，而这个meet/join函数我们选的还是最小上界，因此我们每次走的都是最小的一步，因此第一个遇到的不动点一定是最小的。是不是要证明这个路径是一维的？不用。我们如果不是从bottom出发，则走出的平行路径一定是大于等于从bottom出发的路径的，但是关键在于提前停怎么办？只要拉到无限，当两边都停了后，因为是同轮次的，所以不动点一定小于等于其他地方出发的不动点。</p>
 <p>而must分析类似。</p>
 <figure>
-<img src="image-20210117213246480.png" alt="image-20210117213246480" /><figcaption aria-hidden="true">image-20210117213246480</figcaption>
+<img src="image-20210117213246480.png" alt="" /><figcaption>image-20210117213246480</figcaption>
 </figure>
 <p>如何记忆？</p>
 <ol type="1">
@@ -348,7 +349,7 @@ MOP[S_i]=\mathop{\sqcup/\sqcap}\limits_{A\ path\ P\ from\ Entry\ to\ S_i} (F_P(O
 <h5 id="我们的迭代方法-vs-mop的方法">我们的迭代方法 vs MOP的方法</h5>
 <p>我们的方法和MOP的方法的明显区别在于，MOP的meet是在最后进行的，而我们可能会提前meet结果在带入下一步的转换函数。</p>
 <figure>
-<img src="image-20210117220047438.png" alt="image-20210117220047438" /><figcaption aria-hidden="true">image-20210117220047438</figcaption>
+<img src="image-20210117220047438.png" alt="" /><figcaption>image-20210117220047438</figcaption>
 </figure>
 <p>接下来证明<span class="math inline">\(F(x\sqcup y)\)</span>（我们的）和<span class="math inline">\(F(x) \sqcup F(y)\)</span>（MOP）的关系：<span class="math inline">\(F(x) \sqcup F(y) \sqsubseteq F(x\sqcup y)\)</span>，即<span class="math inline">\(MOP \sqsubseteq Ours\)</span>。</p>
 <ol type="1">
@@ -357,6 +358,8 @@ MOP[S_i]=\mathop{\sqcup/\sqcap}\limits_{A\ path\ P\ from\ Entry\ to\ S_i} (F_P(O
 </ol>
 <p>当函数F满足分配性(distributive)的时候MOP = Ours，此时一样准。而我们之前遇到的Bit-Vector or Gen/Kill problems（用并集和交集操作的）转换函数F都是满足分配性的。而我们下面的这个例子就是不满足分配律的。</p>
 <p>仔细想想，MOP代表着程序（在真实场景中）所有可能执行的路径的每种情况都考虑了进来。如果出现了不确定的循环，那路径数量直接变成正无穷。而我们通过在控制流交汇处提前合并，通过将分析结果合并提前到路径叠加之前，类似于运算符交换顺序，极大地降低了复杂度，使得分析变得可行。</p>
+<p>2023年9月3日 数据流分析的可分配性是一个非常基本的问题。本质上静态分析之所以能够成功，就是抓住了可分配性的特性，把无限可能的路径，通过分配性在路径合并时解决。这么看的话，有种做算法题的感觉。</p>
+<p>可分配性就是，问自己一个问题：如果两条控制流汇聚了，你是转换函数，现在有两种选择，一种是，仿佛有两个程序过来，你转换他们两次，然后为了存储把结果合并，另外一种是，先把结果合并，然后你在去转换，只转换了一次。这两种情况结果是否一样。程序肯定是越多越精确，如果程序先被合并了，那你有可能亏了精度。但是如果你满足交换率，你就不会亏精度。</p>
 <h3 id="constant-propagation-常量传播">Constant Propagation-常量传播</h3>
 <p>定义：给定变量x，判断在点p处x的值是否一定是某个常量。</p>
 <p>每个节点的OUT值，此时保存的是(x,v)的pair，表示此时某变量可能的值。</p>
@@ -375,7 +378,7 @@ MOP[S_i]=\mathop{\sqcup/\sqcap}\limits_{A\ path\ P\ from\ Entry\ to\ S_i} (F_P(O
 <h5 id="为什么不满足分配律">为什么不满足分配律</h5>
 <p>提前合并可能导致下面这种情况失去精度，因为NAC+NAC也有可能是Constant的。</p>
 <figure>
-<img src="image-20210118105438408.png" alt="image-20210118105438408" /><figcaption aria-hidden="true">image-20210118105438408</figcaption>
+<img src="image-20210118105438408.png" alt="" /><figcaption>image-20210118105438408</figcaption>
 </figure>
 <p>这里还可以看出我们的分析是单调的。</p>
 <h3 id="worklist-算法">Worklist 算法</h3>
@@ -485,7 +488,7 @@ c&#39;是c的父类
 <h3 id="interprocedual-cfg-过程间的控制流图">Interprocedual CFG-过程间的控制流图</h3>
 <p>把所有的CFG放到一起，然后加入call edge和return edge。return edge指向call之后的下一条语句。没有栈保存返回地址，那return到谁？通过Context-sensetive的分析可以解决，把数据流分开。如果有多个target，则会有多个call edge和return edge，这里也有merge的情况。如果有递归函数，则类似之前过程内分析的循环情况，还是一样的分析，沿着边走，直到值稳定下来。</p>
 <figure>
-<img src="image-20210118145111232.png" alt="image-20210118145111232" /><figcaption aria-hidden="true">image-20210118145111232</figcaption>
+<img src="image-20210118145111232.png" alt="" /><figcaption>image-20210118145111232</figcaption>
 </figure>
 <p>这里我们保留调用语句指向下一条语句的边，用于传递函数自己的local数据流。让call edge代表参数的流动，return edge代表返回值的流动。call的时候kill掉被赋值的变量，让它的值随着return edge流回来。</p>
 <h2 id="实验三-cha">实验三 CHA</h2>
@@ -545,7 +548,7 @@ c&#39;是c的父类
 <p>Flow insensitive，意味着无需考虑程序中复杂多样、数量无限的数据流，另外也意味着我们的分析的结果是程序中所有的语句按照任意顺序执行的所有结果的上界。</p>
 <h3 id="堆抽象">堆抽象</h3>
 <figure>
-<img src="image-20210118153134258.png" alt="image-20210118153134258" /><figcaption aria-hidden="true">image-20210118153134258</figcaption>
+<img src="image-20210118153134258.png" alt="" /><figcaption>image-20210118153134258</figcaption>
 </figure>
 <p>我们只学习最常用的Store based model中的Allocation-site技术。表示为每个创建点创建一个对象，即使创建点在循环里，被执行了多次，但是都抽象成一个对象。</p>
 <h3 id="java中的指针分析">Java中的指针分析</h3>
@@ -612,7 +615,7 @@ pt = Poniter \rightarrow \mathcal{P}(O)
 </table>
 <p>New语句需要将对应Allocation site加入x的指向范围，但是不引入依赖关系，因此对PFG没有影响。Assign语句<code>x=y</code>蕴含着无论y内有什么，都也要放到x内。因此每当y更新，也要更新x。而x变化却不会影响y。因此需要加入y指向x的边。Store语句和Load语句，增加了取属性的这个不确定的操作，因此采取保守策略，对每个可能被指向的对象，取f属性，执行Assign的操作。例如<code>x.f = y</code>就是对任何x可能的对象，加入y的值，因此需要y指向每个x可能指向的对象的f属性。</p>
 <figure>
-<img src="image-20210119134315358.png" alt="image-20210119134315358" /><figcaption aria-hidden="true">image-20210119134315358</figcaption>
+<img src="image-20210119134315358.png" alt="" /><figcaption>image-20210119134315358</figcaption>
 </figure>
 <p><del>TODO:如何理解这里的<span class="math inline">\(O_i.f\)</span>。我觉得拆开更好吧。设<span class="math inline">\(O_i \in pt(c)\)</span>，设<span class="math inline">\(O_k \in pt(d)\)</span>。由于<span class="math inline">\(pt(c)\subseteq pt(d)\)</span>，因此会存在属于d而不属于c的部分。所以应该单独拆出来一条边，<span class="math inline">\(O_k.f\rightarrow e\)</span>，这样更全面。ppt的写法多增加了a指向属于d而不属于c的部分的边，但我们是May analysis，多增加依赖关系只是会扩大范围，可以接受。ppt中的<span class="math inline">\(O_i.f\)</span>应该是合并起来了对所有f的域的引用节点。</del></p>
 <p>这里没必要太看懂，继续往后学就好了。之后会为每个Allocation site的object的每个域建立节点的。</p>
@@ -621,7 +624,7 @@ pt = Poniter \rightarrow \mathcal{P}(O)
 <p>然而这一过程和PFG的构建是相互依赖的。</p>
 <h3 id="算法">算法</h3>
 <figure>
-<img src="image-20210119174158894.png" alt="image-20210119174158894" /><figcaption aria-hidden="true">image-20210119174158894</figcaption>
+<img src="image-20210119174158894.png" alt="" /><figcaption>image-20210119174158894</figcaption>
 </figure>
 <p>之后学Datalog处理指针分析的时候我被震惊了，为什么我花大力气学的算法居然能被这种通用的引擎处理。我们之前学习了指针分析的规则，只需要填入初始数据，然后根据规则推导出最终结果即可，复杂之处在于各种规则间互相依赖，根据规则更新了这个数据又影响了那个数据，又要更新。仔细想想，这个算法的本质，就是处理规则间的互相依赖的关系，即当一个数据更新的时候会影响到其他什么数据，不断处理达到最终结果。</p>
 <p>首先介绍工作的数据结构：PFG，保存依赖关系。S，程序中所有的语句。指向关系的增加通过Propagate函数中的pt(n) 并等于运算增加，也就是说最终还是反映到pt，这个算法内部没写出来的数据结构内。</p>
@@ -654,7 +657,7 @@ pt = Poniter \rightarrow \mathcal{P}(O)
 <p>本节课的任务只有一个：掌握跨函数的指针分析的算法。</p>
 <p>对于语句<code>r = x.foo(a1, a2)</code>，公式基本上是说，如何解决参数指向，如何解决this指向，如何解决返回值的流向。特别注意this指针，不添加PFG边，而是直接暂时传过去？TODO</p>
 <figure>
-<img src="image-20210119202248454.png" alt="image-20210119202248454" /><figcaption aria-hidden="true">image-20210119202248454</figcaption>
+<img src="image-20210119202248454.png" alt="" /><figcaption>image-20210119202248454</figcaption>
 </figure>
 <h3 id="公式分析">公式分析</h3>
 <p>公式可以拆分来看，把相同的元素如O_i先看条件中关于O_i的部分，再看结论中关于o_i的部分。</p>
@@ -677,7 +680,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 </ol>
 <h3 id="pfg不增加x-m_this">PFG不增加x-&gt;m_{this}</h3>
 <figure>
-<img src="image-20210120114313716.png" alt="image-20210120114313716" /><figcaption aria-hidden="true">image-20210120114313716</figcaption>
+<img src="image-20210120114313716.png" alt="" /><figcaption>image-20210120114313716</figcaption>
 </figure>
 <p>PFG中增加边表示的是依赖关系，<code>m_this = x</code>，如果增加了，那x的所有可能指向都会流向那个函数的指针，如图中，画横线的部分是明显不合适的，因为this指针不可能是那个类型。</p>
 <p>从公式的角度讲，关键在于m是依赖于o_i取值的。也就是先外层遍历o_i，确定了o_i的具体值之后，才能确定m，从而让此时的m_this会指向o_i。如果增加PFG边，则当o_i确定了后，pt(x)中的其他值也可能是this的指向，这明显不对。</p>
@@ -686,7 +689,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <p>是否是Context-sensetive了？不，每个method只考虑了一次，而并不是随着每次调用考虑。</p>
 <h3 id="算法-1">算法</h3>
 <figure>
-<img src="image-20210120115755652.png" alt="image-20210120115755652" /><figcaption aria-hidden="true">image-20210120115755652</figcaption>
+<img src="image-20210120115755652.png" alt="" /><figcaption>image-20210120115755652</figcaption>
 </figure>
 <p>ProcessCall就是增加一个foreach处理call的语句。call语句其实就是一个“大型”拓展CFG和赋值的语句。同时算法增加了从entry函数开始的探索方式，不可达的函数不会被分析，最终生成Call Graph</p>
 <p>给节点增加指向的时候要考虑沿着PFG的流动，因此要先加入工作队列，进行复杂的操作。那给当前可达语句集合增加一整个新函数的语句的时候，是否会对已有的结果产生影响？一方面由于函数作用域导致其他函数中的变量不会影响到这个函数，另外，不会增加已有的两个节点之间的边，因为<code>g1.f = g2.f2</code>这样的语句会被临时变量拆分开。所以增加一个可达函数的时候只是普通地处理New和Assign语句一次性解决，让新的边随着节点的增加而增加，不像增加指向的时候那么麻烦。</p>
@@ -724,7 +727,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 </ol>
 <p>call-site sensitivity是最古老的，最广为人知的方法。通过从entry开始的调用序列区分每次调用，仿佛每次执行到该函数的时候看一下backtrace区分不同的函数。在面向对象语言（如Java）中，Object Sensitivity通常比Call-Site Sensitivity表现更好。如果追求速度，可以进而选用Type Sensitivity。</p>
 <figure>
-<img src="image-20210121195350997.png" alt="image-20210121195350997" /><figcaption aria-hidden="true">image-20210121195350997</figcaption>
+<img src="image-20210121195350997.png" alt="" /><figcaption>image-20210121195350997</figcaption>
 </figure>
 <p>如图中，静态方法调用传参的时候，需要将两次调用区分开，否则数据流就会在同一个参数n上汇聚交错。</p>
 <p><strong>Cloning-Based Context Sensitivity</strong></p>
@@ -734,7 +737,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <p>Context-Sensetive不仅需要对不同的调用点利用上下文标识区分开分析，还需要Context-Sensetive heap，区分在不同上下文中分配的对象。</p>
 <p>然而C.S heap只有在C.S的时候才能提高精度。C.I.+ C.S. heap进行分析时，C.S. heap就不能提高精度了。因为。C.I.意味着不对函数做区分，C.S. heap意味着依然对New出来的object依照backtrace做区分。但是由于不对函数和变量做区分，导致即使分配出来的object不同，也直接在allocation site处被接收的临时变量混在一起，没有任何效果。</p>
 <figure>
-<img src="image-20210121204017858.png" alt="image-20210121204017858" /><figcaption aria-hidden="true">image-20210121204017858</figcaption>
+<img src="image-20210121204017858.png" alt="" /><figcaption>image-20210121204017858</figcaption>
 </figure>
 <p>即图中虽然8行new X();返回了不同的对象，但是直接在变量x上混在一起，即使区分出来了对象，对它们做的操作也是完全相同的，多出来的对象没有任何效果。</p>
 <p>C.S. heap和真正的堆的辨析： TODO</p>
@@ -742,11 +745,11 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <p>还是无法区分单次函数调用多次分配的对象，即循环中的Allocation site的多次调用，Allocation site的固有限制。</p>
 <h3 id="公式">公式</h3>
 <figure>
-<img src="image-20210121160102510.png" alt="image-20210121160102510" /><figcaption aria-hidden="true">image-20210121160102510</figcaption>
+<img src="image-20210121160102510.png" alt="" /><figcaption>image-20210121160102510</figcaption>
 </figure>
 <p>Fields不用加Context表示，是因为它所附属的Object已经有了Context标识，毕竟Fields不能单独存在。</p>
 <figure>
-<img src="image-20210121160536010.png" alt="image-20210121160536010" /><figcaption aria-hidden="true">image-20210121160536010</figcaption>
+<img src="image-20210121160536010.png" alt="" /><figcaption>image-20210121160536010</figcaption>
 </figure>
 <ol type="1">
 <li>New语句：分配的Object的Context标记，和被赋值的变量一样，继承自当前函数调用的context c。</li>
@@ -764,12 +767,12 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <h3 id="算法-2">算法</h3>
 <p>PFG自此也是带context的，称为Pointer Flow Graph with C.S. 体现在节点是带context标记的（变量或对象的域）。加边还是一样的加，只不过对同一个方法可能会clone出各种只有context不同的节点。</p>
 <figure>
-<img src="image-20210121190345121.png" alt="image-20210121190345121" /><figcaption aria-hidden="true">image-20210121190345121</figcaption>
+<img src="image-20210121190345121.png" alt="" /><figcaption>image-20210121190345121</figcaption>
 </figure>
 <h3 id="object-sensitivity">Object Sensitivity</h3>
 <p>每次函数调用的时候，首先拿来receiver object的context作为基础，加上receiver object自身。由于我们是allocation site的堆模型，因此这里的object其实就对于allocation site。</p>
 <figure>
-<img src="image-20210121201818813.png" alt="image-20210121201818813" /><figcaption aria-hidden="true">image-20210121201818813</figcaption>
+<img src="image-20210121201818813.png" alt="" /><figcaption>image-20210121201818813</figcaption>
 </figure>
 <p>和Call-site Sensitivity对比：TODO</p>
 <ol type="1">
@@ -783,7 +786,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <p>类似于allocation的时候把所在的类拿过来增长一下，暂时存在object里，调用方法的时候拿出来。</p>
 <p>context序列代表的是一路alloc的Object的语句所在的类型。</p>
 <figure>
-<img src="image-20210215110334026.png" alt="image-20210215110334026" /><figcaption aria-hidden="true">image-20210215110334026</figcaption>
+<img src="image-20210215110334026.png" alt="" /><figcaption>image-20210215110334026</figcaption>
 </figure>
 <p>TODO：对比</p>
 <h2 id="实验五">实验五</h2>
@@ -818,7 +821,7 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <p>首先将我们感兴趣的信息标记为Tainted，信息源称为source（如把一些函数的返回值设置为source），其他数据是untainted。我们标记危险的函数为sink。我们分析就是试图找出从source流向sink的可能的路径。</p>
 <p>把Source作为Allocation site，把Tainted data作为(artificial)Object，作为所有Object中的一部分。并且增加新的生成tainted Object的规则和收集Sink函数参数指向的规则。然后基于指针分析进行推导。</p>
 <figure>
-<img src="image-20210119215254928.png" alt="image-20210119215254928" /><figcaption aria-hidden="true">image-20210119215254928</figcaption>
+<img src="image-20210119215254928.png" alt="" /><figcaption>image-20210119215254928</figcaption>
 </figure>
 <h2 id="datalog-based-program-analysis">14 Datalog-Based program analysis</h2>
 <h3 id="动机">动机</h3>
@@ -840,16 +843,16 @@ a1\rightarrow m_{p1},a2\rightarrow m_{p2},...,an\rightarrow m_{pn},
 <p>为了防止自我矛盾：<code>A(x) &lt;- B(x), !A(x)</code>，被取反的不能是当前被递归的。</p>
 <h3 id="datalog进行指针分析">Datalog进行指针分析</h3>
 <figure>
-<img src="image-20210121225505327.png" alt="image-20210121225505327" /><figcaption aria-hidden="true">image-20210121225505327</figcaption>
+<img src="image-20210121225505327.png" alt="" /><figcaption>image-20210121225505327</figcaption>
 </figure>
 <figure>
-<img src="image-20210121225653380.png" alt="image-20210121225653380" /><figcaption aria-hidden="true">image-20210121225653380</figcaption>
+<img src="image-20210121225653380.png" alt="" /><figcaption>image-20210121225653380</figcaption>
 </figure>
 <p>同理，函数调用也被拆分成了三个规则，分别处理this指针，参数，返回值。</p>
 <h3 id="datalog进行污点分析">Datalog进行污点分析</h3>
 <p>在指针分析的基础上，增加Source表，Sink表，Taint表（call site -&gt; tainted data）。最终推导出Taint Flow。</p>
 <figure>
-<img src="image-20210121225956439.png" alt="image-20210121225956439" /><figcaption aria-hidden="true">image-20210121225956439</figcaption>
+<img src="image-20210121225956439.png" alt="" /><figcaption>image-20210121225956439</figcaption>
 </figure>
 <p>在指针分析的基础上处理好Source和Sink的情况。把Sink的情况收集起来。</p>
 <h3 id="总结-2">总结</h3>
@@ -926,7 +929,7 @@ G^*=(N^*,E^*)
 <li>使用已有的变量运算需要注意未初始化变量的污染性，运算如果有未初始化值参与，结果也是未初始化的。</li>
 </ol>
 <figure>
-<img src="image-20210128124537981.png" alt="image-20210128124537981" /><figcaption aria-hidden="true">image-20210128124537981</figcaption>
+<img src="image-20210128124537981.png" alt="" /><figcaption>image-20210128124537981</figcaption>
 </figure>
 <h3 id="exploded-supergraph">exploded supergraph</h3>
 <p>representation relation <span class="math inline">\(R_f\)</span>指的是之前讲到的lambda函数的关系形式的表示，用于构建Exploded Supergraph。Exploded Supergraph将原有的Supergraph的每个节点变成（"explode into"）D+1个节点，每条边变成对应λ函数的关系表示而得到的巨大的图。</p>
@@ -947,7 +950,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <li>可以发现，去掉某个元素时（kill），则没有任何边指向它（以它为终点）。</li>
 </ol>
 <figure>
-<img src="image-20210128152531750.png" alt="image-20210128152531750" /><figcaption aria-hidden="true">image-20210128152531750</figcaption>
+<img src="image-20210128152531750.png" alt="" /><figcaption>image-20210128152531750</figcaption>
 </figure>
 <h4 id="flow-function表达data-fact">Flow Function表达data fact</h4>
 <p>看单个flow function的图，如果能走到下方的某个点，则表示此处的OUT包含它。</p>
@@ -957,7 +960,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <li>将多个连接起来的图中入口到出口的可达关系，压缩成单个图，就是将多个flow function复合起来？</li>
 </ol>
 <figure>
-<img src="image-20210128160132226.png" alt="image-20210128160132226" /><figcaption aria-hidden="true">image-20210128160132226</figcaption>
+<img src="image-20210128160132226.png" alt="" /><figcaption>image-20210128160132226</figcaption>
 </figure>
 <p>此外，此时再回顾之前unrealizable的path的识别，就会发现派上用场了。不只要可达，还要realizable。因此该问题也不是简单的图可达性问题。</p>
 <h4 id="tabulation-algorithm">Tabulation Algorithm</h4>
@@ -979,13 +982,13 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <p>如果需要多个input data facts得出一个新的结果，则此时该分析就不满足分配性，不能用IFDS。因为IFDS将每个data fact，和它的传播（每个edge）分开单调考虑了。</p>
 <p>思考题：</p>
 <figure>
-<img src="image-20210128165511145.png" alt="image-20210128165511145" /><figcaption aria-hidden="true">image-20210128165511145</figcaption>
+<img src="image-20210128165511145.png" alt="" /><figcaption>image-20210128165511145</figcaption>
 </figure>
 <p>TODO</p>
 <h4 id="ifds与指针分析">IFDS与指针分析</h4>
 <p>看下面的例子：</p>
 <figure>
-<img src="image-20210128165817475.png" alt="image-20210128165817475" /><figcaption aria-hidden="true">image-20210128165817475</figcaption>
+<img src="image-20210128165817475.png" alt="" /><figcaption>image-20210128165817475</figcaption>
 </figure>
 <p>这个例子说明通过IFDS进行指针分析的致命问题是别名信息。假设x和y是别名，为了得到正确的结果，需要同时考虑x和y，因此最后分析起来还是不满足分配律的。</p>
 <p>TODO</p>
@@ -993,7 +996,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/" data-id="clhu309kl001l98tr76tweo3r" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/" data-id="clpoxee34001ow0uegsjm5hgt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li></ul>
@@ -1042,7 +1045,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
   </div>
 
@@ -1052,7 +1055,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 12px;">Networking</a> <a href="/tags/OS/" style="font-size: 14px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/StaticAnalysis/" style="font-size: 16px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 10px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
     </div>
   </div>
 
@@ -1061,7 +1064,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -1074,23 +1077,23 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
       <ul>
         
           <li>
-            <a href="/2023/Docker%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99%E5%85%B1%E5%AD%98-UFW/">Docker与防火墙共存-UFW</a>
+            <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">Fuzz快速上手指南</a>
           </li>
         
           <li>
-            <a href="/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/">SSA-for-decompilation读后感</a>
+            <a href="/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/">如何写paper</a>
           </li>
         
           <li>
-            <a href="/2023/SSA-for-decompilation-5/">SSA-for-decompilation-5</a>
+            <a href="/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/">计算机专业入门应该做什么</a>
           </li>
         
           <li>
-            <a href="/2023/PL%E4%B8%8E%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0/">PL与类型系统学习</a>
+            <a href="/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/">Maven使用本地JAR文件</a>
           </li>
         
           <li>
-            <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99%E9%98%85%E8%AF%BB/">反编译相关资料阅读</a>
+            <a href="/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/">类型和程序设计语言</a>
           </li>
         
       </ul>

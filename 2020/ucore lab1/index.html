@@ -32,7 +32,8 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
-<meta name="generator" content="Hexo 6.3.0"></head>
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+</head>
 
 <body>
   <div id="container">
@@ -168,40 +169,6 @@
 </tbody>
 </table>
 <p>IDE通道1，读写0x1f0-0x1f7号端口 IDE通道2，读写0x170-0x17f号端口</p>
-<table style="width:6%;">
-<colgroup>
-<col style="width: 5%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Program header描述的是一个段在文件中的位置、大小以及它被放进内存后所在的位置和大小。 所以bootmain中的读取elf文件，需要把每一个段都按照指定的虚拟地址和size加载好。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">readseg((uintptr_t)ELFHDR, SECTSIZE * 8, 0);</span><br><span class="line"></span><br><span class="line">    // is this a valid ELF?</span><br><span class="line">    if (ELFHDR-&gt;e_magic != ELF_MAGIC) &#123;</span><br><span class="line">        goto bad;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    struct proghdr *ph, *eph;</span><br><span class="line"></span><br><span class="line">    // load each program segment (ignores ph flags)</span><br><span class="line">    ph = (struct proghdr *)((uintptr_t)ELFHDR + ELFHDR-&gt;e_phoff);</span><br><span class="line">    eph = ph + ELFHDR-&gt;e_phnum;</span><br><span class="line">    for (; ph &lt; eph; ph ++) &#123;</span><br><span class="line">        readseg(ph-&gt;p_va &amp; 0xFFFFFF, ph-&gt;p_memsz, ph-&gt;p_offset);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // call the entry point from the ELF header</span><br><span class="line">    // note: does not return</span><br><span class="line">    ((void (*)(void))(ELFHDR-&gt;e_entry &amp; 0xFFFFFF))();</span><br></pre></td></tr></table></figure> 但是为什么是ph-&gt;p_va &amp; 0xFFFFFF？ 去掉了前面一个字节。 答：应该不是因为硬盘的问题，可能是内存大小的限制 &gt; https://blog.csdn.net/u012418573/article/details/73823524 &gt; 2、链接地址VS加载地址 &gt; （1）链接地址：是虚拟地址，代码中的绝对跳转地址和全局变量的地址都依赖于链接地址，链接地址改变时，这些地址也会改变，但相对跳转不依赖与链接地址。 &gt; （2）加载地址：程序被加载到的物理地址 &gt; （3）关系：链接地址经过地址转换要等于物理地址（加载地址） &gt; （4）内核的加载地址：0x100000处，参加bootmain.c &gt; （5）内核的链接地址：0xf0100000处，但是我们没有那么大的内存，故：ELFHDR-&gt;e_entry&amp;0xFFFFFF</td>
-</tr>
-<tr class="even">
-<td>另外，这个问题好像不简单啊： &gt; ucore Lab2 调试时断点无效分析 &gt; http://blog.sina.com.cn/s/blog_3dce1e7b0102x6t3.html</td>
-</tr>
-<tr class="odd">
-<td>就是说，lab2的bootloader加载完成之后，会加载一个新的gdt段表，让地址多了一个KERNBASE(0xC0000000)。而lab1没有这个功能，就直接通过这样与一下来解决。</td>
-</tr>
-<tr class="even">
-<td>## 实模式到保护模式的切换</td>
-</tr>
-<tr class="odd">
-<td>问：16位到32位的切换是瞬间完成的吗？</td>
-</tr>
-<tr class="even">
-<td>问：发现进入实模式之后的ljmp之后，cs自动变成8 答：代码段寄存器（CS）的内容不能由装载指令（如MOV）直接设置，而只能被那些会改变程序执行顺序的指令（如JMP、INT、CALL）间接地设置。 8代表序号为1的段描述符表。进入实模式之前就要设置好段描述符表。 &gt; 下面摘自《计算机启动流程分析--以JOS为例（从BIOS到刚进入boot loader）》 &gt; https://blog.csdn.net/old_memory/article/details/79572498</td>
-</tr>
-<tr class="odd">
-<td><span class="math inline">\(CR0_PE_ON是CR0设置实模式或保护模式的开关，这里打开，表明接下来的地址都是32位的虚拟地址（必须注意，这里由于是刚开始，所有的虚拟地址和物理地址等价），然而，系统是怎样真正进入32位寻址的呢？以下代码： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ljmp    $PROT_MODE_CSEG, $protcseg</span><br><span class="line"> </span><br><span class="line">  .code32                     # Assemble for 32-bit mode</span><br><span class="line">protcseg:</span><br></pre></td></tr></table></figure> 它的作用仅仅是跳转到下一行，但是ljmp有副作用：\)</span>PROT_MODE_CSEG的值会被加载，boot.S文件开头的宏表明： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.set PROT_MODE_CSEG, 0x8         # kernel code segment selector</span><br><span class="line">.set PROT_MODE_DSEG, 0x10        # kernel data segment selector</span><br><span class="line">.set CR0_PE_ON,      0x1         # protected mode enable flag</span><br></pre></td></tr></table></figure> 它的值是0x8，这个值被存入CS寄存器，它会与GDT一起影响地址翻译。</td>
-</tr>
-<tr class="even">
-<td>摘录结束，另外在文件bootblock.asm中有 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ljmp $PROT_MODE_CSEG, $protcseg</span><br><span class="line">7c2d:	ea                   	.byte 0xea</span><br><span class="line">7c2e:	32 7c 08 00          	xor    0x0(%eax,%ecx,1),%bh</span><br></pre></td></tr></table></figure> 这说明反汇编失败了？所以ljmp实际上是32位才有的指令吧。 可是为什么在gdb里面却显示 0x7c2d &lt;seta20+25&gt;: ljmp $0xb866,$0x87c32 只是跳转到7c32，为什么有这么多一堆东西？ 严重怀疑在jmp之前还是十六位的代码。</td>
-</tr>
-<tr class="odd">
-<td>另外这篇文章说得特别好啊，说出了内幕： &gt; https://blog.csdn.net/dog250/article/details/5303304 &gt; ljmp的含义是长跳，长跳主要就是重新加载寄存器，32位保护模式主要体现在段寄存器，具有可以参考段选择子和段描述符的概念，如果不用长跳的话，那么段寄存器不会重新加载，后面的取指结果仍然是老段寄存器中的值，当然保护模式不会生效了，Intel手册上有讲可见寄存器和不可见寄存器的篇章，可以看一下，其实实模式就是保护模式的一种权限全开放的特殊情况，就是说段寄存器左移相当于右边添加0，而这添加的0可以看做保护模式的RPL，RPL为0代表Intel的0环，当然是全权限了。 &gt; &gt; 不过Intel的实模式的概念实属不得已而为之，现在的意义已经不大了，从实模式启动然后跳转到保护模式纯粹是在绕圈子，没有实质的意义，商业上为了保护以前的投资不得不将技术做的没有意义的复杂...</td>
-</tr>
-</tbody>
-</table>
 <blockquote>
 <p>【补充】保护模式下，有两个段表：GDT（Global Descriptor Table）和LDT（Local Descriptor Table），每一张段表可以包含8192 (2^13)个描述符[1]，因而最多可以同时存在2 * 2^13 = 2^14 个段。虽然保护模式下可以有这么多段，逻辑地址空间看起来很大，但实际上段并不能扩展物理地址空间，很大程度上各个段的地址空间是相互重叠的。目前所谓的64TB（2^(14+32) =2^46 ）逻辑地址空间是一个理论值，没有实际意义。在32位保护模式下，真正的物理空间仍然只有2^32字节那么大。注：在ucore lab中只用到了GDT，没有用LDT。</p>
 </blockquote>
@@ -245,7 +212,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/ucore%20lab1/" data-id="clhu309kb000z98trg37b8g0x" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2020/ucore%20lab1/" data-id="clpoxee2v000hw0ue0r2164j6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
@@ -294,7 +261,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
   </div>
 
@@ -304,7 +271,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 12px;">Networking</a> <a href="/tags/OS/" style="font-size: 14px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/StaticAnalysis/" style="font-size: 16px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 10px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
     </div>
   </div>
 
@@ -313,7 +280,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -326,23 +293,23 @@
       <ul>
         
           <li>
-            <a href="/2023/Docker%E4%B8%8E%E9%98%B2%E7%81%AB%E5%A2%99%E5%85%B1%E5%AD%98-UFW/">Docker与防火墙共存-UFW</a>
+            <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">Fuzz快速上手指南</a>
           </li>
         
           <li>
-            <a href="/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/">SSA-for-decompilation读后感</a>
+            <a href="/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/">如何写paper</a>
           </li>
         
           <li>
-            <a href="/2023/SSA-for-decompilation-5/">SSA-for-decompilation-5</a>
+            <a href="/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/">计算机专业入门应该做什么</a>
           </li>
         
           <li>
-            <a href="/2023/PL%E4%B8%8E%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0/">PL与类型系统学习</a>
+            <a href="/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/">Maven使用本地JAR文件</a>
           </li>
         
           <li>
-            <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99%E9%98%85%E8%AF%BB/">反编译相关资料阅读</a>
+            <a href="/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/">类型和程序设计语言</a>
           </li>
         
       </ul>
