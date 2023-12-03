@@ -59,10 +59,10 @@
     <link href="https://wjk.moe/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/"/>
     <id>https://wjk.moe/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/</id>
     <published>2023-11-30T03:11:12.000Z</published>
-    <updated>2023-11-30T06:00:42.611Z</updated>
+    <updated>2023-12-03T05:23:59.655Z</updated>
     
     
-    <summary type="html">&lt;p&gt;仔细回顾我大学四年，也有很多做得不够好的地方。希望有一些经验能帮到学弟。我觉得大一开始就可以多接触一些操作系统，计算机组成原理，编译原理的知识，把整个计算机学科的基础打好。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;仔细回顾我这些年，也有很多做得不够好的地方。希望有一些经验能帮到其他人。我觉得开始应该多接触一些操作系统，计算机组成原理，编译原理的知识，把整个计算机学科的基础打好。&lt;/p&gt;</summary>
     
     
     
@@ -228,9 +228,9 @@
     
     <category term="CTF" scheme="https://wjk.moe/tags/CTF/"/>
     
-    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
-    
     <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
   </entry>
   
@@ -275,11 +275,11 @@
     <category term="Project" scheme="https://wjk.moe/categories/Project/"/>
     
     
-    <category term="WebAssembly" scheme="https://wjk.moe/tags/WebAssembly/"/>
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
     
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    <category term="WebAssembly" scheme="https://wjk.moe/tags/WebAssembly/"/>
     
   </entry>
   
@@ -301,9 +301,9 @@
     
     <category term="CTF" scheme="https://wjk.moe/tags/CTF/"/>
     
-    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
-    
     <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
   </entry>
   
