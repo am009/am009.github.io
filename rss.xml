@@ -6,7 +6,7 @@
   <link href="https://wjk.moe/rss.xml" rel="self"/>
   
   <link href="https://wjk.moe/"/>
-  <updated>2023-12-03T03:28:24.881Z</updated>
+  <updated>2023-12-07T03:07:46.834Z</updated>
   <id>https://wjk.moe/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>FFmpeg+Santinizer编译时的奇怪问题</title>
+    <link href="https://wjk.moe/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/"/>
+    <id>https://wjk.moe/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/</id>
+    <published>2023-12-05T03:11:12.000Z</published>
+    <updated>2023-12-07T03:07:46.834Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;FFmpeg+Santinizer编译时的奇怪问题，不得不感叹软件世界的复杂性，总是会有奇奇怪怪的问题，还好有开源，不然都无法debug。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Hack" scheme="https://wjk.moe/categories/Hack/"/>
+    
+    
+    <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
+    
+  </entry>
   
   <entry>
     <title>Fuzz快速上手指南</title>
@@ -99,7 +118,7 @@
     <link href="https://wjk.moe/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/"/>
     <id>https://wjk.moe/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/</id>
     <published>2023-11-27T03:11:12.000Z</published>
-    <updated>2023-11-29T12:09:52.094Z</updated>
+    <updated>2023-12-03T09:42:31.319Z</updated>
     
     
     <summary type="html">&lt;p&gt;类型和程序设计语言&lt;/p&gt;</summary>
@@ -228,9 +247,9 @@
     
     <category term="CTF" scheme="https://wjk.moe/tags/CTF/"/>
     
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
     
   </entry>
   
@@ -251,9 +270,9 @@
     
     <category term="Embedded" scheme="https://wjk.moe/tags/Embedded/"/>
     
-    <category term="Openwrt" scheme="https://wjk.moe/tags/Openwrt/"/>
-    
     <category term="Networking" scheme="https://wjk.moe/tags/Networking/"/>
+    
+    <category term="Openwrt" scheme="https://wjk.moe/tags/Openwrt/"/>
     
   </entry>
   
@@ -275,11 +294,30 @@
     <category term="Project" scheme="https://wjk.moe/categories/Project/"/>
     
     
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    
     <category term="WebAssembly" scheme="https://wjk.moe/tags/WebAssembly/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>编译原理学习与编译系统赛</title>
+    <link href="https://wjk.moe/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/"/>
+    <id>https://wjk.moe/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/</id>
+    <published>2022-09-18T03:11:11.000Z</published>
+    <updated>2022-11-27T15:12:35.165Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;暑假参加了编译系统设计赛，受益匪浅。在比赛初期，拖延症严重，同时经常感觉学习资源匮乏，而且也还在摸黑阶段，心理压力下经常就会高估学习的困难，觉得是不可逾越的大山。尤其是编译器后端，这方面相关的学习资源感觉非常匮乏。现在看来，前期确实没能重视一些重要的学习资源，后面走弯路学会了已经晚了。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
+    
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
     
   </entry>
   
@@ -301,26 +339,7 @@
     
     <category term="CTF" scheme="https://wjk.moe/tags/CTF/"/>
     
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>编译原理学习与编译系统赛</title>
-    <link href="https://wjk.moe/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/"/>
-    <id>https://wjk.moe/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/</id>
-    <published>2022-09-18T03:11:11.000Z</published>
-    <updated>2022-11-27T15:12:35.165Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;暑假参加了编译系统设计赛，受益匪浅。在比赛初期，拖延症严重，同时经常感觉学习资源匮乏，而且也还在摸黑阶段，心理压力下经常就会高估学习的困难，觉得是不可逾越的大山。尤其是编译器后端，这方面相关的学习资源感觉非常匮乏。现在看来，前期确实没能重视一些重要的学习资源，后面走弯路学会了已经晚了。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
     
     <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
     
@@ -401,28 +420,6 @@
     
     <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
     
-    
-  </entry>
-  
-  <entry>
-    <title>换电脑-2021</title>
-    <link href="https://wjk.moe/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/"/>
-    <id>https://wjk.moe/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/</id>
-    <published>2021-03-01T03:11:11.000Z</published>
-    <updated>2023-11-27T05:16:57.770Z</updated>
-    
-    
-    <summary type="html">&lt;h1 id=&quot;换电脑-2021&quot;&gt;换电脑-2021&lt;/h1&gt;
-&lt;p&gt;电脑终于换上5800u了，这里记录一些换电脑系统重装与迁移的过程。&lt;/p&gt;
-&lt;p&gt;早就意识到QQ使用了驱动进行自我保护，这几天又出现了读取浏览记录的事件，我就感到我的电脑如果腾讯想干什么我是拦不住的。从此就计划新电脑一定要24小时跑一个虚拟机，用来装这些流氓软件。&lt;/p&gt;
-&lt;p&gt;具体的方案是家庭版安装hyper-v，然后外部通过windows远程桌面连进去。现在用了快一个多月，还挺不错的，CPU占用也不高。唯一的缺点是内部启动腾讯会议，会使用CPU而不是显卡处理视频，CPU占用较高。所以腾讯会议还是装在外面。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Digi" scheme="https://wjk.moe/categories/Digi/"/>
-    
-    
-    <category term="Windows" scheme="https://wjk.moe/tags/Windows/"/>
     
   </entry>
   

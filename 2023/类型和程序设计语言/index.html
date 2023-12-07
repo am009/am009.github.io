@@ -15,7 +15,7 @@
 <meta property="og:description" content="类型和程序设计语言">
 <meta property="og:locale">
 <meta property="article:published_time" content="2023-11-27T03:11:12.000Z">
-<meta property="article:modified_time" content="2023-11-29T12:09:52.094Z">
+<meta property="article:modified_time" content="2023-12-03T09:42:31.319Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="PL">
 <meta name="twitter:card" content="summary">
@@ -97,11 +97,41 @@
 <p>还记得最早学编程的时候，会去想函数是什么。而现在，脑海里自动出现什么调用栈，返回地址。也许类型系统是当初就应该学的。</p>
 <h2 id="第一部分-无类型系统">第一部分 无类型系统</h2>
 <p>无类型系统是图灵完全的。当整个系统中只有函数的形式，一切都是函数的树的形式，信息也被存储在函数的树状结构中。</p>
+<h3 id="第三章-无类型算术表达式">第三章 无类型算术表达式</h3>
+<p>本章讨论的是布尔和数的无类型演算。</p>
+<ul>
+<li>succ,pred,iszero共同组成了自然数相关的判断的基本元素。true,false,if-then-else，构成了bool类型和条件判断的基本元素。</li>
+</ul>
+<p>相关概念：</p>
+<ul>
+<li>元变量，有点类似语法中的非终结符，是一个可以用其他项代换的“变量”。</li>
+<li>表达式，和项，这两个词现在可以替换使用。但是后面章节里，表达式的范围更大，因为除了包括语言中的表达式（项），还包括类型系统中的表达式等。</li>
+<li>推导规则：写一个横线，上面写前提，下面写结论。没有前提的规则称为公理。我们这里的推导规则实际上是规则模式，因为前提和结论可以包含“元变量”，需要匹配出来，背后代表的是无限多个具体规则。</li>
+<li>语法：定义一个集合，包含所有可能存在的项。书中用 归纳定义，推导规则定义，具体定义 三种方法定义了相同的集合。最后证明了这样定义出来的集合就是满足语法规则的最小集合。</li>
+</ul>
+<p>最后书中证明了，这里定义的集合是满足这三个语法条件的最小的集合。此外，定义的过程中区分了常量出来。因此得到一个推论，每个项目要么是常量，要么形如succ t, pred t, iszero t 或 if t then t else t的形式。</p>
+<p><strong>项上归纳原理</strong>：可以以三种方式归纳证明一些关于项的定理：深度归纳、长度归纳、结构归纳。</p>
+<p><strong>形式化语义的三种方法</strong>：</p>
+<ul>
+<li>操作语义：定义一个简单的抽象机器。抽象指将语言中的项作为状态。机器的行为由一个转换函数定义，要么转换要么声明机器已经停止。有时语义可以看作将t作为初始状态时达到的最后状态。这里描述的是小步语义。还有一种大步语义形式，有时称为自然语义。</li>
+<li>指称语义：语义不只是机器状态，而且是某个数学对象。包括一个语义域的集合和将项映射到域中元素的解释函数。需要为语言特征寻找合适的语义域。有时候所选的语义域的性质可以推导出程序行为。由语义定义域的性质甚至可以得出在一个语言中有些事情是不可能发生的。</li>
+<li>公理语义：公理方法用规则本身作为语言的定义，一个项的语义就是，从公理规则出发，我们能推导出的关于这个项的性质。</li>
+</ul>
+<p>在1980年前后，操作语义逐渐成为主流。</p>
+<p><strong>语义和求值</strong></p>
+<p>布尔表达式的操作语义有如下几个部分：</p>
+<ul>
+<li>语法部分
+<ul>
+<li>项的语法</li>
+<li>值</li>
+</ul></li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/" data-id="clpp1fge5004jdguecx8rbzkj" class="article-share-link">Share</a>
+      <a data-url="https://wjk.moe/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/" data-id="clpumc6n80045xouec1n46h8d" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li></ul>
@@ -160,7 +190,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 10px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 12px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
     </div>
   </div>
 
@@ -182,6 +212,10 @@
       <ul>
         
           <li>
+            <a href="/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/">FFmpeg+Santinizer编译时的奇怪问题</a>
+          </li>
+        
+          <li>
             <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">Fuzz快速上手指南</a>
           </li>
         
@@ -195,10 +229,6 @@
         
           <li>
             <a href="/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/">Maven使用本地JAR文件</a>
-          </li>
-        
-          <li>
-            <a href="/2023/%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/">类型和程序设计语言</a>
           </li>
         
       </ul>
