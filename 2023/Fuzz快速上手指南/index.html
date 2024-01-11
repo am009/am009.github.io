@@ -13,11 +13,17 @@
 <meta property="og:site_name">
 <meta property="og:description" content="Fuzz快速上手指南">
 <meta property="og:locale">
-<meta property="article:published_time" content="2023-12-03T03:11:12.000Z">
-<meta property="article:modified_time" content="2023-12-09T03:00:42.967Z">
+<meta property="og:image" content="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/redqueen1.png">
+<meta property="og:image" content="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/cmplog.png">
+<meta property="og:image" content="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/cmplog-algo1.png">
+<meta property="og:image" content="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/cmplog-algo2.png">
+<meta property="og:image" content="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/bswap.png">
+<meta property="article:published_time" content="2023-12-23T03:11:12.000Z">
+<meta property="article:modified_time" content="2024-01-07T03:19:04.657Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Fuzz">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/redqueen1.png">
   
     <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
   
@@ -74,10 +80,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -87,7 +93,7 @@
         <section id="main"><article id="post-2023/Fuzz快速上手指南" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/" class="article-date">
-  <time class="dt-published" datetime="2023-12-03T03:11:12.000Z" itemprop="datePublished">2023-12-03</time>
+  <time class="dt-published" datetime="2023-12-23T03:11:12.000Z" itemprop="datePublished">2023-12-23</time>
 </a>
     
   <div class="article-category">
@@ -134,7 +140,22 @@
 <li><a target="_blank" rel="noopener" href="https://github.com/mykter/afl-training">AFL-TRAINING</a>。</li>
 </ul>
 <h2 id="fuzzer-架构">Fuzzer 架构</h2>
-<h3 id="afl的coverage-map设计">AFL的coverage map设计</h3>
+<h3 id="libafl的主要模块">LibAFL的主要模块</h3>
+<ul>
+<li>Executor：指定InProcess（当前地址空间）还是ForkServer（执行其他程序），或者InProcessFork。</li>
+<li>Observer：主要功能是存储和上次执行有关的易失性数据，然后后续的Feedback可以获取这些observer，确定。</li>
+<li>Feedback：包括确定是否interesting的普通feedback，以及确定是否达到目标的Objective Feedback。默认Objective的不会放到queue里。
+<ul>
+<li>因为反馈的是一个bool值，feedback可以使用逻辑运算符feedback_or和feedback_and。</li>
+</ul></li>
+<li>Input和TestCase。Input就是普通的buffer，或者复杂的结构体。TestCase则是Input的高级封装，方便存到磁盘。</li>
+<li>Corpus：一般至少两个，一个存储感兴趣的Input，一个存达到Objective的Input。</li>
+<li>Mutator：对输入进行变换。Mutator之间可以进行组合。</li>
+<li>Generator：如果没有初始输入的话，可以用它来生成随机字符串作为初始输入</li>
+<li>Stage：阶段，在每次fuzz时执行一次。比如mutationStage，负责mutate，并测试mutate出来的结果是否interesting。其次可以增加一些Observe的stage，对当前输入进行观察，获得数据，比如TracingStage，执行程序，然后用Observer收集一些信息。CalibrationStage，给输入定一个合适的超时时间。</li>
+</ul>
+<p>然而即使是InProcessExecutor，为了保证持续fuzz，有时会用一个<code>SimpleRestartingEventManager</code>，以从而在崩溃的时候重新起当前进程。在初始化的时候调用<code>SimpleRestartingEventManager::launch</code>，它内部会把主线程挂住，然后起子线程做真正的fuzzing，然后每次在子线程死了的时候重新fork。这也导致lldb调试的时候得额外加上<code>,"initCommands": ["settings set target.process.follow-fork-mode child"]</code>。</p>
+<h2 id="afl的coverage-map设计">AFL的coverage map设计</h2>
 <p>即使是几年后的现在，最初<a target="_blank" rel="noopener" href="https://github.com/google/AFL/blob/master/docs/technical_details.txt">AFL的coverage map设计</a>依然被沿用。</p>
 <p>本质上AFL的coverage map还是衡量的边覆盖率。很自然会想到，通过插桩在运行时维护一个从每条边到它执行时经过的次数的map。然而这样做了之后可能占内存很多，也很慢。和Hash函数的思想类似，通过放弃可解释性，放弃追溯具体是那条边的能力，以增加效率。</p>
 <p>AFL在每个分支处插桩以下代码。每次fuzz执行前将对应coverage区域清零，执行结束后shared_mem（默认64 kB）被填充了每条边执行次数的信息。</p>
@@ -170,17 +191,81 @@
 <h3 id="afl的queue设计">AFL的Queue设计</h3>
 <p>除了每次程序执行的coverage map，AFL维护一个全局的coverage map，包含了之前执行时遇到的所有边。如果某次执行发现了新的边，则当前的输入就会认为是interesting的，放入队列中。</p>
 <p>另外，每次执行都会设置超时时间。背后的思想是，即使有些输入能增加1%的coverage，但是会花了上百倍的执行时间，从务实的角度考虑也要排除这种情况。说不定后面就有更高效的方式覆盖到相同的代码了。毕竟速度和效率是fuzzing的精髓之一。</p>
+<h2 id="afl的forkserver设计">AFL的forkServer设计</h2>
+<p>被fuzz的程序，首先我们一般得给他弄成输入一个buffer的形式。比如经典的<code>LLVMFuzzerTestOneInput</code>。然后main函数可以选择从第一个参数读入文件名，然后把文件内容喂给这个函数，也可以选择stdin读入直接解析。具体怎么弄是根据AFL命令行，指定被测程序的命令行那部分。就是<code>afl++ &lt;afl flags&gt; -- @@</code>这种东西，然后会把<code>@@</code>替换成被测程序的输入。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是这样每次都要启动一次程序，启动成本就上去了。所以说这种fork的fuzzer就不如一些inProcess的fuzzer速度快了吗？也并不是，因为引入了forkServer的机制和<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/instrumentation/README.persistent_mode.md">persistent mode</a>。</p>
+<p><strong>Snapshot LKM</strong>：LibAFL的开发者发现fork太慢之后，提出了一种方法：增加一个专为fuzz设计的snapshot内核模块。代码在<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFL-Snapshot-LKM">AFL-Snapshot-LKM</a>。可以给一整块地址打快照，fuzz结束后再恢复。但是还是下面的Persistent Mode用的更多。</p>
+<p><strong>Persistent Mode</strong>：通过在编写harness的时候增加<code>__AFL_FUZZ_INIT();</code>，在fuzz的函数外面增加循环(<code>while (__AFL_LOOP(10000)) &#123;</code>)，以及相关的重置状态的操作，这样并不是每次执行都重新fork，而是每次fork可以fuzz很多次。从而接近in process的fuzzer的效率，带来10-20x的速度提升。此外，通过共享内存（<code>__AFL_FUZZ_TESTCASE_BUF</code>）直接发送fuzz输入（比如<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/74783c2027c0ccf54a90f03ab21e7c1aae4a1b2f/libafl/src/executors/forkserver.rs#L1232">这里</a>），绕过文件系统，也可以增加效率。</p>
+<p>编写persistent mode的harness的时候，需要调用初始化<code>__AFL_INIT();</code>，fuzz循环<code>while (__AFL_LOOP(10000)) &#123;</code>。在<code>__AFL_INIT();</code>内部调用了AFL提供的特殊函数，其中包括了父进程和子进程的握手机制。</p>
+<p><strong>Pipe&amp;Timeout</strong>：现在往往使用的ForkServer都是开启persistent mode，同时也开启timeout功能的。所以这一块他们具体是怎么沟通交流的呢？这里有三个进程：Fuzzer，Driver Parent（下面简称DP），Driver Child（下面简称DC）。首先Fuzzer进程启动，调用了ForkServer管理端，管理端会在一个特殊的FD（<code>#define FORKSRV_FD 198</code>）创建pipe用于和DP通信。在实例化ForkServer的时候启动DP。DP直接根据环境变量映射Coverage Map共享内存，然后进行功能协商和握手，可以设置coverage map大小，是否共享内存传递输入，是否开启cmplog模式。</p>
+<p>总结每轮Fuzzer想要运行一次的循环里，相关的pipe通信： 1. Fuzzer写入四字节<code>was_killed</code>，表示上次是否杀死了child，指示DP是否要保留上次PID。把DP从read FORKSRV_FD的阻塞中恢复。 1. DP fork出DC并写入DC的PID，把pid传给fuzzer。 1. Timeout时：Fuzzer向DC发送kill，此时依然需要读取DP的wait返回值。 1. 正常执行：（persistent mode）DC给自己发送SIGSTOP，暂停运行，让DP从wait中恢复。 1. DP wait结束写入四字节wait返回值 1. DP在写入前通过<code>WIFSTOPPED</code>判断是否DC stop了自己，是的话才能在下一次运行时复用DC的PID。否则重新fork。 1. 崩溃发生时：Fuzzer可以通过wait的返回值判断是否发生崩溃。 1. DP读四字节<code>was_killed</code>阻塞等待下一次运行</p>
+<p>这里DP也是一个稳定的进程，不会因为fuzz导致的崩溃而退出，它通过Pipe，把PID和wait的结果都传递给fuzzer了，相当于把fork出来的子进程还是交给fuzzer管理。如果这个子进程超时了，也是由fuzzer发送sigkill信号杀进程。这里还有一个小的条件竞争，即DP同时等到了DC的stop信号，同时Fuzzer那边也发送过kill信号。这种情况下还是需要重新fork。</p>
+<p><strong>握手</strong></p>
+<ol type="1">
+<li>fuzzer在forkserver模式下启动 被fuzz的进程的时候会设置一系列环境变量，包括<code>__AFL_SHM_ID</code>等。</li>
+</ol>
+<ul>
+<li><code>__AFL_SHM_ID</code>: 传递edge coverage map的共享内存ID</li>
+<li><code>__AFL_SHM_FUZZ_ID</code>: 传递输入的共享内存ID</li>
+<li><code>__AFL_CMPLOG_SHM_ID</code>: 传递cmplog map的共享内存ID</li>
+</ul>
+<ol type="1">
+<li>被fuzz进程在<code>__AFL_INIT();</code>时，根据环境变量，设置好共享内存等变量。同时会向fuzzer发送四字节的flags，里面设置了自己支持的功能对应的比特位。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cc_params[cc_par_cnt++] =</span><br><span class="line">    <span class="string">&quot;-D__AFL_LOOP(_A)=&quot;</span></span><br><span class="line">    <span class="string">&quot;(&#123; static volatile const char *_B __attribute__((used,unused)); &quot;</span></span><br><span class="line">    <span class="string">&quot; _B = (const char*)\&quot;&quot;</span> PERSIST_SIG</span><br><span class="line">    <span class="string">&quot;\&quot;; &quot;</span></span><br><span class="line">    <span class="string">&quot;extern int __afl_connected;&quot;</span></span><br><span class="line">    <span class="string">&quot;__attribute__((visibility(\&quot;default\&quot;))) &quot;</span></span><br><span class="line">    <span class="string">&quot;int _L(unsigned int) __asm__(\&quot;__afl_persistent_loop\&quot;); &quot;</span></span><br><span class="line">    <span class="comment">// if afl is connected, we run _A times, else once.</span></span><br><span class="line">    <span class="string">&quot;_L(__afl_connected ? _A : 1); &#125;)&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>这里<code>_B</code>是一个字符串<code>#define PERSIST_SIG "##SIG_AFL_PERSISTENT##"</code>，不太重要。关键是<code>_L</code>的定义。这里的意思大概是转而调用了__afl_persistent_loop函数。</p>
+<h2 id="afl的其他模式">AFL的其他模式</h2>
 <h3 id="什么是pcguard">什么是PCGUARD？</h3>
 <p>PCGUARD是AFL的默认模式，名字<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/68919788/13798540">可能源自插桩pass的名字</a>。它就是简单地在每个基本块前插桩。</p>
+<p>在这个clang的<a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-data-flow">文档</a>里提到了相关的插桩选项。比如<code>-fsanitize-coverage=trace-pc-guard</code>就是普通的coverage插桩。</p>
 <h3 id="什么是persistent-mode">什么是persistent mode？</h3>
-<p><a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/instrumentation/README.persistent_mode.md">AFL++的文档</a>介绍了，persistent mode是指在fork server架构下，每次fork会fuzz多次target。可以带来10-20x的速度提升。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/instrumentation/README.persistent_mode.md">AFL++的文档</a>介绍了，persistent mode是指在fork server架构下，每次fork会fuzz多次target。</p>
 <p>这里指，AFL会在运行二进制后，让程序停在main函数，然后每次fuzz前尝试复制这个进程去fuzz，以避免初始化的开销，有点类似fork。如果程序有复杂的初始化逻辑，还可以选择合适的位置，推迟这里“fork”的点。</p>
 <h3 id="cmploginput-to-stateredqueen"><code>cmplog</code>/<code>input to state</code>/<code>redqueen</code></h3>
-<p>当fuzzing遇到多字节比较的时候，很难通过随机变换生成对应的字节出来。<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/fuzzing_in_depth.md#b-selecting-instrumentation-options">AFL++的fuzzing_in_depth.md</a>里有一些简单的介绍。</p>
+<p>当fuzzing遇到多字节比较的时候，很难通过随机变换生成对应的字节出来。<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/fuzzing_in_depth.md#b-selecting-instrumentation-options">AFL++的fuzzing_in_depth.md</a>里有一些简单的介绍，有两种方式解决：</p>
 <ul>
 <li><code>laf-intel</code>/<code>COMPCOV</code>：将多字节比较，拆分为很多单字节比较。</li>
 <li><code>cmplog</code>/<code>input to state</code>/<code>redqueen</code>：当出现这种多字节比较的时候，对应的字节会被反馈给AFL++，作为关键词用于mutate填充。这种方式比前一种更加高效。</li>
 </ul>
+<p>AFL的cmplog模式，需要编译两个binary，一个设置环境变量<code>AFL_LLVM_CMPLOG=1</code>后开启了cmplog的，以及一个没有开启cmplog的binary。平时执行的时候就用没有开启cmplog的，减少开销。</p>
+<p>LibAFL里通过<code>-fsanitize-coverage=trace-pc-guard,trace-cmp</code>开启了cmp比较语句的插桩。在<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/bc91436ef47a6dfad7f19d0ab1a5af5fac97556b/libafl/src/observers/cmp.rs#L300">Observer的pre_exec</a>中执行清空map的操作。</p>
+<h4 id="cmplog的步骤">CmpLog的步骤</h4>
+<p>正如文档里所说，细节得看<a target="_blank" rel="noopener" href="https://www.ndss-symposium.org/wp-content/uploads/2019/02/ndss2019_04A-2_Aschermann_paper.pdf">RedQueen paper</a>，另外还有这篇文章<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2211.08357.pdf">《Improving AFL++ CmpLog: Tackling the bottlenecks》</a>介绍了cmplog当前实现的不足。</p>
+<p>然而，根据<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2211.08357.pdf">《Improving AFL++ CmpLog: Tackling the bottlenecks》</a>，AFL里面的CmpLog模式，和RedQueen paper里的还不太一样。RedQueen paper里用很大篇幅介绍绕过checksum的事情，CmpLog没有实现。另外，实现的细节也不太一样。但是还是根据这篇paper里描述的解读</p>
+<p>CMPLog最基本的思想是，程序里面很多字节和输入里的字节有对应关系。比如我在程序里发现了一个四字节比较，一边是“abcd”，一边是“00ELF”，同时发现这个abcd在程序输入中也出现了。此时我就可以增加一个mutate关系：把“abcd”mutate成“00ELF”。</p>
+<p><strong>Colorization</strong>：（见paper的第5页右侧，Ⅲ.A.v）简单应用上面的方法可能出问题：比如我们种子输入，可能里面有很长一段全都是<code>\x00</code>这种字节。如果生成一个“”到其他东西的mutate，那么会导致可以应用的地方太多。如paper中的例子所示：</p>
+<figure>
+<img src="redqueen1.png" alt="" /><figcaption>为什么需要引入Colorization阶段？</figcaption>
+</figure>
+<p>Colorization阶段基于现有输入变换得到一个新的输入，相比原来的输入多了更多的熵。同时我们可以在两个输入上观察应用的行为，在应用mutation时，可以要求两边在相同的输入都可以这样mutate。即，在两个输入上观察那个四字节比较，比如输入1是“” 和“00ELF”，然后“”在input的offset是offset1，colorized的input是“abcd”和“00ELF”，然后“abcd”在input里的offset也是相同的offset1。</p>
+<p><strong>详细算法细节：LibAFL</strong>：这里解读LibAFL里自己实现的CmpLog技术。</p>
+<p>CmpLogMap为什么是二维数组：首先是最简单的<code>CmpLogInstruction</code>结构体，包含了两个被对比的值（u8,u16,u32,u64），表示两个值被cmp了。但是整个Map是一个二维数组（<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/0b38fabeb009a201cce87cc0e56a57f5ea4199dc/libafl_targets/src/cmps/mod.rs#L253">代码</a>），默认高32，宽65536。宽很好理解，不同插桩点的cmp值。高则代表了单个位置的cmp指令，被执行多次，可能遇到多次不同的cmp情况。</p>
+<p>从Map到Metadata：<code>CmpObserver</code>在执行结束的时候，会处理（<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/bc91436ef47a6dfad7f19d0ab1a5af5fac97556b/libafl/src/observers/cmp.rs#L131">代码</a>）Map，得到可能的mutation作为metadata存入state。而处理的时候有简单的过滤。CmpLog具体怎么处理，由于RedQueen paper它自己不是很开源，这一块具体怎么做还是非常模糊。LibAFL这里简单过滤了loop相关的cmp。在遍历单个cmp的多次执行的时候，如果发现有一边在大部分的执行时是简单的递增或者递减。那么这个cmp不是很有意义。</p>
+<p>具体mutate的时候，则是双向mutate。随机选取输入的一个offset，向后搜索。如果当前位置的字节，取出数字来，刚好等于两边cmp entry里面任意一边的值，则把当前字节替换成另外一边的值。这意味着有可能会使得本次mutate直接skip。</p>
+<p>CmpLogMap被定义为一个rust的全局变量（见<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/0b38fabeb009a201cce87cc0e56a57f5ea4199dc/libafl_targets/src/cmps/mod.rs#L397">这里</a>），在<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/0b38fabeb009a201cce87cc0e56a57f5ea4199dc/libafl_targets/src/cmplog.c">cmplog.c</a>文件里有相关的处理操作。这个cmplog.c是通过rust编译的，见<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/bc91436ef47a6dfad7f19d0ab1a5af5fac97556b/libafl_targets/build.rs">libafl_targets/build.rs</a>。在构建过程中，有一些变量是动态生成到一个rust文件的：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// The size of the edges map</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> EDGES_MAP_SIZE: <span class="type">usize</span> = <span class="number">65536</span>;</span><br><span class="line"><span class="comment">/// The size of the cmps map</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> CMP_MAP_SIZE: <span class="type">usize</span> = <span class="number">65536</span>;</span><br><span class="line"><span class="comment">/// The width of the aflpp cmplog map</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> AFLPP_CMPLOG_MAP_W: <span class="type">usize</span> = <span class="number">65536</span>;</span><br><span class="line"><span class="comment">/// The height of the aflpp cmplog map</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> AFLPP_CMPLOG_MAP_H: <span class="type">usize</span> = <span class="number">32</span>;</span><br><span class="line"><span class="comment">/// The width of the `CmpLog` map</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> CMPLOG_MAP_W: <span class="type">usize</span> = <span class="number">65536</span>;</span><br><span class="line"><span class="comment">/// The height of the `CmpLog` map</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> CMPLOG_MAP_H: <span class="type">usize</span> = <span class="number">32</span>;</span><br><span class="line"><span class="comment">/// The size of the accounting maps</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> ACCOUNTING_MAP_SIZE: <span class="type">usize</span> = <span class="number">65536</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>详细算法细节：AFL++</strong></p>
+<figure>
+<img src="cmplog.png" alt="" /><figcaption>Cmplog原理示意图</figcaption>
+</figure>
+<p>因此，我们现在有两个输入。每个输入执行后都有一系列的CmpLog的项。每个项里面记录了两个比较的值。但是因为不确定哪边是Magic Header，哪边是和我们input有对应的值。因此我们需要对左右分两种情况。</p>
+<p><img src="cmplog-algo1.png" width="60%"/></p>
+<!-- ![cmplog-algo1](cmplog-algo1.png) -->
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">算法</span><br><span class="line">for replication, pattern in CmpLogs</span><br><span class="line">  for taint_region in regions</span><br><span class="line">    for byte in taint_region</span><br><span class="line">      考虑从当前字节到region结尾这一段</span><br><span class="line">      对两种情况调用处理函数</span><br></pre></td></tr></table></figure>
+<p>正如这个函数所示</p>
+<p><img src="cmplog-algo2.png" width="60%"/></p>
+<!-- ![](cmplog-algo2.png) -->
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">解释上图里的算法</span><br><span class="line">尝试一个字节一个字节的来，把当前考虑的这一段替换成对应magic byte（有点子字符串匹配算法的感觉）。每替换一个字节运行一下。</span><br><span class="line">for 每个字节</span><br><span class="line">  检查两个对应关系：</span><br><span class="line">    1 （I2S对应关系）当前改的字节，和当前cmplog的pattern对应上 （o_pattern[i]==orig_buf[idx+i]）</span><br><span class="line">    2 改了这个字节之后运行，当前cmplog确实这个字节跟着改变了。（pattern[i]==buf[idx+i]）</span><br><span class="line">    如果对应关系不成立则break。</span><br><span class="line">  替换当前字节并运行。</span><br></pre></td></tr></table></figure>
+<p>对于常量的比较，即使是8字节比较，但是实际上比较的可能是4字节，甚至2字节单字节。再加上大小端序，对每个比较都能分出下面8种情况。</p>
+<p><img src="bswap.png" /></p>
+<p><strong>算法的缺点：执行爆炸</strong></p>
+<p>所以，之所以会执行爆炸，主要是两点：</p>
+<ol type="1">
+<li>常量比较，由于考虑了多种比较情况，尤其是2字节单字节的情况，导致出现特别简单的单字节替换，在整个输入（实际上taint bytes）里有太多的替换的地方。</li>
+<li>buffer比较，由于每次只替换一个字节，导致如果有很多连续的相同字节，有可能有阶乘的复杂度。和子字符串比较算法里出现的情况类似。每次替换一下就执行一下程序，导致执行次数爆炸。</li>
+</ol>
+<h4 id="libafl实现细节">LibAFL实现细节</h4>
 <h2 id="mutation">Mutation</h2>
 <p><a target="_blank" rel="noopener" href="https://aflplus.plus/libafl-book/core_concepts/mutator.html">LibAFL里对Mutator的介绍</a>很简单。Mutator是一个<a target="_blank" rel="noopener" href="https://docs.rs/libafl/0.11.1/libafl/mutators/trait.Mutator.html">Trait</a>，包含两个函数，mutate和post_exec。同时，<a target="_blank" rel="noopener" href="https://aflplus.plus/libafl-book/core_concepts/stage.html">Stage</a>也很重要，Mutational Stage也会对语料库里的输入进行修改。</p>
 <h3 id="honggfuzz的mutator"><a target="_blank" rel="noopener" href="https://honggfuzz.dev/">honggfuzz</a>的mutator</h3>
@@ -223,11 +308,34 @@
 <ul>
 <li><a target="_blank" rel="noopener" href="https://www.zrzz.site/posts/49460ecb/">AFL-变异策略</a></li>
 </ul>
-<h3 id="mopt-optimized-mutation-scheduling-for-fuzzers">MOpt: Optimized Mutation Scheduling for Fuzzers</h3>
-<p><a target="_blank" rel="noopener" href="https://www.inforsec.org/wp/?p=3950">InForSec通讯</a></p>
+<h2 id="schedule">Schedule</h2>
+<p>Fuzzing的调度分为两个方面，</p>
+<ul>
+<li>Input调度：对每个queue里的testcase，mutate、执行、判断是否interesting，这三个步骤一起作为一轮。调度策略决定执行多少轮。
+<ul>
+<li><code>StdMutationalStage</code>：获取一个从零到最大mutate次数（默认128）的随机数，mutate这些次数。（代码在<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/d53503b73ea0425ffdcfbc467c167b02632077b6/libafl/src/stages/mutational.rs#L190">这</a>）</li>
+<li>Power Schedule：给每个queue中的输入打一个energy分，根据分数决定在这个输入上做mutate的次数。
+<ul>
+<li><code>StdPowerMutationalStage</code>使用的是<code>CorpusPowerTestcaseScore</code>。</li>
+<li><code>EcoPowerMutationalStage</code>使用的是<code>EcoTestcaseScore</code></li>
+</ul></li>
+</ul></li>
+<li>Mutator调度：仅用单个mutator，mutate一次，可能不足以发现新的路径。在单次mutate内部，可以叠加mutator。用哪个mutator多一些，用哪个mutator少一些，是否组合，怎么组合。
+<ul>
+<li><code>ScheduledMutator</code>：内部封装多个其他mutator，在1到迭代次数（默认7）中随机选择一个数字，每次随机选个mutator，对单个input mutate这些次数，返回上层作为一次mutate。（代码在<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/d53503b73ea0425ffdcfbc467c167b02632077b6/libafl/src/mutators/scheduled.rs#L104">这</a>）</li>
+</ul></li>
+</ul>
+<p>例1：对于下面的代码：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Setup a randomic Input2State stage</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">i2s</span> = StdMutationalStage::<span class="title function_ invoke__">new</span>(StdScheduledMutator::<span class="title function_ invoke__">new</span>(tuple_list!(I2SRandReplace::<span class="title function_ invoke__">new</span>())));</span><br></pre></td></tr></table></figure>
+<p>我们可以解读为：随机叠加<code>I2SRandReplace</code>1-7次作为单次mutate。mutate并执行1-128次。</p>
+<p>例2：对于下面的代码</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Setup a MOPT mutator</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">mutator</span> = StdMOptMutator::<span class="title function_ invoke__">new</span>(</span><br><span class="line">    &amp;<span class="keyword">mut</span> state,</span><br><span class="line">    <span class="title function_ invoke__">havoc_mutations</span>().<span class="title function_ invoke__">merge</span>(<span class="title function_ invoke__">tokens_mutations</span>()),</span><br><span class="line">    <span class="number">7</span>,</span><br><span class="line">    <span class="number">5</span>,</span><br><span class="line">)?;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">power</span> = StdPowerMutationalStage::<span class="title function_ invoke__">new</span>(mutator);</span><br></pre></td></tr></table></figure>
+<p>我们可以解读为：将havoc和<code>tokens_mutations</code>(cmplog)合并作为mutator，使用MOpt调度Mutator的叠加，每个testcase上的尝试次数使用<code>StdPowerMutationalStage</code>调度。</p>
+<h3 id="mutator调度-mopt-optimized-mutation-scheduling-for-fuzzers">(Mutator调度) MOpt: Optimized Mutation Scheduling for Fuzzers</h3>
+<p><a target="_blank" rel="noopener" href="https://www.inforsec.org/wp/?p=3950">InForSec通讯</a>有些相关的介绍。</p>
 <p>MOpt这篇paper，改进了AFL里面havoc阶段的Scheduler的过程。</p>
 <p>LibAFL里也实现了这篇paper的方法。</p>
-<h3 id="libafl里其他的mutation机制">LibAFL里其他的mutation机制</h3>
+<h3 id="libafl代码里的mutation流程">LibAFL代码里的mutation流程</h3>
 <p>LibAFL的mutation stage的主要逻辑在这个<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/LibAFL/blob/d53503b73ea0425ffdcfbc467c167b02632077b6/libafl/src/stages/mutational.rs#L118"><code>perform_mutational</code></a>函数。</p>
 <ul>
 <li>首先确定为了当前输入，打算进行多少次mutate，存入变量num。</li>
@@ -253,7 +361,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/" data-id="clpydetma002lr4ue5jckd7u3" data-title="Fuzz快速上手指南" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/" data-id="clr8y89nq00239suef48r01v1" data-title="Fuzz快速上手指南" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -265,25 +373,47 @@
     
 <nav id="article-nav">
   
-    <a href="/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+    <a href="/2023/%E7%94%9F%E6%B4%BB%E5%92%8C%E6%95%88%E7%8E%87/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
       <div class="article-nav-title">
         
-          FFmpeg+Santinizer编译时的奇怪问题
+          生活和效率
         
       </div>
     </a>
   
   
-    <a href="/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">如何写paper</div>
+    <a href="/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">自动机与程序分析</div>
     </a>
   
 </nav>
 
   
 </article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
 
 
 </section>
@@ -295,7 +425,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Kategorien</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -307,7 +437,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
   </div>
 
@@ -317,16 +447,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 14px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 10px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -337,7 +467,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2023 am009@github.com<br>
+      &copy; 2024 am009@github.com<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

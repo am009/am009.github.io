@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>自动机与程序分析 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="自动机与程序分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自动机与程序分析">
+<meta property="og:url" content="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/">
+<meta property="og:site_name">
+<meta property="og:description" content="自动机与程序分析">
+<meta property="og:locale">
+<meta property="og:image" content="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/%E8%87%AA%E5%8A%A8%E6%9C%BA1.png">
+<meta property="og:image" content="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/CFG%E8%BD%ACPDA.png">
+<meta property="article:published_time" content="2023-12-11T03:11:12.000Z">
+<meta property="article:modified_time" content="2024-01-10T02:30:20.266Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="StaticAnalysis">
+<meta property="article:tag" content="PL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/%E8%87%AA%E5%8A%A8%E6%9C%BA1.png">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2023/自动机与程序分析" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/" class="article-date">
+  <time class="dt-published" datetime="2023-12-11T03:11:12.000Z" itemprop="datePublished">2023-12-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      自动机与程序分析
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>自动机与程序分析</p>
+<span id="more"></span>
+<p>最早在程序分析中遇到自动机，是在学IFDS的时候（比如<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/16381920.html#_label2">这里</a>），里面需要根据call和return指令，做类似括号匹配的操作。</p>
+<h2 id="自动机基础">自动机基础</h2>
+<p>参考 《形式语言与自动机导论%20%20（原书第三版）_11454864.pdf》</p>
+<h3 id="下推自动机push-down-automata-pda">下推自动机（Push Down Automata, PDA）</h3>
+<p>背景知识是，编译原理中，有限状态自动机和正则表达式的知识。另外，也需要一些上下文无关语言的知识。</p>
+<p>下推自动机，在有限状态自动机上，额外增加了一个栈，每次转换状态的时候，允许向栈上压入，或弹出元素。</p>
+<p>这里介绍一个例子，我们想要匹配偶数长度的，包含a,b两种字符的回文字符串。可以定义一个语法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">R -&gt; aRa | bRb | ε</span><br></pre></td></tr></table></figure>
+<p>同时，我们可以定义一个下推自动机(来自这个<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=BxA-aI2dyRo&amp;list=PLBlnK6fEyqRgp46KUv4ZY69yXmpwKOIev&amp;index=89">youtube视频</a>)。自动机包含四个状态：</p>
+<ul>
+<li>初始状态q1：读入ε空字符（不读入字符），同时把开始符号Z0压到栈中，可以转换到状态q2</li>
+<li>q2：读入字符a，或字符b，同时把字符压入栈中，可以转换到状态q2（不变）。或者直接转换到状态q3。</li>
+<li>q3：读入字符a，或字符b，同时弹出相应字符，可以转换到状态q3（字符和栈操作绑定，必须完整执行，否则不能转换）。弹出栈顶Z0符号后可以转换到结束状态q4</li>
+<li>如果字符串走到了q4状态，且输入结束了，则表示自动机接受了这个输入。</li>
+</ul>
+<p>这里是不确定性下推自动机，按规则走时有多条路径。只要有可能走到结束，则说明该字符串被接受。其他情况是有可能走不下去的。</p>
+<figure>
+<img src="自动机1.png" alt="" /><figcaption>一个自动机的例子</figcaption>
+</figure>
+<p><strong>下推自动机和上下文无关语言的一致性</strong>：</p>
+<p>这里称上下文无关语言为Context Free Grammar, CFG。下推自动机被称为Push Down Automata, PDA。</p>
+<p>如何把CFG转为PDA？ - 在CFG根据规则替换非终结符的时候，我们约定每次仅替换最左侧的终结符。 - 对于每个状态正在推导的CFG，它包含终结符和非终结符的混合序列。我们从最左侧开始扫描，遇到的所有终结符放在PDA的输出上，剩下的放在PDA的栈里。 - 我们每次看栈上最左侧的非终结符，然后看它有哪些规则，比如<code>R -&gt; aRa</code>，我们对应此时有PDA的状态转换规则，即将这个非终结符替换成对应规则应用后的结果，即此时对当前状态有规则，弹出栈上的<code>R</code>，压入<code>aRa</code>，转换到下一个状态。 - 如果栈上是终结符，此时允许读入相同的终结符，弹出栈顶上的这个终结符。</p>
+<figure>
+<img src="CFG转PDA.png" alt="" /><figcaption>CFG转PDA</figcaption>
+</figure>
+<h2 id="什么是-cfl-reachability-problem">什么是 CFL Reachability Problem</h2>
+<p>阅读《Interconvertibility of Set Constraints and Context-Free Language Reachability》</p>
+<p>我们知道普通的有向图的可达问题。但是这种图可达性太简单了。比如，多个函数的控制流图，它首先把每个函数的控制流图放上来，然后对于call指令，增加call指令到被调用函数开头的调用边，以及被调用函数结束时，返回call指令继续执行的边。这样构建出来的图会发现存在一个问题，即没有考虑到返回的时候要根据调用栈返回的情况。返回的时候，由于边就是连着的，直接看可达性的话我可以返回到任意调用点之后继续执行，然而实际情况是只会根据之前call是从哪里过来的，然后返回那边执行。</p>
+<p>CFL Reachibility问题，就是结合CFG，给图可达性问题增加一些限制。</p>
+<p>首先，我们允许对有向图上每一条边上都标上CFG里的终结符或者非终结符。对于每一条路径，把边上标记的符号连起来就是一个字符串。如果这个字符串属于某个CFG语言，即这个字符串能从CFG的开始符号S，通过CFG语法规则推导得到，则我们称这条路径属于S-Path。</p>
+<p>all pair版本的图可达问题，就是求出所有的这样顶点对 v1, v2，使得v1能走到v2。我们定义all pair版本的S-Path问题为，找出所有的顶点对，使得存在一条v1到v2，且属于S-Path的路径。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/" data-id="clr8y89nu00309suegbz4hj71" data-title="自动机与程序分析" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Fuzz快速上手指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/SMTSolver%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%90%88%E6%88%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">SMTSolver与程序合成</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 10px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
