@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>Openwrt的GRETap隧道的MTU问题 | </title>
+  <title>Openwrt的GRETap6隧道的MTU问题 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="一个给Openwrt贡献patch的机会">
+  <meta name="description" content="Openwrt的GRETap6隧道的MTU问题">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Openwrt的GRETap隧道的MTU问题">
+<meta property="og:title" content="Openwrt的GRETap6隧道的MTU问题">
 <meta property="og:url" content="https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/">
 <meta property="og:site_name">
-<meta property="og:description" content="一个给Openwrt贡献patch的机会">
+<meta property="og:description" content="Openwrt的GRETap6隧道的MTU问题">
 <meta property="og:locale">
 <meta property="article:published_time" content="2023-11-06T03:11:12.000Z">
-<meta property="article:modified_time" content="2024-01-29T12:28:49.009Z">
+<meta property="article:modified_time" content="2024-01-29T13:47:55.956Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Networking">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      Openwrt的GRETap隧道的MTU问题
+      Openwrt的GRETap6隧道的MTU问题
     </h1>
   
 
@@ -110,28 +110,30 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>一个给Openwrt贡献patch的机会</p>
+        <p>Openwrt的GRETap6隧道的MTU问题</p>
 <span id="more"></span>
-<h3 id="gretap的问题">GRETap的问题</h3>
-<p><strong>背景</strong>：两个发射wifi的路由器用GRETap在链路层组网，我在这边wifi通过SSH连接那边路由器有线连接的台式机，诡异地连不上去。经过调研发现应该是GRETap的问题。</p>
-<p><strong>诊断</strong>：正如这个Reddit帖子所说：<a target="_blank" rel="noopener" href="https://www.reddit.com/r/sysadmin/comments/737c1z/friendly_reminder_if_ssh_sometimes_hangs/">Friendly reminder: If ssh sometimes hangs unexplainably, check the mtu to the system</a>。确实很可能是MTU的问题。通过直接把笔记本接到那边路由器，或者连那边的wifi，问题都不再出现。</p>
-<p><strong>初步的尝试</strong></p>
-<ol type="1">
-<li>防火墙，lan zone，勾选MSS clamping</li>
-<li>Interface wlan1，设置MTU为探测的大小（1300）</li>
-</ol>
+<h3 id="问题描述">问题描述</h3>
+<p><strong>背景</strong>：两个发射wifi的路由器用GRETap在链路层组网，我在这边wifi通过SSH连接那边路由器有线连接的台式机，诡异地连不上去。经过调研发现应该是MTU的问题。搜了一下应该是GRETap6的问题。</p>
+<p><strong>诊断</strong>：正如</p>
+<ul>
+<li>这个<a target="_blank" rel="noopener" href="https://www.reddit.com/r/sysadmin/comments/737c1z/friendly_reminder_if_ssh_sometimes_hangs/">Reddit帖子</a>提到这种SSH连接停住的现象很可能是MTU问题。确实很可能是MTU的问题。通过直接把笔记本接到那边路由器，或者连那边的wifi，问题都不再出现。</li>
+<li>这个人也有<a target="_blank" rel="noopener" href="https://www.reddit.com/r/ipv6/comments/pmxg2m/ipv6_mtu_issue_with_hosts_behind_mikrotik_router/">IPv6 GRETap的MTU问题</a></li>
+</ul>
 <p><strong>Path MTU Discovery (PMTUD)原理</strong>：虽然本地机子的MTU不会变，但是发包后路由器就会返回icmp消息说，你太长了，然后本地机子就会用mtu1300.</p>
 <p>但是，关键的问题在于，GRETap不在IP层。。。也就是说，现在在链路层L2组网，我和那边机子中间没有任何其他的中介，直接链路层找它了。虽然中间我们包被中间的路由器由GRE隧道封装了，但是路由器即使知道你笔记本这个包有问题，想和你笔记本说一下，你包太大了，如果通过ICMP的消息说的话，这属于L3层了。在笔记本看来，我是直接和那边机子沟通啊，你怎么突然过来插一脚，根本不会理。</p>
 <p><a target="_blank" rel="noopener" href="https://forum.openwrt.org/t/solved-gretap-tunnel-and-mtu-size-problem/14182/8">这个帖子</a>里和我遇到了相同的问题。想想GRE包在被包裹之后，传递给那边的时候，还是通过IP层传的。<a target="_blank" rel="noopener" href="https://forums.gentoo.org/viewtopic-t-1007394-start-0.html">这个帖子</a>也尝试详细描述这个问题。</p>
 <p>在<a target="_blank" rel="noopener" href="https://bugzilla.kernel.org/show_bug.cgi?id=14837">内核</a>那边也有相关的讨论： - 最底下提到了<code>ignore-df nopmtudisc</code>这两个选项。<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/42545112/linux-gretap-net-ipv4-ip-gre-c-how-to-set-value-of-key-tun-flags">这个回答里</a>也有相关的例子 - 中间看到一些，bridge按照标准会丢大于自己MTU的包，这个好像无关，bridge取的是最小的MTU。</p>
-<h3 id="如何在openwrt里实现">如何在OpenWRT里实现</h3>
-<p><strong>Package GRE</strong>：先看看GRE包的<a target="_blank" rel="noopener" href="https://github.com/openwrt/openwrt/blob/ae500e62e2938e112ae1fc6aa7389e8c7b784b13/package/network/config/gre/files/gre.sh">源码</a>吧，稍微看看就可以发现，这里调的是<code>proto_send_update</code>，是<code>netifd-proto.sh</code>里面的函数。引用到了另外一个仓库：<code>netifd</code>。而<code>netifd</code>并不是调的ip link命令，而是直接C语言底层实现相关操作。。</p>
-<p>总之，抓住这一点：netifd不支持<code>ignore-df nopmtudisc</code>这两个选项，就可能可以给他们交patch吧？应该。</p>
+<h3 id="openwrt的支持">OpenWRT的支持</h3>
+<p><strong>Package GRE</strong>：先看看GRE包的<a target="_blank" rel="noopener" href="https://github.com/openwrt/openwrt/blob/ae500e62e2938e112ae1fc6aa7389e8c7b784b13/package/network/config/gre/files/gre.sh">源码</a>吧，稍微看看就可以发现，这里调的是<code>proto_send_update</code>，是<code>netifd-proto.sh</code>里面的函数。引用到了另外一个仓库：<code>netifd</code>。而<code>netifd</code>并不是调的ip link命令，而是直接C语言底层实现相关操作。</p>
+<p>ip link命令又是怎么实现这个功能的呢？ip这个命令行工具来自<code>iproute2</code>包，搜索相关源码可以找到<a target="_blank" rel="noopener" href="https://github.com/iproute2/iproute2/blob/0c3400cc8f576b9f9e4099b67ae53596111323cd/ip/link_gre.c#L398"><code>link_gre.c</code></a>这里。可以发现在<code>linux/if_tunnel.h</code>这个内核头文件里有个flag叫<code>IFLA_GRE_PMTUDISC</code>。这里操纵的是<code>struct nlmsghdr</code>结构体，</p>
+<p>那边netifd也是一样，但是使用了<a target="_blank" rel="noopener" href="https://www.infradead.org/~tgr/libnl/doc/core.html">libnl</a>库。<a target="_blank" rel="noopener" href="https://docs.kernel.org/userspace-api/netlink/intro.html">内核文档</a>和<a target="_blank" rel="noopener" href="https://www.infradead.org/~tgr/libnl/doc/core.html#core_msg_format">libnl文档</a>都描述了netlink消息的细节。</p>
+<p>然而，<a target="_blank" rel="noopener" href="https://github.com/openwrt/netifd/blob/f01345ec13b9b27ffd314d8689fb2d3f9c81a47d/system-linux.c#L4012">这里</a>可以看到，仅对IPv4的隧道支持了<code>ignore-df</code>选项。在<a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man8/ip-tunnel.8.html">ip命令的帮助</a>里可以发现，ignore-df选项仅忽略IPv4的Dont Fragment包。</p>
+<p><a target="_blank" rel="noopener" href="https://www.reddit.com/r/ipv6/comments/pmxg2m/ipv6_mtu_issue_with_hosts_behind_mikrotik_router/">这里</a>提到了，在IPv6里根本没有分包，必须由中间节点发icmp6消息提醒发送端减少MTU。很可能这个问题是无解的，只能改自己本地MTU？</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/" data-id="clryx4ptk0012s4ueelvn1i8f" data-title="Openwrt的GRETap隧道的MTU问题" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/" data-id="clryzjdv4002ps4ue7y8ygbw6" data-title="Openwrt的GRETap6隧道的MTU问题" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
