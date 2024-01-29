@@ -6,15 +6,15 @@
   
   <title>PL基础入门 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="资源  Stanford CS242 Programming Languages [POPL&#39;22 Tutorial] Program Analysis via Graph Reachability: Past, Present, and Future">
+  <meta name="description" content="PL基础入门">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PL基础入门">
 <meta property="og:url" content="https://wjk.moe/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/">
 <meta property="og:site_name">
-<meta property="og:description" content="资源  Stanford CS242 Programming Languages [POPL&#39;22 Tutorial] Program Analysis via Graph Reachability: Past, Present, and Future">
+<meta property="og:description" content="PL基础入门">
 <meta property="og:locale">
-<meta property="article:published_time" content="2023-11-27T03:11:12.000Z">
-<meta property="article:modified_time" content="2024-01-10T02:35:54.166Z">
+<meta property="article:published_time" content="2024-01-18T03:11:12.000Z">
+<meta property="article:modified_time" content="2024-01-29T07:55:53.079Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="PL">
 <meta name="twitter:card" content="summary">
@@ -87,7 +87,7 @@
         <section id="main"><article id="post-2023/PL基础入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="article-date">
-  <time class="dt-published" datetime="2023-11-27T03:11:12.000Z" itemprop="datePublished">2023-11-27</time>
+  <time class="dt-published" datetime="2024-01-18T03:11:12.000Z" itemprop="datePublished">2024-01-18</time>
 </a>
     
   <div class="article-category">
@@ -110,13 +110,15 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="资源">资源</h2>
+        <p>PL基础入门</p>
+<span id="more"></span>
+<h2 id="资源">资源</h2>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://csdiy.wiki/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%88%86%E6%9E%90/CS242/#_1">Stanford CS242 Programming Languages</a></li>
 <li><a target="_blank" rel="noopener" href="https://helloqirun.github.io/misc/popl22.html">[POPL'22 Tutorial] Program Analysis via Graph Reachability: Past, Present, and Future</a></li>
 </ul>
-<span id="more"></span>
 <h2 id="类型和程序设计语言">《类型和程序设计语言》</h2>
+<p>对照学习中文版《类型和程序设计语言》和英文版<a target="_blank" rel="noopener" href="https://github.com/MPRI/M2-4-2/blob/master/Types%20and%20Programming%20Languages.pdf">《Types and Programming Languages》</a></p>
 <p>还记得最早学编程的时候，会去想函数是什么。而现在，脑海里自动出现什么调用栈，返回地址。也许类型系统是当初就应该学的。</p>
 <h3 id="第一部分-无类型系统">第一部分 无类型系统</h3>
 <p>无类型系统是图灵完全的。当整个系统中只有函数的形式，一切都是函数的树的形式，信息也被存储在函数的树状结构中。</p>
@@ -140,21 +142,108 @@
 <li>指称语义：语义不只是机器状态，而且是某个数学对象。包括一个语义域的集合和将项映射到域中元素的解释函数。需要为语言特征寻找合适的语义域。有时候所选的语义域的性质可以推导出程序行为。由语义定义域的性质甚至可以得出在一个语言中有些事情是不可能发生的。</li>
 <li>公理语义：公理方法用规则本身作为语言的定义，一个项的语义就是，从公理规则出发，我们能推导出的关于这个项的性质。</li>
 </ul>
-<p>在1980年前后，操作语义逐渐成为主流。</p>
+<p>在1980年前后，操作语义逐渐成为主流。这本书也只用操作语义</p>
 <p><strong>语义和求值</strong></p>
 <p>布尔表达式的操作语义有如下几个部分：</p>
 <ul>
 <li>语法部分
 <ul>
-<li>项的语法</li>
-<li>值</li>
+<li>项本身的语法</li>
+<li>值：它定义了项的一个子集，可以作为求值的最终结果</li>
+</ul></li>
+<li>求值关系（也叫归约）
+<ul>
+<li>如果抽象机器有某个状态，则此时可以按照该规则求值一步。</li>
 </ul></li>
 </ul>
+<p>有三条求值关系，IfTrue，IfFalse和E-If。其中只有E-If有前提条件，且注意到求值关系<code>-&gt;</code>的定义的递归性：使用E-If规则时要求有前提<code>t1 -&gt; t2</code>，而这里的箭头正是我们正在定义的求值关系，更精确地说是一步求值关系。</p>
+<p><strong>求值顺序</strong>：求值关系里可以蕴含求值顺序，比如书中仅允许if then else表达式对条件部分进行修改，并不允许先对then/else部分进行求值。</p>
+<p><strong>求值关系</strong>：一个项的pair可以说是一个关系，表示一个项可以推导为另外一个项。当我写下一个求值推导：t1 -&gt; t2时，这里就蕴含了一个求值关系(t1,t2)。我们说，项的pair (t1,t2)在求值关系中。</p>
+<p><strong>规则被某个关系满足</strong>：规则有很多可能的实例（即将规则中的变量替换成具体的项）。如果一个关系<strong>符合/满足</strong>一条规则，对任何一个实例，则满足下面两个条件中至少一个：① 不符合前提：实例的前提不在关系中。②满足结论：实例的结论在关系中。</p>
+<p>这里应该看反例，只有当两个条件都被违反的时候，我们才说一个关系不满足一条规则。实例的前提在关系中（违反第一条），实例的结论不在关系中（违反第二条）。就说明这个实例不符合这个规则。</p>
+<p><strong>一步求值关系<code>-&gt;</code></strong>：一个<em>最小</em>的项上的二元关系，满足上面列出来的三个求值规则。当一个项<span class="math inline">\((t1,t2)\)</span>的pair在求值关系里，我们称，求值推断 t1 -&gt; t2 是可推导的。</p>
+<p><strong>求值树</strong>：可以把推导过程，按照横线上方是前提，下方是结论的方式写成一个倒着的树。由于只有E-If规则有前提，所以它是内部节点，另外两个规则是叶子节点。现在是细长的线，等后面有多前提的规则时它会更像树。</p>
+<p><strong>一步求值的确定性</strong>：如果t1 -&gt; t2，且t1 -&gt; t3，那么t2 == t3。表达的意思是：因为一步求值是确定的，则只会求出一个唯一的项。</p>
+<p><strong>对推理结构的归纳</strong>：这里用证明 一步求值的确定性 来解释这个证明方法。因为我们这里是关于推导关系的定理，我们看t1 -&gt; t2的推导的根部。根部用的式子如果是IfTrue，那么t1必然是一个if-else的形式，而且前提条件为true。因为前提条件已经是true了，那么t1 -&gt; t3的推导的根部不可能是If-False。因为前提条件true不能再进一步求值，那么t1 -&gt; t3的推导的根部不可能是E-If。因为只剩下一个求值规则，那么t1 -&gt; t3的推导的根部肯定也是相同的IfTrue，此时直接得到t2 == t3。</p>
+<p><strong>范式</strong>：如果一个项，不能再被求值规则继续求值，则这个项是范式。每个值（定义操作语义时，作为最终结果的项的集合）都是范式</p>
+<p>书中中间还有一些别的内容：</p>
+<ul>
+<li>习题中可以给语言扩充一个error项，这样总是可以继续求值，只不过最终可能求值到这个错误项，判断为错误。</li>
+<li>本章介绍的表达式演算的具体实现。</li>
+</ul>
+<h4 id="第五章-无类型lambda演算">第五章 无类型lambda演算</h4>
+<blockquote>
+<p>除了这种lambda演算之外，pi演算已经成为定义基于消息并发语言的语义核心语言。</p>
+</blockquote>
+<p><strong>函数（过程）抽象</strong>：借助参数命名表示某种一般的执行演算。在需要的时候实例化，提供参数的值。而lambda演算则用最可能纯的方式表示这种函数定义和应用。</p>
+<p><strong>lambda演算-项</strong>：①变量：x，②抽象：λx.t，③应用：t t</p>
+<p><strong>抽象语法和具体语法</strong>：注意表明写的语法和实际的语法树之间的差异。我们这里是以语法树为准。语法规则上，应用有左结合，函数抽象体尽可能向右拓展。</p>
+<p><strong>变量和元变量</strong>：真正在语言中，作为项的是变量。有时候为了抽象表示，用t表示所有语言中的项，此时是元变量。有时为了节约空间，定义简写<code>s=λy.xy</code>，这种也是元变量。</p>
+<p><strong>辖域，囿界</strong>：在<code>λx.t</code>中，λx是一个绑定器，辖域是t。t中出现的x是囿界的，被这个抽象所界定。而单独出现的则是自由变量。比如x在<code>λy.xy</code>中是自由的。</p>
+<p><strong>封闭项，组合子</strong>：一个不含自由变量的项是封闭项，也成为组合子。</p>
+<p><strong>操作语义</strong>：纯lambda演算的语义依赖于，将函数应用与参数的操作。表示为：<code>(λx.t1) t2 -&gt; [x -&gt; t2] t1</code>。这种方括号的形式表示代换。虽然只有一个操作，但也有不同的求值策略。</p>
+<ul>
+<li>全beta规约（full beta-reduction）：任何时刻可以规约任何约式</li>
+<li>规范（normal order）策略：最左边，最外面的约式第一个被规约。但是如果最外面的不能再规约，还是可以进一步规约抽象内部的。这个策略和下面的策略都能保证每个项单步归约是确定的。</li>
+<li>按名（call by name）策略：不允许在抽象内部进行规约。</li>
+<li>按值调用策略：只有最外面的能被规约，并且函数参数必须规约完毕为一个值。</li>
+</ul>
+<p><strong>lambda演算中的程序设计</strong>：labmda演算很强大，可以表示布尔类型，数值类型，以及相应的运算。注意我们描述的是编程语言的语义，这里不关心执行速度问题，关心的是编程语言的表达能力。谁能想到简单的纯lambda演算居然能做到这么多事情。后续拓展了原生的bool和数值类型后，也可以很方便地进行转换。但是，这个转换内遇到求值策略的时候有一些问题。但是，这种使用纯lambda的Church数值的系统，可以定义出和使用正常数值的运算系统的等价关系，即两边运算的结果是一样的，没有很明显的差别。</p>
+<ul>
+<li>多参数：柯里化，即使用高阶函数，允许部分应用得到部分函数partial function。</li>
+<li>Church bool式：定义<code>tru = λt. λf. t</code>（两个参数选择前者）和<code>fls = λt. λf. f</code>（两个参数选择后者）。另外可以定义似乎没什么用处的test函数，以及逻辑运算函数，将逻辑运算转换为这种选择关系。</li>
+<li>序对：<code>pair = λf.λs.λb. b f s</code> 参数依次是first second select。首先应用first和second，可以得到一个pair：<code>λb. b f s</code>，正好形成一个便于获取第一个还是第二个值的形式。这时候参数给一个tru或者fls就可以取第一个或者第二个了。但是，我们想要的是<code>fst (pair v w)</code>这种pair作为被应用的东西的形式。所以我们定义为<code>fst = λp. p tru</code>，转换一下。</li>
+<li>Church 数值 （丘奇数）：<code>C0 = λs. λz. z</code>参数分别是successor，zero，然后返回一个被应用了n次的zero项，表示做某件事情n次。设计一个scc函数、plus函数、求幂函数变得有些有挑战性。
+<ul>
+<li>Church数的减法比加法更困难：定义前驱函数就很困难。需要定义一个（n-1,n）的pair序列，用ss函数不断将序列推进。然后用数字自身的含义，即做某事情n次，应用在ss和(0,0)上，然后取n-1部分。</li>
+</ul></li>
+</ul>
+<p>使用纯lambda演算的时候，如果有求值策略的限制，比如按值调用策略，那么就会导致有些操作无法化简，即使它可能和化简后的函数确实完全一样。完全一样的意思是，如果把没给完的参数都应用进去，无论参数是什么，两个函数得到的结果最终会一样。直观上会得到一团很复杂的函数，虽然代表一个很简单的东西，但是想要化简过去却很麻烦。</p>
+<p><strong>递归</strong>：发散组合式omega<code>(λx. x x) (λx. x x)</code>没有范式，能一直规约下去，因此称为发散的。想要编写递归，需要用到不动点组合式fix。递归编写的问题在于函数体，当你定义<code>f = xxx</code>的时候，xxx里面是不能用到f的，因为f还没被定义。首先，我们定义<code>g = λf. xxx</code>此时xxx里可以使用f，按照正常的递归函数的方式去定义。然后我们定义真正的f <code>factorial = fix g</code>即可。这种方法能工作的核心是，<code>factorial n -&gt;* (g factorial) n -&gt; ([f -&gt; factorial] xxx) n</code>，这里就开始符合递归函数定义了，而且如果xxx里面化简时没有化简出带factorial的部分，则递归可以停止</p>
+<p><strong>形式化定义</strong>：形式化定义一个语言，复习之前的内容，包括定义语法上有哪些项，有哪些推导规则。</p>
+<ul>
+<li>语法：定义V为变量名的集合。我们用递归定义项的集合。①单独变量名属于项。②如果t1属于项，x属于变量名集合中的合法变量名，则<code>λx.t1</code>也属于项 ③如果两个项的应用，也属于项。</li>
+<li>自由变量集合：定义一个方便的函数FV(t)，表示t中的自由变量集合。比如单独的变量，没有被约束的变量。</li>
+<li>推导规则-代换：直观的想法是把代换像乘法分配律一样深入到每个部分，然后如果最后只需要代换单个变量，是的话就代换。但是在变量命名上有一些问题。比如我们要代换x -&gt; z：
+<ul>
+<li>①如果发现要代换的值 x 突然有个界定 <code>λx. t</code>，此时就不应该继续进入代换了。</li>
+<li>②和上一个相反的错误：如果发现被代换进去的东西 z，本来是一个自由变量的，但是出现了一个<code>λz. t</code>，再代换里面的t，此时代换出来的z变成被lambda约束的变量了，这也不对。</li>
+</ul>
+最后我们得到了避免捕捉的代换，遇到问题需要对变量z重新命名。我们称这种重新命名为alpha转化。</li>
+<li>具体的操作语义：在定义求值关系上，细节决定了具体的求值顺序。根据写出来的规则不同，隐含着采用的是完全beta规约，规范序还是懒惰求值。</li>
+</ul>
+<h3 id="第九章-简单类型的lambda演算">第九章 简单类型的lambda演算</h3>
+<p>注意到单独写一个项，如果不知道参数的类型，则有时也不知道函数体的类型。考虑参数类型被显式标注的语言，比如C语言。隐式标注的语言需要额外的类型推导算法，但并没有什么额外的不同。</p>
+<p><strong>类型上下文</strong>：我们用 <span class="math inline">\(\Gamma\)</span> 表示类型上下文，即一系列类型的假设。然后用 <span class="math inline">\(\vdash\)</span> 符号表示类型上下文的应用。 <span class="math inline">\(\Gamma \vdash t: T\)</span> 的意思是，在类型上下文 <span class="math inline">\(\Gamma\)</span> 中，项t的类型为T。假如有个函数λx.t2，当参数的类型是T1的时候，我们可以推导函数体的类型，把函数体中遇到的参数x假定为T1类型：</p>
+<p><span class="math display">\[
+\frac{\mathrm{x}: \mathrm{T}_1 \vdash \mathrm{t}_2: \mathrm{T}_2}{\vdash \lambda \mathrm{x}: \mathrm{T}_1 \cdot \mathrm{t}_2: \mathrm{T}_1 \rightarrow \mathrm{T}_2}
+\]</span></p>
+<p>同时我们定义dom函数， <span class="math inline">\(dom(\Gamma)\)</span> 表示被 <span class="math inline">\(\Gamma\)</span> 界定的变量集合。</p>
+<h4 id="第十五章-子类型">第十五章 子类型</h4>
+<p>子类型和其他孤立的语言特性很不一样，它对很多其他特性都有着影响。我们这里首先主要关注的是函数和结构体。</p>
+<p>S是T的子类型记作<code>S &lt;: T</code>。</p>
+<p>约定子类型有自反性和传递性，即前序，preorder。往往子类型关系也会满足antisymmetry，即如果<code>S &lt;: T</code> 且 <code>S &lt;: T</code> 则 <code>S == T</code>，此时满足偏序关系，partial order。由于结构体有标签置换规则，即标签顺序不同的认作不同类型，但是是其他相同标签的子类型，所以我们这里讨论的不满足偏序。</p>
+<p><strong>安全代换原则</strong>：任何能用父类型的地方，也可以用子类型代换。子类型比父类型包含的信息量更多。</p>
+<p><strong>width subtyping</strong>：字段越多，越属于子类型。忘记字段时，相当于转为父类型。可以将一个结构体类型类型<code>&#123;x:Nat&#125;</code>理解为至少包含Nat类型的字段x的结构体类型集合。</p>
+<p><strong>Depth subtyping</strong>：允许结构体单个字段用子类型替换。</p>
+<p><strong>函数类型的子类型</strong>：子类型对参数的要求更低，即参数是原类型的父类型（逆变，contravariant），结果的要求更高，返回值是原来的子类型（协变，covariant）。</p>
+<h3 id="第十六章-子类型">第十六章 子类型</h3>
+<h4 id="算法子类型化">算法子类型化</h4>
+<p><strong>S-RCD将width/depth/perm结合的子类型定理</strong>：如下图所示。如果把字段看作集合，且把子类型关系看作相等，则结构体的子类型关系可以表示为集合的子集关系。</p>
+<p><span class="math display">\[
+\frac{\left\{1_i{ }^{i \in 1 . . n}\right\} \subseteq\left\{\mathrm{k}_j{ }^{j \in 1 . . m}\right\} \quad \mathrm{k}_j=1_i \text { implies } \mathrm{S}_j&lt;: \mathrm{T}_i}{\left\{\mathrm{k}_j: \mathrm{S}_j{ }^{j \in 1 . . m}\right\}&lt;:\left\{1_i: \mathrm{T}_i{ }^{i \in 1 . . n}\right\}}
+\]</span></p>
+<p>根据这个可以得到判断两个类型是不是有子类型关系的算法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">subtype(S, T) = </span><br><span class="line">if T = Top, then true</span><br><span class="line">    else if S = S1→S2 and T = T1→T2</span><br><span class="line">        then subtype(T1, S1) ∧ subtype(S2, T2)</span><br><span class="line">    else if S = &#123;kj:Sj j∈1..m&#125; and T = &#123;li:Ti i∈1..n&#125;</span><br><span class="line">        then &#123;li i∈1..n&#125; ⊆ &#123;kj j∈1..m&#125;</span><br><span class="line">            ∧ for all i there is some j ∈ 1..m with kj = li</span><br><span class="line">                and subtype(Sj , Ti)</span><br><span class="line">    else false.</span><br></pre></td></tr></table></figure>
+<p>子类型关系在实际应用中，会遇到不知在何处将类型变为子类型的情况。通过对推导树的观察可以发现，有一种改写方法可以把子类型化不断推迟到推导树末尾。这个过程中只有一种推导无法推迟，那就是函数的应用语句。我们更新应用规则，在应用时同步应用子类型关系。最终得到了推导包含子类型化语言的项的类型的算法。</p>
+<h2 id="advanced-topics-in-types-and-programming-languagesattapl">《Advanced Topics in Types and Programming Languages》(ATTAPL)</h2>
+<h3 id="第十章-基于约束的ml类型推导">第十章 基于约束的ML类型推导</h3>
+<p>这里有<a target="_blank" rel="noopener" href="http://cristal.inria.fr/attapl/">拓展版</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" data-id="clr8y89nr002c9sue3lor56nl" data-title="PL基础入门" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" data-id="clryx4ptm001bs4ue85oi3k2q" data-title="PL基础入门" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -166,19 +255,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Neuer</strong>
       <div class="article-nav-title">
         
-          Maven使用本地JAR文件
+          如何写paper
         
       </div>
     </a>
   
   
-    <a href="/2023/Openwrt%E7%9A%84GRETap%E9%81%87%E5%88%B0MTU%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2023/Openwrt%E6%9E%84%E5%BB%BA/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">Openwrt的GRETap遇到MTU问题</div>
+      <div class="article-nav-title">Openwrt构建</div>
     </a>
   
 </nav>
@@ -240,7 +329,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 10px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 10px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 18px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
     </div>
   </div>
 

@@ -6,7 +6,7 @@
   <link href="https://wjk.moe/rss.xml" rel="self"/>
   
   <link href="https://wjk.moe/"/>
-  <updated>2024-01-10T16:32:13.159Z</updated>
+  <updated>2024-01-28T12:29:38.968Z</updated>
   <id>https://wjk.moe/</id>
   
   <author>
@@ -17,11 +17,68 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>如何写paper</title>
+    <link href="https://wjk.moe/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/"/>
+    <id>https://wjk.moe/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/</id>
+    <published>2024-01-27T03:11:12.000Z</published>
+    <updated>2024-01-28T12:29:38.968Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;学术论文写作总结&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
+    
+    
+    <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>PL基础入门</title>
+    <link href="https://wjk.moe/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/"/>
+    <id>https://wjk.moe/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/</id>
+    <published>2024-01-18T03:11:12.000Z</published>
+    <updated>2024-01-29T07:55:53.079Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;PL基础入门&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
+    
+    
+    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Openwrt构建</title>
+    <link href="https://wjk.moe/2023/Openwrt%E6%9E%84%E5%BB%BA/"/>
+    <id>https://wjk.moe/2023/Openwrt%E6%9E%84%E5%BB%BA/</id>
+    <published>2024-01-11T03:11:12.000Z</published>
+    <updated>2024-01-29T12:35:43.877Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Openwrt构建&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="Networking" scheme="https://wjk.moe/tags/Networking/"/>
+    
+  </entry>
+  
+  <entry>
     <title>生活和效率</title>
     <link href="https://wjk.moe/2023/%E7%94%9F%E6%B4%BB%E5%92%8C%E6%95%88%E7%8E%87/"/>
     <id>https://wjk.moe/2023/%E7%94%9F%E6%B4%BB%E5%92%8C%E6%95%88%E7%8E%87/</id>
     <published>2024-01-11T03:11:12.000Z</published>
-    <updated>2024-01-10T16:32:13.159Z</updated>
+    <updated>2024-01-29T12:40:25.913Z</updated>
     
     
     <summary type="html">&lt;p&gt;如何变得高效。&lt;/p&gt;</summary>
@@ -69,9 +126,9 @@
     <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
     
     
-    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
-    
     <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
+    
+    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
   </entry>
   
@@ -99,7 +156,7 @@
     <link href="https://wjk.moe/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/"/>
     <id>https://wjk.moe/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/</id>
     <published>2023-12-05T03:11:12.000Z</published>
-    <updated>2023-12-07T03:07:46.834Z</updated>
+    <updated>2024-01-19T09:26:20.221Z</updated>
     
     
     <summary type="html">&lt;p&gt;FFmpeg+Santinizer编译时的奇怪问题，不得不感叹软件世界的复杂性，总是会有奇奇怪怪的问题，还好有开源，不然都无法debug。&lt;/p&gt;</summary>
@@ -110,25 +167,6 @@
     
     
     <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>如何写paper</title>
-    <link href="https://wjk.moe/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/"/>
-    <id>https://wjk.moe/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/</id>
-    <published>2023-12-01T03:11:12.000Z</published>
-    <updated>2023-12-16T12:42:44.254Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;学术论文写作总结&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
-    
-    
-    <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
     
   </entry>
   
@@ -173,34 +211,11 @@
   </entry>
   
   <entry>
-    <title>PL基础入门</title>
-    <link href="https://wjk.moe/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/"/>
-    <id>https://wjk.moe/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/</id>
-    <published>2023-11-27T03:11:12.000Z</published>
-    <updated>2024-01-10T02:35:54.166Z</updated>
-    
-    
-    <summary type="html">&lt;h2 id=&quot;资源&quot;&gt;资源&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://csdiy.wiki/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%88%86%E6%9E%90/CS242/#_1&quot;&gt;Stanford CS242 Programming Languages&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://helloqirun.github.io/misc/popl22.html&quot;&gt;[POPL&#39;22 Tutorial] Program Analysis via Graph Reachability: Past, Present, and Future&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
-    
-    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Openwrt的GRETap遇到MTU问题</title>
-    <link href="https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%81%87%E5%88%B0MTU%E9%97%AE%E9%A2%98/"/>
-    <id>https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%81%87%E5%88%B0MTU%E9%97%AE%E9%A2%98/</id>
+    <title>Openwrt的GRETap隧道的MTU问题</title>
+    <link href="https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/"/>
+    <id>https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/</id>
     <published>2023-11-06T03:11:12.000Z</published>
-    <updated>2023-11-27T04:55:49.822Z</updated>
+    <updated>2024-01-29T12:28:49.009Z</updated>
     
     
     <summary type="html">&lt;p&gt;一个给Openwrt贡献patch的机会&lt;/p&gt;</summary>
@@ -255,14 +270,15 @@
   </entry>
   
   <entry>
-    <title>SSA-for-decompilation读后感</title>
-    <link href="https://wjk.moe/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/"/>
-    <id>https://wjk.moe/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/</id>
+    <title>SSA-for-decompilation-5</title>
+    <link href="https://wjk.moe/2023/SSA-for-decompilation-5/"/>
+    <id>https://wjk.moe/2023/SSA-for-decompilation-5/</id>
     <published>2023-05-12T03:11:12.000Z</published>
-    <updated>2023-05-18T08:45:37.093Z</updated>
+    <updated>2023-08-21T13:37:49.376Z</updated>
     
     
-    <summary type="html">&lt;p&gt;SSA-for-decompilation 读后感。反编译这一块不是很成体系。在这里整理一下。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;《Static Single Assignment for Decompilation》 第五章 类型分析&lt;/p&gt;
+&lt;p&gt;划词翻译+人工校对&lt;/p&gt;</summary>
     
     
     
@@ -274,15 +290,14 @@
   </entry>
   
   <entry>
-    <title>SSA-for-decompilation-5</title>
-    <link href="https://wjk.moe/2023/SSA-for-decompilation-5/"/>
-    <id>https://wjk.moe/2023/SSA-for-decompilation-5/</id>
+    <title>SSA-for-decompilation读后感</title>
+    <link href="https://wjk.moe/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/"/>
+    <id>https://wjk.moe/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/</id>
     <published>2023-05-12T03:11:12.000Z</published>
-    <updated>2023-08-21T13:37:49.376Z</updated>
+    <updated>2023-05-18T08:45:37.093Z</updated>
     
     
-    <summary type="html">&lt;p&gt;《Static Single Assignment for Decompilation》 第五章 类型分析&lt;/p&gt;
-&lt;p&gt;划词翻译+人工校对&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;SSA-for-decompilation 读后感。反编译这一块不是很成体系。在这里整理一下。&lt;/p&gt;</summary>
     
     
     
@@ -310,9 +325,9 @@
     
     <category term="CTF" scheme="https://wjk.moe/tags/CTF/"/>
     
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
     
   </entry>
   
@@ -333,9 +348,9 @@
     
     <category term="Embedded" scheme="https://wjk.moe/tags/Embedded/"/>
     
-    <category term="Openwrt" scheme="https://wjk.moe/tags/Openwrt/"/>
-    
     <category term="Networking" scheme="https://wjk.moe/tags/Networking/"/>
+    
+    <category term="Openwrt" scheme="https://wjk.moe/tags/Openwrt/"/>
     
   </entry>
   
@@ -357,9 +372,9 @@
     <category term="Project" scheme="https://wjk.moe/categories/Project/"/>
     
     
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
     
     <category term="WebAssembly" scheme="https://wjk.moe/tags/WebAssembly/"/>
     
@@ -383,9 +398,9 @@
     
     <category term="CTF" scheme="https://wjk.moe/tags/CTF/"/>
     
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
     
   </entry>
   
@@ -405,26 +420,6 @@
     
     
     <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>NativeSummary：Java/C安卓应用无源码污点分析。</title>
-    <link href="https://wjk.moe/2022/NativeSummary/"/>
-    <id>https://wjk.moe/2022/NativeSummary/</id>
-    <published>2022-05-01T03:11:11.000Z</published>
-    <updated>2023-03-29T02:27:34.872Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;让原有的安卓污点分析工具（如FlowDroid），支持通过JNI接口调用的汇编代码（C语言代码）的分析。&lt;/p&gt;
-&lt;p&gt;不使用符号执行等动态分析技术，而是使用二进制静态分析技术。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
-    
-    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
   </entry>
   

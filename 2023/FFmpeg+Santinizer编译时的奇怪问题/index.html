@@ -14,7 +14,7 @@
 <meta property="og:description" content="FFmpeg+Santinizer编译时的奇怪问题，不得不感叹软件世界的复杂性，总是会有奇奇怪怪的问题，还好有开源，不然都无法debug。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2023-12-05T03:11:12.000Z">
-<meta property="article:modified_time" content="2023-12-07T03:07:46.834Z">
+<meta property="article:modified_time" content="2024-01-19T09:26:20.221Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Fuzz">
 <meta name="twitter:card" content="summary">
@@ -112,7 +112,7 @@
       
         <p>FFmpeg+Santinizer编译时的奇怪问题，不得不感叹软件世界的复杂性，总是会有奇奇怪怪的问题，还好有开源，不然都无法debug。</p>
 <span id="more"></span>
-<p>fuzzbench里编译ffmpeg的时候出现了奇怪的编译报错（剧透：和sanitizer有关系），首先上来就说我符号找不到，而且很多。搜了一下发现大多都是汇编里的符号，ffmpeg里面很多手写的汇编代码，直接和C语言链接起来。</p>
+<p>在<a target="_blank" rel="noopener" href="https://github.com/am009/fuzzbench/tree/SBFT24">参与SBFT'24 Fuzzing competition</a>时遇到了这个bug。fuzzbench里编译ffmpeg的时候出现了奇怪的编译报错（剧透：和sanitizer有关系），首先上来就说我符号找不到，而且很多。搜了一下发现大多都是汇编里的符号，ffmpeg里面很多手写的汇编代码，直接和C语言链接起来。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ld.lld: error: undefined symbol: ff_yuv2yuv_422p10to8_sse2</span><br><span class="line">&gt;&gt;&gt; referenced by colorspacedsp_init.c:96 (/src/ffmpeg/libavfilter/x86/colorspacedsp_init.c:96)</span><br><span class="line">&gt;&gt;&gt;               colorspacedsp_init.o:(ff_colorspacedsp_x86_init) in archive libavfilter/libavfilter.a</span><br><span class="line"></span><br><span class="line">ld.lld: error: undefined symbol: ff_yuv2yuv_422p10to10_sse2</span><br><span class="line">&gt;&gt;&gt; referenced by colorspacedsp_init.c:96 (/src/ffmpeg/libavfilter/x86/colorspacedsp_init.c:96)</span><br><span class="line">&gt;&gt;&gt;               colorspacedsp_init.o:(ff_colorspacedsp_x86_init) in archive libavfilter/libavfilter.a</span><br><span class="line"></span><br><span class="line">ld.lld: error: undefined symbol: ff_yuv2yuv_422p10to12_sse2</span><br><span class="line">&gt;&gt;&gt; referenced by colorspacedsp_init.c:96 (/src/ffmpeg/libavfilter/x86/colorspacedsp_init.c:96)</span><br><span class="line">&gt;&gt;&gt;               colorspacedsp_init.o:(ff_colorspacedsp_x86_init) in archive libavfilter/libavfilter.a</span><br><span class="line"></span><br><span class="line">ld.lld: error: undefined symbol: ff_yuv2yuv_422p12to8_sse2</span><br><span class="line">&gt;&gt;&gt; referenced by colorspacedsp_init.c:96 (/src/ffmpeg/libavfilter/x86/colorspacedsp_init.c:96)</span><br><span class="line">&gt;&gt;&gt;               colorspacedsp_init.o:(ff_colorspacedsp_x86_init) in archive libavfilter/libavfilter.a</span><br><span class="line"></span><br><span class="line">ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)</span><br><span class="line">clang++: error: linker command failed with exit code 1 (use -v to see invocation)</span><br></pre></td></tr></table></figure>
 <p>辛酸的debug过程就不说了。只能说还是得多搜代码，同时找一个正确编译的环境去对比。</p>
 <p>最后发现问题在于configure的时候，makefile里多了一个<code>X86ASMFLAGS=-f elf64 -DPIC -DPREFIX -g -F dwarf</code>。关键在于这个<code>-DPREFIX</code>，它会导致汇编链接出来的符号多一个下划线前缀，从而导致符号找不到。</p>
@@ -130,7 +130,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/" data-id="clr8y89nr00299sueci5xfz83" data-title="FFmpeg+Santinizer编译时的奇怪问题" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/" data-id="clryx4ptj000vs4ue79l2c730" data-title="FFmpeg+Santinizer编译时的奇怪问题" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -152,9 +152,9 @@
     </a>
   
   
-    <a href="/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">如何写paper</div>
+      <div class="article-nav-title">计算机专业入门应该做什么</div>
     </a>
   
 </nav>
@@ -216,7 +216,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 10px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 10px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 18px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 10px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
     </div>
   </div>
 
