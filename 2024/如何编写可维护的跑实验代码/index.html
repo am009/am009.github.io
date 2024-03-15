@@ -4,23 +4,20 @@
   <meta charset="utf-8">
   
   
-  <title>ucore lab2 | </title>
+  <title>如何编写可维护的跑实验代码 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="ucore lab2 继续看Intel 80386 Programmer&#39;s Reference Manual, 1987 (HTML) http:&#x2F;&#x2F;www.logix.cz&#x2F;michal&#x2F;doc&#x2F;i386&#x2F; 再看Intel® 64 and IA-32 Architectures Software Developer Manuals https:&#x2F;&#x2F;software.intel.com&#x2F;en-">
+  <meta name="description" content="当你实现了一个工具，需要在不同配置下跑实验的时候，跑实验的代码很可能变得越来越复杂，以至于难以维护。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ucore lab2">
-<meta property="og:url" content="https://wjk.moe/2020/ucore%20lab2/">
+<meta property="og:title" content="如何编写可维护的跑实验代码">
+<meta property="og:url" content="https://wjk.moe/2024/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E8%B7%91%E5%AE%9E%E9%AA%8C%E4%BB%A3%E7%A0%81/">
 <meta property="og:site_name">
-<meta property="og:description" content="ucore lab2 继续看Intel 80386 Programmer&#39;s Reference Manual, 1987 (HTML) http:&#x2F;&#x2F;www.logix.cz&#x2F;michal&#x2F;doc&#x2F;i386&#x2F; 再看Intel® 64 and IA-32 Architectures Software Developer Manuals https:&#x2F;&#x2F;software.intel.com&#x2F;en-">
+<meta property="og:description" content="当你实现了一个工具，需要在不同配置下跑实验的时候，跑实验的代码很可能变得越来越复杂，以至于难以维护。">
 <meta property="og:locale">
-<meta property="og:image" content="https://segmentfault.com/img/remote/1460000009450843">
-<meta property="article:published_time" content="2019-09-29T05:46:25.000Z">
-<meta property="article:modified_time" content="2021-03-12T13:10:56.653Z">
+<meta property="article:published_time" content="2024-03-13T03:11:12.000Z">
+<meta property="article:modified_time" content="2024-03-13T15:30:46.910Z">
 <meta property="article:author" content="am009@github.com">
-<meta property="article:tag" content="OS">
-<meta property="article:tag" content="ucore">
+<meta property="article:tag" content="Scientific">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://segmentfault.com/img/remote/1460000009450843">
   
     <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
   
@@ -87,10 +84,10 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-2020/ucore lab2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-2024/如何编写可维护的跑实验代码" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2020/ucore%20lab2/" class="article-date">
-  <time class="dt-published" datetime="2019-09-29T05:46:25.000Z" itemprop="datePublished">2019-09-29</time>
+    <a href="/2024/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E8%B7%91%E5%AE%9E%E9%AA%8C%E4%BB%A3%E7%A0%81/" class="article-date">
+  <time class="dt-published" datetime="2024-03-13T03:11:12.000Z" itemprop="datePublished">2024-03-13</time>
 </a>
     
   <div class="article-category">
@@ -105,7 +102,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      ucore lab2
+      如何编写可维护的跑实验代码
     </h1>
   
 
@@ -113,59 +110,42 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="ucore-lab2">ucore lab2</h1>
-<p>继续看Intel 80386 Programmer's Reference Manual, 1987 (HTML) http://www.logix.cz/michal/doc/i386/ 再看Intel® 64 and IA-32 Architectures Software Developer Manuals https://software.intel.com/en-us/articles/intel-sdm</p>
+        <p>当你实现了一个工具，需要在不同配置下跑实验的时候，跑实验的代码很可能变得越来越复杂，以至于难以维护。</p>
 <span id="more"></span>
-<h3 id="内存管理">内存管理</h3>
-<p>分段机制启动、分页机制未启动：逻辑地址---&gt;段机制处理---&gt;线性地址=物理地址 分段机制和分页机制都启动：逻辑地址---&gt;段机制处理---&gt;线性地址---&gt;页机制处理---&gt;物理地址</p>
-<p>2^32 = 2^10 * 2^10 * 4k 段机制的时候，limit域长20bit，如果以4k为单位，那么就是最大4g 页机制，一个页4k字节，4字节一个页，一个页可以放1k个页表，那就是1k × 4k = 4M的内存，页表目录则是保存1k个页表，正好4M × 1000 = 4G</p>
-<p>内存分配有几个阶段 https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_3_5_4_maping_relations.html</p>
-<h3 id="lab2-宏观内存分配">lab2 宏观内存分配</h3>
-<p><img src="https://segmentfault.com/img/remote/1460000009450843" /> 图片来自https://segmentfault.com/a/1190000009450840 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">memory: 0009fc00, [00000000, 0009fbff], type = 1.</span><br><span class="line">memory: 00000400, [0009fc00, 0009ffff], type = 2.</span><br><span class="line">memory: 00010000, [000f0000, 000fffff], type = 2.</span><br><span class="line">memory: 07ee0000, [00100000, 07fdffff], type = 1.</span><br><span class="line">memory: 00020000, [07fe0000, 07ffffff], type = 2.</span><br><span class="line">memory: 00040000, [fffc0000, ffffffff], type = 2.</span><br></pre></td></tr></table></figure> 可用内存有两块，一个是从00000000 --&gt; 0009fc00 约1M字节 5个十六进制位是20bit，2^10 是1KB,那么2^20就是1M</p>
-<p>bios加载bootloader bootblock占512字节 = 0x200.占0x7c00 ---&gt; 0x 7dff bootloader探测的内存信息位于0x8000</p>
-<p>内核加载到100000，恰好是第二块可用内存的起始地址 第二块内存有07ee0000，大概126MB多一点 在memlayout.h <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define KMEMSIZE            0x38000000                  // the maximum amount of physical memory</span><br></pre></td></tr></table></figure> 这里限制的物理内存接近1g</p>
-<p>然后就是kernel的ELF一路加载下来 其中data段有页目录表（约0x0010b000）和第一个页表 映射0~4MB的首个页表已经填充好。</p>
-<p>0x10e000之后就是Page结构体，有32736个，每一个管理4K内存，和内存总量相符。 每一个Page有20字节，所以Pages占了654720字节 = 0x9fd80。占了640K...比想象中大好多 page管理物理内存，数量固定，页表数量可能变化，按需创建。 0x1add80之后就是用来分配的内存了，我们的kernel总共用了0xadd80=712KB。</p>
-<p>如果内存再大的话，如果想对应上整个4g空间，那么Page占的空间还可以大32倍。</p>
-<h3 id="diff-lab2-with-lab1">diff lab2 with lab1</h3>
-<p>https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_2_2_phymemlab_files.html 简单来说变化不大，变化的部分除了一些不重要的库（cprintf，什么console的命令解析）其他的基本上都要在写lab2的时候碰到，指导书也讲得很详细。 可以先git commit lab1_result 之后再把lab2 覆盖进去看看变化。</p>
-<h3 id="内存探测">内存探测</h3>
-<p>bootasm.S 添加了有关内存分布的汇编代码 https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_5_probe_phymem_methods.html</p>
-<h3 id="do-while0">do while(0)</h3>
-<p>kern/sync/sync.h https://www.jianshu.com/p/99efda8dfec9</p>
-<h3 id="kern_entry">kern_entry</h3>
-<p>https://segmentfault.com/a/1190000009450840 https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_3_5_4_maping_relations.html</p>
-<h3 id="gdb打印变量不对">gdb打印变量不对</h3>
-<p>https://blog.csdn.net/jeff_/article/details/53333154 http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html CFLAGS := -march=i686 -fno-builtin -fno-PIC -Wall -ggdb -m32 -gstabs -nostdinc $(DEFS) 修改成 CFLAGS := -march=i686 -fno-builtin -fno-PIC -Wall -ggdb -m32 -gdwarf-4 -nostdinc $(DEFS) 目测没有什么其他问题 然而 造成了print_stackframe()不能打印出行数了</p>
-<h3 id="页表映射到自己">页表映射到自己</h3>
-<p>页目录表地址意义： 这个地址开头的线性地址，管理它的页表在哪一个内存页（物理地址）？ 页表地址意义： 你这个4M的地址范围空间，里面的这个地址页在哪个物理内存页？</p>
-<p>如果把页目录表项当成页表项，也就是说，里面的每一个页，都是一个页表。 把0xFAC（10 bit）映射到自己，也就是说在0xFAC（10 bit），这4M的虚拟地址，之后加上10bit的页表的虚拟地址前10bit作为index，就可以直接访问到页表了。 这就相当于必须要解两次地址，消耗了一次，这样就可以达到只取一次地址的效果了。</p>
-<h3 id="invlpg">invlpg</h3>
-<p>https://blog.csdn.net/cinmyheart/article/details/39994769 TLB 页表缓冲，我还以为只是页目录表缓冲。。。</p>
-<p>问： TLB里面有页目录表吗？ 暂时答：因为缓冲一次就缓冲了整个页表，是否命中的判断就是根据对应的页目录表项对不对，所以可能命中缓冲时完全不需要访问页目录表。。。</p>
-<blockquote>
-<p>5.2.5 Page Translation Cache For greatest efficiency in address translation, the processor stores the most recently used page-table data in an on-chip cache. Only if the necessary paging information is not in the cache must both levels of page tables be referenced.</p>
-<p>The existence of the page-translation cache is invisible to applications programmers but not to systems programmers; operating-system programmers must flush the cache whenever the page tables are changed. The page-translation cache can be flushed by either of two methods:</p>
-<ol type="1">
-<li><p>By reloading CR3 with a MOV instruction; for example:</p>
-<p>MOV CR3, EAX</p></li>
-<li><p>By performing a task switch to a TSS that has a different CR3 image than the current TSS. (Refer to Chapter 7 for more information on task switching.)</p></li>
-</ol>
-</blockquote>
-<p>When to do or not do INVLPG, MOV to CR3 to minimize TLB flushing https://www.e-learn.cn/content/wangluowenzhang/626493 TLB的那些事儿 https://blog.csdn.net/omnispace/article/details/61415935</p>
-<h2 id="缺页">缺页？</h2>
-<p>问题： 现在管理的只是物理内存，那谁管理页表的映设关系？如果某虚拟地址没有对应的页怎么办？ 还是说lab2其实就没有管这一块？ 暂时答：似乎确实不管这回事？虽然有一些维护页表项的函数，但是没怎么被调用。 先写写lab3吧。</p>
-<h3 id="mark-收藏夹">mark-收藏夹</h3>
-<p>https://www.jianshu.com/p/abbe81dfe016 https://blog.csdn.net/hezxyz/article/details/95764158</p>
+<h3 id="如何测量内存和时间">如何测量内存和时间</h3>
+<p>建议优先使用<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/774601/13798540"><code>/usr/bin/time -v</code></a>。如果实验在docker里运行，则修改docker容器，在docker内部使用<code>/usr/bin/time</code></p>
+<p>我之前实验在docker里运行，于是开始搜索是否有监控docker容器运行的内存和时间的工具，发现没有之后就开始用python脚本自己写了一个。写起来很折磨，因为其实考虑清楚细节挺复杂的。最后选择了监控docker stats的输出的方式，统计每个容器的时间和内存。最让人沮丧的事情是，最后分析实验数据的时候发现，自己测出来的时间不准！！最后很让人崩溃</p>
+<h3 id="如何控制命令运行超时">如何控制命令运行超时</h3>
+<p>使用<code>timeout</code>命令，同时加上<code>--kill-after=60s</code>防止命令因为卡死不退出的情况。即使使用了docker，也不要使用docker kill等命令，而是修改docker镜像，在内部使用timeout。</p>
+<p>结合测量时间和内存的话，通常需要在运行实验的命令前加上一长串（<code>/usr/bin/time -v /usr/bin/timeout --kill-after=60s $TIMEOUT ...</code>）。虽然一开始可能感觉奇怪，但实际上相比其他的方案会简单很多。我也在python脚本里集成了监控运行的docker容器，超时调用docker kill的功能，最后导致复杂度的暴增，有时也无法有效地停止卡死的容器。</p>
+<p>一个可能的问题是，如果强行终止程序，即使有了一些结果程序也没保存下来。这时候建议同时设置这个硬超时，和程序命令行里的软超时（略小于硬超时时间）。</p>
+<h3 id="如何多进程并行运行实验同时控制并行数量">如何多进程并行运行实验，同时控制并行数量</h3>
+<p>使用python脚本将需要运行的命令打印出来，需要顺序运行的命令之间可以用分号隔开。使用<code>\x00</code>作为并行运行命令的分隔符，并通过管道传给<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/19618159/13798540">xargs命令</a>（例如：<code>python cmds_print.py | xargs -0 -I CMD --max-procs=1 bash -c CMD</code>）。即使是用docker运行，也应该把docker run命令打印出来然后用该方案运行。</p>
+<p>这种方案的另外一个好处是，可以先将需要运行的命令收集起来，然后按照想要的方式打印出来作为执行顺序。有时候会发现，自己运行的实验命令是一个二维的情况，生成的时候按照参数配置生成方便，但是如果运行的时候按照数据集运行，则便于自己在实验没完全跑完时手动分析处理。此时可以将运行的命令矩阵<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/8421412/13798540">转置</a>一下（<code>list(*zip(arr))</code>），再打印出来。</p>
+<p>之前没有发现这个方案，又自己写并行运行的方案。写出来也很复杂。。</p>
+<h3 id="如何在文件数据集的子集上分析">如何在文件数据集的子集上分析</h3>
+<p>为这个数据集创建新的文件夹，内部使用软链接的方式，链接到原数据集文件夹。通过转换为在一个新的数据集上分析的问题，复用分析单个文件夹的逻辑。</p>
+<h3 id="如何给实验数据画图">如何给实验数据画图</h3>
+<p>（最好想好自己要画的图的类型）将需要画图的数据转换为简单的格式，如json/csv。然后将数据文件发送给GPT4，说明需求，让GPT4的code interpreter功能为自己画图。</p>
+<p>不得不说，我在matplotlib seaborn等画图库上调试和debug的时间很多。数据可视化已经是GPT4能干得不错的事情。</p>
+<h3 id="实验数据如何存储pickel序列化存数据库">实验数据如何存储，pickel序列化？，存数据库？</h3>
+<p>使用tee命令或者输出重定向的方式，将实验的相关原始输出都记录下来，包括/usr/bin/time -v的输出。数据完全不存储数据库，而是按需直接访问对应实验文件夹，在输出中匹配得到。</p>
+<p>本质上实验数据输出的原始文件夹，也可以看作一种“数据库”。如果还要单独存一份的话，那一方面要维护一个实验数据提取脚本，一方面要维护从数据库读取然后转换画图的脚本。时刻警惕复杂度的上升，不然它会成为软件工程的灾难和自己的噩梦。</p>
+<h3 id="善用环境变量传递参数">善用环境变量传递参数</h3>
+<p>当整个实验环境被打包，在复杂的模块套模块的情况里，如果要通过最外层命令行设置里面模块的参数，则需要将参数一直保持和传递，极大地增加了复杂性。然而可以通过环境变量传递参数，在最外层设置环境变量，在内部模块则可以直接获取到（例如python，<code>os.environ['XXX']</code>）。</p>
+<p>如果用python，首先定义一个实验数据类，指定每个实验结果文件夹，然后定义一些获取实验数据的成员函数，需要参数的用<code>@cache</code>修饰，不需要参数的用<code>@cached_property</code>修饰，这样无需考虑反复调用获取的复杂度问题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NSStats</span>:</span><br><span class="line">    native_methods = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, result_path:<span class="built_in">str</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        self.result_path = result_path</span><br><span class="line"></span><br><span class="line"><span class="meta">    @cached_property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">time</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> match_unix_time_file(<span class="string">f&quot;<span class="subst">&#123;self.result_path&#125;</span>/docker_stderr.txt&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>然后可以利用类似defaultdict的思想，自动在取dict的时候实例化我们这个类。只需要直接拿结果文件夹路径访问这个dict，然后访问参数直接得到对应的实验数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NSDataDict</span>(<span class="title class_ inherited__">dict</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__missing__</span>(<span class="params">self, key</span>):</span><br><span class="line">        self[key] = NSStats(key)</span><br><span class="line">        <span class="keyword">return</span> self[key]</span><br><span class="line"></span><br><span class="line">ns_data_dict = NSDataDict()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> folder <span class="keyword">in</span> os.listdir(xxx):</span><br><span class="line">    st = ns_data_dict[<span class="string">f&#x27;<span class="subst">&#123;BASE&#125;</span>/<span class="subst">&#123;folder&#125;</span>&#x27;</span>]<span class="comment"># type: NSStats</span></span><br><span class="line">    time = st.time</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/ucore%20lab2/" data-id="clts47ok3000x7gue9s2h8zpb" data-title="ucore lab2" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2024/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E8%B7%91%E5%AE%9E%E9%AA%8C%E4%BB%A3%E7%A0%81/" data-id="clts47okl001y7gue9ngkgm1g" data-title="如何编写可维护的跑实验代码" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li></ul>
 
     </footer>
   </div>
@@ -173,19 +153,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2019/%E5%A0%86%E5%9D%97Unlink%E7%9A%84%E7%90%86%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
-      <div class="article-nav-title">
-        
-          堆块Unlink的理解
-        
-      </div>
-    </a>
   
-  
-    <a href="/2020/ucore%20lab1/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">ucore lab1</div>
+      <div class="article-nav-title">Openwrt的GRETap6隧道的MTU问题</div>
     </a>
   
 </nav>
