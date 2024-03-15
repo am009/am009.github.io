@@ -6,15 +6,15 @@
   
   <title>Openwrt的GRETap6隧道的MTU问题 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Openwrt的GRETap6隧道的MTU问题">
+  <meta name="description" content="TLDR：如何使用GRE Tap隧道不会遇到MTU问题？使用IPv4连接，同时关闭GRE接口配置中的“设置Don&#39;t Fragment”选项。。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Openwrt的GRETap6隧道的MTU问题">
 <meta property="og:url" content="https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/">
 <meta property="og:site_name">
-<meta property="og:description" content="Openwrt的GRETap6隧道的MTU问题">
+<meta property="og:description" content="TLDR：如何使用GRE Tap隧道不会遇到MTU问题？使用IPv4连接，同时关闭GRE接口配置中的“设置Don&#39;t Fragment”选项。。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2024-03-10T03:11:12.000Z">
-<meta property="article:modified_time" content="2024-03-15T03:43:08.911Z">
+<meta property="article:modified_time" content="2024-03-15T05:55:33.439Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Networking">
 <meta name="twitter:card" content="summary">
@@ -110,7 +110,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>Openwrt的GRETap6隧道的MTU问题</p>
+        <p>TLDR：如何使用GRE Tap隧道不会遇到MTU问题？使用IPv4连接，同时关闭GRE接口配置中的“设置Don't Fragment”选项。。</p>
 <span id="more"></span>
 <h2 id="背景">背景</h2>
 <p>两个发射wifi的路由器用GRETap通过IPv6在链路层组网，我在这边wifi通过SSH连接那边路由器有线连接的台式机，诡异地连不上去。经过调研发现应该是MTU的问题。</p>
@@ -135,6 +135,9 @@
 <p>上面说的都是使用GRE通过互联网创建隧道。但是实际上我们想做的是通过IPv6，跨学校交换机在两个房间组网。如果经过交换机的这个链路支持很大的MTU，那我们隧道就应该没问题。经过测试，交换机能传输大的以太网包。但是我们发现，怎么改接口的MTU都不管用。</p>
 <p>不断抓包，使用nping命令直接发送以太网包发现，IPv6和IPv4的MTU居然不一样。先把网卡MTU配置为2000。首先使用<code>nping -c 1 --icmp --dest-mac 00:0C:29:72:2D:59 1.1.1.1 --data-length 1954</code> 可以发出总大小为2000的以太网包。但是如果转而想发送IPv6，使用 <code>ping -s 11472 -Mdo 2001:250:4000:511d:114:514:1919:810</code> 提示<code>ping: local error: message too long, mtu: 1500</code>。</p>
 <p>进一步搜索找出了问题的根源：IPv6的RA路由通告会通告当前网段的MTU大小。通过设置静态地址，忽略RA，可以使得MTU正确地变成网卡配置的MTU。</p>
+<h2 id="mss-clamping">MSS Clamping</h2>
+<p>如果链路中MTU出现了问题，则每次都得发送一个PMTUD的消息，减小传输大小，然后才能正常通信。这在每次通信时都增加了一个round trip的延迟开销</p>
+<p>MSS是TCP的一个协商出来的参数，也是最大的传输大小。路由器防火墙(在Masquerade的同时？)，如果发现链路的MTU很小，可以在协商的时候把TCP的MSS直接弄小一点。这样就直接省去了这个round trip步骤。</p>
 <h3 id="其他">其他</h3>
 <p><strong>诊断</strong>：</p>
 <ul>
@@ -155,7 +158,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/" data-id="clts47okw002g7gue1gy82wlz" data-title="Openwrt的GRETap6隧道的MTU问题" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/" data-id="clts8wnmz0023e0ue4z0p52f3" data-title="Openwrt的GRETap6隧道的MTU问题" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
