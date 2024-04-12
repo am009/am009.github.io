@@ -2525,9 +2525,14 @@
 <ul>
 <li>跟着<a href="https://openwrt.org/docs/guide-developer/toolchain/install-buildsystem">install-buildsystem</a>安装一堆包</li>
 <li>跟着<a href="https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem">use-buildsystem</a>克隆源码</li>
-<li>跟着<a href="https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem#using_official_build_config">using_official_build_config</a>构建一个路由器能用的镜像。我手头的路由器是AX6S，ROM的下载链接是：<code>http://downloads.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/openwrt-23.05.0-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin</code>，所以我就执行：<code>wget https://mirror-01.infra.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/config.buildinfo -O .config</code> 和 <code>wget https://mirror-01.infra.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/feeds.buildinfo -O feeds.conf</code></li>
+<li>跟着<a href="https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem#using_official_build_config">using_official_build_config</a>构建一个路由器能用的镜像。下载config.buildinfo文件到.config。
+<ul>
+<li>我手头的路由器是AX6S，ROM的下载链接是：<code>http://downloads.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/openwrt-23.05.0-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin</code>，所以我就执行：<code>wget https://mirror-01.infra.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/config.buildinfo -O .config</code> 和 <code>wget https://mirror-01.infra.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/feeds.buildinfo -O feeds.conf</code></li>
+</ul></li>
 <li>构建GRE、netifd包：<code>make package/network/config/netifd/compile V=s</code> （加上了<code>V=s</code>可以看到使用的相关命令）</li>
 </ul>
+<p><strong>重新构建一切</strong></p>
+<p><code>make dirclean defconfig download clean world</code></p>
 <h3 id="包编译的细节">包编译的细节</h3>
 <ul>
 <li>首先源码的压缩包，会被下载：<code>openwrt/dl/netifd-2023-09-19-7a58b995.tar.xz</code></li>
@@ -2545,6 +2550,9 @@
 <li><a href="https://openwrt.org/submitting-patches">Submitting patches</a>页面，提到了核心包可以通过Github PR或者邮件列表提交。</li>
 <li><a href="https://lists.openwrt.org/pipermail/openwrt-devel/2024-January/041977.html">这个Patch</a>先出现在邮件列表，然后<a href="https://git.openwrt.org/?p=project/netifd.git;a=commit;h=4219e99eeec7514657f5838eb4b4b5eb28ee1271">commit</a>才出现在netifd的列表里，说明他们还是在用mailing list的，可以考虑直接写patch交patch。</li>
 </ul>
+<h3 id="给包增加patch">给包增加Patch</h3>
+<p>https://openwrt.org/docs/guide-developer/toolchain/use-patches-with-buildsystem</p>
+<p>quilt import https://github.com/am009/mosdns/commit/4f90490dc7c56c94880f09b5bf2542ac65d97530.patch</p>
 ]]></content>
       <categories>
         <category>Dev</category>
@@ -3802,7 +3810,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
   <entry>
     <title>Openwrt的GRETap6隧道的MTU问题</title>
     <url>/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>TLDR：如何使用GRE Tap隧道不会遇到MTU问题？使用IPv4连接，同时关闭GRE接口配置中的“设置Don't Fragment”选项。。</p>
+    <content><![CDATA[<p>TLDR：如何使用GRE Tap隧道不会遇到MTU问题？使用IPv4连接（gretap4），同时（在第一次创建接口时！！）关闭GRE接口配置中的“设置Don't Fragment”选项。</p>
 <span id="more"></span>
 <h2 id="背景">背景</h2>
 <p>两个发射wifi的路由器用GRETap通过IPv6在链路层组网，我在这边wifi通过SSH连接那边路由器有线连接的台式机，诡异地连不上去。经过调研发现应该是MTU的问题。</p>
@@ -3828,6 +3836,7 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <p>不断抓包，使用nping命令直接发送以太网包发现，IPv6和IPv4的MTU居然不一样。先把网卡MTU配置为2000。首先使用<code>nping -c 1 --icmp --dest-mac 00:0C:29:72:2D:59 1.1.1.1 --data-length 1954</code> 可以发出总大小为2000的以太网包。但是如果转而想发送IPv6，使用 <code>ping -s 11472 -Mdo 2001:250:4000:511d:114:514:1919:810</code> 提示<code>ping: local error: message too long, mtu: 1500</code>。</p>
 <p>进一步搜索找出了问题的根源：IPv6的RA路由通告会通告当前网段的MTU大小。通过设置静态地址，忽略RA，可以使得MTU正确地变成网卡配置的MTU。</p>
 <h2 id="mss-clamping">MSS Clamping</h2>
+<p><a href="https://blog.ipspace.net/2013/01/tcp-mss-clamping-what-is-it-and-why-do.html?m=1">这个视频</a>很好地介绍了MSS Clamping的原理。</p>
 <p>如果链路中MTU出现了问题，则每次都得发送一个PMTUD的消息，减小传输大小，然后才能正常通信。这在每次通信时都增加了一个round trip的延迟开销</p>
 <p>MSS是TCP的一个协商出来的参数，也是最大的传输大小。路由器防火墙(在Masquerade的同时？)，如果发现链路的MTU很小，可以在协商的时候把TCP的MSS直接弄小一点。这样就直接省去了这个round trip步骤。</p>
 <h3 id="其他">其他</h3>
@@ -4085,31 +4094,49 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
     <url>/2023/%E5%A6%82%E4%BD%95%E5%86%99paper/</url>
     <content><![CDATA[<p>学术论文写作总结</p>
 <span id="more"></span>
-<h3 id="相关工具">相关工具</h3>
+<h3 id="资料和工具">资料和工具</h3>
 <ul>
+<li>How to Write a Good Scientific Paper 作者：Chris. A. Mack.</li>
+<li><a href="https://simon.peytonjones.org/great-research-paper/">How to Write a Great Research Paper</a> Simon Peyton Jones</li>
 <li><a href="https://github.com/am009/git-latexdiff-web">git-latexdiff-web</a>：上传两个overleaf压缩包，运行git-latexdiff，返回一个可以看出有哪些修改的pdf。可以在其他人帮改paper后得到反馈。</li>
-<li><a href="https://poe.com/TranslatingChinese">Poe翻译机器人</a>：直接输入中文，内置提示词会让LLM将内容直接翻译为英文。</li>
+<li><a href="https://poe.com/TranslatingChinese">Poe翻译机器人</a>：直接输入中文，内置提示词会让ChatGPT将内容直接翻译为英文。</li>
 </ul>
-<h2 id="学习路线">学习路线</h2>
-<p>没有不能克服的困难。写paper看似很难，实际上是由一些没那么难的事情组合而成。想起我之前写作卡出半天写不出一句话，有时候是逻辑理不清楚的问题，有时候是英语语法语料不足，想表达一句话不能很好地表达出来。每次写都是花费大量时间，憋不出两三句话，每次都很难受，想到就抑郁。</p>
-<p>先写中文是有帮助的。能够清楚地知道自己往往遇到的是逻辑问题，而不是英语表达能力的问题。速度就是质量，真正好的文章是改出来的，如果不能以很快的速度进行这个过程，那么就很可能不能在自己可接受的时间范围内写出“还看得过去”的paper内容，自己也会非常折磨。可以在文档中自己分两栏，比如用个两列的列表，左边放中文，右边放英文。每次同时修改两边内容。</p>
-<p>在分离了语言这个困难后，其次是讲求逻辑，有明确的逻辑关系。优先看自己是不是完全写清楚了，其次是考虑篇幅等其他问题。往往会发现越写越多，然后超出内容，然后开始精简，这也是写paper的必经之路。后面再删，删的时候优先选择必要的逻辑，次要的注释掉。</p>
-<p>最后，需要注意，语言是一种艺术。必须要让自己的语言能够以最简单的方式被看懂。首先，任何逻辑上复杂的弯都最好理顺，①进一步增加自己paper的受众，让更多人能看懂，②很有可能reviewer在看你paper的时候很累，思维也并不是很清晰。其次，为了段落结构的清晰，可以通过调整句子，让自己每个段落想表达什么都明确出来。比如，介绍自己paper主要思想时，我们往往并不会写：“The main idea of our paper is that xxxx.”，但是我们却可以刻意改成这样，从而极度明确地让人知道这个段落的主要内容。从另外一方面想，把段落组织起来，利用开头句作为索引，也是方便知识查找和索引的一种方式。语言也是一种艺术，你很难知道这些句子在别人脑子里能否和得到你形成一样的想法。就像艺术要追求美一样，我们要追求逻辑上的清晰，简洁易懂。</p>
-<p>另外，克服自己害怕的事情有一些通用的“技巧”。早上刚起床的时候做你最害怕，最不想做的事情。</p>
-<h3 id="学习方法">学习方法</h3>
-<p>首先是英文写作。这两天正好在准备托福，有一道写作题，每次做完放到grammarly里检查语法错误。第一遍的时候很多语法错，有点沮丧。但是连续做了几遍这同一题之后，渐渐知道自己经常在哪些地方犯错，能够在检查的时候基本上错误没多少了。之后对英文写作就有信心多了，这一点对写paper也有帮助。</p>
 <h2 id="总体思想">总体思想</h2>
+<p>没有不能克服的困难。写paper看似很难，实际上是由一些没那么难的事情组合而成。</p>
 <ul>
-<li>写作要逻辑，讲求逻辑，文字是次要的。遇到自己写不出来的情况，首先问自己是不是逻辑问题，把自己的逻辑理清楚。</li>
-<li>Reader Oriented：</li>
-<li>Reproducible：重视实验结果的可复现性</li>
+<li>Good paper = Good Research + Good Writing。一般过于忽视了好的写作的重要性。好的写作和好的Research同等重要。不需要注重词语，不建议写很长句子。
+<ul>
+<li>Good Research:
+<ul>
+<li>Good Idea: 提出问题/解决问题？</li>
+</ul></li>
+<li>Good Writing
+<ul>
+<li>English: 大模型帮助很大，但是依然要注重提升英语水平。不要用太多复杂的词。
+<ul>
+<li>同时准备雅思/托福等英语考试。</li>
+</ul></li>
+<li>Good Logic:
+<ul>
+<li>总体结构上，都是形成了模式的。就像填模板一样，不需要要有格式上的创新。</li>
+<li>宏观是逻辑是一条线下来，微观上段落都是总分的结构。</li>
+<li>多找其他人看一看自己写的好不好。</li>
+</ul></li>
+<li>Reader Oriented:</li>
+<li>Correct and Succinct:</li>
+<li>Clear with Good Logic: 把自己的逻辑先列出来，然后再理清楚。</li>
+<li>Reproducible: 重视实验结果的可复现性。写作上指写出来的东西是可复现的，要把关键的点写出来。</li>
+</ul></li>
+</ul></li>
 </ul>
-<p>写Abstract、Introduction可以留到最后。Abstract需要考虑让没有背景的人也能看懂。Introduction也不需要写得太细节，即使能很好地概况你的内容。写清楚是正文approach的事情。</p>
-<p>如何写得更清晰： 1. 从读者熟悉的概念入手。如果要指代同一个东西，尽量用读者熟悉的那个词指代。 2. Abstract，Introduction以及Motivating Examples中，有可能写得太细节，导致读者看不懂。让其他人看看有哪些关键词太过细节，不需要那么详细说。 3. 宏观是逻辑是一条线下来，微观上段落都是总分的结构。</p>
+<p>写Abstract、Introduction可以留到最后？Abstract需要考虑让没有背景的人也能看懂。Introduction也不需要写得太细节，即使能很好地概况你的内容。写清楚是正文approach的事情。</p>
 <h2 id="写paper">写paper</h2>
-<h3 id="摘要">摘要</h3>
-<p>摘要并不是为了准确地概况paper的方法。方法不用写太细节。包括the scope, purpose, main idea, results。摘要需要易懂，让更多人能看懂，此外，让看的人知道是不是他们想要找的paper。</p>
-<h2 id="latex">Latex</h2>
+<h3 id="rebuttal-revision">Rebuttal &amp; Revision</h3>
+<ol type="1">
+<li>reviewer可能忘了自己之前说什么，最好不要有太多引用文章或者rebuttal的地方，而是复述一下。</li>
+<li>rebuttal的时候最好不要对其他没有提到意见的地方有太大修改。因为理论上应该在投paper之前，paper应当被打磨完毕。</li>
+</ol>
+<h2 id="latex相关问题">Latex相关问题</h2>
 <p><strong>ACM模板移除Copyright</strong></p>
 <p>这篇<a href="https://shantoroy.com/latex/acm-remove-copyright-information-from-first-page/">文章</a>介绍了。其中<a href="https://fr.overleaf.com/learn/latex/Headers_and_footers#LaTeX_page_styles">pagestyle</a>是和header和footer有关的设置，我加上好像没什么变化。</p>
 <figure class="highlight latex"><table><tr><td class="code"><pre><span class="line"><span class="comment">% 加在use的package后面</span></span><br><span class="line"><span class="keyword">\setcopyright</span>&#123;none&#125;</span><br><span class="line"><span class="keyword">\settopmatter</span>&#123;printacmref=false&#125; <span class="comment">% Removes citation information below abstract</span></span><br><span class="line"><span class="keyword">\renewcommand</span><span class="keyword">\footnotetextcopyrightpermission</span>[1]&#123;&#125; <span class="comment">% removes footnote with conference information in first column</span></span><br><span class="line"><span class="comment">% \pagestyle&#123;plain&#125;% removes running headers</span></span><br></pre></td></tr></table></figure>
@@ -4119,13 +4146,16 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <p>使用autoref可以免去写<code>Figure. 1</code>前面的<code>Figure.</code>部分。</p>
 <p><strong>IEEE 表Caption是大写</strong></p>
 <p><a href="https://tex.stackexchange.com/questions/166814/table-caption-in-uppercase-i-dont-know-why">IEEE模板确实要求表的标题是Small Caps格式</a>的。但是，当你<a href="https://tex.stackexchange.com/questions/387133/my-table-is-not-conforming-to-the-ieeetran-caption-table-format">引用了<code>\usepackage&#123;subcaption&#125;</code>之后会变成正常格式</a>。如果要提交到期刊，这是一个容易犯的错误。但是确实有很多paper的table的格式因为这个而不对。有一个<a href="https://tex.stackexchange.com/questions/154435/ieee-template-and-caption-false-option-for-subcaption-package">方法</a>（<a href="https://liuzhiguang.wordpress.com/2018/01/05/get-ieeetran-to-work-with-the-subcaption-package/">这里</a>也提到）可以绕过这个问题而正常使用subcaption包。</p>
+<ul>
+<li><strong>在Caption中使用footnote</strong>：<a href="https://tex.stackexchange.com/questions/10181/using-footnote-in-a-figures-caption">这里</a>说需要先使用<code>\protect\footnotemark</code>生成脚标标记，然后在表后增加一个<code>\footnotetext&#123;xxxx&#125;</code>。此外，建议此时同时使用<code>\caption[short description]&#123;long description&#125;</code>的格式。有的论文会在结尾生成一个list of figures/tables目录，此时short description会被用到。</li>
+</ul>
 <h3 id="图表">图表</h3>
 <p>基础样式的表格：基于 https://www.tablesgenerator.com/ 生成，选择Booktabs table style，仅选择三个横线（表顶部底部和表头）和内部竖线。</p>
 <ul>
 <li>图表说明是否需要句号？</li>
 <li>引用图表时使用波浪线：<code>Fig.~\ref&#123;fig:xxx&#125;</code>。波浪线代表不换行空格。</li>
 <li>引用Section的时候用<code>\S</code>替代，例如<code>\S \ref&#123;sssec:xxx&#125;</code></li>
-<li>标号可以用<code>\pin</code></li>
+<li>标号可以用<a href="https://tex.stackexchange.com/questions/7032/good-way-to-make-textcircled-numbers">带圆圈的数字</a>。</li>
 </ul>
 <p><strong>节约空间</strong></p>
 <p>调paper空间要注意Latex的块结构。如果有个块是一个整体，比如一些RQ的Answer块，正好卡在了页面边缘，那么除非你能删改出整个块的空间，不然空间布局是不会变的。</p>
@@ -4154,6 +4184,9 @@ R_f = \{(0,0)\} \qquad Edge: 0 \rightarrow 0 \\
 <h2 id="rebuttal">rebuttal</h2>
 <p>最直接的想法当然是，针对review提出的问题，直接列表一个个回答便是。但是，review经常会，完全不记得问题的上下文。因此这种方式容易导致review想不起来之前的问题。因此要注意重新介绍一下相关的上下文。</p>
 <h2 id="其他">其他</h2>
+<p>先写中文是有帮助的。能够清楚地知道自己往往遇到的是逻辑问题，而不是英语表达能力的问题。速度就是质量，真正好的文章是改出来的，如果不能以很快的速度进行这个过程，那么就很可能不能在自己可接受的时间范围内写出“还看得过去”的paper内容，自己也会非常折磨。可以在文档中自己分两栏，比如用个两列的列表，左边放中文，右边放英文。每次同时修改两边内容。</p>
+<p>在分离了语言这个困难后，其次是讲求逻辑，有明确的逻辑关系。优先看自己是不是完全写清楚了，其次是考虑篇幅等其他问题。往往会发现越写越多，然后超出内容，然后开始精简，这也是写paper的必经之路。后面再删，删的时候优先选择必要的逻辑，次要的注释掉。</p>
+<p>最后，需要注意，语言是一种艺术。必须要让自己的语言能够以最简单的方式被看懂。首先，任何逻辑上复杂的弯都最好理顺，①进一步增加自己paper的受众，让更多人能看懂，②很有可能reviewer在看你paper的时候很累，思维也并不是很清晰。其次，为了段落结构的清晰，可以通过调整句子，让自己每个段落想表达什么都明确出来。比如，介绍自己paper主要思想时，我们往往并不会写：“The main idea of our paper is that xxxx.”，但是我们却可以刻意改成这样，从而极度明确地让人知道这个段落的主要内容。从另外一方面想，把段落组织起来，利用开头句作为索引，也是方便知识查找和索引的一种方式。语言也是一种艺术，你很难知道这些句子在别人脑子里能否和得到你形成一样的想法。就像艺术要追求美一样，我们要追求逻辑上的清晰，简洁易懂。</p>
 <p>2024年1月24日 - 表格的<code>\extracolsep</code>填满整个页，会导致边框有gap，rotate之后不对齐到中间。 - 引用网页时，使用<code>@misc&#123;&#125;</code>项目，如果写<code>url = &#123;&#123;xxx&#125;&#125;</code>则在后面不会显示链接。写<code>howpublished  = &#123;\url&#123;xxx&#125;&#125;</code>才会显示。<a href="https://tex.stackexchange.com/questions/171441/url-not-showing-in-references">这里</a>有个相关的问题。可能<code>@online</code>和<code>url</code>搭配，而<code>@misc</code>和<code>howpublished</code>搭配使用。</p>
 <p>2023年12月9日 <del>今天花了一个小时，就改了一个小节（半页）。有时会没有</del>注意小节开头的句子和之前的连贯性。</p>
 <ul>
@@ -5691,6 +5724,17 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
     <url>/2024/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E8%B7%91%E5%AE%9E%E9%AA%8C%E4%BB%A3%E7%A0%81/</url>
     <content><![CDATA[<p>当你实现了一个工具，需要在不同配置下跑实验的时候，跑实验的代码很可能变得越来越复杂，以至于难以维护。</p>
 <span id="more"></span>
+<h3 id="python-dict转array">Python dict转array</h3>
+<p>比如你有一个实验数据表示不同工具的时间消耗<code>&#123;"tool A": [1.1, 2.0, 3.9, ...], "tool B": [...], "tool C": [...]&#125;</code>。然后你想要画一个散点图。但是散点图需要直接传入内部数据的数组，此时，似乎自然而然地就会直接<code>list(data.values())</code>。</p>
+<p>血和泪的教训。。。实验数据可能会产生错位！！！因为<code>.values()</code>调用不会保证顺序！！还是要按照自己图上的label，从dict里好好一个个取出，才能正确地按顺序得到list。</p>
+<h3 id="善于cache减少重复运算">善于<code>@cache</code>减少重复运算。</h3>
+<p>基于Jupyter notebook分块运行python代码非常方便。将实验数据收集划分为不同的函数，然后加上<code>@cache</code>修饰，使得重跑时不会重复运行代码。</p>
+<p>如果用python，首先定义一个实验数据类，指定每个实验结果文件夹，然后定义一些获取实验数据的成员函数，需要参数的用<code>@cache</code>修饰，不需要参数的用<code>@cached_property</code>修饰，这样无需考虑反复调用获取的复杂度问题。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NSStats</span>:</span><br><span class="line">    native_methods = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, result_path:<span class="built_in">str</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        self.result_path = result_path</span><br><span class="line"></span><br><span class="line"><span class="meta">    @cached_property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">time</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> match_unix_time_file(<span class="string">f&quot;<span class="subst">&#123;self.result_path&#125;</span>/docker_stderr.txt&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>然后可以利用类似defaultdict的思想，自动在取dict的时候实例化我们这个类。只需要直接拿结果文件夹路径访问这个dict，然后访问参数直接得到对应的实验数据。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NSDataDict</span>(<span class="title class_ inherited__">dict</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__missing__</span>(<span class="params">self, key</span>):</span><br><span class="line">        self[key] = NSStats(key)</span><br><span class="line">        <span class="keyword">return</span> self[key]</span><br><span class="line"></span><br><span class="line">ns_data_dict = NSDataDict()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> folder <span class="keyword">in</span> os.listdir(xxx):</span><br><span class="line">    st = ns_data_dict[<span class="string">f&#x27;<span class="subst">&#123;BASE&#125;</span>/<span class="subst">&#123;folder&#125;</span>&#x27;</span>]<span class="comment"># type: NSStats</span></span><br><span class="line">    time = st.time</span><br></pre></td></tr></table></figure>
+<h3 id="标记正常运行完成而不是被杀或者超时">标记正常运行完成，而不是被杀或者超时</h3>
+<p>在跑实验的脚本里使用touch创建对应的文件，例如 touch XXX_FINISHED 表示已经完成，通过检测对应文件是否存在判断是否运行完成。</p>
 <h3 id="如何测量内存和时间">如何测量内存和时间</h3>
 <p>建议优先使用<a href="https://stackoverflow.com/a/774601/13798540"><code>/usr/bin/time -v</code></a>。如果实验在docker里运行，则修改docker容器，在docker内部使用<code>/usr/bin/time</code></p>
 <p>我之前实验在docker里运行，于是开始搜索是否有监控docker容器运行的内存和时间的工具，发现没有之后就开始用python脚本自己写了一个。写起来很折磨，因为其实考虑清楚细节挺复杂的。最后选择了监控docker stats的输出的方式，统计每个容器的时间和内存。最让人沮丧的事情是，最后分析实验数据的时候发现，自己测出来的时间不准！！最后很让人崩溃</p>
@@ -5712,10 +5756,6 @@ T (c) = ∆_d(T (a), T (b)) \qquad (5.6)
 <p>本质上实验数据输出的原始文件夹，也可以看作一种“数据库”。如果还要单独存一份的话，那一方面要维护一个实验数据提取脚本，一方面要维护从数据库读取然后转换画图的脚本。时刻警惕复杂度的上升，不然它会成为软件工程的灾难和自己的噩梦。</p>
 <h3 id="善用环境变量传递参数">善用环境变量传递参数</h3>
 <p>当整个实验环境被打包，在复杂的模块套模块的情况里，如果要通过最外层命令行设置里面模块的参数，则需要将参数一直保持和传递，极大地增加了复杂性。然而可以通过环境变量传递参数，在最外层设置环境变量，在内部模块则可以直接获取到（例如python，<code>os.environ['XXX']</code>）。</p>
-<p>如果用python，首先定义一个实验数据类，指定每个实验结果文件夹，然后定义一些获取实验数据的成员函数，需要参数的用<code>@cache</code>修饰，不需要参数的用<code>@cached_property</code>修饰，这样无需考虑反复调用获取的复杂度问题。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NSStats</span>:</span><br><span class="line">    native_methods = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, result_path:<span class="built_in">str</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        self.result_path = result_path</span><br><span class="line"></span><br><span class="line"><span class="meta">    @cached_property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">time</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> match_unix_time_file(<span class="string">f&quot;<span class="subst">&#123;self.result_path&#125;</span>/docker_stderr.txt&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>然后可以利用类似defaultdict的思想，自动在取dict的时候实例化我们这个类。只需要直接拿结果文件夹路径访问这个dict，然后访问参数直接得到对应的实验数据。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NSDataDict</span>(<span class="title class_ inherited__">dict</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__missing__</span>(<span class="params">self, key</span>):</span><br><span class="line">        self[key] = NSStats(key)</span><br><span class="line">        <span class="keyword">return</span> self[key]</span><br><span class="line"></span><br><span class="line">ns_data_dict = NSDataDict()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> folder <span class="keyword">in</span> os.listdir(xxx):</span><br><span class="line">    st = ns_data_dict[<span class="string">f&#x27;<span class="subst">&#123;BASE&#125;</span>/<span class="subst">&#123;folder&#125;</span>&#x27;</span>]<span class="comment"># type: NSStats</span></span><br><span class="line">    time = st.time</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Dev</category>

@@ -14,7 +14,7 @@
 <meta property="og:description" content="Openwrt构建">
 <meta property="og:locale">
 <meta property="article:published_time" content="2024-01-11T03:11:12.000Z">
-<meta property="article:modified_time" content="2024-01-29T13:47:00.585Z">
+<meta property="article:modified_time" content="2024-03-19T02:34:49.193Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Networking">
 <meta name="twitter:card" content="summary">
@@ -117,9 +117,14 @@
 <ul>
 <li>跟着<a target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-developer/toolchain/install-buildsystem">install-buildsystem</a>安装一堆包</li>
 <li>跟着<a target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem">use-buildsystem</a>克隆源码</li>
-<li>跟着<a target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem#using_official_build_config">using_official_build_config</a>构建一个路由器能用的镜像。我手头的路由器是AX6S，ROM的下载链接是：<code>http://downloads.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/openwrt-23.05.0-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin</code>，所以我就执行：<code>wget https://mirror-01.infra.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/config.buildinfo -O .config</code> 和 <code>wget https://mirror-01.infra.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/feeds.buildinfo -O feeds.conf</code></li>
+<li>跟着<a target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem#using_official_build_config">using_official_build_config</a>构建一个路由器能用的镜像。下载config.buildinfo文件到.config。
+<ul>
+<li>我手头的路由器是AX6S，ROM的下载链接是：<code>http://downloads.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/openwrt-23.05.0-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin</code>，所以我就执行：<code>wget https://mirror-01.infra.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/config.buildinfo -O .config</code> 和 <code>wget https://mirror-01.infra.openwrt.org/releases/23.05.0/targets/mediatek/mt7622/feeds.buildinfo -O feeds.conf</code></li>
+</ul></li>
 <li>构建GRE、netifd包：<code>make package/network/config/netifd/compile V=s</code> （加上了<code>V=s</code>可以看到使用的相关命令）</li>
 </ul>
+<p><strong>重新构建一切</strong></p>
+<p><code>make dirclean defconfig download clean world</code></p>
 <h3 id="包编译的细节">包编译的细节</h3>
 <ul>
 <li>首先源码的压缩包，会被下载：<code>openwrt/dl/netifd-2023-09-19-7a58b995.tar.xz</code></li>
@@ -137,6 +142,9 @@
 <li><a target="_blank" rel="noopener" href="https://openwrt.org/submitting-patches">Submitting patches</a>页面，提到了核心包可以通过Github PR或者邮件列表提交。</li>
 <li><a target="_blank" rel="noopener" href="https://lists.openwrt.org/pipermail/openwrt-devel/2024-January/041977.html">这个Patch</a>先出现在邮件列表，然后<a target="_blank" rel="noopener" href="https://git.openwrt.org/?p=project/netifd.git;a=commit;h=4219e99eeec7514657f5838eb4b4b5eb28ee1271">commit</a>才出现在netifd的列表里，说明他们还是在用mailing list的，可以考虑直接写patch交patch。</li>
 </ul>
+<h3 id="给包增加patch">给包增加Patch</h3>
+<p>https://openwrt.org/docs/guide-developer/toolchain/use-patches-with-buildsystem</p>
+<p>quilt import https://github.com/am009/mosdns/commit/4f90490dc7c56c94880f09b5bf2542ac65d97530.patch</p>
 
       
     </div>
