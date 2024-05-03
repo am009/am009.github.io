@@ -81,6 +81,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-2020/rcore学习笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time class="dt-published" datetime="2020-08-29T05:46:25.000Z" itemprop="datePublished">2020-08-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">rcore学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="rcore学习笔记">rcore学习笔记</h1>
+<p>这是我这几天学习rcore-Tutorial第三版时的笔记, 汇总到了一起. <a href="#lab1中断">lab1</a> 学习了不少RISC-V的中断相关的基础知识, 之后补的中断相关的知识也补在这里了 <a href="#lab3虚拟内存管理">lab3</a>, <a href="#lab4线程与调度">lab4</a> 对实现细节写得详细一些, 稍微看懂一点代码就写上去了, 很多函数的实现细节都写下来了.</p>
+<p>有的地方还留下了一些疑问没有解决, 自己也查了资料但没有找到答案, 如果去掉感觉有可能产生误导, 所以就留着了.</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="clvq3qv62000v5kue65r0e5d2" data-title="rcore学习笔记" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+
+
+
+  
     <article id="post-2020/K210开发板相关外设学习" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" class="article-date">
@@ -117,11 +171,119 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" data-id="clts8wnmk0006e0ue4c2sc5u3" data-title="K210开发板相关外设学习" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" data-id="clvq3qv5t000b5kue6uaefbia" data-title="K210开发板相关外设学习" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+
+
+
+  
+    <article id="post-2020/COM与RPC" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/COM%E4%B8%8ERPC/" class="article-date">
+  <time class="dt-published" datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/COM%E4%B8%8ERPC/">COM与RPC</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="com与rpc">COM与RPC</h1>
+<p>研究windows安全的过程中对COM非常不熟。于是找资料学习了一会。</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/COM%E4%B8%8ERPC/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2020/COM%E4%B8%8ERPC/" data-id="clvq3qv5v000e5kue6mr7h83b" data-title="COM与RPC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+
+
+
+  
+    <article id="post-2020/heap" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/heap/" class="article-date">
+  <time class="dt-published" datetime="2020-06-01T03:11:11.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Hack/">Hack</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/heap/">堆复习</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="堆复习">堆复习</h1>
+<p>64位时, 默认开启的fastbin范围(chunk总大小)是0x20 - 0x80 32位TODO</p>
+<p>tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。 fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个, 大小基本重合.</p>
+<p>当某一个tcache链表满了7个，再有对应的chunk（不属于fastbin的）被free，就直接进入了unsortedbin中。 tcache_perthread_struct结构，一般是在heapbase+0x10（0x8）的位置。对应tcache的数目是char类型。</p>
+        
+          <p class="article-more-link">
+            <a href="/2020/heap/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2020/heap/" data-id="clvq3qv5y000l5kue64681jtd" data-title="堆复习" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
 
     </footer>
   </div>
@@ -171,7 +333,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/samba/" data-id="clts8wnml000be0ue2wqd1zfj" data-title="设置最新版本的windows10能够访问的samba服务器" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2020/samba/" data-id="clvq3qv61000r5kue8x23bj0d" data-title="设置最新版本的windows10能够访问的samba服务器" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -224,7 +386,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/windows%E6%9D%83%E9%99%90/" data-id="clts8wnmq000pe0ue1he5g1aj" data-title="Windows权限与UAC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2020/windows%E6%9D%83%E9%99%90/" data-id="clvq3qv6500165kue1udi0k5z" data-title="Windows权限与UAC" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -278,7 +440,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2021/%E8%87%AA%E5%88%B6Ollvm/" data-id="clts8wnmu001de0ue9p5v2f1h" data-title="自制Ollvm" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2021/%E8%87%AA%E5%88%B6Ollvm/" data-id="clvq3qv67001d5kue31mu7tzy" data-title="自制Ollvm" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -330,7 +492,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/main%E5%87%BD%E6%95%B0%E5%90%AF%E5%8A%A8%E4%B8%8EPOSIX-ABI/" data-id="clts8wnmj0005e0ue1v9fht3s" data-title="main函数启动与POSIX-ABI" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2020/main%E5%87%BD%E6%95%B0%E5%90%AF%E5%8A%A8%E4%B8%8EPOSIX-ABI/" data-id="clvq3qv5z000n5kue74gn64qe" data-title="main函数启动与POSIX-ABI" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -383,7 +545,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2019/%E5%A0%86%E5%9D%97Unlink%E7%9A%84%E7%90%86%E8%A7%A3/" data-id="clts8wnms000ze0ue6bod8yqt" data-title="堆块Unlink的理解" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2019/%E5%A0%86%E5%9D%97Unlink%E7%9A%84%E7%90%86%E8%A7%A3/" data-id="clvq3qv5q00065kueg4l8g2wa" data-title="堆块Unlink的理解" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -436,171 +598,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/ucore%20lab2/" data-id="clts8wnmn000he0ue2cfh0g0a" data-title="ucore lab2" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2020/ucore%20lab2/" data-id="clvq3qv63000z5kuee21fbdzk" data-title="ucore lab2" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- 2024年1月11日 giscus -->
-
-
-
-
-  
-    <article id="post-2020/ucore lab1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/ucore%20lab1/" class="article-date">
-  <time class="dt-published" datetime="2019-09-29T05:46:25.000Z" itemprop="datePublished">2019-09-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Dev/">Dev</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/ucore%20lab1/">ucore lab1</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="ucore-lab1">ucore lab1</h1>
-<p>上来先看看Intel 80386 Programmer's Reference Manual, 1987 (HTML)吧。 http://www.logix.cz/michal/doc/i386/</p>
-        
-          <p class="article-more-link">
-            <a href="/2020/ucore%20lab1/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/ucore%20lab1/" data-id="clts8wnmo000le0uee1da2oxf" data-title="ucore lab1" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- 2024年1月11日 giscus -->
-
-
-
-
-  
-    <article id="post-2019/树莓派resbian" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/" class="article-date">
-  <time class="dt-published" datetime="2019-07-31T12:46:25.000Z" itemprop="datePublished">2019-07-31</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Dev/">Dev</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/">树莓派与resbian</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="树莓派与resbian">树莓派与resbian</h1>
-        
-          <p class="article-more-link">
-            <a href="/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://wjk.moe/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/" data-id="clts8wnmt0013e0ue6p969y5y" data-title="树莓派与resbian" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- 2024年1月11日 giscus -->
-
-
-
-
-  
-    <article id="post-2019/天枢的新手入门指南 Q&amp;A" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2019/%E5%A4%A9%E6%9E%A2%E7%9A%84%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%20Q&A/" class="article-date">
-  <time class="dt-published" datetime="2019-07-31T12:46:25.000Z" itemprop="datePublished">2019-07-31</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Hack/">Hack</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2019/%E5%A4%A9%E6%9E%A2%E7%9A%84%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%20Q&A/">天枢的新手入门指南 Q&amp;A</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>这篇文章是2019年7月31日从天枢新人群里复制来的。增加自己博客的文章数</p>
-<h1 id="天枢的新手入门指南-qa">天枢的新手入门指南 Q&amp;A</h1>
-<h2 id="什么是天枢">什么是天枢</h2>
-<h3 id="天枢战队">天枢战队</h3>
-        
-          <p class="article-more-link">
-            <a href="/2019/%E5%A4%A9%E6%9E%A2%E7%9A%84%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%20Q&A/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://wjk.moe/2019/%E5%A4%A9%E6%9E%A2%E7%9A%84%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%20Q&A/" data-id="clts8wnmt0016e0uea1ag0kse" data-title="天枢的新手入门指南 Q&amp;A" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
 
     </footer>
   </div>
@@ -641,7 +643,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
   </div>
 
@@ -651,7 +653,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 10px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 18px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 12px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 16px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 18px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 14px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
     </div>
   </div>
 
@@ -660,7 +662,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>大语言模型学习笔记 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="大模型学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大语言模型学习笔记">
+<meta property="og:url" content="https://wjk.moe/2024/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+<meta property="og:site_name">
+<meta property="og:description" content="大模型学习笔记">
+<meta property="og:locale">
+<meta property="article:published_time" content="2024-04-21T03:11:12.000Z">
+<meta property="article:modified_time" content="2024-04-22T06:18:00.190Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Learning">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2024/大语言模型学习笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time class="dt-published" datetime="2024-04-21T03:11:12.000Z" itemprop="datePublished">2024-04-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      大语言模型学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>大模型学习笔记</p>
+<span id="more"></span>
+<h3 id="什么是stepbatch-sizeepoch">什么是step，batch size，epoch</h3>
+<p>一般来说，会同时跑batch size个样本，然后把梯度平均一下，然后根据这个梯度更新参数。</p>
+<ul>
+<li>step: 模型一次step代表了一次更新参数的过程。</li>
+<li>batch的设置：batch size使得单次遍历数据集所更新的参数次数减少了，因此通常似乎认为batch size是为了增加训练速度，所以batch size越小越好。但是实际上并不一定。如果数据集很多样，则最好让模型多看一些数据，使得数据能够比较好地代表整个数据集，然后再更新参数。</li>
+<li>batch size与显存：batch size越大，占用的显存也越大。但是有时候想要batch size大一些但是显存不够，此时需要增加gradient accumulation。将多次的梯度聚集起来再做参数更新（step）。</li>
+<li>然而，梯度聚集虽然能够显著减少显存使用，但随着梯度聚集的值增加，显存占用还是会增长不少。gradient_checkpointing_enable参数可以使用checkpoint技术进一步减少显存占用，但是会增加20%左右的训练开销。</li>
+</ul>
+<h3 id="大模型的训练阶段">大模型的训练阶段</h3>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://deci.ai/blog/dpo-preference-tuning-llms/">Is DPO Always the Better Choice for Preference Tuning LLMs?</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://medium.com/@bijit211987/the-evolution-of-language-models-pre-training-fine-tuning-and-in-context-learning-b63d4c161e49">Empowering Language Models: Pre-training, Fine-Tuning, and In-Context Learning</a> 解释了PreTraining的特点（无监督，填空），和Fine-Tuning的特点（转移学习，根据梯度优化参数）。</p></li>
+<li><p>PreTraining 预训练：一般是无监督学习类似填空这样的任务。</p></li>
+<li><p>Supervised Fine-Tuning 有监督微调：直接让模型学习输出对应的东西。</p></li>
+<li><p>RLHF 基于人类反馈的大模型微调过程。首先收集人类反馈，然后基于反馈训练奖励模型(Rewarding Model)，代替人类做出实时反馈。基于奖励模型，使用“Proximal Policy Optimization”（PPO）这种强化学习算法，使这个过程更加稳定。最终大模型的输出被训练为最大化奖励模型的奖励。</p></li>
+<li><p>DPO: 一种和RLHF类似，但是更为简化和稳定的方法：基于大模型生成的输出对，直接标注哪个更好。使用这些输出优化大模型的参数。</p></li>
+</ul>
+<h3 id="什么是rope-scaling">什么是RoPE scaling</h3>
+<p>现有的大模型存在上下文长度的问题：当输入的上下文长度超过了训练时的上下文时，会出现困惑度（基于模型输出时概率分布，衡量模型是否确信自己的输出的指标。）猛增的情况。</p>
+<p><strong>RoPE</strong>：位置编码是 Transformer 里一个重要组成部分。通过生成一些位置向量，加到词向量上，使模型知道每个词之间的位置信息。否则模型无法知道词之间的位置关系。RoPE是LLaMA模型引入的一种新的生成位置向量的方法，不使用加法，而是给向量增加一些旋转。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://nn.labml.ai/transformers/rope/index.html">RoPE explanation with code</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@jain.sm/position-interpolation-extending-context-window-sizes-in-large-language-models-ef19d0209a9f">RoPE interpolation paper explanation</a></li>
+</ul>
+<p><strong>Linear RoPE scaling</strong>：最初，Meta（和<a target="_blank" rel="noopener" href="https://kaiokendev.github.io/context#random-positional-encoding">reddit</a>/kaiokendev同时发现）提出了<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2306.15595">RoPE interpolation</a>方法提升上下文长度。它基于插值。打个比方，例如训练的时候是360上下文，此时RoPE可以比作给每个向量旋转1度编码位置关系。此时我们想输入720长度的文字，则我们在原来的360度中分720段，每个字旋转0.5度，从而让大模型更适应长上下文。</p>
+<p>Reddit上有人提出了两个重要的RoPE scaling方法（是的，没有论文，论文也引用的reddit）： - <a target="_blank" rel="noopener" href="https://www.reddit.com/r/LocalLLaMA/comments/14lz7j5/ntkaware_scaled_rope_allows_llama_models_to_have/">NTK-Aware RoPE scaling</a> 引入了neural tangent kernel - <a target="_blank" rel="noopener" href="https://www.reddit.com/r/LocalLLaMA/comments/14mrgpr/dynamically_scaled_rope_further_increases/">Dynamically Scaled RoPE</a> 根据当前上下文位置，动态调整线性或者NTK方法的参数。</p>
+<p>基于这些方法，可以零微调直接提升上下文长度，或者让大模型在长上下文中进行进一步微调，更大地提升上下文长度。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2310.05209">“Scaling Laws of RoPE-based Extrapolation”</a> 深入地研究了这个方面：
+<ul>
+<li>文中发现，RoPE原文中选取的base参数10000居然是最差的值？无论变大还是变小都能有效提升上下文长度。</li>
+</ul></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2309.00071">YaRN: Efficient Context Window Extension of Large Language Models</a> 提出了新的修改和改进。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2024/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="clvq3qv6n002z5kue9wrs9tou" data-title="大语言模型学习笔记" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2024/%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E7%AF%87%E5%A5%BD%E7%9A%84%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E7%BB%BC%E8%BF%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          如何写一篇好的学术论文综述
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2024/%E8%8B%B1%E8%AF%AD%E6%A0%87%E5%87%86%E5%8F%91%E9%9F%B3%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">英语标准发音教程笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 18px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 14px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 12px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 16px;">Learning</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Networking/" style="font-size: 18px;">Networking</a> <a href="/tags/OS/" style="font-size: 16px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 16px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 14px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 14px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 18px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 12px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
