@@ -7,6 +7,9 @@
 <p>很多问题的解决方案，虽然非常有用，但是概括起来不需要多少字，都汇总在这里。</p>
 <span id="more"></span>
 <p>[toc]</p>
+<h2 id="调试docker构建过程-docker-image-build-debug-dockerfile">调试docker构建过程 docker image build debug dockerfile</h2>
+<p>首先，在docker file里需要调试的地方增加 <code>RUN sleep infinity</code> 然后使用<code>ps -aux | grep sleep</code>找到sleep的uid，并使用 <code>sudo nsenter -a -t $PID_OF_SLEEP sh</code> 进入构建过程调试。</p>
+<p>来自： https://github.com/moby/buildkit/issues/1053#issuecomment-564340155</p>
 <h2 id="docker修改现有容器的参数环境变量等">docker修改现有容器的参数，环境变量等</h2>
 <ul>
 <li>停止docker daemon</li>

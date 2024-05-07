@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://wjk.moe/%E4%B8%80%E5%8F%A5%E8%AF%9D/</loc>
+    
+    <lastmod>2024-05-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://wjk.moe/2024/%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E7%AF%87%E5%A5%BD%E7%9A%84%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E7%BB%BC%E8%BF%B0/</loc>
     
     <lastmod>2024-05-03</lastmod>
@@ -104,15 +113,6 @@
     <loc>https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/</loc>
     
     <lastmod>2024-01-07</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://wjk.moe/%E4%B8%80%E5%8F%A5%E8%AF%9D/</loc>
-    
-    <lastmod>2023-12-26</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -409,7 +409,7 @@
 
   <url>
     <loc>https://wjk.moe/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -417,154 +417,154 @@
   
   <url>
     <loc>https://wjk.moe/tags/Embedded/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Java/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/CTF/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Raspberrypi/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Windows/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Linux/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/OS/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/rcore/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/ucore/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/LLVM/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/PL/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Networking/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Fuzz/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Scientific/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Decompile/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Learning/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/StaticAnalysis/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Compiler/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/AI/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/English/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/WebAssembly/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/tags/Openwrt/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -573,42 +573,42 @@
   
   <url>
     <loc>https://wjk.moe/categories/Notes/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/categories/Hack/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/categories/Dev/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/categories/Digi/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/categories/Read/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://wjk.moe/categories/Project/</loc>
-    <lastmod>2024-05-03</lastmod>
+    <lastmod>2024-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
