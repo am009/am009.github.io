@@ -50,30 +50,9 @@
     <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
     
     
+    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
+    
     <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
-    
-    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>大语言模型学习笔记</title>
-    <link href="https://wjk.moe/2024/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
-    <id>https://wjk.moe/2024/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
-    <published>2024-04-21T03:11:12.000Z</published>
-    <updated>2024-04-22T06:18:00.190Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;大模型学习笔记&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
-    
-    
-    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
-    
-    <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
     
   </entry>
   
@@ -95,6 +74,27 @@
     <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
     
     <category term="English" scheme="https://wjk.moe/tags/English/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>大语言模型学习笔记</title>
+    <link href="https://wjk.moe/2024/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <id>https://wjk.moe/2024/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
+    <published>2024-04-21T03:11:12.000Z</published>
+    <updated>2024-04-22T06:18:00.190Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;大模型学习笔记&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
+    
+    <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
     
   </entry>
   
@@ -227,9 +227,9 @@
     <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
     
     
-    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
-    
     <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
+    
+    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
     
   </entry>
   

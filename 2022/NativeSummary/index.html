@@ -15,7 +15,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://wjk.moe/2022/NativeSummary/flows.png">
 <meta property="article:published_time" content="2022-05-01T03:11:11.000Z">
-<meta property="article:modified_time" content="2023-03-29T02:27:34.872Z">
+<meta property="article:modified_time" content="2024-08-18T10:02:33.304Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="StaticAnalysis">
 <meta name="twitter:card" content="summary">
@@ -115,8 +115,16 @@
         <p>让原有的安卓污点分析工具（如FlowDroid），支持通过JNI接口调用的汇编代码（C语言代码）的分析。</p>
 <p>不使用符号执行等动态分析技术，而是使用二进制静态分析技术。</p>
 <span id="more"></span>
-<!-- 这是我的本科毕设。最初选题其实我非常不喜欢这个题目的，中间觉得选都选了，还是继续搞吧，但是非常难受。觉得如果想不清楚，最后写起代码来就是软件工程上的灾难。很难做到可维护性和容易理解。现在我后悔了。我要么就别做，要么就不要说自己正在做的事情的坏话，因为这只会让自己更加折磨。不要否认任何方向和课题，因为这会让你的路变窄，丧失灵活性。不做还好，一旦你必须要做这个方向，就会遇到无尽的走神，自我否认。从此以后，即使一个方向我觉得大概率有坑，稍微远离就好了，我也不会去否认它，而是保持自我怀疑，毕竟没有做就不知道是不是真的有坑。真的不能有极端的情绪，坏处很多。（说多了都是泪） -->
-<p>这是论文的“手稿”。因为用来翻译，所以一些英式中文是故意的。</p>
+
+
+	<div class="row">
+    <embed src="/2024.assets/NativeSummary__ISSTA_24__Camera_Ready.pdf" width="100%" height="550" type="application/pdf">
+	</div>
+
+
+
+<p>这是论文之前的“手稿”。感兴趣的话只需要看上面的论文即可。</p>
+<!-- 因为用来翻译，所以一些英式中文是故意的。 -->
 <p>这个题目可以分为两个部分 1. 逆向部分：将APK中的二进制库拿出来，分析基于JNI接口的汇编代码在干什么。 2. 跨语言部分：C语言和Java语言的差异摆在那里，如何污点分析。</p>
 <p>通过探索得到了下面的方案：</p>
 <ol type="1">
@@ -131,7 +139,6 @@
 <li>提出了一种兼容现有Java 侧分析框架的二阶段跨语言分析方法。</li>
 <li>通过使用静态分析技术分析汇编语言代码，相比于符号执行技术，提升了分析的鲁棒性（和代码覆盖率）。</li>
 <li>把现有的工具打包为了docker镜像，极大地提升了现有工具的可用性和用户友好性。</li>
-<li></li>
 </ol>
 <h2 id="背景">背景</h2>
 <h3 id="java侧污点分析框架">Java侧污点分析框架</h3>
@@ -407,7 +414,7 @@ be very rare in the datasets of JN-SAF -->
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2022/NativeSummary/" data-id="clvq3qv6q003b5kuebgmq3una" data-title="NativeSummary：Java/C安卓应用无源码污点分析。" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2022/NativeSummary/" data-id="clzzefaig000wf4ue04rvcbsv" data-title="NativeSummary：Java/C安卓应用无源码污点分析。" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -419,11 +426,11 @@ be very rare in the datasets of JN-SAF -->
     
 <nav id="article-nav">
   
-    <a href="/2022/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E5%AD%A6%E4%B9%A0%E4%B8%8E%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E8%B5%9B/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Neuer</strong>
       <div class="article-nav-title">
         
-          编译原理学习与编译系统赛
+          反编译-代码混淆-程序分析与编译优化
         
       </div>
     </a>
