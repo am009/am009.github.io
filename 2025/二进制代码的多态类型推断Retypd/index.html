@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>二进制代码的多态类型推断Retypd | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="钻研了两年半《Polymorphic Type Inference for Machine Code》论文。看完本文后还有任何相关的问题可以问我。 跨函数的类型传播算法，可以将库函数的类型传递到代码内部。即使没有库函数识别时，也可以识别处函数内的结构体信息。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="二进制代码的多态类型推断Retypd">
+<meta property="og:url" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/">
+<meta property="og:site_name">
+<meta property="og:description" content="钻研了两年半《Polymorphic Type Inference for Machine Code》论文。看完本文后还有任何相关的问题可以问我。 跨函数的类型传播算法，可以将库函数的类型传递到代码内部。即使没有库函数识别时，也可以识别处函数内的结构体信息。">
+<meta property="og:locale">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/saturation.drawio.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/saturation3.drawio.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/s-ptr-example.drawio.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/sketch-lattice-annotation.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/assignment-retypd.drawio.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/Anderson-pointer-algo.png">
+<meta property="article:published_time" content="2025-01-30T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-01-31T14:57:12.414Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="PL">
+<meta property="article:tag" content="Decompile">
+<meta property="article:tag" content="StaticAnalysis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/saturation.drawio.png">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2025/二进制代码的多态类型推断Retypd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" class="article-date">
+  <time class="dt-published" datetime="2025-01-30T03:11:12.000Z" itemprop="datePublished">2025-01-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      二进制代码的多态类型推断Retypd
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>钻研了两年半《<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1603.05495">Polymorphic Type Inference for Machine Code</a>》论文。看完本文后还有任何相关的问题可以问我。</p>
+<p>跨函数的类型传播算法，可以将库函数的类型传递到代码内部。即使没有库函数识别时，也可以识别处函数内的结构体信息。</p>
+<span id="more"></span>
+<p><strong>资源</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd">retypd</a> 是一个非常高级的反编译类型恢复算法，技术领先程度足以超出其他论文好几年。有一篇<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd/blob/master/reference/paper.pdf">论文</a>: 《<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1603.05495">Polymorphic Type Inference for Machine Code</a>》</p>
+<p>资源：</p>
+<ul>
+<li>优先看<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd/blob/master/reference/type-recovery.rst">这个介绍</a>。</li>
+<li>这个<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd/blob/master/reference/presentation_slides.pdf">PPT</a>比论文容易懂很多</li>
+</ul>
+<h2 id="开发与使用">开发与使用</h2>
+<p>如何使用当前开源的代码呢？代码是一个python模块。当前开源的两个相关的使用代码有：<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd-ghidra-plugin">retypd-ghidra-plugin</a>和<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/gtirb-ddisasm-retypd">gtirb-ddisasm-retypd</a>。</p>
+<p>首先分析<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd-ghidra-plugin">retypd-ghidra-plugin</a>是如何使用retypd的。内部代码主要分为ghidra插件的java代码，和封装模块，<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd-ghidra-plugin/tree/master/ghidra_retypd_provider">ghidra_retypd_provider</a>。Java代码部分通过Ghidra提供的API，从Ghidra的反编译器的IR中提取出相关的类型约束，提取为json文件。然后调用python封装模块读取并求解，结果也表示为json文件。然后Ghidra插件部分的java代码读取结果，并设置相应的类型。（注，无论是上次分析lua虚拟机，还是这次分析<code>/bin/ls</code>，花的时间特别久，半小时往上）</p>
+<p>输入ghidra_retypd_provider的样例json约束文件如下。可以观察到，每个函数的约束单独分开，同时还包含一个call graph部分。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;language&quot;</span><span class="punctuation">:</span> <span class="string">&quot;x86/little/64/default&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;constraints&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;FUN_00109d00&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;v_7456 ⊑ v_7780&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_997 ⊑ int64&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_1441 ⊑ FUN_00109b50.in_13&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_4504 ⊑ v_1242.store.σ8@0&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_6777 ⊑ FUN_00109b50.in_5&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;bool ⊑ v_542&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_2301 ⊑ null&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_7379.load.σ8@0*[nobound] ⊑ v_1441&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_4396 ⊑ v_1671.store.σ8@0*[nobound]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_1188.load.σ8@0 ⊑ v_1191&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;v_1671.load.σ8@0*[nobound] ⊑ v_1720&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;FUN_00110e10&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        ...</span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="attr">&quot;callgraph&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;FUN_00109d00&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;FUN_001158c0&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;FUN_00115920&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;FUN_00109b50&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;FUN_00115b30&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;FUN_00110e10&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;strcmp&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;strlen&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;FUN_001158c0&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;getgrnam&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;strcpy&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    ...</span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>输出ghidra_retypd_provider的样例json结果文件如下。可以观察到，包含两种类型的结果，分别是结构体和函数。结构体包含内部的成员及类型。函数块描述了函数的各个参数的类型。在<a target="_blank" rel="noopener" href="https://github.com/am009/retypd-ghidra-plugin/blob/e4f587a2560148f0d0ebbdb2f26fc9977587661f/ghidra_retypd_provider/type_serialization.py#L51">这里</a>的自定义encoder中定义了转json的函数。</p>
+<p>这一点其实很奇怪，似乎该插件关注的核心是函数参数类型。这里<a target="_blank" rel="noopener" href="https://github.com/am009/retypd-ghidra-plugin/blob/7c2547574cd86100e02793ae2c8c0cc8f88c3990/GhidraRetypd/src/main/java/ghidraretypd/RetypdTypes.java#L272">后续解析和类型设置</a>也说明了这一点。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;struct&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;struct_545&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;fields&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;field_0&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;char1_t*&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;offset&quot;</span><span class="punctuation">:</span> <span class="number">0</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;field_1&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;char1_t[4]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;offset&quot;</span><span class="punctuation">:</span> <span class="number">168</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;function&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;function_260&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;index&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;char1_t[4]&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;ret&quot;</span><span class="punctuation">:</span> <span class="string">&quot;char1_t[0]&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  ...</span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+<p>接着我们看ghidra_retypd_provider内部是如何调用retypd的。</p>
+<ul>
+<li><p>使用<code>SchemaParser.parse_constraint</code>解析每个约束项（<code>SubtypeConstraint</code>），它保存子类型关系左右两边的变量（<code>DerivedTypeVariable</code>）。每个函数的约束项放到一个集合里，再按函数名字放到map里，然后构建<code>Program</code>： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">program = Program(</span><br><span class="line">    CLattice(),</span><br><span class="line">    &#123;&#125;,</span><br><span class="line">    parsed_constraints,</span><br><span class="line">    callgraph,</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<p>这里<code>parsed_constraints</code>就是准备好的那个map。callgraph都不用动，就是<code>Dict[str, List[str]]</code>。前两个参数分别是<code>types: Lattice[DerivedTypeVariable]</code>和<code>global_vars: Iterable[MaybeVar]</code>。</p></li>
+<li><p>使用Solver去求解约束： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config = SolverConfig(top_down_propagation=<span class="literal">True</span>)</span><br><span class="line">solver = Solver(program, config, verbose=LogLevel.DEBUG)</span><br><span class="line">_, sketches = solver()</span><br></pre></td></tr></table></figure></p>
+<p>查看solver的<code>__call__</code>方法，可以发现返回类型是<code>Dict[DerivedTypeVariable, ConstraintSet]</code>和<code>Dict[DerivedTypeVariable, Sketch]</code>。</p></li>
+<li><p>传入<code>CTypeGenerator</code>，得到最终的类型结果。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">gen = CTypeGenerator(</span><br><span class="line">    sketches,</span><br><span class="line">    CLattice(),</span><br><span class="line">    CLatticeCTypes(),</span><br><span class="line">    int_size,</span><br><span class="line">    pointer_size,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">return</span> <span class="built_in">list</span>(gen().values())</span><br></pre></td></tr></table></figure></p>
+<p><code>CTypeGenerator</code>的<code>__call__</code>方法的返回类型是<code>Dict[DerivedTypeVariable, CType]</code>。</p></li>
+</ul>
+<p>根据<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd/blob/e2c2adac5b123aa68b573192519f0d01e365527d/src/parser.py#L111">这里</a>，每个规则大致就是<code>var1 ⊑ var2</code>或者<code>var1 &lt;= var2</code>，然后两边的变量就是DerivedTypeVariable类型的。因此，上面结果里返回的map其实就能够用来查每个变量的类型。</p>
+<p><strong>S-Pointer and S-Field⊕/⊖</strong> 通过搜索代码，可以得知，至少在<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/retypd-ghidra-plugin">retypd-ghidra-plugin</a>和<a target="_blank" rel="noopener" href="https://github.com/GrammaTech/gtirb-ddisasm-retypd">gtirb-ddisasm-retypd</a>中是没有和这个相关的规则的生成的。</p>
+<h4 id="retypd-ghidra-插件">retypd ghidra 插件</h4>
+<p>在我的<a target="_blank" rel="noopener" href="https://github.com/am009/retypd-ghidra-plugin">fork</a>仓库里可以直接下载到构建好的插件，修改版Ghidra，以及docker镜像。同时提供了给retypd的样例输入和输出。（其实docker容器可以通过挂载x11 socks的方式运行图形界面程序）</p>
+<p>通过修改 GhidraRetypd.zip中的extension.properties，可以绕过ghidra插件安装时的版本检查</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">version=<span class="number">10.2</span><span class="number">.3</span></span><br></pre></td></tr></table></figure>
+<p>安装Ghidra插件：</p>
+<ol type="1">
+<li>打开 Ghidra 软件，点击 "File" 菜单，选择 "Install Extensions" 选项。</li>
+<li>在弹出的 "Install Extensions" 窗口中，点击 "Browse" 按钮选择你要安装的扩展程序。</li>
+<li>选中你要安装的扩展程序文件（通常是一个 zip 压缩文件），然后点击 "Open" 按钮。</li>
+<li>点击 "OK" 按钮开始安装扩展程序。在安装过程中，Ghidra 软件会自动解压缩扩展程序文件，并将它们安装到正确的目录中。</li>
+<li>安装完成后，重启 Ghidra。</li>
+</ol>
+<h2 id="算法详解">算法详解</h2>
+<ul>
+<li>首先阅读<a target="_blank" rel="noopener" href="http://www.lsv.fr/~schwoon/enseignement/verification/ws1112/c3.pdf">这个PPT</a>和这个论文《<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1405.5593">Saturation algorithms for model-checking pushdown systems</a>》，学会B¨uchi发现， Caucal提出的这个saturation算法。</li>
+<li>然后阅读论文，学习其中基于saturation算法改进的部分。</li>
+</ul>
+<h3 id="自动机基础-saturation-algorithms">自动机基础 Saturation algorithms</h3>
+<p>资料：</p>
+<ul>
+<li>《<a target="_blank" rel="noopener" href="http://www.lsv.fr/~schwoon/enseignement/verification/ws1112/c3.pdf">Pushdown systems</a>》了解下推自动机</li>
+<li>《<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1405.5593">Saturation algorithms for model-checking pushdown systems</a>》了解Saturation algorithms相关的背景概念。</li>
+</ul>
+<p>有两个重要结论：</p>
+<ul>
+<li>下推系统可达的栈内容形成了一个正则语言，因此可以表示为有限状态自动机。但是最初提出的算法是指数级的。后面有人提出了多项式级的算法，核心思想就是引入一个saturation process，转换被逐渐地加入有限自动机。（这个结论没有被retypd使用）</li>
+<li>下推系统定义了配置（状态加栈字符串）之间的转换关系，可以多项式时间内构建一个带输出的有限状态自动机（transducer）识别这些转换关系。（retypd使用的结论）</li>
+</ul>
+<p><strong>有限自动机</strong></p>
+<ul>
+<li><span class="math inline">\(\Sigma\)</span> 是自动机的字符集。<span class="math inline">\(\Sigma^{*}\)</span> 是字符串的集合。 <span class="math inline">\(\Gamma^{\leq n}\)</span> 是长度最多为n的字符串集合。</li>
+<li>一个在字符集 <span class="math inline">\(\Sigma\)</span> 上的自动机 <span class="math inline">\(\mathcal{A}\)</span> 是一个元组： <span class="math inline">\((\mathbb{S},\mathcal{I},\mathcal{F},\delta)\)</span> 分别代表有限的状态集合，初始状态集合，最终状态集合，转换规则集合 <span class="math inline">\(\delta \subseteq \mathbb{S} \times \Sigma \times \mathbb{S}\)</span> 表示从一个状态遇到一个字符，转换到另外一个状态。
+<ul>
+<li>有时会把字符集写进来 <span class="math inline">\((\mathbb{S},\Sigma,\mathcal{I},\mathcal{F},\delta)\)</span> 变成五元组</li>
+</ul></li>
+<li><span class="math inline">\(s \overset{a}{\underset{\mathcal{A}}{\longrightarrow}} t\)</span> 表示自动机 <span class="math inline">\(\mathcal{A}\)</span> 有这样一个转换 <span class="math inline">\((s,a,t)\)</span></li>
+<li><span class="math inline">\(s \overset{w}{\underset{\mathcal{A}}{\Longrightarrow}} t\)</span> 表示自动机读入字符串w之后可以转换到t。</li>
+</ul>
+<h4 id="下推系统-pushdown-system-与-p-自动机">下推系统 pushdown system 与 P-自动机</h4>
+<p><strong>和下推自动机的区别</strong>：pushdown system是自动机的简化版本。当我们用PDS建模程序的时候，有时不太关注读入和识别字符，而是关注栈状态的转移。</p>
+<p>和自动机的区别在于没有识别字符串这种概念。自动机一般只能用来识别字符串，有初始态，终止态，遇到某个字符的时候触发转换规则。这里的下推系统则不是识别字符串的，即转换规则里不需要读入字符，直接改变状态和栈内容。这里下推系统直接主要关注栈上的内容字符串。</p>
+<p>一个下推系统是四元组 <span class="math inline">\((Q,\Gamma,\bot,\Delta)\)</span></p>
+<ul>
+<li><span class="math inline">\(Q\)</span> 是有限的控制状态的集合</li>
+<li><span class="math inline">\(\Gamma\)</span> 是有限的栈字符集</li>
+<li><span class="math inline">\(\bot \in \Gamma\)</span> 是一个特殊的底部栈字符</li>
+<li><span class="math inline">\(\Delta \subseteq (Q \times \Gamma) \times (Q \times \Gamma^{\leq 2})\)</span> 是转换的集合。表示在一个状态从栈上弹出一个字符，转换到另外一个状态并压入一个字符串。</li>
+<li>Configuration表示系统状态，是 当前状态 <span class="math inline">\(\in Q\)</span> 和 当前栈字符串 <span class="math inline">\(\in \Gamma^{*}\)</span> 的二元组。</li>
+<li>不考虑弹出超过栈底的情况。所以有时会引入特殊底部栈字符，然后要求规则不会把这个符号弹出来。</li>
+</ul>
+<p><strong>Pushdown system （PDS）可以用来分析程序</strong></p>
+<ul>
+<li>程序表示
+<ul>
+<li>状态Q保存程序的全局变量</li>
+<li>栈反映程序执行的调用栈</li>
+<li>栈上字符编码程序局部变量：比如编码为 当前program counter 和 局部变量的二元组。</li>
+</ul></li>
+<li>一些例子
+<ul>
+<li>状态 <span class="math inline">\(pAw\)</span>, 这里 <span class="math inline">\(p\)</span> 表示状态，代表全局变量， <span class="math inline">\(Aw\)</span> 表示栈。其中 <span class="math inline">\(A\)</span> 表示当前的PC和局部变量，w表示调用栈中，被“暂停”执行的程序状态，包括返回地址和局部变量情况。</li>
+<li>状态转换 <span class="math inline">\(pA \rightarrow qB\)</span> 表示执行一个普通语句。
+<ul>
+<li>全局变量可能发生修改，从 <span class="math inline">\(p\)</span> 变成 <span class="math inline">\(q\)</span> ，</li>
+<li>栈深度不变，但是从A变成B，表示当前PC和局部变量发生了变化。</li>
+</ul></li>
+<li>状态转换 <span class="math inline">\(pA \rightarrow qBC\)</span> 表示函数调用
+<ul>
+<li>栈深度增加了，B里面包含了返回地址以及调用者的局部变量状态。现在压入了被调用者的栈。</li>
+</ul></li>
+<li><span class="math inline">\(pA \rightarrow q\epsilon\)</span> 表示函数返回
+<ul>
+<li>栈上弹出了一个字符，表示弹出了一个调用栈。</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><strong>PDS的可达性问题</strong></p>
+<p>给定一个PDS和两个configuration <span class="math inline">\(c,c&#39;\)</span>，是否能从 <span class="math inline">\(c\)</span> 走到 <span class="math inline">\(c&#39;\)</span> 状态？</p>
+<p><span class="math display">\[
+\{ w \in \Gamma^{*} \mid  \exists q \in Q, (q_{0},\bot) \Rightarrow (q,w) \}
+\]</span></p>
+<p>即求出这样一个集合，从起始状态 <span class="math inline">\((q_{0},\bot)\)</span> 出发能推导到的所有状态 <span class="math inline">\((q,w)\)</span> (这里状态 <span class="math inline">\(q \in Q\)</span> 任意)，其中字符串w组成的集合。</p>
+<p><strong>一个非常重要的结论是，这里可达的字符串集合形成了正则语言。</strong> 这意味着函数调用时的状态转换可以用一个有限状态自动机表示。</p>
+<p><strong>PDS的configuration的正则性：</strong></p>
+<ul>
+<li><strong>背景</strong>：众所周知，能被确定有限状态自动机识别的语言是正则（regular）语言。而说到语言，我们会想到根据语法生成的规则，最后推导出很多可以被接受的字符串，但是语言本质也就是一种无限的字符串的集合。
+<ul>
+<li>如果是有限的话，直接对每个字符串用or连接就完全匹配了。所以一般讨论的都是无限的字符串集合。</li>
+</ul></li>
+<li><strong>定义1</strong>：如果某个配置集合 <span class="math inline">\(C\)</span> 是正则的，那么对任意的状态 <span class="math inline">\(p \in Q\)</span> （即不管状态），在这个配置集合里面的所有字符串w构成的集合， <span class="math inline">\(\{ w \in \Gamma^{*} \mid (p,w) \in C\}\)</span> 是正则的。即栈状态构成正则语言。
+<ul>
+<li>简单来说，不管state，如果栈上字符的集合构成正则的语言，则这个configuration集合是正则的。</li>
+</ul></li>
+<li><strong>定理1，初始状态可达的配置集合的正则性</strong>：
+<ul>
+<li>定义：初始配置：任意状态，但是栈为空（仅有 <span class="math inline">\(\bot\)</span> 符号）的配置</li>
+<li>任意pushdown system，从初始配置出发，可达的配置是正则的。</li>
+</ul></li>
+<li><strong>定理2：后推闭包的正则性</strong>：给定一个正则配置集合C，基于自动机规则任意后推形成的闭包集合也是正则的。
+<ul>
+<li>写作：<span class="math inline">\(Post^*_{P}(C) = \{ c&#39; \mid \exists c \in C, c \underset{P}{\Longrightarrow} c&#39; \}\)</span> 从任意的C中配置开始，在自动机P下能推导出c'，则c'属于集合。</li>
+<li>这一定理能从定理1推出：构建一个新自动机P'，增加很多新的state，使得当前配置集合都是初始配置。这里定理里的后推可得到的配置集合其实就是可达的配置集合。</li>
+</ul></li>
+<li><strong>倒推闭包的正则性</strong>：正则集合的倒推集合，即另外一个配置集合Pre<em>(C)，能够推理得到当前集合C。当前集合是正则的，则Pre</em>(C)也是正则的。
+<ul>
+<li><strong>原因</strong>：有时候想要基于程序的错误状态，倒退前面的可达状态。</li>
+<li><strong>证明</strong>：思想是，构建新的自动机P'，规则和P是反着来的。
+<ul>
+<li>如果P有个规则是 <span class="math inline">\(qA \rightarrow p\)</span> 即弹出了字符A。我们P'增加反着来，压入字符A的规则 <span class="math inline">\(pX \rightarrow qAX\)</span>。即对于任意字符X，都允许压入AX。</li>
+<li>如果P有个规则是 <span class="math inline">\(qA \rightarrow pBC\)</span> 弹出A压入BC。则我们需要增加两个规则。
+<ul>
+<li><span class="math inline">\(pB \rightarrow r_{(C,q,A)}\)</span></li>
+<li><span class="math inline">\(r_{(C,q,A)} C \rightarrow q A\)</span></li>
+<li>直接插入规则的问题在于，下推自动机左边一般只能匹配一个栈顶字符，右边则可以为空，也可以压入两个字符。这里我们需要考虑同时按顺序存在BC字符的情况。</li>
+<li>借助中间状态 <span class="math inline">\(r_{(C,q,A)}\)</span> 我们</li>
+</ul></li>
+<li><strong>一致性</strong>：如果在P中有两个状态可以互推，当且仅当我们P'中这两个状态可以反着互推。而且P'满足上面定理的要求，然后应用上面正推的定理，成功证明反推定理。</li>
+</ul></li>
+</ul></li>
+</ul>
+<!-- 但是实际构建出来可能存在很多初始状态不可达的序列。例如如果有规则 $A.load \sqsubseteq B$ 我们增加初始状态的转换，使得初始状态可达 (A/B, $\bot$) 的配置。但是规则并不允许 $(A, \bot) \rightarrow (A, .load)$ ，否则存在子类型关系 $A \sqsubseteq A.load$。也因此，这里构建的自动机没有用在retypd中。 -->
+<p><strong>PDS对应的自动机</strong></p>
+<p>有一个PDS <span class="math inline">\(\mathcal{P}=(P, \Gamma, \Delta)\)</span>，我们对应有一个有限自动机 <span class="math inline">\(\mathcal{A}=(Q, \Gamma, P, T, F)\)</span></p>
+<ul>
+<li>PDS的栈字符集 <span class="math inline">\(\Gamma\)</span> 被用作有限自动机的字符集。PDS栈字符原本用来表示局部变量和PC。</li>
+<li>PDS的控制状态（表示全局变量），被用作有限自动机的初始状态。</li>
+<li>我们称，有限自动机接受配置 <span class="math inline">\(pw\)</span> ，如果自动机从状态p开始，接受字符串w之后能停止在终结态。而且对应每个PDS都能构造出这样的自动机。
+<ul>
+<li>直观上理解：对任意的state（代表了程序的全局变量状态），此时可能的栈情况是什么样的？这些所有可能的栈情况可以用一个有限自动机来表达。</li>
+<li>上面提到，不考虑状态，单把栈上字符串拿出来，形成的也是正则语言。这里其实表达的是一个意思。每个configuration的状态作为初始状态，然后存在一个P-有限自动机匹配栈上的内容，其实就是说明了栈上形成的是正则语言。</li>
+</ul></li>
+</ul>
+<p><strong>Pre(S)的Saturation Algorithm</strong></p>
+<ul>
+<li>相关符号总结
+<ul>
+<li><span class="math inline">\(\Delta\)</span>: pushdown system的下推规则</li>
+<li><span class="math inline">\(\delta\)</span>: P-自动机的状态推理规则。后面会不断增加规则，构成一个递增的规则序列。</li>
+<li><span class="math inline">\(Q\)</span>: pushdown system的状态集合，也是P-自动机的初始状态</li>
+<li><span class="math inline">\(\mathcal{F}\)</span>: P-自动机的终止状态集合</li>
+<li><span class="math inline">\(\mathcal{A}\)</span>: P-自动机。包括状态集合 <span class="math inline">\(\mathbb{S}\)</span>, 初始状态 <span class="math inline">\(Q\)</span>, 推理规则 <span class="math inline">\(\delta\)</span> 和终止状态 <span class="math inline">\(\mathcal{F}\)</span>。</li>
+<li><span class="math inline">\(\mathcal{L}(\mathcal{A})\)</span>: 表示A接受的语言。</li>
+<li><span class="math inline">\(\mathcal{B}\)</span>: 需要构建的新自动机，接受 <span class="math inline">\(Pre^{*}_P (\mathcal{L}(\mathcal{A}))\)</span></li>
+</ul></li>
+<li>Saturation Algorithm算法
+<ul>
+<li><p>前提：已知一个下推系统 <span class="math inline">\(P=(Q,\Gamma,\bot,\Delta)\)</span> ,和对应的P-自动机 <span class="math inline">\(\mathcal{A}=(\mathbb{S},Q,\delta,\mathcal{F})\)</span></p></li>
+<li><p>目标：构建出一个新的自动机 <span class="math inline">\(\mathcal{B}\)</span> 接受语言 <span class="math inline">\(Pre^{*}_P (\mathcal{L}(\mathcal{A}))\)</span></p></li>
+<li><p>过程：构建一个自动机的序列 <span class="math inline">\((\mathcal{A}_{i})_{i \in [0,N]}\)</span></p>
+<ul>
+<li>其中其他部分都是相同的，状态数量是相同的，只有转换规则 <span class="math inline">\(\delta_i\)</span> 不同。</li>
+<li>保证转换规则只会增加新的规则： <span class="math inline">\(i \in [0,N-1]\)</span>, <span class="math inline">\(\delta_{i} \subseteq \delta_{i+1}\)</span></li>
+<li>最后转换规则会收敛，达到不动点： <span class="math inline">\(\delta_{i+1}=\delta_{i}\)</span></li>
+<li>每次至少增加一个规则，因此程序最多走 <span class="math inline">\(|Q|^{2} |\Gamma|\)</span> 步
+<ul>
+<li>作为一个有限状态自动机，这里只对Q状态增加边，每两个状态之间最多 <span class="math inline">\(|\Gamma|\)</span> 个规则。</li>
+</ul></li>
+</ul></li>
+<li><p>算法：如果有一个规则 <span class="math inline">\(pA \rightarrow qw\)</span> ，同时现在的P-自动机存在一个路径 <span class="math inline">\(q \overset{w}{\underset{\mathcal{A}_{i}}{\Longrightarrow}} s\)</span> 我们给P-自动机增加一个新的转换规则 <span class="math inline">\(p \xrightarrow[]{A} s\)</span></p>
+<figure>
+<img src="imgs/saturation.drawio.png" alt="" /><figcaption>saturaion</figcaption>
+</figure>
+<p><code>p Au -&gt; q wu</code>。原有自动机为黑色部分，u代表未知任意字符串，即代表的是路径，内部省略了具体的其他节点。意味着从状态为q栈为空的状态，能够接受一个字符串wu。</p>
+<p>然后我们新增了这样一条规则，使得状态为p，字符串为Au也被接受了。</p>
+<p>规则的构建使得，某个下推系统的前驱规则的节点被覆盖到了。而最后目的自动机 <span class="math inline">\(\mathcal{B}\)</span> 由于达到了不动点，因此关于下推系统P的前驱规则封闭。</p></li>
+<li><p>证明过程的不变量：在这个自动机转换规则的序列中，存在一些始终为真的条件。如果自动机存在转换规则 <span class="math inline">\(p \xrightarrow[]{A} s\)</span> ，那么以下两个性质始终满足满足。</p>
+<ul>
+<li>如果状态s属于下推系统P的状态：在下推系统P中存在规则 <span class="math inline">\(pA \overset{}{\underset{P}{\Longrightarrow}} s\)</span>。这是一个弹出栈字符的规则。</li>
+<li>如果状态s属于其他状态，即不属于下推系统P的状态：对于任何从状态s出发能被接受的字符串u，配置 <span class="math inline">\((p,Au)\)</span> 属于 <span class="math inline">\(Pre^{*}_P (\mathcal{L}(\mathcal{A}))\)</span></li>
+<li>从这个不变关系，可以推出， <span class="math inline">\(\mathcal{L}(\mathcal{A}_i) \subseteq Pre^{*}_P (\mathcal{L}(\mathcal{A}))\)</span> ，即每个A的语言都是我们目标的子集。 特别地， <span class="math inline">\(\mathcal{L}(\mathcal{B}) \subseteq Pre^{*}_P (\mathcal{L}(\mathcal{A}))\)</span> 最终迭代的不动点也是这样。</li>
+</ul></li>
+<li><p>最小关系：我们如果只关注状态在Q中（下推系统的状态）的部分，那么关系只在 <span class="math inline">\((Q \times \{\varepsilon\}) \times (Q \times \Gamma)\)</span> 上被添加 1. 左边都是初始状态; 2. 转换规则都是接受了一个字符。 这里增加的关系可以被看作是一个最小关系 <span class="math inline">\(\mathcal{R}\)</span></p>
+<ul>
+<li><span class="math inline">\(pA \; \mathcal{R} \; q\)</span> 如果存在规则 <span class="math inline">\(pA \rightarrow q\)</span></li>
+<li><span class="math inline">\(pA \; \mathcal{R} \; q\)</span> 如果 <span class="math inline">\(rB \; \mathcal{R} \; q\)</span> 并且 <span class="math inline">\(pA \rightarrow rB\)</span> 在规则中。
+<ul>
+<li>这里关系 <span class="math inline">\(\mathcal{R}\)</span> 似乎会对每个带栈字符的状态创建一个无字符的对应状态？比如这里为 <span class="math inline">\(rB\)</span> 引入中间状态</li>
+</ul></li>
+<li><span class="math inline">\(pA \; \mathcal{R} \; q\)</span> 如果存在规则 <span class="math inline">\(pA \rightarrow rBC\)</span>，并且存在状态 <span class="math inline">\(s\in Q\)</span>，关系 <span class="math inline">\(rB \; \mathcal{R} \; s\)</span> 和 <span class="math inline">\(sC \; \mathcal{R} \; q\)</span>
+<ul>
+<li>这里 <span class="math inline">\(q\)</span> 仿佛直接代表了 <span class="math inline">\(rBC\)</span></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p><strong>和retypd的PDS对应</strong>：我们构建的PDS表达的是子类型之间的转换关系，某个配置如果可达，表示这种dtv的存在。</p>
+<ul>
+<li>首先，我们构建一个自动机识别当前所有存在的变量。
+<ul>
+<li>初始状态是所有顶层变量，栈为空的变量。</li>
+<li>终止状态是所有存在的变量。
+<ul>
+<li>如果顶层变量存在，则它也是终止状态。</li>
+<li>如果某个dtv存在，我们构造从顶层变量到它的连续的push边，表示从顶层变量走过来要识别这些栈字符，然后把它设置为终止态。</li>
+</ul></li>
+</ul></li>
+<li>然后我们使用saturation算法计算post*。</li>
+</ul>
+<p>得到的自动机描述所有可达的配置集合，即描述所有可能存在的dtv，进一步得到每个变量所有可能存在的标签语言，即sketches。</p>
+<h4 id="描述派生可达关系的-transducer">描述派生（可达）关系的 Transducer</h4>
+<p>基础概念：</p>
+<ul>
+<li><p>Finite State Transducer 其实就是带有输出的有限状态自动机（finite state automaton）。简单来说自动机的边上标记了(push/pop, 字符)的pair，表示一个操作。想象自动机有一个栈，栈里放了一个待转换的字符串，自动机先走过一些弹出字符的边，弹出栈顶对应字符，然后再走一些压入字符的边，压入字符到栈顶，这样就完成了栈顶，甚至整个字符串的替换。此时把栈拿出来就是输出的字符串。</p></li>
+<li><p>派生关系 <span class="math inline">\(Deriv_{P}\)</span>：描述任意两个字符串之间的关系： <span class="math inline">\(Deriv_{P} =\{ (u,v) \in \Gamma^{*} \mid (q_{0},u) \overset{}{\underset{P}{\Longrightarrow}} (q_{f},v) \}.\)</span></p>
+<ul>
+<li><span class="math inline">\(Deriv_{P} \subseteq \Gamma^{*} \times \Gamma^{*}\)</span> 。是字符串之间的关系。</li>
+</ul></li>
+<li><p>操作：<span class="math inline">\(A_{+}\)</span> 表示压入单个符号的操作 push A（<span class="math inline">\(A \in \Gamma\)</span> 是字符）。 <span class="math inline">\(A_{-}\)</span> 同理。</p>
+<ul>
+<li>操作集合 <span class="math inline">\(\Gamma_{+}=\{ A_{+} \mid A \in \Gamma\}\)</span> push操作的集合， <span class="math inline">\(\Gamma_{-}\)</span> 同理。 <span class="math inline">\(\overline{\Gamma}=\Gamma_{+} \cup \Gamma_{-}\)</span> 表示两个的并集。</li>
+<li>操作序列： <span class="math inline">\(\alpha=\alpha_{1} \ldots \alpha_{n} \in \overline{\Gamma}^{*}\)</span> 表示一系列操作。
+<ul>
+<li>例如， <span class="math inline">\(pA \rightarrow qBC\)</span> 的操作序列是 <span class="math inline">\(A_{-}C_{+}B_{+}\)</span></li>
+</ul></li>
+<li>操作转换关系： <span class="math inline">\(u \overset{\alpha}{\underset{}{\leadsto}} v\)</span> 表示栈状态 <span class="math inline">\(u \in \Gamma^{*}\)</span> 在操作 <span class="math inline">\(\alpha\)</span> 下变成了栈状态 <span class="math inline">\(v\)</span>。</li>
+<li>non-productive序列：无法被应用的栈序列，常常是这种 <span class="math inline">\(B_{+} C_{-}\)</span> 先push再pop一个不同符号的序列，刚压入B，怎么可能栈顶弹出C呢？
+<ul>
+<li>就像下面对比图先走橙色边再走蓝色边一样。</li>
+</ul></li>
+</ul></li>
+<li><p>对比自动机和transducer</p>
+<figure>
+<img src="imgs/saturation3.drawio.png" alt="" /><figcaption>对比自动机和transducer</figcaption>
+</figure>
+<p>注意到几点：1. Transducer的边可以看作双向的，如果有个pop过去的边，则也可以push回去。而且这里pop边和P-自动机的边对应。2. 从非确定性自动机NFA角度看，transducer 1 和transducer 2是等价的。3. 这里可以看到，transducer的状态可以和PDS配置是一个一对多的关系。</p></li>
+<li><p>行为集合 <span class="math inline">\(Behaviour_{P}\)</span> 表示下推系统P，不管是否non-productive，可能走出的所有栈操作序列的集合。</p>
+<ul>
+<li>即我现在只需要管状态转换，不需要管栈操作的应用。</li>
+<li>即画出上面的转换图，然后随便沿着边走</li>
+</ul></li>
+<li><p><span class="math inline">\(Behaviour_{P}\)</span> 和 <span class="math inline">\(Deriv_{P}\)</span> 的关系：对于任何在行为集合的操作序列， <span class="math inline">\(\alpha \in Behaviour_{P}\)</span> ， 两个字符串属于派生关系集合 <span class="math inline">\((u,v) \in Deriv_{P}\)</span> 当且仅当 这两个字符串存在操作关系 <span class="math inline">\(u \overset{\alpha}{\underset{}{\leadsto}} v\)</span> 。</p>
+<ul>
+<li>然而这个定义不太行，因为 (1) <span class="math inline">\(Behaviour_{P}\)</span> 有很多不合法的序列。(2) 存在刚push就pop的冗余序列，如 <span class="math inline">\(A_{-} B_{+} A_{+} A_{-} C_{+} C_{-}=A_{-} B_{+}\)</span> 。</li>
+</ul></li>
+<li><p>简化关系 <span class="math inline">\(\mapsto\)</span> ：表示一个栈操作序列被简化为另外一个栈操作序列。消除了上面的这种刚push就pop的冗余行为</p>
+<ul>
+<li>例如 <span class="math inline">\(B_{-}A_{+}A_{-}C_{+} \mapsto B_{-}C_{+}\)</span></li>
+</ul></li>
+<li><p>操作序列集合在简化操作下维持正则性：如果一个操作序列集合R内的每个操作都被 <span class="math inline">\(\mapsto\)</span> 简化，那么新的集合 <span class="math inline">\(Red(R) = \{ Red(\alpha) \mid \alpha \in R \}\)</span> 也是正则的</p></li>
+<li><p>操作序列自动机的简化算法： <span class="math inline">\(Red(R)\)</span> 能在 <span class="math inline">\(\mathcal{O}(|\mathcal{A}|^{3})\)</span> 的复杂度构建出来。</p></li>
+<li><p>简化并移除non-productive序列的操作集合 <span class="math inline">\(RP_{P}\)</span></p>
+<ul>
+<li>移除non-productive序列：简化后很容易识别，直接扫描找先push再pop的序列。因为如果push的字符和pop的字符不同则不合法，相同则说明化简没有结束。</li>
+<li>性质：可以推出里面的序列必然只会先pop再push。</li>
+</ul></li>
+<li><p>最终的结论：</p>
+<ul>
+<li><span class="math inline">\(Deriv_{P}\)</span> 的关系 <span class="math inline">\((w_{1},w_{2})\)</span> 对应到transducer 必然是，找出两个串的公共后缀，然后先pop w1的前缀，然后push w2的前缀。</li>
+<li><span class="math inline">\(Deriv_{P}\)</span> 对应的 Transducer 可以在多项式时间内被构建出来。</li>
+</ul></li>
+</ul>
+<p>核心在于，将状态转换改为了一个push pop栈的序列。即，如果有一个 <span class="math inline">\(pA \rightarrow rw\)</span> 规则，那么我们这里构建一个序列：pop A，push ...(构成w的几个字符)。表示栈上的变化关系。</p>
+<p>然后使用饱和（Saturation）算法。这里需要每条边上的操作只能压入或者弹出单个字符。即找到两个路径上能化简的状态，然后直接连过去，标上化简后的操作序列。</p>
+<p>这里的饱和（Saturation）算法才是后面retypd使用的。</p>
+<h3 id="retypd-基础符号">retypd 基础符号</h3>
+<p><strong>使用的符号</strong></p>
+<ul>
+<li><span class="math inline">\(\mathcal{V}\)</span>: 类型变量的集合
+<ul>
+<li>在这个集合里包含一系列类型常量，作为一种符号描述。这些类型常量可能形成一个lattice，但是我们不解释它们。</li>
+</ul></li>
+<li><span class="math inline">\(\Sigma\)</span>: 字段标签 field label。不一定是有限的。主要的符号如下：
+<ul>
+<li><span class="math inline">\(\mathsf{.in}_L\)</span> 函数在位置L的输入</li>
+<li><span class="math inline">\(\mathsf{.out}_L\)</span> 函数在L位置的输出</li>
+<li><span class="math inline">\(\mathsf{.load}\)</span> 可读的指针</li>
+<li><span class="math inline">\(\mathsf{.store}\)</span> 可写的指针</li>
+<li><span class="math inline">\(.\sigma\mathsf{N@k}\)</span> 在偏移k处有一个N bit的成员。</li>
+</ul></li>
+<li>函数 <span class="math inline">\(\langle \cdot \rangle : \Sigma \to \{ \oplus, \ominus \}\)</span>: 从结构体label映射到 <span class="math inline">\(\{ \oplus, \ominus \}\)</span> 表示variance，协变和逆变属性</li>
+<li>派生的类型变量 derived type variable (定义3.1)：形为 <span class="math inline">\(\alpha w\)</span> ，其中类型变量 <span class="math inline">\(\alpha \in \mathcal{V}\)</span> and 字段标签 <span class="math inline">\(w \in \Sigma^*\)</span>.</li>
+<li>标签 <span class="math inline">\(\ell\)</span> 的variance (定义3.2)，指的是前面的类型变量的类型如果发生变化时，带标签的派生类型变量的variance的变化方向。 <span class="math inline">\(\alpha.\ell\)</span> 和 <span class="math inline">\(\beta.\ell\)</span> 中，如果 <span class="math inline">\(\alpha\)</span> 是 <span class="math inline">\(\beta\)</span> 的子类型。</li>
+<li>约束 <span class="math inline">\(c\)</span> (定义3.3)有两种形式。约束的集合用 <span class="math inline">\(\mathcal{C}\)</span> 表示
+<ul>
+<li>存在形式: (派生)类型变量X存在</li>
+<li>子类型形式：(派生)类型变量X是Y的子类型。</li>
+<li>约束的推导 <span class="math inline">\(\mathcal{C} \vdash c\)</span> 表示约束能从原约束集合中，由那些规则派生出来。</li>
+<li>约束中的自由变量定义 <span class="math inline">\(\exists \tau . \mathcal{C}\)</span> 表示，存在变量 <span class="math inline">\(\tau\)</span> 满足了约束集合。</li>
+</ul></li>
+<li>Type Scheme类型方案，表示一个泛型的函数。 <span class="math inline">\(\forall{\overline{\alpha}}.{\mathcal{C}}\Rightarrow{\beta}\)</span> 表示在约束C的条件下，带有模板变量集合 <span class="math inline">\(\overline{\alpha}\)</span> 的泛型类型 <span class="math inline">\(\beta\)</span>
+<ul>
+<li>仅增加约束： <span class="math inline">\(\forall \tau . C \Rightarrow \tau\)</span> 表示仅对类型 <span class="math inline">\(\tau\)</span> 增加约束。
+<ul>
+<li>例如 <span class="math inline">\(\forall \tau . (\tau.\mathsf{in}.\mathsf{load}.\sigma\mathsf{32@4} \sqsubseteq \tau.\mathsf{out}) \Rightarrow \tau\)</span> 表示函数返回了参数在4字节offset位置的成员。</li>
+</ul></li>
+<li>和约束的关系：基本是对应的。可以想象为我们主要关注约束，任何类型方案都可以理解为，声明一些通配符变量，然后定义一些约束。例如 <span class="math inline">\(\forall \alpha . (\exists \tau . \mathcal{C}) \Rightarrow \alpha\)</span> 。通过引入新的类型变量，可以让最右侧总是等于单个变量。如果能把约束里每个类型变量解出来，那么这个泛型也很容易得到。</li>
+<li>和sketch的关系。通过inferShapes算法将约束求解为变量映射到sketch的树/自动机结构。</li>
+</ul></li>
+</ul>
+<p><strong>常见术语</strong></p>
+<ul>
+<li>pushdown system: 在基本的自动机的基础上，额外增加了一个栈结构。</li>
+<li>non-structural subtyping: 即子类型关系不一定非要结构完全相同（在structural subtyping中只能叶子节点不同）。尤其是在有结构体和对象这种情况。见<a target="_blank" rel="noopener" href="https://web.cs.ucla.edu/~palsberg/paper/fac97.pdf">"Type Inference with Non-structural Subtyping"</a></li>
+</ul>
+<p><strong>规则生成</strong></p>
+<ul>
+<li>复制操作：x := y，此时保守地认为，有可能是子类型赋值给了父类型变量：Y ⊑ X。
+<ul>
+<li>由复制操作带来的数据流，类型方向是父类型。子类型赋值给了父类型。</li>
+</ul></li>
+<li>指针加载：x := *p，生成：P.load.σ32@0 ⊑ X 。</li>
+<li>指针赋值：*q := y，生成 Y ⊑ Q.store.σ32@0 。</li>
+<li>函数调用：如果有调用y := f(x)，生成 X ⊑ F.in 和 F.out ⊑ Y 。</li>
+<li>icmp：两值进行比较的时候：1 bool类型是结果的子类型。2 两个被比较的值直接，随便生成一个子类型关系？</li>
+</ul>
+<p><strong>规约规则</strong></p>
+<ul>
+<li><strong>T-Left</strong>/<strong>T-Right</strong>/<strong>T-Prefix</strong>: 如果存在约束 <span class="math inline">\(\alpha \sqsubseteq \beta\)</span> ，则 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 存在。如果存在一个带field label的派生变量，则原始变量存在。
+<ul>
+<li>这意味着在算法中我们在访问约束时会创建对应变量节点。</li>
+</ul></li>
+<li><strong>T-InheritL</strong> / <strong>T-InheritR</strong>: 子类型能安全代换父类型。父类型如果能带一个field label，则子类型带有相同的field label的派生变量也存在。</li>
+<li><strong>S-Refl</strong>: 反射性，自己是自己的子类型。</li>
+<li><strong>S-Field<span class="math inline">\(_\oplus\)</span></strong> / <strong>S-Field<span class="math inline">\(_\ominus\)</span></strong>: 如果field label的variance是协变 <span class="math inline">\(\oplus\)</span>，则原变量子类型关系在带上标签后保持。否则反过来。</li>
+<li><strong>S-Pointer</strong>: 指针存入的类型是取出的子类型。</li>
+</ul>
+<p><strong>sketches</strong> 约束的求解结果被表示为sketches。每个value关联上一个sketch，包含该value的所有能力，即能否被store，能否访问指定的偏移。同时sketch还包含一个可自定义的lattice，用来传播类似于typedef这种类型。</p>
+<p>我们分析的不是具体的程序中的变量，而是他们的类型和类型之间的关系。因为复杂的约束关系，我们会把类型再设为一个类型变量，称为DataTypeVariable，DTV。</p>
+<p><strong>什么是Sketches</strong>：一个派生类型变量DTV，可能有各种各样的能力，比如可以在offset为4的地方load出一个四字节的值 （<code>.load.σ32@4</code>）。首先可以遍历所有的约束关系，比如<code>v_4504 ⊑ v_1242.store.σ8@0</code>，对每个关系单独看两边的变量，然后看比如<code>v_1242</code>是否被直接这样取过offset，然后把这些操作收集起来。但是这样还不够，因为可能因为约束的存在，其他变量能做的操作，它因为约束，应该也能做。这些都求解出来，得到的数据结构就是一个Sketch。</p>
+<p>一个Sketch才是真正直接代表一个具体的类型。是一个树状的类型结构。这个树的边上标记了field label，节点上标记了类型lattice上的元素。</p>
+<p><strong>基于程序操作的约束生成</strong></p>
+<ul>
+<li>变量复制/赋值：要么两边类型相同，要么根据安全代换原则，子类型被赋值为父类型。</li>
+<li>指针读取：增加field label。
+<ul>
+<li>指针的读和写能力分开考虑。子类型方面特殊处理。</li>
+</ul></li>
+<li>函数调用：参数父类型，返回值子类型。
+<ul>
+<li>单独的类型变量规则是structural的，即子类型和父类型的能力必须一致。但是在函数调用时，可以遗忘一些能力。</li>
+</ul></li>
+</ul>
+<h2 id="规约算法概述section-5">规约算法：概述（Section 5）</h2>
+<h3 id="约束的简化">约束的简化</h3>
+<p><strong>类型，以及函数的类型到底应该怎么表示？</strong></p>
+<ul>
+<li>格表示的类型：对于单个固定大小的基本类型，可以使用lattice结构以及一个偏序关系表示类型。子类型为格上的偏序关系</li>
+<li>对于复杂的具有能力的类型，比如访问某个偏移字段的能力，加载出值的能力，则类似结构体的子类型关系，子类型允许具有更多能力，安全代换父类型。</li>
+<li>函数的类型则涉及到泛型的类型方案的表示 <span class="math inline">\(\forall{\overline{\alpha}}.\,{C}\!\Rightarrow\!{\tau}\)</span> 。为函数的输入和输出类型创建类型变量，然后得到一个变量的最小约束集合表示这个函数的类型。
+<ul>
+<li>例如通用的恒等函数，直接将参数返回，表示为，对任意的类型X，返回值的类型也是X。对应我们的表示可能是 <span class="math inline">\(F.in \sqsubseteq F.out\)</span></li>
+</ul></li>
+<li>PDS = （未化简，或者简化后的）约束 = 类型方案 type scheme</li>
+</ul>
+<p><strong>我们为什么要简化约束？</strong> 为了减少无用的自由变量，降低约束集的增长率。令 <span class="math inline">\(\mathcal{C}\)</span> 表示由抽象解释生成的过程的约束集，并且 <span class="math inline">\(\overline{\alpha}\)</span> 是 <span class="math inline">\(\mathcal{C}\)</span> 中的自由类型变量集。我们其实已经可以使用 <span class="math inline">\(\forall{\overline{\alpha}}.\,{\mathcal{C}}\!\Rightarrow\!{\tau}\)</span> 作为过程类型方案中的约束集，因为合法调用 <span class="math inline">\(f\)</span> 时使用的输入和输出类型显然是满足 <span class="math inline">\(\mathcal{C}\)</span> 的。</p>
+<p>然而，实际上我们不能直接使用这个约束集，因为这会导致在嵌套过程中产生很多无用的自由变量，并且约束集的增长率很高。如果一个函数没有调用其他函数，则确实约束集就自己。但是当函数调用别人，其他函数又调用更其他的函数，此时每次为一个函数推理类型时，就会牵涉进来所有这些涉及的函数的约束。因此化简约束是非常有必要的（TODO，是否可以根据约束的性质，判断它是否需要牵涉进来？）。</p>
+<p>这个简化算法的输入是，从一个函数的推断得到的一个类型方案 <span class="math inline">\(\forall{\overline{\alpha}}.\,{C}\!\Rightarrow\!{\tau}\)</span> （包括自由类型变量，约束，和泛型），并创建一个较小的约束集 <span class="math inline">\(\mathcal{C}&#39;\)</span>，使得任何由 <span class="math inline">\(\mathcal{C}\)</span> 对 <span class="math inline">\(\tau\)</span> 的约束也被 <span class="math inline">\(\mathcal{C}&#39;\)</span> 所蕴含。</p>
+<p>相反，我们寻求生成一个<strong>简化的约束集</strong> <span class="math inline">\(\mathcal{C}&#39;\)</span>，使得如果 <span class="math inline">\(c\)</span> 是一个“有趣”的约束，并且 <span class="math inline">\(\mathcal{C} \;\vdash\; c\)</span>，那么 <span class="math inline">\(\mathcal{C}&#39; \;\vdash\; c\)</span> 也同样成立。但什么让一个约束变得有趣呢？</p>
+<ul>
+<li>能力约束，表示某个dtv有某个field label</li>
+<li>递归类型约束： <span class="math inline">\(\tau.u {\;\sqsubseteq\;} \tau.v\)</span></li>
+<li>涉及常量类型的约束： <span class="math inline">\(\tau.u {\;\sqsubseteq\;} \overline{\kappa}\)</span> 或者 <span class="math inline">\(\overline{\kappa} {\;\sqsubseteq\;} \tau.u\)</span> 其中 <span class="math inline">\(\overline{\kappa}\)</span> 是类型常量.</li>
+</ul>
+<h3 id="roadmap">Roadmap</h3>
+<ol type="1">
+<li>（A.）收集文字格式的初始约束，构建初始图。插入外部函数已知的参数类型。</li>
+<li>（F.1）约束简化算法。简化后的约束就是type schemes。这里对每个强连通分量后序遍历进行处理，处理完的分量内的type schemes保存下来，等待实例化。
+<ol type="1">
+<li>基于约束集合构建初始图。子类型关系增加标记为1的边。对标签增加和减少的关系，增加对应push/pop的边。
+<ol type="1">
+<li>比如对于dtv <code>F.in_a.load.off_4_size_8</code> 构建一系列图节点 <code>F -&gt; F.in_a -&gt; ... -&gt; F.in_a.load.off_4_size_8</code>。</li>
+<li>对于约束关系两边的dtv，连接边（边上标记1）。</li>
+</ol></li>
+<li>运行Saturation算法，将 <code>push α -&gt; 1 -&gt; pop α</code> 这种边序列增加shortcut边。应用S-Pointer的实例化规则</li>
+</ol></li>
+</ol>
+<ul>
+<li>Step 3: Identify the “externally-visible” type variables and constants; call that set E.</li>
+<li>Step 4: Use Tarjan’s path-expression algorithm to describe all paths that start and end in E but only travel through E c.</li>
+<li>Step 5: Intersect the path expressions with the language (recall <em>)*(forget </em>)*.</li>
+<li>Step 6: Interpret the resulting language as a regular set of subtype constraints. (“forgets” on the right, “recalls” on the left)</li>
+</ul>
+<ol start="3" type="1">
+<li>（F.2）构建sketches（为每个类型变量，比如函数类型）（自底向上遍历call graph的顺序），同时细化具体类型。</li>
+<li>（4.3）最后转换sketches到C类型。</li>
+</ol>
+<p>类型恢复本质上是三层分析的叠加：</p>
+<ul>
+<li>指针和数字类型的区分。</li>
+<li>指针能力分析。</li>
+<li>自定义的typedef常量类型传播。</li>
+</ul>
+<p>本质上，retypd在前两者里用的是快速的steensgaard的指针分析，在最后这层的分析上用的是Anderson的指针分析算法。</p>
+<p>retypd为什么不直接采用steensgaard的类型恢复？因为常量用不了，merge了直接变成父类型，基本无法传播自定义的typedef类型。。</p>
+<p>对于每个SCC看作按需分析。每个SCC能够简化算法计算出对应的summary。</p>
+<h3 id="无约束的下推系统-unconstrained-pushdown-systems">无约束的下推系统 Unconstrained Pushdown Systems</h3>
+<p><strong>无约束的含义</strong>：TODO。可能是表示没有限制栈符号和转换规则的有限性？</p>
+<p>核心思路： 下推系统 <span class="math inline">\(\mathcal{P}_\mathcal{C}\)</span> 的转换序列，可以直接对应上基于约束集合 <span class="math inline">\(\mathcal{C}\)</span> 上的子类型推导判断的推导树。</p>
+<p>定义：一个<strong>无约束下推系统</strong>是由三个部分组成的元组 <span class="math inline">\(\mathcal{P} = (\mathcal{V}, \Sigma, \Delta)\)</span>，其中 <span class="math inline">\(\mathcal{V}\)</span> 是<strong>控制位置</strong>的集合，<span class="math inline">\(\Sigma\)</span> 是<strong>栈符号</strong>的集合，而 <span class="math inline">\(\Delta\)</span> 是包含在 <span class="math inline">\((\mathcal{V} \times \Sigma^*)^2\)</span> 内的（可能无限）<strong>转换规则</strong>的集合。转换规则表示为 <span class="math inline">\(\langle X; u \rangle \hookrightarrow \langle Y;v\rangle\)</span>，其中 <span class="math inline">\(X,Y \in \mathcal{V}\)</span> 且 <span class="math inline">\(u,v \in \Sigma^*\)</span>。我们定义<strong>配置</strong>的集合为 <span class="math inline">\(\mathcal{V} \times \Sigma^*\)</span>。在配置 <span class="math inline">\((p,w)\)</span> 中，<span class="math inline">\(p\)</span> 称为<strong>控制状态</strong>，<span class="math inline">\(w\)</span> 称为<strong>栈状态</strong>。</p>
+<p>注意到，我们既不要求栈符号的集合也不要求转换规则的集合是有限的。这种自由度是为了模拟推导规则 S-Pointer， 正如图3的推导规则 S-Pointer 所示，它对应于一个无限的转换规则集。</p>
+<p><strong>为什么要用下推系统？</strong> 下推系统能很好地反映类型关系关于能力的传递关系，反映在下推系统上就是后缀子串的关系。</p>
+<ul>
+<li>转换关系定义：一个无约束的下推系统 <span class="math inline">\(\mathcal{P}\)</span> 确定了一个<strong>转换关系</strong> <span class="math inline">\(\longrightarrow\)</span> 在配置集合上： <span class="math inline">\((X,w) \longrightarrow (Y,w&#39;)\)</span> 如果存在一个后缀 <span class="math inline">\(s\)</span> 和一个规则 <span class="math inline">\(\langle {X}; {u} \rangle \hookrightarrow \langle {Y}; {v} \rangle\)</span>，使得 <span class="math inline">\(w = us\)</span> 和 <span class="math inline">\(w&#39; = vs\)</span>。<span class="math inline">\(\longrightarrow\)</span> 的传递闭包表示为 <span class="math inline">\(\stackrel{*}{\longrightarrow}\)</span>。
+<ul>
+<li>这里的公共后缀s，就可以想象为类型的能力。比如各种偏移里的字段。然后前缀类型变量，比如两个结构体类型，如果符合子类型关系，则对应的访问相同的字段得到的类型变量，则也存在子类型关系。</li>
+</ul></li>
+</ul>
+<p>有了这个定义，我们可以陈述我们简化算法背后的主要定理。这里一个类型对应一个 <span class="math inline">\((\mathcal{V} \cup \Sigma)^*\)</span> 字符串。</p>
+<p>设 <span class="math inline">\(\mathcal{C}\)</span> 是一个约束集合，<span class="math inline">\(\mathcal{V}\)</span> 是一组基类型变量集合。定义 在类型变量和标签集合构成的两个字符串之间的关系 <span class="math inline">\((\mathcal{V} \cup \Sigma)^* \times (\mathcal{V} \cup \Sigma)^*\)</span> 的一个子集 <span class="math inline">\(S_\mathcal{C}\)</span>， 通过 <span class="math inline">\((Xu, Yv) \in S_\mathcal{C}\)</span> 当且仅当 <span class="math inline">\(\mathcal{C} \;\vdash\; X.u {\;\sqsubseteq\;} Y.v\)</span>。 那么 <span class="math inline">\(S_\mathcal{C}\)</span> 是一个正则集合，并且可以在 <span class="math inline">\(O(|\mathcal{C}|^3)\)</span> 时间内构造一个识别 <span class="math inline">\(S_\mathcal{C}\)</span> 的自动机 <span class="math inline">\(Q\)</span>。</p>
+<!-- TODO -->
+<p>证明：基本思想是将每个 <span class="math inline">\(X.u {\;\sqsubseteq\;} Y.v \in \mathcal{C}\)</span> 作为下推系统 <span class="math inline">\(\mathcal{P}\)</span> 中的一个转换规则 <span class="math inline">\(\langle {X}; {u} \rangle \hookrightarrow \langle {Y}; {v} \rangle\)</span>。 此外，我们为每个 <span class="math inline">\(X \in \mathcal{V}\)</span> 添加控制状态 <span class="math inline">\({Start}, {End}\)</span> 及其转换 <span class="math inline">\(\langle {Start}; {X} \rangle \hookrightarrow \langle {X}; {\varepsilon} \rangle\)</span> 和 <span class="math inline">\(\langle {X}; {\varepsilon} \rangle \hookrightarrow \langle ; {X} \rangle\)</span>。 目前，假设所有标签都是协变的，并且忽略规则 S-Pointer。 通过构造，<span class="math inline">\(({Start}, Xu) \stackrel{*}{\longrightarrow} ({End}, Yv)\)</span> 在 <span class="math inline">\(\mathcal{P}\)</span> 中当且仅当 <span class="math inline">\(\mathcal{C} \;\vdash\; X.u {\;\sqsubseteq\;} Y.v\)</span>。 Büchi [27] 保证，对于任何标准（非无约束）下推系统中的两个控制状态 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span>， 所有满足 <span class="math inline">\((A, u) \stackrel{*}{\longrightarrow} (B, v)\)</span> 的 <span class="math inline">\((u,v)\)</span> 对组成的集合是一个正则语言； Caucal [8] 给出了一个构造识别这种语言的自动机的饱和算法。</p>
+<p>在完整的证明中，我们增加了两个创新之处：首先，我们通过将variance数据编码到控制状态和转换规则中，支持逆变堆栈符号。 第二个创新之处涉及到 S-Pointer 规则；这个规则是有问题的，因为自然的编码将导致无限多的转换规则。 我们将 Caucal 的构造扩展为在饱和过程中懒惰实例化所有必要的 S-Pointer 应用。 详情见 Appendix D。</p>
+<p>由于 <span class="math inline">\(\mathcal{C}\)</span> 通常涉及到无限多的约束， 这个定理特别有用：它告诉我们由 <span class="math inline">\(\mathcal{C}\)</span> 引发的完整约束集合可以通过自动机 <span class="math inline">\(Q\)</span> 的有限编码来实现。 对约束闭包的进一步操作，如有效的最小化，可以在 <span class="math inline">\(Q\)</span> 上进行。通过限制与 <span class="math inline">\({Start}\)</span> 和 <span class="math inline">\({End}\)</span> 的转换，使用相同的算法 消去类型变量，生成所需的约束简化。</p>
+<p><strong>推理的整体复杂性</strong></p>
+<p>用于执行约束集简化类型方案构造的饱和算法， 在最坏情况下，是关于简化子类型约束数量的三次方。由于一些著名的指针分析方法也具有三次方复杂度（如 Andersen [4]）， 因此很自然地会怀疑 Retypd 的“无需指向”分析是否真的比基于指向分析数据的类型推理系统提供优势。</p>
+<p>为了理解 Retypd 的效率所在，首先考虑 <span class="math inline">\(O(n^3)\)</span> 中的 <span class="math inline">\(n\)</span>。 Retypd 的核心饱和算法在子类型约束的数量上是三次方的；由于机器代码指令的简单性，每条指令大约会产生一个子类型约束。 此外，Retypd 在每个独立的过程中应用约束简化以消除该过程局部的类型变量， 从而得到只涉及过程形参、全局变量和类型常量的约束集。在实践中，这些简化的约束集很小。</p>
+<p>由于每个过程的约束集是独立简化的，因此三次方的 <span class="math inline">\(n^3\)</span> 因子由最大过程大小控制，而不是整个二进制文件的大小。 相比之下，像 Andersen 这样的源代码指向分析通常与指针变量的总数呈三次方，并且根据用于上下文敏感性的调用字符串深度呈</p>
+<h2 id="算法细节">算法细节</h2>
+<h3 id="约束简化算法appendix-d">约束简化算法（Appendix D）</h3>
+<p><strong>基础符号</strong></p>
+<ul>
+<li><span class="math inline">\(\amalg\)</span> 表示集合的不交并。表示某个集合可以分割为不同的组成部分。
+<ul>
+<li><span class="math inline">\(\mathcal{V} = \mathcal{V}_i \amalg \mathcal{V}_u\)</span> 表示类型变量集合被分割为interesting和uninteresting两部分。</li>
+</ul></li>
+<li>一个证明是elementary的，如果证明的结论的子类型关系里没有uninteresting的变量，且证明过程中，uninteresting变量都只在内部。
+<ul>
+<li><span class="math inline">\(\mathcal{C} {\;\vdash\;}^{\mathcal{V}_i}_\text{elem} X.u {\;\sqsubseteq\;} Y.v\)</span> 表示约束集合 <span class="math inline">\(\mathcal{C}\)</span> 上能够推理出这样一个子类型约束。其中类型变量都定义在 <span class="math inline">\({\mathcal{V}_i}\)</span> 上，并且这样的关系是elementary的。</li>
+</ul></li>
+</ul>
+<p><strong>自动机</strong></p>
+<p>对应关系：</p>
+<ul>
+<li>一个类型（sketch）就是一个有限状态自动机。
+<ul>
+<li>本来用树就够了，但是递归类型会导致无限长的树。根据子树的有限性，用自动机处理递归的情况。典型的例子是复杂的递归结构体类型。</li>
+</ul></li>
+<li>下推自动机工作的过程就是我们类型推理的过程
+<ul>
+<li>当前状态表示基础的类型变量。</li>
+<li>栈状态表示标签，比如<code>.load</code>，field访问</li>
+<li>自动机配置：状态+栈状态。表示一个派生变量。</li>
+<li>状态转换规则：子类型关系。
+<ul>
+<li>比如，随便写一个规则 <span class="math inline">\(a.\sigma\mathsf{N@k} \sqsubseteq b.load\)</span> 表示可以从状态为 <span class="math inline">\(a\)</span> 栈内容为 <span class="math inline">\(\sigma\mathsf{N@k}\)</span> 的配置转换到 状态为 <span class="math inline">\(b\)</span> 栈内容为 <span class="math inline">\(load\)</span> 的配置。</li>
+</ul></li>
+<li>可达性：派生的子类型关系。
+<ul>
+<li>然后，如果 <span class="math inline">\(b.load\)</span> 又是 <span class="math inline">\(c\)</span> 的子类型，两个规则合起来，在自动机上，状态 <span class="math inline">\(a.\sigma\mathsf{N@k}\)</span> 到 <span class="math inline">\(c\)</span> 也是可达的（走了两步）。因此也具有子类型关系。 <span class="math inline">\(a.\sigma\mathsf{N@k} \sqsubseteq c\)</span>。</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="transducer-与其构建">Transducer 与其构建</h3>
+<ul>
+<li>Transducer可以表示下推自动机的所有的推断关系！任意两个dtv字符串之间的子类型关系！</li>
+<li>Transducer和类型推断的对应关系。</li>
+</ul>
+<p>重要概念：</p>
+<ul>
+<li><p><span class="math inline">\(\mathcal{P}_\mathcal{C}\)</span> 表示我们这里构建的pushdown system。包含三部分 <span class="math inline">\((\widetilde{\mathcal{V}}, \widetilde{\Sigma}, \Delta)\)</span></p>
+<ul>
+<li>状态集合： <span class="math inline">\(\widetilde{\mathcal{V}} = \left(\mathsf{lhs}(\mathcal{V}_i) \amalg \mathsf{rhs}(\mathcal{V}_i) \amalg \mathcal{V}_u\right) \times \{ \oplus, \ominus \} \cup \{ {Start}, {End} \}\)</span>
+<ul>
+<li>额外增加的两个特殊状态 start 和 end</li>
+<li>带有variance标签的状态，包括三部分
+<ul>
+<li>带有L或R标签的interesting变量</li>
+<li>uninteresting变量</li>
+</ul></li>
+</ul></li>
+<li>栈字符集： <span class="math inline">\(\widetilde{\Sigma} = \Sigma \cup \{ v^\oplus ~|~ v \in \mathcal{V}_i \} \cup \{ v^\ominus ~|~ v \in \mathcal{V}_i \}\)</span>
+<ul>
+<li>包含普通的field label</li>
+<li>带有variance标记的有趣变量。TODO这表示什么意思</li>
+</ul></li>
+<li>转换规则包括四部分 <span class="math inline">\(\Delta = \Delta_\mathcal{C} \amalg \Delta_\mathsf{ptr} \amalg \Delta_\mathsf{start} \amalg \Delta_\mathsf{end}\)</span>
+<ul>
+<li><span class="math inline">\(\Delta_\mathcal{C}\)</span> 现有的规则，经过rule函数转换后的结果</li>
+<li><span class="math inline">\(\Delta_\mathsf{ptr}\)</span> PTR规则，经过rule函数转换后的结果</li>
+<li><span class="math inline">\(\Delta_\mathsf{start} = \left\{\langle {Start}; {v^\oplus} \rangle \hookrightarrow \langle {v^\oplus_\mathsf{L}}; {\varepsilon} \rangle~|~v \in \mathcal{V}_i \right\} \cup \left\{\langle {Start}; {v^\ominus} \rangle \hookrightarrow \langle {v^\ominus_\mathsf{L}}; {\varepsilon} \rangle~|~v \in \mathcal{V}_i \right\}\)</span>
+<ul>
+<li>表示start状态可以把栈上的唯一变量标签转换为当前状态，栈为空</li>
+</ul></li>
+<li><span class="math inline">\(\Delta_\mathsf{end} = \left\{\langle {v^\oplus_\mathsf{R}}; {\varepsilon} \rangle \hookrightarrow \langle {End}; {v^\oplus} \rangle~|~v \in \mathcal{V}_i \right\} \cup \left\{\langle {v^\ominus_\mathsf{R}}; {\varepsilon} \rangle \hookrightarrow \langle {End}; {v^\ominus} \rangle~|~v \in \mathcal{V}_i \right\}\)</span>
+<ul>
+<li>表示当前状态为某个变量，栈为空的时候，可以转换到End状态，把变量放到标签。</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><span class="math inline">\(\mathsf{Deriv}_{\mathcal{P_C}}\)</span> 表示 <span class="math inline">\(\mathcal{P}_\mathcal{C}\)</span> 上派生得到的约束</p></li>
+<li><p><span class="math inline">\(\mathsf{Deriv}_{\mathcal{P_C}}&#39; = \left\{ (X.u, Y.v) ~|~ (X^{\langle u \rangle}u, Y^{\langle v \rangle} v)\in \mathsf{Deriv}_{\mathcal{P_C}}\right\}\)</span></p>
+<ul>
+<li>表示 <span class="math inline">\(\mathcal{P}_\mathcal{C}\)</span> 上删去variance标签得到的约束。</li>
+</ul></li>
+<li><p>rule辅助函数，对普通的规则，生成我们内部使用的，带variance标签的规则形式</p>
+<ul>
+<li><span class="math inline">\(\mathsf{rule}^\oplus(p.u \sqsubseteq q.v) = \langle {\mathsf{lhs}(p)^{\langle u \rangle}}; {u} \rangle \hookrightarrow \langle {\mathsf{rhs}(q)^{\langle v \rangle}}; {v} \rangle \\\)</span>
+<ul>
+<li>首先观察到分别给左边和后边的有趣的基本类型变量，通过lhs和rhs函数带上了L/R标记</li>
+<li>其次将field label的variance标签标记到了类型变量上</li>
+</ul></li>
+<li><span class="math inline">\(\mathsf{rule}^\ominus(p.u \sqsubseteq q.v) = \langle {\mathsf{lhs}(p)^{\ominus \cdot \langle u \rangle}}; {u} \rangle \hookrightarrow \langle {\mathsf{rhs}(q)^{\ominus \cdot \langle v \rangle}}; {v} \rangle \\\)</span>
+<ul>
+<li>这里的点运算符就是variance的叠加运算。</li>
+<li>TODO：这里的规则有什么实际的含义吗？</li>
+</ul></li>
+<li><span class="math inline">\(\mathsf{rules}(c) = \{ \mathsf{rule}^\oplus(c),~ \mathsf{rule}^\ominus(c)\}\)</span>
+<ul>
+<li>表示对每个约束生成两种类型的约束，带有不同的variance标记。</li>
+</ul></li>
+</ul></li>
+<li><p>状态上的variance标签的作用：控制状态上的 <span class="math inline">\(\{ \oplus, \ominus \}\)</span> 上标用于追踪栈状态的当前variance，这使得我们能够区分在协变和逆变位置使用公理的情况。</p></li>
+<li><p>标签 操作 lhs 和 rhs 的作用：用于防止推导中使用来自 <span class="math inline">\(\mathcal{V}_i\)</span> 的变量，防止 <span class="math inline">\(\mathcal{P}_\mathcal{C}\)</span> 接受代表非基本证明的推导。</p>
+<ul>
+<li>例如，我们写一个递归的无限约束 <span class="math inline">\(var.load \sqsubseteq var\)</span>，推导为 <span class="math inline">\(var.load.load \sqsubseteq var.load \sqsubseteq var\)</span> ，在增加标签之后就变成了 <span class="math inline">\(var_{L}.load \sqsubseteq var_{R}\)</span> 从而不会被递归推导。</li>
+</ul></li>
+</ul>
+<p>基于Transducer的约束简化算法包含四个步骤：</p>
+<ul>
+<li>构建初始图
+<ul>
+<li>生成的约束可以直接看作PDS，这里的初始图表示未化简的transducer。</li>
+</ul></li>
+<li>Saturation。</li>
+<li>Tarjan's PathExpression 算法</li>
+<li>转换回约束</li>
+</ul>
+<p><strong>Saturation算法</strong></p>
+<p>实际算法直接构建对应的，在边上标记有push/pop序列的自动机，即Transducer。然后在上面执行saturation算法。</p>
+<ol type="1">
+<li>基于约束集合构建初始图。子类型关系增加标记为1的边。对标签增加和减少的关系，增加对应push/pop的边。
+<ol type="1">
+<li>规则左边存在的变量，标记pop边，右边的变量标记push边。</li>
+<li>状态标记代表剩余的可读字符串，所以push之后反而变少，pop反而变多。</li>
+</ol></li>
+<li>运行Saturation算法，
+<ol type="1">
+<li>维护Reaching Set集合 <span class="math inline">\(R(x)\)</span>
+<ol type="1">
+<li>初始的时候，遍历所有边，如果存在一个 <code>push l</code> 的边从 x 到 y 的边，则 <span class="math inline">\(R(y) \leftarrow R(y) \cup {(l,x)}\)</span> 从 x 节点 push l 可以来到 y 。即，只关注push边。</li>
+<li>循环开始时，假如有子类型关系边 <span class="math inline">\((x, y, 1)\)</span> ，则 <span class="math inline">\(R(y) \leftarrow R(y) \cup R(x)\)</span> 父类型更新子类型的可达关系。</li>
+</ol></li>
+<li>（循环内）Saturation规则：将 <code>push α -&gt; 1 -&gt; pop a</code> 这种边序列增加shortcut边。即，如果存在边 <span class="math inline">\((x, y, pop\;l)\)</span> 且 x 的到达集合 <span class="math inline">\(R(x)\)</span> 内有一个对应标签的到达关系 <span class="math inline">\((l,z)\)</span> 则给增加子类型关系边 <span class="math inline">\((z, y, 1)\)</span>。</li>
+<li>同时考虑S-Pointer规则：如果有一个 <span class="math inline">\((.store, z) \in R(x)\)</span>，想象边从 z 到 x，上面标记push store。此时找到x的逆 variance 节点 <span class="math inline">\(x^-\)</span>，然后给 <span class="math inline">\(R(x^-)\)</span> 增加 <span class="math inline">\((.load, z)\)</span>
+<ol type="1">
+<li>直接应用： <span class="math inline">\((.load,\;x.store) \in R(\overline{x})\)</span> 不是最典型的例子。往往会结合之前新增的子类型边。</li>
+<li>可以想象 <span class="math inline">\(x\)</span> 到 <span class="math inline">\(x^-\)</span> 额外增加了pop store和push load边。 <img src="imgs/s-ptr-example.drawio.png" /></li>
+<li>应用时最好 <span class="math inline">\(\overline{x}\)</span> 也存在在图上。</li>
+</ol></li>
+</ol></li>
+</ol>
+<p>实际实现时，saturation算法被包含在Transducer的构建中。Transducer的构建在两个地方发挥作用：</p>
+<ul>
+<li>约束的简化。</li>
+<li>给sketch标记lattice元素时用来查询。</li>
+</ul>
+<p><strong>Tarjan’s path-expression algorithm</strong> 来自论文 《Fast Algorithms for Solving Path Problems》（see also this <a target="_blank" rel="noopener" href="https://github.com/johspaeth/PathExpression">Github repo</a>）。 在一个有向图中，求解一个源点到其他任意点的可能的路径构成的正则表达式。</p>
+<p>在Saturation算法后，首先找到感兴趣的变量集合 <span class="math inline">\(\mathcal{\epsilon}\)</span> 然后找出所有开始并结束于 <span class="math inline">\(\mathcal{\epsilon}\)</span> 但是不经过 <span class="math inline">\(\mathcal{\epsilon}\)</span> 的路径表达式。然后和 <span class="math inline">\((recall\;\_)^*(forget \;\_)^*\)</span> 求交集（recall就是pop，forget就是push）。正则表达式也可以看作自动机，因此这里得到了一个新的自动机。</p>
+<p>将自动机翻译为一系列子类型约束：首先将源点和目的点的基础类型变量，作为子类型关系变量的两侧。如果路径上遇到了forget标记，则在右侧增加label。遇到了recall，对应的label增加到左侧。如果存在通配关系，引入新的类型变量，表示为递归的约束。</p>
+<p><strong>将Transducer转换回约束（D.3 TypeScheme）</strong> 这里的算法D.3并不是直接被用。而是主要反映一个性质。上述 transducer 在构建时，我们理解为有一个隐藏的栈，会从状态push进去。这里仅仅是构建了一个完全对应的PDS，把这个栈显式地表示出来。</p>
+<p>算法具体实现的时候，则是在前一步就找出从有趣变量到有趣变量的路径，然后直接把路径写成约束。</p>
+<p><strong>性质</strong>：最终得到的自动机Q有以下性质：</p>
+<ul>
+<li>将 pop l 看作读取输入 l，push l 看作写出字符 l，1 看作空转换（ε）。则这个Transducer描述了PDS所有可能的派生关系，即所有可能的子类型关系。</li>
+<li>如果在Q下，字符 Xu 能转换为 Yv，当且仅当X和Y是感兴趣变量，且存在一个基础的派生关系 <span class="math inline">\(\mathcal{C} \vdash X.u \sqsubseteq Y.v\)</span> 。</li>
+</ul>
+<h3 id="sketches-构成的格">Sketches 构成的格</h3>
+<ul>
+<li>sketch
+<ul>
+<li>定义1：sketch是一个带有标记的regular tree。</li>
+<li>定义2：sketch可以被看作两个函数
+<ul>
+<li>前缀闭合的语言： <span class="math inline">\(\mathcal{L}(S) \subseteq \Sigma^*\)</span></li>
+<li>从语言上的单词映射到lattice标记的函数 <span class="math inline">\(\nu : S \to \Lambda\)</span> ，例如 <span class="math inline">\(\nu_S(w)\)</span>。</li>
+</ul></li>
+<li>定义3：通过折叠sketch子树，sketch可以表示为一个有限状态自动机，每个状态标注了一个lattice元素 <span class="math inline">\(\Lambda\)</span> 。
+<ul>
+<li>这个自动机的每个状态都是接受态。因为语言是前缀闭合的。</li>
+</ul></li>
+<li>sketch的格结构。偏序关系写作 <span class="math inline">\(X \trianglelefteq Y\)</span>
+<ul>
+<li>为sketch的树结构定义了 <span class="math inline">\(\sqcup\)</span> 和 <span class="math inline">\(\sqcap\)</span> 运算：在语言上分别是交和并。对应节点不变，或者根据variance在节点标记的格上做交或者并。</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>一个在变量集合V上的约束集合C的解，是一个变量到sketch的映射，满足：</p>
+<ul>
+<li>如果是类型常量，则路径为空，lattice标记为常量</li>
+<li>如果约束能推出 <span class="math inline">\(X.v\)</span> 存在，则v属于语言 <span class="math inline">\(v \in \mathcal{L}(X)\)</span></li>
+<li>如果有子类型关系 <span class="math inline">\(\mathcal{C} \vdash X.u \sqsubseteq Y.v\)</span>
+<ul>
+<li>对应的节点上的lattice标记也有偏序关系</li>
+<li>对应的子树之间有sketch的偏序关系 <span class="math inline">\(u^{-1} S_X \trianglelefteq v^{-1} S_Y\)</span></li>
+</ul></li>
+</ul>
+<p>sketch 和约束的对应关系很好。任何约束集合都能被一个sketch表示，只要没有证明出lattice标记上不可能的关系。</p>
+<p><strong>从约束构建sketches (E.1 InferShapes)</strong></p>
+<p>将子类型关系理解为等价关系。</p>
+<ol type="1">
+<li>为每个变量，以及前缀隐含的变量存在，创建节点。</li>
+<li>构建图，边上标记field label的增加关系。</li>
+<li>划分等价关系：
+<ol type="1">
+<li>如果有子类型关系，则属于一个等价类。
+<ol type="1">
+<li>如果因为子类型关系在没有函数调用时是结构化的，即形状上一致，父子类型可拥有的field label一致，因此这里的父子关系划分的等价类内部，只要有一个变量能有某个label，则类内每个变量都能有这个label。</li>
+</ol></li>
+<li>等价类内两个变量，访问相同的标签得到的变量，（有子类型关系）也在同一个等价类内。
+<ol type="1">
+<li>这个地方有点像Steensgaard的线性指针分析算法。</li>
+</ol></li>
+<li>等价类内两个变量，一个访问load标签，一个访问store标签，得到的新变量也属于同一个等价类。</li>
+</ol></li>
+<li>计算每个等价类的形状，就是等价类内每个变量的sketch的形状。</li>
+</ol>
+<p>算法中实际实现时使用的步骤</p>
+<ol type="1">
+<li>Substitute</li>
+</ol>
+<p><strong>标记lattice元素 (F.2 Solve)</strong></p>
+<p>具体sketch上每个节点标什么lattice元素，借助了前面的transducer。关注所有的类型常量，然后看这个类型常量和哪些dtv有子类型关系，有则更新对应的lattice标记。根据子类型或父类型，取交或者并。</p>
+<figure>
+<img src="imgs/sketch-lattice-annotation.png" alt="" /><figcaption>sketch-lattice-annotation</figcaption>
+</figure>
+<h3 id="tarjan-path-expression">Tarjan Path Expression</h3>
+<p>基础符号</p>
+<ul>
+<li><span class="math inline">\(\epsilon(P(a,b))\)</span> 从源点a到目标点b的路径表达式P(a,b)，所表达的所有路径的集合。</li>
+<li><span class="math inline">\(\Lambda\)</span> 表示空路径，源点和目的点为同一点时，为空路径。</li>
+</ul>
+<p>定义</p>
+<h3 id="qa">Q&amp;A</h3>
+<p>Q1. <strong>为什么实现的时候，那边先infer shapes然后才简化约束？那能不能直接不简化约束了，既然我本来就想要内部的变量</strong></p>
+<p>确实不应该这样？简化约束应当是最早的一步，然后才是type scheme。但是这并不代表简化约束是没有意义的。因为如果其他地方如果调用了这边的函数，会实例化约束。简化了还是有好处的。</p>
+<p>从我的其他角度：</p>
+<ul>
+<li>先infer shapes可以获取到小的内部变量的类型，不然后面这些变量被简化没了。</li>
+<li>sketches可以作为函数的简化版约束，用在增量运算。关联Q3</li>
+</ul>
+<p>Q2. <strong>为什么算法要后序遍历SCC？起到什么作用？</strong></p>
+<p>TODO</p>
+<p>Q3. 给定一个SCC内所有函数的已经简化完的约束。开始分析另一个调用了已分析函数的SCC，是否会对之前函数的分析结果产生影响？？</p>
+<p>直观上看，函数就是函数本身，type schemes也就是一个函数到约束集合的映射，所以外部调用不会对函数类型有影响。细化到最具体的类型是后面考虑的事情。</p>
+<p>如何证明？类型从形状和lattice两方面考虑。类型关系在函数调用的时候允许丢失一些能力（non-structural subtyping）。</p>
+<p>Q4. 为什么只有函数调用的时候是non-structural subtyping?</p>
+<p>可能一般以函数为单位做抽象？一般不会出现：函数内部一小块代码突然被看作更泛化的代码。</p>
+<p>Q5. 如何将Sketch转换为普通类型？</p>
+<p>从根节点出发，为所有可达路径构建path expression。？</p>
+<p>Q6. 全局变量怎么处理？</p>
+<ol type="1">
+<li>全局变量被认为是参数和返回值的拓展？在分析时作为一个interesting的变量，从而在简化约束得到type scheme的时候，能够得到它和其他类型变量之间的关系？如果其他函数也用了同样的全局变量，就可以对接上。</li>
+<li>全局变量可以看作一个无参函数？函数的type scheme是最简化的约束，假设存在任何调用者，也不因caller的调用而变化。这个角度考虑，如果看作一个无参函数，任何全局变量的类型都是一个无约束的自由类型变量。真正发挥作用的时候，仅仅是后面的附录G里面，根据使用细化类型的时候才真正产生类型。这个是不是就是retypd代码里的top down propagation？TODO
+<ol type="1">
+<li>比如存在全局变量g，以及getter函数get_g和setter函数set_g。简化约束过程中，不推断G的类型。最后结束时根据使用会给G赋值一个最精确的类型。如果使用是通过get_g和set_g，则get_g因为使用获得的类型，能否从g顺着传播到set_g？</li>
+</ol></li>
+</ol>
+<p>Q7. 约束的实例化是怎么做的？</p>
+<ul>
+<li>在简化约束，求每个函数的type scheme时：
+<ul>
+<li>如果涉及的函数调用在SCC外，则根据调用点的不同，总是创建额外的实例。例如identity函数，函数内调用多次是不同的类型。</li>
+<li>如果涉及的函数在SCC内。则不复制任何实例。TODO是这样吗？调研一下summary based analysis是如何处理递归和调用环的情况的。</li>
+</ul></li>
+</ul>
+<p>另外，这说明提取约束时需要显式体现函数调用。可能可以为每个函数调用的约束增加一个调用地址标识。</p>
+<p>Q8. 为什么要标记L和R？为什么构图时仅对左边的增加forget边，右边的变量仅增加recall边？能否证明，不标记L和R，仅仅限制路径探索不能再经过interesting的变量，即可得到相同的约束？如果不能，则得到的约束是否能用？</p>
+<p>区分L/R以及仅对左边的增加forget边，右边的变量仅增加recall边，可以使得我们关注的变量不会存在于推导树内部。</p>
+<p>推理关系和 proof tree 之间有对应关系。区分L和R的区别在于是否把L的变量当R的变量，从而递归推进了子类型关系。回忆elementary proof的定义，能否保证得到的约束关系的推导树，都没有感兴趣的变量在函数内部？</p>
+<p>能否给出一个例子，使得某个saturation推导使得感兴趣的变量在推导树中间。</p>
+<p>为了给出这样一个例子，首先回忆，为什么要简化类型约束。关键在于，是否任何原约束集合能推导出的关系，我们给出的简化的约束集合也能推导出来？</p>
+<p>没有任何field label的<code>F.in</code>不能出现在该函数的子类型关系的子类型一方。同样，对应的<code>F.out</code>不能出现在子类型关系的父类型一方。</p>
+<p>另外，如果一个变量仅出现在子类型关系左边（contra-variant时仅出现在右边）。不会出现反过来的情况，因此即使加上了这样的边也不会被用到。定理：如果有临时变量t，仅出现在子类型关系左边，证明不会有额外的边指向t，因此即使有边从t指向end，也不会被用到。证明：有边指向t有两种情况。第一种：构建图的时候有边指向。这种情况需要t在子类型关系右边，所以不成立。第二种，saturation时增加了边指向。根据saturation规则，仅有某个节点已经被某个pop边指向的时候，这个节点才会可能获得新增的1边。因为t没有其他边指向它，所以不成立。</p>
+<p>Q9. 单个SCC内如何处理多态的类型关系？以及non-structural subtyping?</p>
+<p>可以假设，能形成SCC的变量，不太可能有多态的类型关系，所以，就按照非多态的角度考虑？</p>
+<p>TODO？这一块和full-context-sensitive的分析之间有点关系？</p>
+<p>Q10. 为什么算法，在单个函数内关于指令是指令数的三次方的复杂度？</p>
+<p>我们关注那个SCC的循环：生成约束的低于三次方。然后是对于每函数，这里还不是指令，不太算一个N。内部transducer函数构图，saturate，pathexpr算法。文章说saturate是主要的复杂度来源。</p>
+<p>其实这里SCC构图之后，对每个普通的函数，已经可以做一些简单的优化了？比如一个base var没有其他的节点，然后仅有一个successor和predecessor，则可以消除。怎么有点像基本块的。</p>
+<p>或者我可以把所有感兴趣的变量都区分L/R，先saturate一次，然后每次分析把图复制一份，merge其他的非感兴趣的图。</p>
+<p>Q11. 函数内的类型分析算法是怎么做的？</p>
+<p>首先，假如你已经有了被调函数的type schemes，type lattice，而且所有变量都是需要的，不需要简化。那么可以构建图，然后假设完全是non-structural subtyping，直接推导sketches。为了标记lattice，则需要构建transducer推导然后标记相关元素。</p>
+<p>Q12. 加减法约束对约束化简有什么影响？</p>
+<p>TODO</p>
+<h3 id="图算法基础">图算法基础</h3>
+<p>回顾之前的算法，我们先构建transducer图表示所有可能的子类型关系，然后饱和算法，再与productive语言相交。然后我们选择一系列感兴趣的变量，计算对应的路径表达式，然后再转换回约束。</p>
+<p>为了将带有标记的图转换回约束，有两个相关的算法：</p>
+<ol type="1">
+<li>将有限状态自动机转换为正则表达式的算法。 我们构建图的时候其实是有起始态和结束态的。把它看作一个自动机，然后即可求解出对应的正则表达式。
+<ol type="1">
+<li>对每个结束状态，从它开始，利用一系列规则归纳，归纳过程中允许边上直接标记为正则表达式，最后起始态和结束态会相邻。此时删除其他状态，并总结出对应的正则表达式。</li>
+<li>最后将得到的多个正则表达式并起来。得到最终的表达式。</li>
+</ol></li>
+<li>（Tarjan's path expression算法）给定有向图，和图上的某个源点，求出源点到图上任意一个其他点之间的可达路径，所构成的表达式。</li>
+<li>两个算法之间的关联：path expression算法会构建path sequence，缓存了子图的结果。而上面的表达式算法则没有这样做，因此path expression算法效率更高一些。（TODO 对吗？）</li>
+</ol>
+<h4 id="tarjans-path-expression算法">Tarjan's path expression算法</h4>
+<ul>
+<li>"Fast Algorithms for Solving Path Problems"</li>
+<li>"A Unified Approach to Path Problems"</li>
+</ul>
+<p><strong>定义：</strong> 给定有向图 <span class="math inline">\(G=(V, E)\)</span> ，对于单源点 s 的路径表达式（path expression）问题是，对于任何顶点v，求解出一个无歧义的路径表达式 <span class="math inline">\(P(s,v)\)</span> 使得 它所表达的路径 <span class="math inline">\(\sigma(P(s,v))\)</span> 包含了所有的从s到v的路径。</p>
+<p>注：</p>
+<ul>
+<li>这里指的表达式就是由路径构成的正则表达式，包括<span class="math inline">\(\cup\)</span>, <span class="math inline">\(*\)</span>, <span class="math inline">\(\;\cdot\;\)</span>(连接) 等特殊符号。</li>
+<li>该问题还存在变种：single-sink，all-pairs</li>
+</ul>
+<p><strong>路径序列（Path Sequence）：</strong> 一个有向图G的路径序列是一个序列 <span class="math inline">\((P_1,v_1,w_1), (P_2,v_2,w_2),...,(P_l,v_l,w_l)\)</span> ，满足以下条件：</p>
+<ol type="1">
+<li>对于 <span class="math inline">\(1 \le i \le l\)</span> ， <span class="math inline">\(P_l\)</span> 是一个无歧义的路径表达式，具有类型 <span class="math inline">\((v_i, w_i)\)</span> (即该表达式表示从 <span class="math inline">\(v_i\)</span> 到 <span class="math inline">\(w_i\)</span> 的路径)</li>
+<li>（空路径）对于 <span class="math inline">\(1 \le i \le l\)</span> ，如果 <span class="math inline">\(v_i = w_i\)</span>，则空路径 <span class="math inline">\(\Lambda \in \sigma(P_i)\)</span></li>
+<li>（非空路径）对于任何非空的路径p，存在一个唯一的下标序列 <span class="math inline">\(1 \le i_1 \le i_2 \le ... \le i_k \le l\)</span> 并且存在一个唯一的p的划分（不会划分出非空序列） <span class="math inline">\(p=p_1,p_2,...,p_k\)</span> 使得 <span class="math inline">\(p_j \in \sigma(P_{i_j})\)</span> 对于 <span class="math inline">\(1 \le j \le k\)</span>。</li>
+</ol>
+<p><strong>如何理解非空路径条件？</strong> 图可以被分区为 <span class="math inline">\(l\)</span> 部分，且每个分区都按顺序有个编号。然后每条路径都可以被这些部分切分，但是可能不经过部分分区。这里经过了k个分区，编号依次是 <span class="math inline">\(i_1,...,i_k\)</span>。让 <span class="math inline">\(j\)</span> 从1遍历到 <span class="math inline">\(k\)</span> ，每个分区内的路径 <span class="math inline">\(p_j\)</span> 是属于对应分区的路径表达式能够表达的所有路径集合 <span class="math inline">\(\sigma(P_{i_j})\)</span>。</p>
+<p><strong>如何理解路径序列？</strong> 任何图上的路径需要被分解为路径序列。</p>
+<ul>
+<li>比如我们可以构造一个路径序列，从图上任意点到任意点，则每个路径能直接找到对应。此时路径序列的顺序不重要。</li>
+<li>对于有向无环图，每个边可以单独成为一个路径序列，因为这个边是连接这两个节点的唯一必经路径。每个路径可以直接分解为每条边，然后对应到路径序列中。。</li>
+<li>对于强连通分量这种复杂情况，实在不行我们可以为里面任意两个点构建路径序列。如果有路径经过了强连通分量内部，如果能直接找到对应，则此时分量内部路径序列的顺序不重要。</li>
+</ul>
+<p><strong>Solve算法</strong>：给定一个路径序列，我们可以使用下面的传播算法解决单源点的路径表达式问题。</p>
+<ul>
+<li>初始化：设置 <span class="math inline">\(P(s,s) = \Lambda\)</span> ，同时对每个不为s的顶点，初始化 <span class="math inline">\(P(s,v) = \emptyset\)</span></li>
+<li>循环：让i从1到 <span class="math inline">\(l\)</span> （有 <span class="math inline">\(l\)</span> 个顶点）
+<ul>
+<li>如果 路径序列 <span class="math inline">\((P_i,v_i,w_i)\)</span> 中的 <span class="math inline">\(v_i = w_i\)</span> ， <span class="math inline">\(P(s, v_i):= [P(s,v_i)\;\cdot\;P_i]\)</span></li>
+<li>如果 <span class="math inline">\(v_i \ne w_i\)</span> ，<span class="math inline">\(P(s,w_i) = [P(s,w_i)\cup[P(s,v_i)\;\cdot\;P_i]]\)</span></li>
+</ul></li>
+</ul>
+<p>（这个算法基本上就是把路径连接起来。另外意味着我们需要按拓扑排序给节点一个编号）</p>
+<p><strong>路径表达式简化算法（方括号）</strong>：</p>
+<ul>
+<li>如果路径表达式 R 具有形式 <span class="math inline">\(R_1 \cup R_2\)</span> 则，
+<ul>
+<li>如果任意一边为空集合，则直接简化为另外一边</li>
+</ul></li>
+<li>如果路径表达式具有形式 <span class="math inline">\(R_1\;\cdot\;R_2\)</span> 则
+<ul>
+<li>如果任意一边是空集，则直接返回空集</li>
+<li>如果任意一边是空路径，则直接简化为另外一边</li>
+</ul></li>
+<li>如果路径表达式具有形式 <span class="math inline">\(R_1^*\)</span>
+<ul>
+<li>如果 <span class="math inline">\(R_1\)</span> 是空集或者空路径，则直接返回空路径</li>
+</ul></li>
+<li>否则原样返回</li>
+</ul>
+<p><strong>使用Solve函数解决路径问题</strong></p>
+<ul>
+<li>对于单源点路径表达式问题（single-source path expression），我们构建Path Sequence然后调用Solve一次</li>
+<li>对于所有节点对的路径表达式问题（all-pairs path expression），我们构建Path Sequence然后把每个点作为源点，调用Solve。</li>
+<li>对于单目的点的路径表达式问题（single-sink path expression），我们构建一个边都是反向的图，然后转换为单源点的路径表达式问题。</li>
+</ul>
+<p><strong>Eliminate算法：</strong> 我们可以对任意的图构建路径序列。</p>
+<ul>
+<li>初始化：
+<ul>
+<li><span class="math inline">\(P(v, w):=\varnothing\)</span> 任意两个顶点间都初始化为空集合</li>
+<li>然后对每个边 <span class="math inline">\(e \in E\)</span> ， 让路径表达式包含当前边 <span class="math inline">\(P(h(e), t(e)):=[P(h(e), t(e)) \cup e]\)</span></li>
+</ul></li>
+<li>求解的主循环：
+<ul>
+<li>让v遍历每个节点序号1到n
+<ul>
+<li><span class="math inline">\(P(v, v)=\left[P(\nu, v)^*\right]\)</span></li>
+<li>遍历每个 <span class="math inline">\(u \gt v\)</span> ，如果 <span class="math inline">\(P(u, v) \neq \varnothing\)</span>
+<ul>
+<li><span class="math inline">\(P(u, v):=[P(u, v) \cdot P(v, v)]\)</span></li>
+<li>遍历每个 <span class="math inline">\(w \gt v\)</span> ，如果 <span class="math inline">\(P(v, w) \neq \varnothing\)</span>
+<ul>
+<li><span class="math inline">\(P(u, w):=[P(u, w) \cup[P(u, v) \cdot P(v, w)]]\)</span></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>比如，如果一个有向无环图，按照拓扑排序编号，则 <span class="math inline">\(u \gt v\)</span> 时， <span class="math inline">\(P(u, v)\)</span> 必然为空，导致该算法无法进入循环，什么也做不了。但是实际上，初始化过程中，就已经完成了path sequence的构建了。因为有向无环图的路径序列就是每个边单独构成的序列。</p>
+<p><strong>Eliminate结果的顺序</strong>：Eliminate算法计算得到的结果，需要按照正确的顺序排列才能形成路径序列：</p>
+<p>Theorem 4. Let <span class="math inline">\(P(u, w)\)</span> for <span class="math inline">\(u, w \in V\)</span> be the path expressions computed by ELIMINATE. Then the following sequence is a path sequence: the elements of <span class="math inline">\(\{(P(u, w), u, w) \mid P(u, w) \notin\{\varnothing, \Lambda\} \; and \; u \leq w\}\)</span> in increasing order on <span class="math inline">\(u\)</span>, followed by the elements of <span class="math inline">\(\{(P(u, w), u, w) \mid P(u, w)=\varnothing \; and \; u&gt;w\}\)</span> in decreasing order on <span class="math inline">\(u\)</span>.</p>
+<p><strong>问题的分解</strong>： 为了提升Eliminate算法的效率，有两种方法，他们都对图进行分解。首先可以将图按强连通分量SCC分解。</p>
+<p><strong>有向无环图的路径序列：</strong> 首先将节点按照拓扑排序编号，可以直接得到集合 <span class="math inline">\(\{(e, h(e),t(e))|e\in E\}\)</span> 将这个集合中的点按照 <span class="math inline">\(h(e)\)</span> 升序排序，可以直接得到路径序列。</p>
+<p><strong>拓展到任意有向图：</strong> 对于有向图G，首先将图中的强连通分离凝结成单个点表示，则可以得到有向无环图，这些节点 <span class="math inline">\(G_1,G_2,...,G_k\)</span> 表示图G中的一个子图，编号按照拓扑排序。假设这些子图的路径表达式是 <span class="math inline">\(X_1,...,X_k\)</span> ，设 <span class="math inline">\(Y_l\)</span> 是序列 <span class="math inline">\(\{e,h(e),t(e)|h(e) \in G_l \; and \; t(e) \notin G_l\}\)</span> 任意排序（注意到 <span class="math inline">\(Y_k\)</span> 为空）。则 <span class="math inline">\(X_1,Y_1,X_2,Y_2,...,X_{k-1},Y_{k-1},X_k\)</span>是G的一个路径序列。</p>
+<h2 id="与其他算法的关系">与其他算法的关系</h2>
+<h3 id="retypd与现有指针分析的关系">Retypd与现有指针分析的关系</h3>
+<h4 id="steensgaard-线性时间-指针分析">Steensgaard 线性时间 指针分析</h4>
+<p>相关资料：</p>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://homepages.dcc.ufmg.br/~fernando/classes/dcc888/ementa/slides/PointerAnalysis.pdf">DCC888 编译器静态分析课 Pointer Analysis</a></li>
+<li><a target="_blank" rel="noopener" href="https://xiongyingfei.github.io/SA/2017/10_control_flow_analysis.pdf">北京大学 软件分析 熊英飞</a></li>
+</ol>
+<h4 id="与-anderson-指针分析的关系">与 Anderson 指针分析的关系</h4>
+<p>对应retypd论文中Constraint generation一节。</p>
+<p>对于语句 q = &amp;x，如何生成约束？有两种方式</p>
+<ul>
+<li>x是q加载后的子类型（提前假设q会被load）： 生成 <code>x &lt;= q.load.off0@N</code></li>
+<li>q存入值是x的子类型（提前假设q会被store）：生成 <code>q.store.off0@N &lt;= x</code></li>
+</ul>
+<p>需要考虑的问题是，立刻生成这两个约束，和维护一个指针分析，根据指针分析的结果生成这些约束。这两种方式是否有区别。</p>
+<ul>
+<li>假如提前生成了这个约束，是否会产生什么额外的影响？
+<ul>
+<li>直观来说，额外生成的 q.load.off0@N q.store.off0@N 还能有谁指向吗？</li>
+</ul></li>
+<li>如果Steensgaard指针分析能推断出指向关系，假如不产生指针分析的约束，原有类型系统是否依然能推断出来类型关系。</li>
+</ul>
+<p>证明：</p>
+<p>分每种语句考虑(TODO 证明 offset和load/store可以绑定/合并)</p>
+<ul>
+<li><strong>语句1</strong>：对于 x = &amp;O1，对应 <code>O1 &lt;= x.load</code> 和 <code>x.store &lt;= O1</code> 我们把指向关系定义为这两个关系的组合。</li>
+<li><strong>语句2</strong>：对于 y = x (x &lt;= y)，在retypd下有如下图结构：</li>
+</ul>
+<figure>
+<img src="imgs/assignment-retypd.drawio.png" alt="" /><figcaption>assignment constraint graph</figcaption>
+</figure>
+<p>在指针分析中有如下约束： pts(x) <span class="math inline">\(\subseteq\)</span> pts(y) 我们尝试证明：</p>
+<ul>
+<li>对于任何x可能指向的对象，y也会指向它。
+<ul>
+<li>1 已知 O1 &lt;= x.load ，证明 O1 &lt;= y.load：证：由 x.load &lt;= y.load 显然 O1 &lt;= x.load &lt;= y.load</li>
+<li>2 已知 x.store &lt;= O1 ，证明 y.store &lt;= O1：证：由y.store &lt;= x.store 显然 y.store &lt;= x.store &lt;= O1</li>
+</ul></li>
+</ul>
+<p>能否证明充要条件？如果存在 <code>O1 &lt;= x.load</code> 和 <code>x.store &lt;= O1</code> 则必然在Anderson指针分析中有 O1 <span class="math inline">\(\in\)</span> pts(x)</p>
+<p>则我们可以证明，retypd是一种基于anderson指针分析的类型推断算法。</p>
+<figure>
+<img src="imgs/Anderson-pointer-algo.png" alt="" /><figcaption>Pointer analysis constraints</figcaption>
+</figure>
+<p><strong>语句3</strong>：对于a = *b，有 b.load &lt;= a</p>
+<ul>
+<li>方式1 提前生成约束： 由归纳法，如果之前的其他语句都能够维持和指针分析等效的分析关系，当前语句依然能维持关系，则关系继续维持。
+<ul>
+<li>提前生成约束会额外生成约束： 对于任何 O <span class="math inline">\(\in\)</span> pts(b) 有 b.store &lt;= O 似乎影响不大？</li>
+</ul></li>
+<li>方式2 根据指针分析生成约束：对于任何 v <span class="math inline">\(\in\)</span> pts(b) ，生成/之前有 v &lt;= b.load。因此有 v &lt;= b.load &lt;= a。对应 v <span class="math inline">\(\subseteq\)</span> a</li>
+</ul>
+<p><strong>语句4</strong>：对于*a = b，有 b &lt;= a.store</p>
+<ul>
+<li><p>根据指针分析生成约束：对于任何 v <span class="math inline">\(\in\)</span> pts(a) ，之前有 a.store &lt;= v。所以有 b &lt;= a.store &lt;= v。对应 b <span class="math inline">\(\subseteq\)</span> v</p></li>
+<li><p>saturation算法和Anderson指针分析算法求解时的异同。</p></li>
+<li><p>retypd如果没有区分指针的load和store，是否依然和anderson指针分析一致？</p>
+<ul>
+<li>不行，明显上面的证明是和load和store性质有很大关系的。</li>
+</ul></li>
+</ul>
+<p><strong>问题</strong>：offset和load/store可以绑定/合并?</p>
+<p><strong>证明</strong>：首先.in 和.out只能在最外层。因此没有什么能够介入load/store中间。其次，每次load和store必然有offset和size。我们讨论某个变量的load和store的时候，本质上在讨论所有可能的offset和size之间的关系/对应的结构体类型。</p>
+<p><strong>结构体域敏感的指针分析</strong></p>
+<p>《Efficient Field-Sensitive Pointer Analysis for C》中提出了几种新的操作</p>
+<h2 id="实现---约束生成">实现 - 约束生成</h2>
+<p><strong>基本运算</strong></p>
+<p>根据指令的依赖关系，自底向上处理指令，插入到指令到约束集合的集合。生成约束变量。</p>
+<ul>
+<li>指针相关
+<ul>
+<li>存地址运算：由上面的证明，直接假设它之后会被load/store，生成两条约束。</li>
+</ul></li>
+<li>变量赋值/数据流传递：对应子类型关系。</li>
+<li>加法和减法约束
+<ul>
+<li>函数内是双向数据流分析，但是要和Summary-based analysis结合，无法求解的约束存到summary里尝试化简。</li>
+</ul></li>
+<li>比较运算
+<ul>
+<li>如果不是指针大小的整数比较，则判定为数字比较或者浮点数比较(应该吧？)</li>
+<li>如果是指针大小的比较。
+<ul>
+<li>变量和常量比较
+<ul>
+<li>如果常量落在指针可能存在的区间里，则它即有可能是数字也可能是指针</li>
+<li>指针类型和数字类型不会混合比较，即使出现了常量数字，则说明该数字为指针类型。</li>
+</ul></li>
+<li>变量和变量比较
+<ul>
+<li>同上</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>整数转换
+<ul>
+<li>Truncate: 同时适用于有符号和无符号数。无法看出符号。Shl同理</li>
+<li>ZExt: 如果是在32位/64位之间的转换，就当普通赋值。否则就都是数字</li>
+<li>SExt: 全当做数字。</li>
+</ul></li>
+<li>比特操作
+<ul>
+<li>And Or如果有常量，常量得符合一定要求才能认为可能是保留指针类型的指针运算。否则认为两端非指针。</li>
+<li>And Or如果有常量，可以直接认为为保留类型的一元运算符</li>
+</ul></li>
+</ul>
+<p><strong>加减法约束</strong></p>
+<p>加减法约束的计算问题，其实是一个双向数据流分析问题。对应关系如下：</p>
+<ul>
+<li>数据流流动关系，即SSA上的def-use关系，对应约束生成时的子类型关系，都是一种边。</li>
+<li>指针类型关于子类型关系双向传递，子类型关系可以看作是数据流分析的边，加减法看作带有运算的基本块。然后基于worklist算法，递归应用约束，直到迭代到不动点。。</li>
+<li>子类型关系。</li>
+</ul>
+<p>因为本来就有基于类型的alias analysis。所以涉及指针的时候，类型分析和指针分析和别名分析真的有联系。</p>
+<ul>
+<li>指针分析是别名分析的更精确版本。别名分析可以看作指针分析的应用。</li>
+<li>类型分析需要随着指针指向去传播。</li>
+<li>类型分析涉及指针时，不需要考虑流敏感性，上下文敏感性。</li>
+</ul>
+<h2 id="其他">其他</h2>
+<p><strong>SSA的静态分析和传统静态分析</strong></p>
+<ul>
+<li>SSA的静态分析是在 SSA Edge ，即def-use chain上进行，遇到Phi指令merge结果。。</li>
+<li>传统静态分析在CFG上进行，遇到控制流合并时merge结果。</li>
+</ul>
+<p><strong>静态分析之间的分层依赖</strong></p>
+<p>静态分析直接可能有依赖关系。比如指针和数字类型区分就被retypd类型恢复依赖，retypd进一步恢复指针的具体类型。</p>
+<p>静态分析之间，是依赖关系还是更复杂的的关系。在于是否上层依赖的分析结果会反哺下层分析的结果。比如这里retypd如果恢复了更详细的具体类型，比如两个指针指向的结构体成员之间的复杂关系，那么这两个就有关系。。</p>
+<p>问题：基于Steensgaard的线性时间指针分析算法的合并存储图，和retypd的sketches 等价图分析指针和数字类型，达到的精度是否相同？</p>
+<p>答：应该是相同的。retypd的等价图构建后就等价是Steensgaard的存储关系图。</p>
+<p>但是在跨函数分析框架下，这些具体分析都是一样地需要专门看待。。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" data-id="cm6kw4rj6005r08uef8v3g948" data-title="二进制代码的多态类型推断Retypd" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Ghidra反编译器原理与代码架构解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">SoftwareFoundations学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.67px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 11.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.67px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 15px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.67px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16.67px;">Networking</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.33px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 13.33px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 15px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 16.67px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.67px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

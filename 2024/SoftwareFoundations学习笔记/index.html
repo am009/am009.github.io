@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>SoftwareFoundations学习笔记 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="SoftwareFoundations学习笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SoftwareFoundations学习笔记">
+<meta property="og:url" content="https://wjk.moe/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+<meta property="og:site_name">
+<meta property="og:description" content="SoftwareFoundations学习笔记。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2024-11-03T03:11:12.000Z">
+<meta property="article:modified_time" content="2024-12-30T08:16:35.609Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="PL">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2024/SoftwareFoundations学习笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time class="dt-published" datetime="2024-11-03T03:11:12.000Z" itemprop="datePublished">2024-11-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      SoftwareFoundations学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>SoftwareFoundations学习笔记。</p>
+<span id="more"></span>
+<p>不得不说，还是应该跟着各种课程，好好的去重新学习一下编程语言理论相关的知识。首先，我在问过很多大佬之后，他们提到的学习资源也就是这些东西。第二，奢求其他人耐心的给你讲解基础知识基本上是不可能的，所以这些东西都需要靠自己自学。最近完全没有耐下心来去好好学习，从现在开始冲刺还来得及。而且，这种基础知识类的东西，无论什么时候学，都是好处远大于投入。学了之后，基本马上就能用到。不学，只能浪费更多的时间自己推理。</p>
+<p>https://coq.inria.fr/tutorial/</p>
+<p>https://blog.vero.site/ref/coq</p>
+<h2 id="常用命令与环境配置">常用命令与环境配置：</h2>
+<p>手动命令行命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 最好先运行make编译每个.v为.vo文件</span><br><span class="line">coqc -Q . LF Basics.v</span><br><span class="line">coqc -Q . LF BasicsTest.v</span><br><span class="line">coqtop -Q . LF # 进入交互式模式。退出使用 `Quit.`</span><br><span class="line">ledit coqtop -Q . LF # 直接使用coqtop 会无法使用左右箭头，上下翻历史等功能。搜了发现需要先`opam install ledit`然后用ledit执行coqtop</span><br></pre></td></tr></table></figure>
+<p>然后执行 <code>From LF Require Export Induction.</code> 导入当前在读的章节。</p>
+<p>最基本的做题环境设置：VSCode下面开两个分屏的终端，上面看代码（即同时也是看书）。每次做题目就把上面的定理复制到下面coqtop。然后在下面手动证明。做好了把答案整理上去。</p>
+<p>更好用的配置，首先安装vscoq插件并配置好，然后在要做题的地方使用快捷键Alt + 右箭头。插件会解释代码到文件当前位置。同时在右侧展示当前Goal。不断写语句并查看右侧。</p>
+<h2 id="逻辑基础-basics">1 逻辑基础 Basics</h2>
+<p>声明（Declaration），将一个名字和规范（specification）对应起来，有三种规范：logical propositions, mathematical collections, and abstract types。 - Hypothesis 假设，一个返回Prop（bool）类型值的logical propositions， - Definition 定义，就是给个别名。Definition double (m : nat) := plus m m. - Inductive 递归的定义，即定义里面可以用当前正在定义的类型。类似Fixpoint，但是Fixpoint更复杂。 - Fixpoint 递归函数定义，可以函数体内用这个函数。 Coq 要求每个 Fixpoint 定义中的某些参数必须是“递减的”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Fixpoint evenb (n:nat) : bool :=</span><br><span class="line">  match n with</span><br><span class="line">  | O ⇒ true</span><br><span class="line">  | S O ⇒ false</span><br><span class="line">  | S (S n&#x27;) ⇒ evenb n&#x27;</span><br><span class="line">  end.</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Check 类型检查。如果不加类型则打印类型。</li>
+<li>Example / Theorem /Lemma / Fact / Remark 都是表示一个需要证明的定理？</li>
+</ul>
+<h3 id="数据结构">数据结构</h3>
+<p>有参数的构造函数： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Inductive color : Type :=</span><br><span class="line">  | black</span><br><span class="line">  | white</span><br><span class="line">  | primary (p : rgb).</span><br></pre></td></tr></table></figure></p>
+<p>模式匹配：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Definition isred (c : color) : bool :=</span><br><span class="line">  match c with</span><br><span class="line">  | black ⇒ false</span><br><span class="line">  | white ⇒ false</span><br><span class="line">  | primary red ⇒ true</span><br><span class="line">  | primary _ ⇒ false</span><br><span class="line">  end.</span><br></pre></td></tr></table></figure>
+<p>元组：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Inductive nybble : Type :=</span><br><span class="line">  | bits (b(0) b(1) b(2) b(3) : bit).</span><br></pre></td></tr></table></figure>
+<p>定义的数组的表示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Notation &quot;x :: y&quot; := (cons x y)</span><br><span class="line">                     (at level 60, right associativity).</span><br><span class="line">Notation &quot;[ ]&quot; := nil.</span><br><span class="line">Notation &quot;[ x ; .. ; y ]&quot; := (cons x .. (cons y []) ..).</span><br><span class="line">Notation &quot;x ++ y&quot; := (app x y)</span><br><span class="line">                     (at level 60, right associativity).</span><br></pre></td></tr></table></figure>
+<h3 id="证明模式">证明模式：</h3>
+<p>https://www.cs.cornell.edu/courses/cs3110/2018sp/a5/coq-tactics-cheatsheet.html#induction</p>
+<ul>
+<li>intro H：将条件成立的定理的条件移入到局部的假设，假设命名为H。intros：反复应用intro，自动取假设的名字。</li>
+<li>Symmetry 交换等式左右两边。</li>
+<li>Apply H: H是一个条件成立的定理，且结果和待证明目标相同。想要应用H，则需要满足H的条件。接下来只需要证明H的条件，即可证明待证明的目标。</li>
+<li>Exact HA: 待证明目标就是假设HA。不需要证明/直接完成证明。</li>
+<li>Assumption: 当前需要证明的目标，直接可以由已有的假设得到。尝试在上下文中查找完全匹配目标的前提 H。 如果找到了，那么其行为与 apply H 相同。</li>
+<li>assert：引入一个子目标，先证明它然后把它加入假设。例如：<code>assert (H : n * m * n = n * n * m). &#123; rewrite mul_comm. apply mult_assoc. &#125;</code></li>
+<li>Qed.: 检查当前的证明并保存。</li>
+<li>rewrite -&gt; H ：基于相等的某个前提，把等式一边的东西改写成另外一边的东西。右箭头表示从左往右改写</li>
+<li>Destruct n as [| n'] eqn:E : 根据结构体结构解构，引入多个子目标。这里方括号内用|分割，是给每个构造函数的参数取的变量名字。然后后面用标号依次证明每个子目标。减号和加号 星号，或者它们的重复都可以。也可以花括号。
+<ul>
+<li>这里的eqn，表示用E表示引入的等价关系。比如这里将n解构为<code>0</code>或者<code>S n1</code>，这里E就分别代表<code>n = 0</code>或者 <code>n = S n1</code>。</li>
+</ul></li>
+<li>unfold 展开定义。有时候定义会阻止simpl.简化。</li>
+<li>induction：归纳法，证明基础的，证明传递保持的。和destruct类似，引入多个子目标。</li>
+<li>injection：利用构造子的单射性，比如把<code>S n = S m</code>的两边都移除构造子，<code>injection H as Hnm</code>，得到假设<code>Hnm</code> 即<code>n = m</code>。</li>
+<li>discriminate 理由构造子的不相交性，对一个假设说这个是不可能成立的。因此直接停止证明。因为错误的假设可以推出任何东西。</li>
+<li>transitivity 连续的应用等式，利用等式的传递性。</li>
+<li>f_equal 可以将结论外面相同的函数脱去。
+<ul>
+<li>如果每个参数依次等价，则相同形式的构造器/函数等价。对一个<code>f a1 ... an = g b1 ... bn</code>的场景应用该定理，得到多个子目标：<code>[f = g], [a1 = b1], ..., [an = bn]</code>。</li>
+</ul></li>
+<li>inversion 和上面类型，但是应用在假设上，把假设里相同的构造器脱去。</li>
+<li>specialize 将一个通用的假设，用一个情况特化。比如假设<code>H : forall m : nat, m * n = 0</code> 然后执行<code>specialize H with (m := 1).</code>，这个假设变成<code>H : 1 * n = 0</code>。可以specialize一个外面的定理进来，得到新的假设，控制apply的工作方式。</li>
+<li>generalize dependent 可以将变量重新放回forall的量词。在想要给量词顺序换位置的时候有用。</li>
+</ul>
+<p>直接使用这些Tactics都是反向证明，使用<code>apply xx in H</code>这种带in的Tactics则可以进行前向证明。即，不断变换前提条件，最后直接在某个假设中得到结论，Apply一下即可完成证明。</p>
+<ul>
+<li>clear H：从上下文中删除前提 H。</li>
+<li>subst x：对于变量 x，在上下文中查找假设 x = e 或 e = x， 将整个上下文和当前目标中的所有 x 替换为 e 并清除该假设。</li>
+<li>subst：替换掉'所有'形如 x = e 或 e = x 的假设（其中 x 为变量）。</li>
+<li>rename... into...：更改证明上下文中前提的名字。例如， 如果上下文中包含名为 x 的变量，那么 rename x into y 就会将所有出现的 x 重命名为 y。</li>
+<li>contradiction：尝试在当前上下文中查找逻辑等价于 False 的前提 H。 如果找到了，就解决该目标。</li>
+<li>constructor：尝试在当前环境中的 Inductive 定义中查找可用于解决当前目标的构造子 c。如果找到了，那么其行为与 apply c 相同。</li>
+</ul>
+<h3 id="连接不同的证明">连接不同的证明：</h3>
+<ul>
+<li><code>T(1) ; T(2) (read T(1) then T(2))</code> 先应用T1，出现了多个需要证明的子目标时，对所有子目标应用T2</li>
+<li><code>T; [T(1) | T(2) | ... | T(n)]</code> 先应用T，出现了多个需要证明的子目标时，对每个子目标按顺序应用T1 T2 ... Tn</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="cm6kw4ri2001e08ue8k54crpd" data-title="SoftwareFoundations学习笔记" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          二进制代码的多态类型推断Retypd
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/%E7%94%9F%E6%B4%BB%E5%92%8C%E6%95%88%E7%8E%87/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">生活和效率</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 20px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.67px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 13.33px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 11.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.67px;">Java</a> <a href="/tags/LLVM/" style="font-size: 10px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 15px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.67px;">Linux</a> <a href="/tags/Networking/" style="font-size: 16.67px;">Networking</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.33px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Scientific/" style="font-size: 13.33px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 15px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 16.67px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.67px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
