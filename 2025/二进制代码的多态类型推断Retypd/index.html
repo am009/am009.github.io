@@ -13,20 +13,20 @@
 <meta property="og:site_name">
 <meta property="og:description" content="钻研了两年半《Polymorphic Type Inference for Machine Code》论文。看完本文后还有任何相关的问题可以问我。 跨函数的类型传播算法，可以将库函数的类型传递到代码内部。即使没有库函数识别时，也可以识别处函数内的结构体信息。">
 <meta property="og:locale">
-<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/saturation.drawio.png">
-<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/saturation3.drawio.png">
-<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/s-ptr-example.drawio.png">
-<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/sketch-lattice-annotation.png">
-<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/assignment-retypd.drawio.png">
-<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/Anderson-pointer-algo.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/saturation.drawio.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/saturation3.drawio.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/s-ptr-example.drawio.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/sketch-lattice-annotation.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/assignment-retypd.drawio.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/Anderson-pointer-algo.png">
 <meta property="article:published_time" content="2025-01-30T03:11:12.000Z">
-<meta property="article:modified_time" content="2025-01-31T14:57:12.414Z">
+<meta property="article:modified_time" content="2025-03-07T03:08:25.678Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="PL">
-<meta property="article:tag" content="Decompile">
 <meta property="article:tag" content="StaticAnalysis">
+<meta property="article:tag" content="Decompile">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/imgs/saturation.drawio.png">
+<meta name="twitter:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/saturation.drawio.png">
   
     <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
   
@@ -308,7 +308,7 @@
 </ul></li>
 <li><p>算法：如果有一个规则 <span class="math inline">\(pA \rightarrow qw\)</span> ，同时现在的P-自动机存在一个路径 <span class="math inline">\(q \overset{w}{\underset{\mathcal{A}_{i}}{\Longrightarrow}} s\)</span> 我们给P-自动机增加一个新的转换规则 <span class="math inline">\(p \xrightarrow[]{A} s\)</span></p>
 <figure>
-<img src="imgs/saturation.drawio.png" alt="" /><figcaption>saturaion</figcaption>
+<img src="saturation.drawio.png" alt="" /><figcaption>saturaion</figcaption>
 </figure>
 <p><code>p Au -&gt; q wu</code>。原有自动机为黑色部分，u代表未知任意字符串，即代表的是路径，内部省略了具体的其他节点。意味着从状态为q栈为空的状态，能够接受一个字符串wu。</p>
 <p>然后我们新增了这样一条规则，使得状态为p，字符串为Au也被接受了。</p>
@@ -370,7 +370,7 @@
 </ul></li>
 <li><p>对比自动机和transducer</p>
 <figure>
-<img src="imgs/saturation3.drawio.png" alt="" /><figcaption>对比自动机和transducer</figcaption>
+<img src="saturation3.drawio.png" alt="" /><figcaption>对比自动机和transducer</figcaption>
 </figure>
 <p>注意到几点：1. Transducer的边可以看作双向的，如果有个pop过去的边，则也可以push回去。而且这里pop边和P-自动机的边对应。2. 从非确定性自动机NFA角度看，transducer 1 和transducer 2是等价的。3. 这里可以看到，transducer的状态可以和PDS配置是一个一对多的关系。</p></li>
 <li><p>行为集合 <span class="math inline">\(Behaviour_{P}\)</span> 表示下推系统P，不管是否non-productive，可能走出的所有栈操作序列的集合。</p>
@@ -684,7 +684,7 @@
 <li>同时考虑S-Pointer规则：如果有一个 <span class="math inline">\((.store, z) \in R(x)\)</span>，想象边从 z 到 x，上面标记push store。此时找到x的逆 variance 节点 <span class="math inline">\(x^-\)</span>，然后给 <span class="math inline">\(R(x^-)\)</span> 增加 <span class="math inline">\((.load, z)\)</span>
 <ol type="1">
 <li>直接应用： <span class="math inline">\((.load,\;x.store) \in R(\overline{x})\)</span> 不是最典型的例子。往往会结合之前新增的子类型边。</li>
-<li>可以想象 <span class="math inline">\(x\)</span> 到 <span class="math inline">\(x^-\)</span> 额外增加了pop store和push load边。 <img src="imgs/s-ptr-example.drawio.png" /></li>
+<li>可以想象 <span class="math inline">\(x\)</span> 到 <span class="math inline">\(x^-\)</span> 额外增加了pop store和push load边。 <img src="s-ptr-example.drawio.png" /></li>
 <li>应用时最好 <span class="math inline">\(\overline{x}\)</span> 也存在在图上。</li>
 </ol></li>
 </ol></li>
@@ -761,7 +761,7 @@
 <p><strong>标记lattice元素 (F.2 Solve)</strong></p>
 <p>具体sketch上每个节点标什么lattice元素，借助了前面的transducer。关注所有的类型常量，然后看这个类型常量和哪些dtv有子类型关系，有则更新对应的lattice标记。根据子类型或父类型，取交或者并。</p>
 <figure>
-<img src="imgs/sketch-lattice-annotation.png" alt="" /><figcaption>sketch-lattice-annotation</figcaption>
+<img src="sketch-lattice-annotation.png" alt="" /><figcaption>sketch-lattice-annotation</figcaption>
 </figure>
 <h3 id="tarjan-path-expression">Tarjan Path Expression</h3>
 <p>基础符号</p>
@@ -950,7 +950,7 @@
 <li><strong>语句2</strong>：对于 y = x (x &lt;= y)，在retypd下有如下图结构：</li>
 </ul>
 <figure>
-<img src="imgs/assignment-retypd.drawio.png" alt="" /><figcaption>assignment constraint graph</figcaption>
+<img src="assignment-retypd.drawio.png" alt="" /><figcaption>assignment constraint graph</figcaption>
 </figure>
 <p>在指针分析中有如下约束： pts(x) <span class="math inline">\(\subseteq\)</span> pts(y) 我们尝试证明：</p>
 <ul>
@@ -963,7 +963,7 @@
 <p>能否证明充要条件？如果存在 <code>O1 &lt;= x.load</code> 和 <code>x.store &lt;= O1</code> 则必然在Anderson指针分析中有 O1 <span class="math inline">\(\in\)</span> pts(x)</p>
 <p>则我们可以证明，retypd是一种基于anderson指针分析的类型推断算法。</p>
 <figure>
-<img src="imgs/Anderson-pointer-algo.png" alt="" /><figcaption>Pointer analysis constraints</figcaption>
+<img src="Anderson-pointer-algo.png" alt="" /><figcaption>Pointer analysis constraints</figcaption>
 </figure>
 <p><strong>语句3</strong>：对于a = *b，有 b.load &lt;= a</p>
 <ul>
@@ -1056,7 +1056,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" data-id="cm6tduozf003rasue1gjp570b" data-title="二进制代码的多态类型推断Retypd" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" data-id="cm7y759xl0062rkue90dr15n0" data-title="二进制代码的多态类型推断Retypd" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
