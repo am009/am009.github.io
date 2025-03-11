@@ -64,7 +64,7 @@
     <link href="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/"/>
     <id>https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/</id>
     <published>2025-01-30T03:11:12.000Z</published>
-    <updated>2025-03-07T03:08:25.678Z</updated>
+    <updated>2025-03-07T03:10:33.212Z</updated>
     
     
     <summary type="html">&lt;p&gt;钻研了两年半《&lt;a href=&quot;https://arxiv.org/abs/1603.05495&quot;&gt;Polymorphic Type Inference for Machine Code&lt;/a&gt;》论文。看完本文后还有任何相关的问题可以问我。&lt;/p&gt;
@@ -77,9 +77,9 @@
     
     <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
     
-    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
   </entry>
   
@@ -136,9 +136,9 @@
     <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
     
     
-    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
-    
     <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
+    
+    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
     
   </entry>
   
@@ -157,9 +157,9 @@
     <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
     
     
-    <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
-    
     <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
+    
+    <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
     
   </entry>
   
@@ -372,9 +372,9 @@
     <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
     
     
-    <category term="OS" scheme="https://wjk.moe/tags/OS/"/>
-    
     <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    
+    <category term="OS" scheme="https://wjk.moe/tags/OS/"/>
     
   </entry>
   
