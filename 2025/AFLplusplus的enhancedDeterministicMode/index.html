@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>LLVM的SROA解析 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="AFL++的Enhanced Deterministic mode的实现解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LLVM的SROA解析">
+<meta property="og:url" content="https://wjk.moe/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/">
+<meta property="og:site_name">
+<meta property="og:description" content="AFL++的Enhanced Deterministic mode的实现解析">
+<meta property="og:locale">
+<meta property="article:published_time" content="2025-04-02T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-05-31T08:36:47.401Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="LLVM">
+<meta property="article:tag" content="Compiler">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2025/AFLplusplus的enhancedDeterministicMode" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/" class="article-date">
+  <time class="dt-published" datetime="2025-04-02T03:11:12.000Z" itemprop="datePublished">2025-04-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      LLVM的SROA解析
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>AFL++的<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/pull/1972">Enhanced Deterministic mode</a>的实现解析</p>
+<span id="more"></span>
+<p>deterministic mode是最开始的时候AFL就有的一个和havoc并列的mutate阶段。而后续AFL++则进一步改进了这一阶段，增加了效率。本文介绍相关的内容。</p>
+<h2 id="之前的deterministic-mode">之前的deterministic mode</h2>
+<p><a target="_blank" rel="noopener" href="https://www.usenix.org/system/files/woot20-paper-fioraldi.pdf">《AFL++: Combining Incremental Steps of Fuzzing Research》</a> 里面提到了AFL++的mutation分为两个主要部分，分别是这里解析的确定性变异（deterministic）和havoc。确定性变异阶段，AFL++会对种子进行单次的确定性的变异。使用的mutation通常包括bit blips, addition, 用常见的整数值，比如INT_MAX, -1等进行替换（substitution）。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.adacore.com/advanced-fuzz-testing-with-aflplusplus-3-00">这个网站</a>提到，deterministic策略会尝试bit flip每个test-case的bit。</p>
+<p>这一确定性的过程比较花时间，所以在fuzz初期的覆盖率上，开了会比不过关闭deterministic mode。但是如果关闭deterministic mode会直接缺失一部分的mutator，所以最后coverage收敛后，开启deterministic模式会高一点。</p>
+<h3 id="effect-map">Effect Map</h3>
+<p>如果某个字节，完全翻转（fully flipped）都不会对执行的路径造成影响，则跳过对这些字节的deterministic阶段。</p>
+<p>比如，如果一个值被用作for循环的循环次数，那么翻转了肯定是影响执行路径的，此时在deterministic阶段使用一些int_max或者-1这种值进行mutate就很有用，但是如果是普通的无关执行路径的值，那么浪费时间在上面也没有意义。</p>
+<p>原版的AFL中就有了Effect map机制，在<a target="_blank" rel="noopener" href="https://github.com/ThePatrickStar/AFL-Original/blob/d09714865d3a211a9c1a682eaa9bb8b00327e842/afl-fuzz.c#L5421">这里</a>。</p>
+<h2 id="enhanced-deterministic-mode">Enhanced deterministic mode</h2>
+<p>原始的Pull Request: https://github.com/AFLplusplus/AFLplusplus/pull/1972</p>
+<p>在2024年1月份左右，有人提交了PR改进了deterministic模式，跳过了很多不必要的mutation。增加了总体的效率。在fuzzbench上的表现有所提升。在openthread_ot-ip6-send-fuzzer上提升很大。在sqlite3_ossfuzz，freetype2_ftfuzzer，woff2_convert_woff2ttf_fuzzer上略有提升。</p>
+<p>这个Patch里面最核心的文件<code>afl-fuzz-skipdet.c</code>里面的最核心的函数是<code>skip_deterministic_stage</code>。在fuzz-one里面插入了对skip_deterministic_stage的调用，该函数设置了skip_eff_map(初始都为0)，然后正常执行deterministic mode的时候，如果当前mutate的字节在skip_eff_map里面的值是0，则会直接跳过该字节。</p>
+<h3 id="skip_deterministic_stage">skip_deterministic_stage</h3>
+<h4 id="should_det_fuzz">should_det_fuzz</h4>
+<p>首先，使用<code>should_det_fuzz</code>函数做初步的判断：</p>
+<ul>
+<li>如果种子不是favored，则直接跳过deterministic stage（<code>!q-&gt;favored</code>）</li>
+<li>基于coverage map和virgin_det_bits进行考虑。virgin_det_bits是全局的一个数据结构，和coverage map大小一样。如果当前的种子的coverage map 的某个bit是1，而全局的这个virgin_det_bits对应的地方不是1，则给new_det_bits加1。如果new_det_bits大于undet_bits_threshold则</li>
+</ul>
+<p>undet_bits_threshold是一个动态的阈值，每隔一段时间（20分钟），如果大于2，会乘以0.75。</p>
+<h4 id="推理阶段inference-stage">推理阶段（Inference Stage）</h4>
+<p>首先，在队列的每个种子的数据结构里，增加了<code>skipdet_entry</code>成员： - <code>u8 continue_inf</code> - <code>u8 done_eff</code> - <code>u32 undet_bits</code> - <code>u32 quick_eff_bytes</code> - <code>u8 *skip_eff_map</code> 最重要的map，如果设置某个字节为0，则表示跳过。 - <code>u8 *done_inf_map</code>：</p>
+<p>首先这个节点会把skip_eff_map都设置为1，表示默认不跳过。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/" data-id="cmbyzgw3s003ymoue8262aha9" data-title="LLVM的SROA解析" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/AlgebraticSubtyping/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          AlgebraticSubtyping
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/Fuzzing-MOpt-Mutator/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Fuzzing-MOpt-Mutator</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read/" rel="tag">Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 17.5px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 13.75px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 12.5px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 11.25px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

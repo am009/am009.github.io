@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Fuzzing-MOpt-Mutator | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation Scheduling for Fuzzers》">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fuzzing-MOpt-Mutator">
+<meta property="og:url" content="https://wjk.moe/2025/Fuzzing-MOpt-Mutator/">
+<meta property="og:site_name">
+<meta property="og:description" content="Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation Scheduling for Fuzzers》">
+<meta property="og:locale">
+<meta property="article:published_time" content="2025-04-02T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-04-02T04:56:55.750Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Fuzz">
+<meta property="article:tag" content="Read">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2025/Fuzzing-MOpt-Mutator" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/Fuzzing-MOpt-Mutator/" class="article-date">
+  <time class="dt-published" datetime="2025-04-02T03:11:12.000Z" itemprop="datePublished">2025-04-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Fuzzing-MOpt-Mutator
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation Scheduling for Fuzzers》</p>
+<span id="more"></span>
+<h3 id="主要思想">主要思想</h3>
+<p>这里解决的问题是fuzzing过程中各种mutator的概率应该设置为多少比较好。这篇Paper引入了粒子群优化（Particle Swarm Optimization, PSO）。</p>
+<p><strong>主要思想</strong>：一个很简单的思想就是根据fuzzing过程中的结果去动态调整。先给一个基础的概率，然后在Fuzzing的过程中观察。众所周知，Fuzz过程中,会不断选取种子，随机使用mutator进行变异。如果当前的种子并没有覆盖额外的全局边，那么该种子将会直接被抛弃。如果产生了好的种子则会加入Corpus。如果当前Fuzz循环产生了好的种子，记录此时用到的mutator都是哪些，那么说明这些mutator肯定是更好的，应该增加他们的概率。</p>
+<p><strong>为什么有粒子？</strong>：但是具体增加多少呢？反正得朝那个方向调整。如果我们把这个从零到一的一维的概率空间，上面某个mutator被使用的可能性看作一个粒子，那我们调整概率本质上就是调整这个粒子的位置。那么我们可以采用速度和加速度的办法调整概率，根据上面统计出来的好的mutator的情况。把好的mutator对应的粒子给他增加一个向概率增加方向的速度或者加速度（具体怎么做需要学习粒子群优化算法）。</p>
+<p><strong>局部优化方案与全局优化方案</strong>：一方面，我们可以根据最近的固定数量的Fuzz尝试（最近的表现，局部表现），里面每个mutated的表现去调控，这对应了论文里面的Local Best Position。另外一方面，我们也可以统计整个fuzz过程的Mutated表现（全局表现）调控，对应了论文里面的Global Best Position。最后，论文尝试同时，维护这两个粒子群，选出表现比较好的用来调控mutator的概率。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/Fuzzing-MOpt-Mutator/" data-id="cmbyzgw3u0045moueanhq9ru6" data-title="Fuzzing-MOpt-Mutator" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Read/" rel="tag">Read</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          LLVM的SROA解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Honggfuzz的DynamicFeedbackDict</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read/" rel="tag">Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 17.5px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 13.75px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 12.5px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 11.25px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

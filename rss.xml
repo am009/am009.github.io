@@ -6,7 +6,7 @@
   <link href="https://wjk.moe/rss.xml" rel="self"/>
   
   <link href="https://wjk.moe/"/>
-  <updated>2025-02-06T13:37:32.131Z</updated>
+  <updated>2025-04-08T08:54:52.782Z</updated>
   <id>https://wjk.moe/</id>
   
   <author>
@@ -15,6 +15,113 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>AlgebraticSubtyping</title>
+    <link href="https://wjk.moe/2025/AlgebraticSubtyping/"/>
+    <id>https://wjk.moe/2025/AlgebraticSubtyping/</id>
+    <published>2025-04-08T03:11:12.000Z</published>
+    <updated>2025-04-08T08:54:52.782Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;读论文：《Algebraic Subtyping》 -- Dolan&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
+    
+    
+    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
+    
+    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
+    
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LLVM的SROA解析</title>
+    <link href="https://wjk.moe/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/"/>
+    <id>https://wjk.moe/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/</id>
+    <published>2025-04-02T03:11:12.000Z</published>
+    <updated>2025-05-31T08:36:47.401Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;AFL++的&lt;a href=&quot;https://github.com/AFLplusplus/AFLplusplus/pull/1972&quot;&gt;Enhanced Deterministic mode&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="LLVM" scheme="https://wjk.moe/tags/LLVM/"/>
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Fuzzing-MOpt-Mutator</title>
+    <link href="https://wjk.moe/2025/Fuzzing-MOpt-Mutator/"/>
+    <id>https://wjk.moe/2025/Fuzzing-MOpt-Mutator/</id>
+    <published>2025-04-02T03:11:12.000Z</published>
+    <updated>2025-04-02T04:56:55.750Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation Scheduling for Fuzzers》&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
+    
+    <category term="Read" scheme="https://wjk.moe/tags/Read/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Honggfuzz的DynamicFeedbackDict</title>
+    <link href="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/"/>
+    <id>https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/</id>
+    <published>2025-04-02T03:11:12.000Z</published>
+    <updated>2025-04-16T07:01:29.179Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Honggfuzz的DynamicFeedbackDict机制&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
+    
+    <category term="Read" scheme="https://wjk.moe/tags/Read/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LLVM的SROA解析</title>
+    <link href="https://wjk.moe/2025/LLVM-SROA/"/>
+    <id>https://wjk.moe/2025/LLVM-SROA/</id>
+    <published>2025-04-02T03:11:12.000Z</published>
+    <updated>2025-04-28T06:49:16.348Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;LLVM的&lt;a href=&quot;https://llvm.org/docs/Passes.html#sroa-scalar-replacement-of-aggregates&quot;&gt;SROA（Scalar Replacement of Aggregates）&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="LLVM" scheme="https://wjk.moe/tags/LLVM/"/>
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    
+  </entry>
   
   <entry>
     <title>BTIGhidra和BinSub代码解析</title>
@@ -32,6 +139,27 @@
     
     
     <category term="CTF" scheme="https://wjk.moe/tags/CTF/"/>
+    
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>高效的指针分析与二进制类型恢复</title>
+    <link href="https://wjk.moe/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/"/>
+    <id>https://wjk.moe/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/</id>
+    <published>2025-02-06T03:11:12.000Z</published>
+    <updated>2025-06-16T10:59:54.415Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;基于《FULCRA POINTER ANALYSIS FRAMEWORK》，迁移到retypd（《Polymorphic Type Inference for Machine Code》）上&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
+    
+    
+    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
@@ -64,7 +192,7 @@
     <link href="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/"/>
     <id>https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/</id>
     <published>2025-01-30T03:11:12.000Z</published>
-    <updated>2025-03-07T03:10:33.212Z</updated>
+    <updated>2025-03-11T12:46:05.334Z</updated>
     
     
     <summary type="html">&lt;p&gt;钻研了两年半《&lt;a href=&quot;https://arxiv.org/abs/1603.05495&quot;&gt;Polymorphic Type Inference for Machine Code&lt;/a&gt;》论文。看完本文后还有任何相关的问题可以问我。&lt;/p&gt;
@@ -77,9 +205,9 @@
     
     <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
     
-    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
-    
     <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
+    
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
   </entry>
   
@@ -136,9 +264,9 @@
     <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
     
     
-    <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
-    
     <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
+    
+    <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
     
   </entry>
   
@@ -157,9 +285,9 @@
     <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
     
     
-    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
-    
     <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
+    
+    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
     
   </entry>
   
@@ -189,7 +317,7 @@
     <link href="https://wjk.moe/2024/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E8%B7%91%E5%AE%9E%E9%AA%8C%E4%BB%A3%E7%A0%81/"/>
     <id>https://wjk.moe/2024/%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E8%B7%91%E5%AE%9E%E9%AA%8C%E4%BB%A3%E7%A0%81/</id>
     <published>2024-03-13T03:11:12.000Z</published>
-    <updated>2024-03-28T09:44:16.809Z</updated>
+    <updated>2025-05-06T08:16:07.537Z</updated>
     
     
     <summary type="html">&lt;p&gt;当你实现了一个工具，需要在不同配置下跑实验的时候，跑实验的代码很可能变得越来越复杂，以至于难以维护。&lt;/p&gt;</summary>
@@ -227,7 +355,7 @@
     <link href="https://wjk.moe/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
     <id>https://wjk.moe/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/</id>
     <published>2024-01-27T03:11:12.000Z</published>
-    <updated>2024-04-29T07:49:15.888Z</updated>
+    <updated>2025-04-25T03:46:23.018Z</updated>
     
     
     <summary type="html">&lt;p&gt;学术论文写作总结&lt;/p&gt;</summary>
@@ -295,124 +423,6 @@
     
     
     <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>自动机与程序分析</title>
-    <link href="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/"/>
-    <id>https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/</id>
-    <published>2023-12-11T03:11:12.000Z</published>
-    <updated>2024-02-02T02:20:24.672Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;自动机与程序分析&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
-    
-    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
-    
-    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SMTSolver与程序合成</title>
-    <link href="https://wjk.moe/2023/SMTSolver%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%90%88%E6%88%90/"/>
-    <id>https://wjk.moe/2023/SMTSolver%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%90%88%E6%88%90/</id>
-    <published>2023-12-08T03:11:12.000Z</published>
-    <updated>2023-12-07T17:12:34.053Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;SMTSolver与程序合成。如何合成命令式语言？&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
-    
-    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>FFmpeg+Santinizer编译时的奇怪问题</title>
-    <link href="https://wjk.moe/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/"/>
-    <id>https://wjk.moe/2023/FFmpeg+Santinizer%E7%BC%96%E8%AF%91%E6%97%B6%E7%9A%84%E5%A5%87%E6%80%AA%E9%97%AE%E9%A2%98/</id>
-    <published>2023-12-05T03:11:12.000Z</published>
-    <updated>2024-01-19T09:26:20.221Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;FFmpeg+Santinizer编译时的奇怪问题，不得不感叹软件世界的复杂性，总是会有奇奇怪怪的问题，还好有开源，不然都无法debug。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Hack" scheme="https://wjk.moe/categories/Hack/"/>
-    
-    
-    <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>计算机专业入门应该做什么</title>
-    <link href="https://wjk.moe/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/"/>
-    <id>https://wjk.moe/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/</id>
-    <published>2023-11-30T03:11:12.000Z</published>
-    <updated>2023-12-03T05:23:59.655Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;仔细回顾我这些年，也有很多做得不够好的地方。希望有一些经验能帮到其他人。我觉得开始应该多接触一些操作系统，计算机组成原理，编译原理的知识，把整个计算机学科的基础打好。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
-    
-    
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
-    <category term="OS" scheme="https://wjk.moe/tags/OS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Maven使用本地JAR文件</title>
-    <link href="https://wjk.moe/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/"/>
-    <id>https://wjk.moe/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/</id>
-    <published>2023-11-28T03:11:12.000Z</published>
-    <updated>2023-11-28T08:45:51.641Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Maven，如果想要修改底层依赖的库，先clone下来修改构建，然后使用本地JAR文件。StackOverflow的高票回答里有一些坑。记录一下。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
-    
-    
-    <category term="Java" scheme="https://wjk.moe/tags/Java/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>X11转发-从docker到WSL</title>
-    <link href="https://wjk.moe/2023/X11%E8%BD%AC%E5%8F%91-%E4%BB%8Edocker%E5%88%B0wsl/"/>
-    <id>https://wjk.moe/2023/X11%E8%BD%AC%E5%8F%91-%E4%BB%8Edocker%E5%88%B0wsl/</id>
-    <published>2023-10-28T03:11:12.000Z</published>
-    <updated>2023-11-27T04:53:21.695Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;X11转发-从docker到WSL&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
-    
-    <category term="Networking" scheme="https://wjk.moe/tags/Networking/"/>
     
   </entry>
   

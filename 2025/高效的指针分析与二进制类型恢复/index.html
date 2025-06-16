@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>高效的指针分析与二进制类型恢复 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="基于《FULCRA POINTER ANALYSIS FRAMEWORK》，迁移到retypd（《Polymorphic Type Inference for Machine Code》）上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高效的指针分析与二进制类型恢复">
+<meta property="og:url" content="https://wjk.moe/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/">
+<meta property="og:site_name">
+<meta property="og:description" content="基于《FULCRA POINTER ANALYSIS FRAMEWORK》，迁移到retypd（《Polymorphic Type Inference for Machine Code》）上">
+<meta property="og:locale">
+<meta property="og:image" content="https://wjk.moe/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/opaqueholding%E5%92%8Ccritical%E8%A7%84%E5%88%99.png">
+<meta property="article:published_time" content="2025-02-06T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-06-16T10:59:54.415Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="StaticAnalysis">
+<meta property="article:tag" content="Decompile">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjk.moe/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/opaqueholding%E5%92%8Ccritical%E8%A7%84%E5%88%99.png">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2025/高效的指针分析与二进制类型恢复" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/" class="article-date">
+  <time class="dt-published" datetime="2025-02-06T03:11:12.000Z" itemprop="datePublished">2025-02-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      高效的指针分析与二进制类型恢复
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>基于《FULCRA POINTER ANALYSIS FRAMEWORK》，迁移到retypd（《Polymorphic Type Inference for Machine Code》）上</p>
+<span id="more"></span>
+<h2 id="总体架构">总体架构</h2>
+<p>算法的主要思想是，基于调用图自底向上遍历，并生成描述副作用的摘要。通过实例化摘要，不断将“副作用”从callee提升到caller。当所有的函数调用都没有副作用时，上下文非敏感的分析结果将会等价于上下文敏感的分析结果。</p>
+<p>算法的主要特点有： - 基于Solution Preview的思想，不断迭代结果，不断复用，而不是重新计算。</p>
+<p>算法主要分为两个阶段： 1. 不断拓展Solution Preview，不断发现新的调用边，完善调用图 2. 基于调用图自底向上summarization总结每个函数。创建summary的同时，实例化到Caller中，并再次尝试推理指针分析。 1. COMPACT分析（第86页），用于简化和压缩约束 1. holding, opacity, and criticality分析（第84页）</p>
+<h3 id="criticality第43页-3.2.1">Criticality（第43页, 3.2.1）</h3>
+<p>Caller调用Callee的时候，可能出现指针的传递与访问，从而改变Caller中变量的值（包括指针变量的指向关系）。典型的情况就是，传了一些值到Callee里，然后有一个关键的（Critical）赋值，然后相关的值被传递回Caller上面。</p>
+<p>三个重要概念：</p>
+<ul>
+<li>Criticality：导致副作用的赋值</li>
+<li>Holding：表示某个变量可能会存放外来的值。比如一开始的时候，参数都是holding的。然后Holding的值会被进一步传递到其他变量。
+<ul>
+<li>对于语句<code>*u = v</code>如果v和u都是holding的，那么这个赋值语句是critical的。</li>
+</ul></li>
+<li>Opaque：如果没有调用上下文，数据流传递关系不确定的变量，就是不透明的。
+<ul>
+<li>所有外部定义的变量是不透明的（opaque）。</li>
+<li>一个局部变量的地址被放到了外部定义的变量时，别的外部指针变量的store可能会存到局部变量里，此时该局部变量也变成不透明的。</li>
+</ul></li>
+</ul>
+<p>如下是相关的传递规则：</p>
+<figure>
+<img src="opaqueholding和critical规则.png" alt="" /><figcaption>opaque,holding和critical规则</figcaption>
+</figure>
+<ul>
+<li><strong>从holding变量中加载得到的值是holding的</strong>：对于<code>u:=*v</code>，如果v可能指向外部变量（Holding），那么u也可能指向外部变量（Holding）。对应约束图中，holding属性可能沿着.load边逆向传递。</li>
+<li><strong>被holding变量赋值的变量是holding的</strong>：对于<code>u:=v</code>，如果v可能指向外部变量（Holding），那么u也可能指向外部变量（Holding）。对应约束图中，holding属性可能沿着子类型边（数据流）传递。</li>
+<li><strong>某局部变量的地址被存入holding变量，则该局部变量是不透明的</strong>：如果u可能指向外部变量（Holding），<code>*u = &amp;w</code>，那么w变量是不透明的（opaque）。对应约束图中，如果一个变量的地址被存入了外部的地址中，则该变量是不透明的。</li>
+<li><strong>某局部变量的地址被赋值给holding变量，则该局部变量是不透明的</strong>：对于<code>u:=&amp;v</code>，如果u可能指向外部变量（Holding），那么v变量是不透明的（opaque）。对应约束图中，如果一个变量的地址被赋值给不透明变量，则该变量是不透明的（opaque）。（TODO，为什么）</li>
+<li><strong>不透明的参数可能指向外部变量</strong>：如果u是参数，且u是不透明的，那么，u可能指向外部变量（Holding）。</li>
+<li><strong>不透明变量的地址是不透明的</strong>：如果v是不透明的，且<code>u:=&amp;v</code>，即v的地址被赋值给了变量u，则u是不透明的（opaque）</li>
+</ul>
+<p>Critical规则：</p>
+<ul>
+<li>赋值给holding变量的赋值是可能产生副作用的（critical）。</li>
+<li>赋值给不透明变量的赋值是可能产生副作用的（critical）。无论是加载出来的值，还是取地址的值。</li>
+</ul>
+<p>这意味着</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/" data-id="cmbyzgw4c006lmouebemthm68" data-title="高效的指针分析与二进制类型恢复" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          BTIGhidra和BinSub代码解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Ghidra反编译器原理与代码架构解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read/" rel="tag">Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 17.5px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 13.75px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 12.5px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 11.25px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

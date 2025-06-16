@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Honggfuzz的DynamicFeedbackDict | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Honggfuzz的DynamicFeedbackDict机制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Honggfuzz的DynamicFeedbackDict">
+<meta property="og:url" content="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/">
+<meta property="og:site_name">
+<meta property="og:description" content="Honggfuzz的DynamicFeedbackDict机制">
+<meta property="og:locale">
+<meta property="og:image" content="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/honggfuzz-decdict.png">
+<meta property="article:published_time" content="2025-04-02T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-04-16T07:01:29.179Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Fuzz">
+<meta property="article:tag" content="Read">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/honggfuzz-decdict.png">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2025/Honggfuzz的DynamicFeedbackDict" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/" class="article-date">
+  <time class="dt-published" datetime="2025-04-02T03:11:12.000Z" itemprop="datePublished">2025-04-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Honggfuzz的DynamicFeedbackDict
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Honggfuzz的DynamicFeedbackDict机制</p>
+<span id="more"></span>
+<h2 id="实际场景的优势">实际场景的优势</h2>
+<p>Honggfuzz实现了一套相比现有cmplog更简单的机制，却达到了很好的效果，甚至在proj4_proj_crs_to_crs_fuzzer这个benchmark上超越了其他的fuzzer。</p>
+<figure>
+<img src="honggfuzz-decdict.png" alt="" /><figcaption>honggfuzz 禁用feedback dict后，效果大打折扣</figcaption>
+</figure>
+<p>可以看到图中，禁用feedback的hongfuzz-decdict，覆盖率降低了接近一半。正常的honggfuzz-orig，比AFL++效果还要好。</p>
+<h2 id="clang的trace-cmp选项">Clang的trace-cmp选项</h2>
+<p><a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-data-flow">Clang可以增加<code>--trace-cmp</code>选项</a>，在代码中出现比较指令的时候，会调用提供的插桩函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> __sanitizer_cov_trace_cmp8(<span class="type">uint64_t</span> Arg1, <span class="type">uint64_t</span> Arg2);</span><br></pre></td></tr></table></figure>
+<p>honggfuzz提供的插桩函数在<code>/sn640/fuzzerlog/honggfuzz/libhfuzz/instrument.c</code>。</p>
+<h3 id="honggfuzz的插桩逻辑">Honggfuzz的插桩逻辑</h3>
+<p>Hongfuzz的feedback dict主要分为两部分，</p>
+<ul>
+<li>插桩部分负责将重要的内容存入dict数组，即生成dict关键词。</li>
+<li>后续mutation中随机抽取数组中的词找个位置随机插入或者覆盖（即和普通的dict使用一致（虽然使用概率很高，大于50%）。</li>
+</ul>
+<p>因此主要介绍插桩部分。</p>
+<p>首先是存储生成的dict的数组。结构如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">uint32_t</span> cnt;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">        <span class="type">uint8_t</span>  val[<span class="number">32</span>];</span><br><span class="line">        <span class="type">uint32_t</span> len;</span><br><span class="line">    &#125; valArr[<span class="number">1024</span> * <span class="number">16</span>];</span><br><span class="line">&#125; <span class="type">cmpfeedback_t</span>;</span><br></pre></td></tr></table></figure>
+<p>这个结构在整个fuzzing过程中共享一个实例。其中第一个字段的cnt会随着fuzz过程不断增长。每个dict的值不能超过32字节大小，总数量不超过1024*16个。后面mutation的时候就是随机抽取valArr里的成员。所以我们重点关注valArr的使用。</p>
+<p>以<code>__sanitizer_cov_trace_cmp8</code>为例，主要有以下几个插桩逻辑：</p>
+<ul>
+<li>每4095次才进入内部，即按概率随机抽取进入内部逻辑。</li>
+<li><code>__builtin_bswap64</code>主要负责处理大小端的问题。</li>
+<li><code>util_64bitValInBinary</code>很关键，仅过滤出binary中存在的内容，加入dict。因为比较运算的时候，经常是输入中的一个什么东西和程序里的常量比较。如果不加过滤，那么就是把fuzz自己得出的东西当做dict使用，意义不大。
+<ul>
+<li>在最开始的时候，honggfuzz会整理程序中的值存到values32InBinary数组中。这个数组在<code>collectValuesInBinary_cb</code>中被初始化。它使用libdl，遍历程序（非动态链接库）中readonly的段，就直接按32字节，64字节收集起来了。然后排序，方便后续二分查找。</li>
+</ul></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> __sanitizer_cov_trace_cmp8(<span class="type">uint64_t</span> Arg1, <span class="type">uint64_t</span> Arg2) &#123;</span><br><span class="line">    <span class="comment">/* Add 8byte values to the const_dictionary if they exist within the binary */</span></span><br><span class="line">    <span class="keyword">if</span> (globalCmpFeedback &amp;&amp; instrumentLimitEvery(<span class="number">4095</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (Arg1 &gt; <span class="number">0xffffff</span>) &#123;</span><br><span class="line">            <span class="type">uint64_t</span> bswp = __builtin_bswap64(Arg1);</span><br><span class="line">            <span class="keyword">if</span> (util_64bitValInBinary(Arg1) || util_64bitValInBinary(bswp)) &#123;</span><br><span class="line">                instrumentAddConstMemInternal(&amp;Arg1, <span class="keyword">sizeof</span>(Arg1));</span><br><span class="line">                instrumentAddConstMemInternal(&amp;bswp, <span class="keyword">sizeof</span>(bswp));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (Arg2 &gt; <span class="number">0xffffff</span>) &#123;</span><br><span class="line">            <span class="type">uint64_t</span> bswp = __builtin_bswap64(Arg2);</span><br><span class="line">            <span class="keyword">if</span> (util_64bitValInBinary(Arg2) || util_64bitValInBinary(bswp)) &#123;</span><br><span class="line">                instrumentAddConstMemInternal(&amp;Arg2, <span class="keyword">sizeof</span>(Arg2));</span><br><span class="line">                instrumentAddConstMemInternal(&amp;bswp, <span class="keyword">sizeof</span>(bswp));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    hfuzz_trace_cmp8_internal((<span class="type">uintptr_t</span>)__builtin_return_address(<span class="number">0</span>), Arg1, Arg2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面插桩获取的都是大小为4或者8的值，此外，字符串比较也非常重要。这是通过<code>libhfuzz/memorycmp.c</code>里的插桩实现的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">__sanitizer_weak_hook_strcmp</span><br><span class="line">__sanitizer_weak_hook_strcasecmp</span><br><span class="line">__sanitizer_weak_hook_stricmp</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">instrumentAddConstStr</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* s)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!globalCmpFeedback) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!instrumentLimitEvery(<span class="number">127</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * if (len &lt;= 1)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (s[<span class="number">0</span>] == <span class="string">&#x27;\0&#x27;</span> || s[<span class="number">1</span>] == <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (util_getProgAddr(s) == LHFC_ADDR_NOTFOUND) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    instrumentAddConstMemInternal(s, <span class="built_in">strlen</span>(s));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于字符串比较，也存在可能把自己fuzz随机生成的东西抓过来的问题。这里通过判断值的地址是不是映射到二进制内部进行筛选。一般程序输入的值都在栈上或者堆上，然后和程序自带的字符串（位于不可变的内存区域）进行比较。如下面的代码所示，如果值太长就切断到32字节。同时也会遍历已有的map找是否已经这个值已经被插入了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">instrumentAddConstMemInternal</span><span class="params">(<span class="type">const</span> <span class="type">void</span>* mem, <span class="type">size_t</span> len)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (len &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (len &gt; <span class="keyword">sizeof</span>(globalCmpFeedback-&gt;valArr[<span class="number">0</span>].val)) &#123;</span><br><span class="line">        len = <span class="keyword">sizeof</span>(globalCmpFeedback-&gt;valArr[<span class="number">0</span>].val);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">uint32_t</span> curroff = ATOMIC_GET(globalCmpFeedback-&gt;cnt);</span><br><span class="line">    <span class="keyword">if</span> (curroff &gt;= ARRAYSIZE(globalCmpFeedback-&gt;valArr)) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">uint32_t</span> i = <span class="number">0</span>; i &lt; curroff; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((len == ATOMIC_GET(globalCmpFeedback-&gt;valArr[i].len)) &amp;&amp;</span><br><span class="line">            hf_memcmp(globalCmpFeedback-&gt;valArr[i].val, mem, len) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> newoff = ATOMIC_POST_INC(globalCmpFeedback-&gt;cnt);</span><br><span class="line">    <span class="keyword">if</span> (newoff &gt;= ARRAYSIZE(globalCmpFeedback-&gt;valArr)) &#123;</span><br><span class="line">        ATOMIC_SET(globalCmpFeedback-&gt;cnt, ARRAYSIZE(globalCmpFeedback-&gt;valArr));</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memcpy</span>(globalCmpFeedback-&gt;valArr[newoff].val, mem, len);</span><br><span class="line">    ATOMIC_SET(globalCmpFeedback-&gt;valArr[newoff].len, len);</span><br><span class="line">    wmb();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/" data-id="cmbyzgw4a006imouehx6v7a2s" data-title="Honggfuzz的DynamicFeedbackDict" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Read/" rel="tag">Read</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/Fuzzing-MOpt-Mutator/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Fuzzing-MOpt-Mutator
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/LLVM-SROA/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">LLVM的SROA解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read/" rel="tag">Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 17.5px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 13.75px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 12.5px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 11.25px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
