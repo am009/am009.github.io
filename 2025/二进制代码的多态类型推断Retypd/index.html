@@ -20,11 +20,11 @@
 <meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/assignment-retypd.drawio.png">
 <meta property="og:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/Anderson-pointer-algo.png">
 <meta property="article:published_time" content="2025-01-30T03:11:12.000Z">
-<meta property="article:modified_time" content="2025-03-11T12:46:05.334Z">
+<meta property="article:modified_time" content="2025-06-23T15:55:18.362Z">
 <meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Decompile">
 <meta property="article:tag" content="PL">
 <meta property="article:tag" content="StaticAnalysis">
-<meta property="article:tag" content="Decompile">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/saturation.drawio.png">
   
@@ -280,8 +280,12 @@
 <li>上面提到，不考虑状态，单把栈上字符串拿出来，形成的也是正则语言。这里其实表达的是一个意思。每个configuration的状态作为初始状态，然后存在一个P-有限自动机匹配栈上的内容，其实就是说明了栈上形成的是正则语言。</li>
 </ul></li>
 </ul>
-<p>本质上我们关注的是操作序列。操作序列描述了无限的初始栈和操作后的栈之间的关系。一个栈就是对应一个变量加一系列标签，就是派生变量。所以描述的是派生变量之间的关系。</p>
-<p>子类型关系一个核心的部分就是，比如A和B有子类型关系，那么两个加上相同标签之后，还是有子类型关系。栈的操作的特点是，可能只会操作顶部的东西。这个时候，一个操作序列就可以只把顶部的有子类型关系的变量换掉，然后栈底下的东西不动，这里栈底下的东西就是这里相同的标签。</p>
+<p>本质上我们关注的是操作序列。操作序列是一个函数，描述了所有可能的初始栈和操作后的栈之间的关系。一个栈就是对应一个变量加一系列标签，就是派生变量。所以描述的是派生变量之间的关系。</p>
+<p><strong>操作序列的概念类比</strong>。你就想象有一个人在流水线上，拿着这个操作序列的纸条去操作一个存了方块的栈。比如说纸条是 pop蓝色，push红色。那么我们给一个栈，里面方块按自顶向下顺序是（蓝，黄），传入流水线，里面的人根据指示拿出一个蓝色的方块，放入一个红色的方块，然后把栈传出来，得到新的栈（红，黄）。这里这个人就看作一个函数，进入流水线时的栈状态（蓝，黄）就是定义域，出来流水线的栈状态就是值域。我们这里关注的是内部的操作，而不局限于具体的某一个输入输出。还有操作失败的情况：如果输入的栈顶上不是蓝色，但是里面的人要按照指示先拿出蓝色方块，那么我们说这个输入的栈序列不被这个操作序列接受。</p>
+<p>有几种值得注意的情况： - <strong>push B, pop A的无法操作序列</strong>：比如纸条里面的序列有这样连续的两个操作，push蓝色然后pop红色，可以想象push之后顶上就是蓝色的方块，所以不可能从顶上拿出一个红色的方块。此时没有任何输入的栈能够满足操作的要求，我们称这个操作序列是non-productive的。 - <strong>pop A, push A的无操作序列</strong>：比如纸条里面的序列有这样连续的两个操作，push蓝色然后pop蓝色，可以想象push再pop之后等于啥也没干，因此如果发现了这种情况，可以直接把这两个操作组合抵消掉。</p>
+<p>定理：所有可能的输入栈是无限的。证明过程：纸条上的操作序列是确定的，因此，总有一个访问的最大深度，此时不会操作到更深的栈里面的东西，因此更深的栈里面无论放什么都是符合输入要求的。</p>
+<p>更进一步，我们可以把纸条上的序列内容拓展为一个自动机，描述一个序列的正则集合。里面的工人可以根据自动机的定义，操作的同时变更自动机的状态，然后根据当前状态看接下来允许的操作是什么。操作完成后看是否在终结态，判断是否能停止操作栈并输出。</p>
+<p>子类型关系一个核心的部分就是，比如A和B有子类型关系，那么两个加上相同标签（比如都访问相同offset的成员）之后，还是有子类型关系。栈的操作的特点是，可能只会操作某个最大深度向上的顶部的东西。这个时候，一个操作序列就可以只把顶部的有子类型关系的变量换掉，然后栈底下的东西不动，这里栈底下的东西就是这里子类型关系前面相同的标签。</p>
 <p>比如A和B有子类型关系，有一个pop A，push B的序列被自动机接受。这个操作序列可以对什么样的栈就行操作呢？当然是顶部有A的栈，不然pop不了这个东西。后面的push操作会压入一个B。</p>
 <p><strong>Pre(S)的Saturation Algorithm</strong></p>
 <ul>
@@ -1059,7 +1063,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" data-id="cmbyzgw4c006nmoue7gr309zn" data-title="二进制代码的多态类型推断Retypd" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" data-id="cmc9a5jjp0043akue4r7ressx" data-title="二进制代码的多态类型推断Retypd" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -1145,7 +1149,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 17.5px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 13.75px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 12.5px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 11.25px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 17.5px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 15px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 12.5px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
     </div>
   </div>
 

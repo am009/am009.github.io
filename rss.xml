@@ -31,11 +31,32 @@
     <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
     
     
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
     <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
     
     <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
-    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+  </entry>
+  
+  <entry>
+    <title>AFLplusplus的动态dict生成与cmplog插桩</title>
+    <link href="https://wjk.moe/2025/AFLplusplus%E7%9A%84%E5%8A%A8%E6%80%81dict%E7%94%9F%E6%88%90%E4%B8%8Ecmplog%E6%8F%92%E6%A1%A9/"/>
+    <id>https://wjk.moe/2025/AFLplusplus%E7%9A%84%E5%8A%A8%E6%80%81dict%E7%94%9F%E6%88%90%E4%B8%8Ecmplog%E6%8F%92%E6%A1%A9/</id>
+    <published>2025-04-02T03:11:12.000Z</published>
+    <updated>2025-06-17T16:12:25.751Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;AFL++的动态dict生成与cmplog插桩&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
+    
+    <category term="Read" scheme="https://wjk.moe/tags/Read/"/>
     
   </entry>
   
@@ -61,14 +82,14 @@
   </entry>
   
   <entry>
-    <title>Fuzzing-MOpt-Mutator</title>
-    <link href="https://wjk.moe/2025/Fuzzing-MOpt-Mutator/"/>
-    <id>https://wjk.moe/2025/Fuzzing-MOpt-Mutator/</id>
+    <title>Honggfuzz的DynamicFeedbackDict</title>
+    <link href="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/"/>
+    <id>https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/</id>
     <published>2025-04-02T03:11:12.000Z</published>
-    <updated>2025-04-02T04:56:55.750Z</updated>
+    <updated>2025-06-17T08:22:37.638Z</updated>
     
     
-    <summary type="html">&lt;p&gt;Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation Scheduling for Fuzzers》&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;Honggfuzz的DynamicFeedbackDict机制&lt;/p&gt;</summary>
     
     
     
@@ -82,14 +103,14 @@
   </entry>
   
   <entry>
-    <title>Honggfuzz的DynamicFeedbackDict</title>
-    <link href="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/"/>
-    <id>https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/</id>
+    <title>Fuzzing-MOpt-Mutator</title>
+    <link href="https://wjk.moe/2025/Fuzzing-MOpt-Mutator/"/>
+    <id>https://wjk.moe/2025/Fuzzing-MOpt-Mutator/</id>
     <published>2025-04-02T03:11:12.000Z</published>
-    <updated>2025-04-16T07:01:29.179Z</updated>
+    <updated>2025-04-02T04:56:55.750Z</updated>
     
     
-    <summary type="html">&lt;p&gt;Honggfuzz的DynamicFeedbackDict机制&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation Scheduling for Fuzzers》&lt;/p&gt;</summary>
     
     
     
@@ -159,9 +180,9 @@
     <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
     
     
-    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
   </entry>
   
@@ -192,7 +213,7 @@
     <link href="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/"/>
     <id>https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/</id>
     <published>2025-01-30T03:11:12.000Z</published>
-    <updated>2025-03-11T12:46:05.334Z</updated>
+    <updated>2025-06-23T15:55:18.362Z</updated>
     
     
     <summary type="html">&lt;p&gt;钻研了两年半《&lt;a href=&quot;https://arxiv.org/abs/1603.05495&quot;&gt;Polymorphic Type Inference for Machine Code&lt;/a&gt;》论文。看完本文后还有任何相关的问题可以问我。&lt;/p&gt;
@@ -203,11 +224,11 @@
     <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
     
     
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
     <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
     
     <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
-    
-    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
   </entry>
   
@@ -285,9 +306,9 @@
     <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
     
     
-    <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
-    
     <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
+    
+    <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
     
   </entry>
   
@@ -404,25 +425,6 @@
     
     
     <category term="Networking" scheme="https://wjk.moe/tags/Networking/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Fuzz快速上手指南</title>
-    <link href="https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/"/>
-    <id>https://wjk.moe/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/</id>
-    <published>2023-12-23T03:11:12.000Z</published>
-    <updated>2024-01-07T03:19:04.657Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Fuzz快速上手指南&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Hack" scheme="https://wjk.moe/categories/Hack/"/>
-    
-    
-    <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
     
   </entry>
   
