@@ -4,14 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>Archives: 2025 | </title>
+  <title>Fuzzbench架构 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title">
-<meta property="og:url" content="https://wjk.moe/archives/2025/">
+  <meta name="description" content="Fuzzbench的代码架构解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fuzzbench架构">
+<meta property="og:url" content="https://wjk.moe/2025/Fuzzbench%E6%9E%B6%E6%9E%84/">
 <meta property="og:site_name">
+<meta property="og:description" content="Fuzzbench的代码架构解析">
 <meta property="og:locale">
+<meta property="article:published_time" content="2025-06-29T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-06-29T07:13:25.950Z">
 <meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Fuzz">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
@@ -79,216 +84,144 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2025" class="archive-year">2025</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/Fuzzbench%E6%9E%B6%E6%9E%84/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-06-29T03:11:12.000Z" itemprop="datePublished">Jun 29</time>
+        <section id="main"><article id="post-2025/Fuzzbench架构" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/Fuzzbench%E6%9E%B6%E6%9E%84/" class="article-date">
+  <time class="dt-published" datetime="2025-06-29T03:11:12.000Z" itemprop="datePublished">2025-06-29</time>
 </a>
-      
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/Fuzzbench%E6%9E%B6%E6%9E%84/">Fuzzbench架构</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      Fuzzbench架构
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/AlgebraticSubtyping/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-04-08T03:11:12.000Z" itemprop="datePublished">Apr 8</time>
-</a>
+    <div class="e-content article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/AlgebraticSubtyping/">AlgebraticSubtyping</a>
-    </h1>
-  
+        <p>Fuzzbench的代码架构解析</p>
+<span id="more"></span>
+<h2 id="fuzzbench">Fuzzbench</h2>
+<p>使用流程：</p>
+<ul>
+<li>根据教程创建好虚拟环境，并安装好python的包</li>
+<li>调用make执行相关的debug和test-run</li>
+<li>填写yaml，然后使用脚本运行实验</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> .venv/bin/activate</span><br><span class="line">PYTHONPATH=. python3 experiment/run_experiment.py \</span><br><span class="line">--experiment-config ./fuzzbench.yaml \</span><br><span class="line">--benchmarks mbedtls_fuzz_dtlsclient lcms_cms_transform_fuzzer libpcap_fuzz_both libxml2_xml \</span><br><span class="line">--experiment-name <span class="variable">$BENCHNAME</span> \</span><br><span class="line">--fuzzers libafl aflplusplus</span><br></pre></td></tr></table></figure>
+<h2 id="运行相关的make命令">运行相关的Make命令</h2>
+<ul>
+<li><strong>生成Makefile</strong>：首先根目录的makefile会检查是否docker/generated.mk不存在，或者需要更新，然后使用docker/generate_makefile.py生成makefile，然后再include进来。</li>
+</ul>
+<h2 id="fuzzer的三大文件">Fuzzer的三大文件</h2>
+<ul>
+<li>builder.Dockerfile 负责下载和构建Fuzzer</li>
+<li>fuzzer.py 提供两个函数，分别用于构建和运行fuzzer。</li>
+<li>runner.Dockerfile 负责准备Fuzzer的运行环境</li>
+</ul>
+<h2 id="fuzzing相关的镜像">Fuzzing相关的镜像</h2>
+<ul>
+<li><strong>project-builder镜像</strong>：每个Benchmark提供的基础的project-builder镜像里面负责存储项目的源码，并放好相关的构建脚本<code>$SRC/build.sh</code>。</li>
+<li><strong>Coverage镜像</strong>：有个特殊的fuzzer叫做Coverage，内部其实是一个LLVM的Libfuzzer。它负责测量实验过程中的coverage：实验过程中提取所有的queue里的种子，然后拿这个插桩的binary跑一遍得到coverage信息。</li>
+<li><strong>builder-intermediate镜像</strong>（Fuzzer的<strong>builder.Dockerfile</strong>）：<code>fuzzers/xxx/builder.Dockerfile</code>：每个Fuzzer提供的两个dockerfile之一。它开头是固定的通过参数传入Paren Image。该镜像负责在原有的project-builder镜像中构建好fuzzer自身。然后得到<strong>builder-intermediate镜像</strong>。</li>
+</ul>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ARG</span> parent_image</span><br><span class="line"><span class="keyword">FROM</span> $parent_image</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译并准备好fuzzer</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>builder镜像</strong>：基于builder-intermediate镜像，使用统一的dockerfile（<code>docker/benchmark-builder/Dockerfile</code>），开始用Fuzzer构建Target。它安装了fuzzbench需要的python3，用于运行Fuzzer提供的三大文件之一的fuzzer.py。最后提供了一个fuzzer_build脚本，内部主要运行的是<code>python3 -c "from fuzzers import utils; utils.initialize_env(); from fuzzers.$FUZZER import fuzzer; fuzzer.build()"</code>，而给fuzzers提供的编译Target的接口<code>utils.build_benchmark</code>内部就是用bash执行<code>$SRC/build.sh</code> 这个就是最早project-builder镜像放好的构建脚本。</li>
+</ul>
+<p>最终编译好的Target的相关文件会被放到<code>OUT=/out</code>。同时fuzzer.py也要将Fuzzer自身的binary放过去。</p>
+<ul>
+<li><p><strong>intermediate-runner镜像</strong>（Fuzzer的<strong>runner.Dockerfile</strong>）：从最基础的Base镜像，使用runner.Dockerfile构建，给fuzzer准备一些辅助的环境，比如安装一些包，设置一些环境变量。对于简单的fuzzer，这里是可以是空的。由于从Base重新构建，这里面不含任何Target和Fuzzer的东西。</p></li>
+<li><p><strong>runner镜像</strong>：将builder镜像里面构建好的Fuzzer和Target复制到intermediate-runner镜像，然后复制了一些fuzzbench的源码进去，最后设置了entry point为<code>docker/benchmark-runner/startup-runner.sh</code>。使用docker的multi-stage build特性，使用<code>docker/benchmark-runner/Dockerfile</code>统一构建。</p></li>
+</ul>
+<p><strong>相关的debug target</strong></p>
+<ul>
+<li><strong>builder-debug镜像</strong>：在builder镜像的基础上增加了个<code>--build-arg debug_builder=1</code>。</li>
+<li><strong>debug-builder-xxx Target</strong>：在builder-debug镜像上给shell。</li>
+<li><strong>debug-xxx Target</strong>：在runner镜像上给一个shell <code>--entrypoint "/bin/bash"</code></li>
+<li><strong>test-run Target</strong>：在runner镜像基础上设置<code>SNAPSHOT_PERIOD=10</code>，<code>MAX_TOTAL_TIME=20</code></li>
+</ul>
+<h2 id="fuzzbench的镜像">Fuzzbench的镜像</h2>
+<ul>
+<li><strong>dispatcher-image</strong>：之后会将docker挂载进去，因此下载了docker-client，然后安装了llvm-cov等工具。最后复制了启动脚本startup-dispatcher.sh，它调用<code>src/experiment/dispatcher.py</code>。</li>
+<li><strong>worker-image</strong>：</li>
+</ul>
+<h2 id="启动一次实验">启动一次实验</h2>
+<p>实验的docker数量 = benchmark数量 * Fuzzer数量 * 重复数量 + 1</p>
+<p>这里我们称某个（benchmark，fuzzer，trial）是一个pair，对应一个docker。</p>
+<p>处理跑实验的fuzzer容器，还有负责总体管理的dispatcher容器。</p>
+<p>主要的入口是<code>experiment/run_experiment.py</code></p>
+<ul>
+<li><strong>构建镜像</strong>根据上面镜像的构建流程，得到最终runner镜像。具体就是使用docker依次构建Fuzzer，使用Fuzzer的Toolchain构建Fuzz Target，最后将构建好的Target放到Fuzzer一起准备运行。</li>
+<li>然后会将相关的参数转存并启动dispatcher-image，执行dispatcher.py。
+<ul>
+<li>dispatcher容器内部会启动scheduler_loop_thread</li>
+<li>dispatcher容器内部会启动measurer进程。</li>
+</ul></li>
+<li>然后一边等待实验结束，一边生成临时的report。</li>
+</ul>
+<p><strong>scheduler</strong>：它会不断获取相关的需要运行的某个pair，然后执行启动流程（start_trials）。内部创建一个专门的脚本（render_startup_script_template），启动对应的runner。</p>
+<p><strong>Measurer</strong>：主函数执行measure_manager_inner_loop，负责发送请求给measurers_cpus数量的子进程。子进程接受到请求就拉取queue然后测量coverage。这里有一个DEFAULT_SNAPSHOT_SECONDS=900s，每隔这么久就会尝试去拉取所有的fuzzer的coverage测量一下。</p>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-04-03T03:11:12.000Z" itemprop="datePublished">Apr 3</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/">AFLplusplus的enhancedDeterministicMode</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/AFLplusplus%E7%9A%84%E5%8A%A8%E6%80%81dict%E7%94%9F%E6%88%90%E4%B8%8Ecmplog%E6%8F%92%E6%A1%A9/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-04-02T03:11:12.000Z" itemprop="datePublished">Apr 2</time>
-</a>
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/Fuzzbench%E6%9E%B6%E6%9E%84/" data-id="cmchvk6tp004f4oue0ee36ue4" data-title="Fuzzbench架构" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/AFLplusplus%E7%9A%84%E5%8A%A8%E6%80%81dict%E7%94%9F%E6%88%90%E4%B8%8Ecmplog%E6%8F%92%E6%A1%A9/">AFLplusplus的动态dict生成与cmplog插桩</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/Fuzzing-MOpt-Mutator/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-04-02T03:11:12.000Z" itemprop="datePublished">Apr 2</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/Fuzzing-MOpt-Mutator/">Fuzzing-MOpt-Mutator</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-04-02T03:11:12.000Z" itemprop="datePublished">Apr 2</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/">Honggfuzz的DynamicFeedbackDict</a>
-    </h1>
-  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li></ul>
 
-    </header>
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2025/AlgebraticSubtyping/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">AlgebraticSubtyping</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/LLVM-SROA/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-04-02T03:11:12.000Z" itemprop="datePublished">Apr 2</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/LLVM-SROA/">LLVM的SROA解析</a>
-    </h1>
-  
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-02-06T03:11:12.000Z" itemprop="datePublished">Feb 6</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/">BTIGhidra和BinSub代码解析</a>
-    </h1>
-  
+<!-- 2024年1月11日 giscus -->
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-02-06T03:11:12.000Z" itemprop="datePublished">Feb 6</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/">高效的指针分析与二进制类型恢复</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-01-31T03:11:12.000Z" itemprop="datePublished">Jan 31</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/">Ghidra反编译器原理与代码架构解析</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
 
 
-  <nav id="page-nav">
-    
-    <span class="page-number current">1</span><a class="page-number" href="/archives/2025/page/2/">2</a><a class="extend next" rel="next" href="/archives/2025/page/2/">Next &raquo;</a>
-  </nav>
 
 </section>
         
