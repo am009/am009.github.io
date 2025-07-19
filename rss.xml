@@ -50,11 +50,11 @@
     <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
     
     
-    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
     <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
-    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
     
   </entry>
   
@@ -120,6 +120,27 @@
   </entry>
   
   <entry>
+    <title>LLVM的SROA解析</title>
+    <link href="https://wjk.moe/2025/LLVM-SROA/"/>
+    <id>https://wjk.moe/2025/LLVM-SROA/</id>
+    <published>2025-04-02T03:11:12.000Z</published>
+    <updated>2025-07-01T13:31:19.028Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;LLVM的&lt;a href=&quot;https://llvm.org/docs/Passes.html#sroa-scalar-replacement-of-aggregates&quot;&gt;SROA（Scalar Replacement of Aggregates）&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    
+    <category term="LLVM" scheme="https://wjk.moe/tags/LLVM/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Honggfuzz的DynamicFeedbackDict</title>
     <link href="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/"/>
     <id>https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/</id>
@@ -137,27 +158,6 @@
     <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
     
     <category term="Read" scheme="https://wjk.moe/tags/Read/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>LLVM的SROA解析</title>
-    <link href="https://wjk.moe/2025/LLVM-SROA/"/>
-    <id>https://wjk.moe/2025/LLVM-SROA/</id>
-    <published>2025-04-02T03:11:12.000Z</published>
-    <updated>2025-06-29T11:19:35.537Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;LLVM的&lt;a href=&quot;https://llvm.org/docs/Passes.html#sroa-scalar-replacement-of-aggregates&quot;&gt;SROA（Scalar Replacement of Aggregates）&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
-    
-    
-    <category term="LLVM" scheme="https://wjk.moe/tags/LLVM/"/>
-    
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
     
   </entry>
   
@@ -197,9 +197,9 @@
     <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
     
     
-    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
-    
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    
+    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
   </entry>
   
@@ -230,7 +230,7 @@
     <link href="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/"/>
     <id>https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/</id>
     <published>2025-01-30T03:11:12.000Z</published>
-    <updated>2025-06-23T15:55:18.362Z</updated>
+    <updated>2025-07-16T03:36:54.938Z</updated>
     
     
     <summary type="html">&lt;p&gt;钻研了两年半《&lt;a href=&quot;https://arxiv.org/abs/1603.05495&quot;&gt;Polymorphic Type Inference for Machine Code&lt;/a&gt;》论文。看完本文后还有任何相关的问题可以问我。&lt;/p&gt;
@@ -241,11 +241,11 @@
     <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
     
     
-    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
+    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
     
     <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
     
-    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
+    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
     
   </entry>
   
@@ -302,30 +302,9 @@
     <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
     
     
-    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
-    
     <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
     
-  </entry>
-  
-  <entry>
-    <title>英语标准发音教程笔记</title>
-    <link href="https://wjk.moe/2024/%E8%8B%B1%E8%AF%AD%E6%A0%87%E5%87%86%E5%8F%91%E9%9F%B3%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/"/>
-    <id>https://wjk.moe/2024/%E8%8B%B1%E8%AF%AD%E6%A0%87%E5%87%86%E5%8F%91%E9%9F%B3%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/</id>
-    <published>2024-04-21T03:11:12.000Z</published>
-    <updated>2024-05-03T03:12:19.966Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;之前很早就买了王式仁的《英语标准发音教程》和王桂珍的《英语语音语调教程》这两本书&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
-    
     <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
-    
-    <category term="English" scheme="https://wjk.moe/tags/English/"/>
     
   </entry>
   
@@ -347,6 +326,27 @@
     <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
     
     <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>英语标准发音教程笔记</title>
+    <link href="https://wjk.moe/2024/%E8%8B%B1%E8%AF%AD%E6%A0%87%E5%87%86%E5%8F%91%E9%9F%B3%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/"/>
+    <id>https://wjk.moe/2024/%E8%8B%B1%E8%AF%AD%E6%A0%87%E5%87%86%E5%8F%91%E9%9F%B3%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/</id>
+    <published>2024-04-21T03:11:12.000Z</published>
+    <updated>2024-05-03T03:12:19.966Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;之前很早就买了王式仁的《英语标准发音教程》和王桂珍的《英语语音语调教程》这两本书&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
+    
+    
+    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
+    
+    <category term="English" scheme="https://wjk.moe/tags/English/"/>
     
   </entry>
   
@@ -393,7 +393,7 @@
     <link href="https://wjk.moe/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
     <id>https://wjk.moe/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/</id>
     <published>2024-01-27T03:11:12.000Z</published>
-    <updated>2025-04-25T03:46:23.018Z</updated>
+    <updated>2025-07-19T11:34:39.758Z</updated>
     
     
     <summary type="html">&lt;p&gt;学术论文写作总结&lt;/p&gt;</summary>
