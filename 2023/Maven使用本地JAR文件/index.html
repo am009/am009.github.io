@@ -74,10 +74,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -113,7 +113,9 @@
         <p>Maven，如果想要修改底层依赖的库，先clone下来修改构建，然后使用本地JAR文件。StackOverflow的高票回答里有一些坑。记录一下。</p>
 <span id="more"></span>
 <h3 id="背景">背景</h3>
-<p>Soot加载新的APK总是报错，而且报错了就停了。能不能让它忽略当前报错，直接放弃当前method body呢？基于这个想法我开始修改soot源码，最后的方案在<a target="_blank" rel="noopener" href="https://github.com/am009/soot/commit/d3934e6c39a6e2993b02c7f2793d59d26c49afe3">这个commit</a>。</p>
+<p>Soot加载新的APK总是报错，而且报错了就停了。能不能让它忽略当前报错，直接放弃当前method
+body呢？基于这个想法我开始修改soot源码，最后的方案在<a
+target="_blank" rel="noopener" href="https://github.com/am009/soot/commit/d3934e6c39a6e2993b02c7f2793d59d26c49afe3">这个commit</a>。</p>
 <h2 id="遇到的问题">遇到的问题</h2>
 <h3 id="编译时跳过测试">编译时跳过测试</h3>
 <p>修改了Soot代码，直接编译会说一些测试异常。使用<code>mvn -Dmaven.test.skip=true package</code>在打包时跳过异常。</p>
@@ -121,32 +123,37 @@
 <ul>
 <li><strong>基于scope=system的方式</strong></li>
 </ul>
-<p>网上搜索首先会看到<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/22300875">这个回答</a>，它推荐使用system类型的依赖：</p>
+<p>网上搜索首先会看到<a
+target="_blank" rel="noopener" href="https://stackoverflow.com/a/22300875">这个回答</a>，它推荐使用system类型的依赖：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.sample<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>sample<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>system<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">systemPath</span>&gt;</span>$&#123;project.basedir&#125;/src/main/resources/Name_Your_JAR.jar<span class="tag">&lt;/<span class="name">systemPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>然而，再看看就发现很多地方说这种方式不好，比如已经depricated了。直接劝退我的，是我用的shaded插件（和依赖一起打包为一个jar），不会把这种依赖加进来，直接报错找不到<code>Soot.G</code>这个类。</p>
 <ul>
 <li><strong>基于<code>mvn install:install-file</code>的方式</strong></li>
 </ul>
-<p>于是采用回答里的<a target="_blank" rel="noopener" href="https://stackoverflow.com/a/4955695">第二种方法</a>，安装到本地maven缓存。</p>
+<p>于是采用回答里的<a
+target="_blank" rel="noopener" href="https://stackoverflow.com/a/4955695">第二种方法</a>，安装到本地maven缓存。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mvn install:install-file \</span><br><span class="line">   -Dfile=$SCRIPTPATH/sootclasses-trunk.jar \</span><br><span class="line">   -DgroupId=org.soot-oss \</span><br><span class="line">   -DartifactId=soot \</span><br><span class="line">   -Dversion=4.5.0-SNAPSHOT1 \</span><br><span class="line">   -Dpackaging=jar \</span><br><span class="line">   -DgeneratePom=true</span><br></pre></td></tr></table></figure>
 <p>问题在于，这种方式引入的依赖似乎不会引入递归的依赖。比如我发现缺了很多soot的依赖。</p>
 <ul>
 <li><strong>基于maven-install-plugin的方式</strong></li>
 </ul>
-<p>根据<a target="_blank" rel="noopener" href="https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html">官方文档</a>，如果那边jar是maven构建的，则可以使用下面这种方式直接安装到本地缓存，因为读取了jar里的<code>pom.xml</code>文件。既然都有了pom了，依赖信息也在了。但是坑点是版本要改成3.0.1以上，因为其实这个是个已知的问题，很晚才修复。<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/27554781/maven-install-file-isnt-resolving-dependencies#comment129402640_27554971">这个comment</a>救了我。</p>
+<p>根据<a
+target="_blank" rel="noopener" href="https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html">官方文档</a>，如果那边jar是maven构建的，则可以使用下面这种方式直接安装到本地缓存，因为读取了jar里的<code>pom.xml</code>文件。既然都有了pom了，依赖信息也在了。但是坑点是版本要改成3.0.1以上，因为其实这个是个已知的问题，很晚才修复。<a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/27554781/maven-install-file-isnt-resolving-dependencies#comment129402640_27554971">这个comment</a>救了我。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 删除本地的缓存</span><br><span class="line"># mvn dependency:purge-local-repository -DmanualInclude=&quot;org.soot-oss:soot&quot;</span><br><span class="line">mvn org.apache.maven.plugins:maven-install-plugin:3.0.1:install-file -Dfile=$SCRIPTPATH/sootclasses-trunk.jar</span><br></pre></td></tr></table></figure>
 <p>最后发现怎么还是在跑的旧代码，可能是shaded插件的问题。还是得删掉targets文件夹。</p>
 <h3 id="检查依赖问题">检查依赖问题</h3>
 <p>使用<code>mvn dependency:tree</code>可以打印树状的依赖图</p>
 <h3 id="vscode-java插件关联本地代码">VSCode Java插件关联本地代码</h3>
-<p>根据这个<a target="_blank" rel="noopener" href="https://github.com/redhat-developer/vscode-java/issues/2391">issue</a>里说的，看来只能在那边创建<code>-src</code>后缀的jar文件，可能要同时放到本地maven仓库？</p>
+<p>根据这个<a
+target="_blank" rel="noopener" href="https://github.com/redhat-developer/vscode-java/issues/2391">issue</a>里说的，看来只能在那边创建<code>-src</code>后缀的jar文件，可能要同时放到本地maven仓库？</p>
 <h3 id="总体构建脚本">总体构建脚本</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># 获取脚本当前路径</span></span><br><span class="line">SCRIPTPATH=<span class="string">&quot;<span class="subst">$( cd -- <span class="string">&quot;<span class="subst">$(dirname <span class="string">&quot;<span class="variable">$0</span>&quot;</span>)</span>&quot;</span> &gt;/dev/null 2&gt;&amp;1 ; pwd -P )</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 防止还是用的旧的库</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="variable">$SCRIPTPATH</span>/target</span><br><span class="line"></span><br><span class="line"><span class="built_in">pushd</span> ~/soot</span><br><span class="line"><span class="comment"># 生成patch留存</span></span><br><span class="line">git diff --cached &gt; <span class="variable">$SCRIPTPATH</span>/mypatch.patch </span><br><span class="line"><span class="comment"># 构建依赖的库的jar包</span></span><br><span class="line">mvn -Dmaven.test.skip=<span class="literal">true</span> package</span><br><span class="line"><span class="built_in">cp</span> target/sootclasses-trunk.jar <span class="variable">$SCRIPTPATH</span>/</span><br><span class="line">mvn org.apache.maven.plugins:maven-install-plugin:3.0.1:install-file -Dfile=<span class="variable">$SCRIPTPATH</span>/sootclasses-trunk.jar</span><br><span class="line"><span class="built_in">popd</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建真正的项目</span></span><br><span class="line">mvn package</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/" data-id="cmda69qoy002gg4ue5ulydry7" data-title="Maven使用本地JAR文件" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2023/Maven%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0JAR%E6%96%87%E4%BB%B6/" data-id="cmgmjrgkc000q6gue49zf4utd" data-title="Maven使用本地JAR文件" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -159,7 +166,7 @@
 <nav id="article-nav">
   
     <a href="/2023/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%93%E4%B8%9A%E5%85%A5%E9%97%A8%E5%BA%94%E8%AF%A5%E5%81%9A%E4%BB%80%E4%B9%88/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           计算机专业入门应该做什么
@@ -169,7 +176,7 @@
   
   
     <a href="/2023/X11%E8%BD%AC%E5%8F%91-%E4%BB%8Edocker%E5%88%B0wsl/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">X11转发-从docker到WSL</div>
     </a>
   
@@ -210,7 +217,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -232,16 +239,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

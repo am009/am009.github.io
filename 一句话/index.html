@@ -73,10 +73,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -113,19 +113,36 @@
 <p>很多问题的解决方案，虽然非常有用，但是概括起来不需要多少字，都汇总在这里。</p>
 <span id="more"></span>
 <p>[toc]</p>
-<h2 id="使用draw.io-diagrams.net-给paper画图camera-ready提交时提示使用了type-3字体">使用Draw.io diagrams.net 给paper画图，Camera Ready提交时提示使用了Type 3字体</h2>
-<p>2024年9月2日 发现使用了特殊字符时会出现Type 3字体。比如emoji，特殊的图形或者数字字符。使用Adobe Acrobat打开PDF在属性-字体里也可以看到有Type 3字体。</p>
-<p>使用Adobe Illustrator 打开PDF的图然后直接另存为，就可以消除这些Type 3字体。</p>
+<h2
+id="使用draw.io-diagrams.net-给paper画图camera-ready提交时提示使用了type-3字体">使用Draw.io
+diagrams.net 给paper画图，Camera Ready提交时提示使用了Type 3字体</h2>
+<p>2024年9月2日 发现使用了特殊字符时会出现Type
+3字体。比如emoji，特殊的图形或者数字字符。使用Adobe
+Acrobat打开PDF在属性-字体里也可以看到有Type 3字体。</p>
+<p>使用Adobe Illustrator 打开PDF的图然后直接另存为，就可以消除这些Type
+3字体。</p>
 <p>使用matplotlib的时候进行下面的设置：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import matplotlib</span><br><span class="line">matplotlib.rcParams[&#x27;pdf.fonttype&#x27;] = 42</span><br><span class="line">matplotlib.rcParams[&#x27;ps.fonttype&#x27;] = 42</span><br></pre></td></tr></table></figure>
-<h2 id="windows-11-远程桌面无法保存密钥">Windows 11 远程桌面无法保存密钥</h2>
-<p>Windows 11 远程桌面无法保存密钥，报错"Windows Defender Credential Guard does not allow using saved credentials"</p>
+<h2 id="windows-11-远程桌面无法保存密钥">Windows 11
+远程桌面无法保存密钥</h2>
+<p>Windows 11 远程桌面无法保存密钥，报错"Windows Defender Credential
+Guard does not allow using saved credentials"</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmdkey /generic:TERMSRV/&lt;targetNameOrIp&gt; /user:&lt;username&gt; /pass:&lt;password&gt;</span><br></pre></td></tr></table></figure>
-<p>来自：<a target="_blank" rel="noopener" href="https://superuser.com/questions/1756354/windows-defender-credential-guard-does-not-allow-using-saved-credentials-for-r">remote desktop - "Windows Defender Credential Guard does not allow using saved credentials" for RDP connections? - Super User</a></p>
-<h2 id="调试docker构建过程-docker-image-build-debug-dockerfile">调试docker构建过程 docker image build debug dockerfile</h2>
-<p>首先，在docker file里需要调试的地方增加 <code>RUN sleep infinity</code> 然后使用<code>ps -aux | grep sleep</code>找到sleep的uid，并使用 <code>sudo nsenter -a -t $PID_OF_SLEEP sh</code> 进入构建过程调试。</p>
-<p>来自： https://github.com/moby/buildkit/issues/1053#issuecomment-564340155</p>
-<h2 id="docker修改现有容器的参数环境变量等">docker修改现有容器的参数，环境变量等</h2>
+<p>来自：<a
+target="_blank" rel="noopener" href="https://superuser.com/questions/1756354/windows-defender-credential-guard-does-not-allow-using-saved-credentials-for-r">remote
+desktop - "Windows Defender Credential Guard does not allow using saved
+credentials" for RDP connections? - Super User</a></p>
+<h2
+id="调试docker构建过程-docker-image-build-debug-dockerfile">调试docker构建过程
+docker image build debug dockerfile</h2>
+<p>首先，在docker file里需要调试的地方增加
+<code>RUN sleep infinity</code>
+然后使用<code>ps -aux | grep sleep</code>找到sleep的uid，并使用
+<code>sudo nsenter -a -t $PID_OF_SLEEP sh</code> 进入构建过程调试。</p>
+<p>来自：
+https://github.com/moby/buildkit/issues/1053#issuecomment-564340155</p>
+<h2
+id="docker修改现有容器的参数环境变量等">docker修改现有容器的参数，环境变量等</h2>
 <ul>
 <li>停止docker daemon</li>
 <li>修改配置文件
@@ -143,29 +160,40 @@
 <p>按照这个思路，windows下wsl可以和本机用同一个密钥。</p>
 <p>我现在就是这样，每个设备就用单独一个默认的id_ed25519，从来也不需要加选项单独指定私钥。</p>
 <h2 id="github下载单个文件夹">Github下载单个文件夹</h2>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/7106012/download-a-single-folder-or-directory-from-a-github-repo">git - Download a single folder or directory from a GitHub repo - Stack Overflow</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/7106012/download-a-single-folder-or-directory-from-a-github-repo">git
+- Download a single folder or directory from a GitHub repo - Stack
+Overflow</a></p>
 <ul>
-<li>可以使用svn export （不进行版本管理）而不是checkout（同时下载了<code>.svn</code>文件夹）</li>
-<li><code>--depth=files</code> 可以仅下载这个文件夹下面的文件，不深入下载</li>
+<li>可以使用svn export
+（不进行版本管理）而不是checkout（同时下载了<code>.svn</code>文件夹）</li>
+<li><code>--depth=files</code>
+可以仅下载这个文件夹下面的文件，不深入下载</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">svn export --depth=files https://github.com/JordanSamhi/JuCify/trunk/benchApps &quot;$SCRIPTPATH/jucifybench&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="linux下限制进程cpu和内存使用率">Linux下限制进程CPU和内存使用率</h2>
+<h2
+id="linux下限制进程cpu和内存使用率">Linux下限制进程CPU和内存使用率</h2>
 <ul>
-<li><code>CPUQuota=100%</code>: 强制限制CPU使用，100%表示单核的100%，即上限不是100%，比如我有256核，则上限是25600%</li>
-<li><code>CPUWeight=idle</code> 或<code>CPUWeight=1</code> 仅使用空闲的CPU。</li>
+<li><code>CPUQuota=100%</code>:
+强制限制CPU使用，100%表示单核的100%，即上限不是100%，比如我有256核，则上限是25600%</li>
+<li><code>CPUWeight=idle</code> 或<code>CPUWeight=1</code>
+仅使用空闲的CPU。</li>
 <li><code>MemoryMax=32G</code> 限制最大内存占用</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemd-run --scope --same-dir --collect -p MemoryMax=32G -p CPUQuota=100% bash -c <span class="string">&quot;xxx&quot;</span> <span class="comment"># 限制内存和强制单核</span></span><br><span class="line">systemd-run --scope --same-dir -p CPUWeight=idle bash -c <span class="string">&quot;xxx&quot;</span></span><br></pre></td></tr></table></figure>
-<p>默认需要root权限，加上<code>--user</code> 则不需要root权限了。但是现在好像有点问题，限制不住CPU和内存。</p>
+<p>默认需要root权限，加上<code>--user</code>
+则不需要root权限了。但是现在好像有点问题，限制不住CPU和内存。</p>
 <p>https://github.com/systemd/systemd/issues/10581</p>
 <p>测试是否支持user模式：运行这个</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemd-run --user --scope --same-dir -p CPUQuota=50% bash -c <span class="string">&#x27;python -c &quot;while True: i=1&quot;&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>然后用htop观察CPU占用，看是否生效：看CPU占用是100还是50</p>
 <p>进一步调试：https://github.com/systemd/systemd/issues/9502</p>
 <p><strong>相关系统配置：</strong>（仅使用的话不用管这一部分）</p>
-<p>https://unix.stackexchange.com/questions/624428/cgroups-v2-cgroup-controllers-not-delegated-to-non-privileged-users-on-centos-s （里面的EOF应该不用写进文件）</p>
+<p>https://unix.stackexchange.com/questions/624428/cgroups-v2-cgroup-controllers-not-delegated-to-non-privileged-users-on-centos-s
+（里面的EOF应该不用写进文件）</p>
 <h2 id="windows下稳定的挂起执行">Windows下稳定的挂起执行</h2>
-<p>https://github.com/winsw/winsw 不得不说比windows自带的task scheduler（任务计划程序）好太多。下面盘点一下task scheduler的坑点</p>
+<p>https://github.com/winsw/winsw 不得不说比windows自带的task
+scheduler（任务计划程序）好太多。下面盘点一下task scheduler的坑点</p>
 <ol type="1">
 <li><p>启动失败后多久重新启动任务的选项，对于启动失败的定义完全不是返回值是否不为零，而是他有没有正常启动你的程序。也就是说完全不管你的返回值的。</p></li>
 <li><p>从某个时间点后周期性重复的触发器，如果你设置无限重复，但是开始时间是过去，即使你选了那个错过了时间立刻启动也不管用。可以看到下次执行时间是几分钟后，但是几分钟后就是不给你执行。必须要把开始时间设置在几分钟后，正常触发一次。</p>
@@ -177,10 +205,14 @@
 <h2 id="稳定的给自己的推送接口">稳定的给自己的推送接口</h2>
 <p>通过qq邮箱SMTP，发给自己（同一个邮箱），通过qq的QQ邮箱提醒接收</p>
 <h2 id="方便地换硬盘重装系统">方便地换硬盘重装系统</h2>
-<p>2022年9月13日 直接用DiskGenius的系统迁移功能，直接下免费版也能用。体验下来比<code>备份与恢复（win7）</code>好很多。但是<code>备份与恢复（win7）</code>用来给电脑做全盘备份还是不错的。</p>
-<p><del>利用win10自带的 <code>备份与恢复（win7）</code> 借来一个大容量移动硬盘先备份，换硬盘之后恢复。</del></p>
-<p>2021年12月19日 这个<code>备份与恢复（win7）</code> 其实还是有很多槽点的。一旦你用usb安装盘进入恢复过程，它给你报个错，你就完全没有任何办法。。。之前成功过两次，但也遇到了几次没办法的情况。今天尝试DiskGenius的系统迁移功能，新硬盘通过硬盘盒，usb连接电脑，然后热迁移过去。</p>
-<h2 id="将旧电脑系统连带硬盘迁移到新电脑">将旧电脑系统连带硬盘迁移到新电脑</h2>
+<p>2022年9月13日
+直接用DiskGenius的系统迁移功能，直接下免费版也能用。体验下来比<code>备份与恢复（win7）</code>好很多。但是<code>备份与恢复（win7）</code>用来给电脑做全盘备份还是不错的。</p>
+<p><del>利用win10自带的 <code>备份与恢复（win7）</code>
+借来一个大容量移动硬盘先备份，换硬盘之后恢复。</del></p>
+<p>2021年12月19日 这个<code>备份与恢复（win7）</code>
+其实还是有很多槽点的。一旦你用usb安装盘进入恢复过程，它给你报个错，你就完全没有任何办法。。。之前成功过两次，但也遇到了几次没办法的情况。今天尝试DiskGenius的系统迁移功能，新硬盘通过硬盘盒，usb连接电脑，然后热迁移过去。</p>
+<h2
+id="将旧电脑系统连带硬盘迁移到新电脑">将旧电脑系统连带硬盘迁移到新电脑</h2>
 <p>首先关bitLocker。其次是WSL导出并unregister。</p>
 <p>使用下面命令准备系统：然后直接移动硬盘过去。</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">%windir%</span>\system32\sysprep\sysprep.exe /generalize /oobe /shutdown</span><br></pre></td></tr></table></figure>
@@ -194,23 +226,31 @@
 <p>清空自己的PYTHONHOME才行 或者通过bat启动</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set PYTHONHOME=</span><br><span class="line">set PYTHONPATH=</span><br><span class="line">start C:\Users\warren\my_programs\IDA_Pro_v7.0_Portable\ida.exe</span><br></pre></td></tr></table></figure>
 <h2 id="sd卡作为内部存储">SD卡作为内部存储</h2>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/38044532/how-to-turn-a-portable-sd-card-into-internal-storage-via-adb-command">stackoverflow</a></p>
-<p>不需要改initrd，或者什么vold.fstab了。现在的安卓系统内置支持了。害的我还折腾，root手机。 <code>sm set-force-adoptable true</code>大法， <code>sm partition disk:179,64 mixed 60</code>表示留下60%的空间，将SD卡40%的空间用作内部存储。<code>sm partition disk:179,64 private</code>表示将整个SD卡用作内部存储。</p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/38044532/how-to-turn-a-portable-sd-card-into-internal-storage-via-adb-command">stackoverflow</a></p>
+<p>不需要改initrd，或者什么vold.fstab了。现在的安卓系统内置支持了。害的我还折腾，root手机。
+<code>sm set-force-adoptable true</code>大法，
+<code>sm partition disk:179,64 mixed 60</code>表示留下60%的空间，将SD卡40%的空间用作内部存储。<code>sm partition disk:179,64 private</code>表示将整个SD卡用作内部存储。</p>
 <h2 id="magisk的通用安装方法">Magisk的通用安装方法</h2>
-<p><code>system as root</code>可能指没有boot分区，直接将system作为根目录。而不是像通常的boot目录作为initramfs只读启动，再挂载system分区。这种情况要patch recovery分区，开机的时候用进入recovery的方式开机。</p>
+<p><code>system as root</code>可能指没有boot分区，直接将system作为根目录。而不是像通常的boot目录作为initramfs只读启动，再挂载system分区。这种情况要patch
+recovery分区，开机的时候用进入recovery的方式开机。</p>
 <p>找到当前手机rom刷机包，提取boot.img打patch，解锁手机后fastboot刷入。</p>
 <p>红米6这样操作后似乎没了基带。注意考虑基带问题。</p>
 <p>三星手机似乎非常复杂。</p>
 <h2 id="git从commit中提取patch">git从commit中提取patch</h2>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/6658313/how-to-generate-a-git-patch-for-a-specific-commit">这里</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/6658313/how-to-generate-a-git-patch-for-a-specific-commit">这里</a></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git format-patch -1 HEAD</span><br></pre></td></tr></table></figure>
-<p>想要把多个commit放到一个patch里，就先check out新branch，然后squash成一个，最后提取patch。</p>
+<p>想要把多个commit放到一个patch里，就先check
+out新branch，然后squash成一个，最后提取patch。</p>
 <h2 id="screen让ssh退出还能运行命令">screen让ssh退出还能运行命令</h2>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen</span><br></pre></td></tr></table></figure>
-<p>启动screen然后运行自己的命令，然后Ctrl-a, d就可以detach，安全离开ssh</p>
+<p>启动screen然后运行自己的命令，然后Ctrl-a,
+d就可以detach，安全离开ssh</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen -r</span><br></pre></td></tr></table></figure>
 <p>恢复之前的screen</p>
-<p>如果报错<code>Cannot make directory '/run/screen': Permission denied</code>执行<code>sudo /etc/init.d/screen-cleanup start</code> 。</p>
+<p>如果报错<code>Cannot make directory '/run/screen': Permission denied</code>执行<code>sudo /etc/init.d/screen-cleanup start</code>
+。</p>
 <h2 id="移动硬盘被占用">移动硬盘被占用</h2>
 <ol type="1">
 <li>任务管理器-资源监视器-CPU-句柄-搜索盘符</li>
@@ -218,23 +258,32 @@
 </ol>
 <h2 id="cmd启动uwp程序">cmd启动UWP程序</h2>
 <p>例如<code>Microsoft.WindowsTerminal_8wekyb3d8bbwe!App</code></p>
-<p>用管理员cmd，cd到<code>C:\ProgramData\Microsoft\Windows\AppRepository\Packages</code> 然后dir看目录名字就可以了。或者everything搜。或者先pin到开始菜单再拖到桌面得到快捷方式，在看属性。</p>
+<p>用管理员cmd，cd到<code>C:\ProgramData\Microsoft\Windows\AppRepository\Packages</code>
+然后dir看目录名字就可以了。或者everything搜。或者先pin到开始菜单再拖到桌面得到快捷方式，在看属性。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">explorer shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App</span><br></pre></td></tr></table></figure>
 <h2 id="diff导出单个文件的patch">diff导出单个文件的patch</h2>
-<p><a target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/162131/is-this-a-good-way-to-create-a-patch">单个文件或文件夹</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://unix.stackexchange.com/questions/162131/is-this-a-good-way-to-create-a-patch">单个文件或文件夹</a></p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;diff.exe&quot; -Naru --strip-trailing-cr orig-file-<span class="built_in">path</span> new-file-<span class="built_in">path</span> &gt; result.patch</span><br></pre></td></tr></table></figure>
-<h2 id="visual-studio-字符集-character-set">Visual Studio 字符集 Character Set</h2>
+<h2 id="visual-studio-字符集-character-set">Visual Studio 字符集
+Character Set</h2>
 <p>https://stackoverflow.com/questions/9349342/about-the-character-set-option-in-visual-studio</p>
 <p>https://stackoverflow.com/questions/3298569/difference-between-mbcs-and-utf-8-on-windows</p>
-<p>听说tchar不太好，Multi byte在GBK环境下可能不是指utf-8. 推荐处理windows API时全用wchar的版本。</p>
-<p>输出方面，直接使用wchar版本输出函数，可能导致每个字符带一个空字符。使用 <code>setmode(_fileno(stdout), _O_U16TEXT);</code> 启用UTF-16输出。</p>
-<p><code>system("chcp 65001")</code> 可以配合在不带L的字符串常量，使用不带w的输出函数输出中文正常。（这可能和源代码的编码有关？）</p>
+<p>听说tchar不太好，Multi byte在GBK环境下可能不是指utf-8.
+推荐处理windows API时全用wchar的版本。</p>
+<p>输出方面，直接使用wchar版本输出函数，可能导致每个字符带一个空字符。使用
+<code>setmode(_fileno(stdout), _O_U16TEXT);</code> 启用UTF-16输出。</p>
+<p><code>system("chcp 65001")</code>
+可以配合在不带L的字符串常量，使用不带w的输出函数输出中文正常。（这可能和源代码的编码有关？）</p>
 <p>猜测：codepage决定了multibyte的解码。</p>
 <p>TODO: locale和chcp 、code page和setmode什么关系。</p>
-<p>：涉及 <code>setlocale(LC_ALL, "chinese");</code> <code>_setmode(_fileno(stdout), _O_U16TEXT);</code> 等操作</p>
+<p>：涉及 <code>setlocale(LC_ALL, "chinese");</code>
+<code>_setmode(_fileno(stdout), _O_U16TEXT);</code> 等操作</p>
 <p>https://stackoverflow.com/questions/2492077/output-unicode-strings-in-windows-console-app</p>
-<h2 id="gdb如何断点自动执行命令并继续">gdb如何断点自动执行命令并继续？</h2>
-<p>在使用hook-stop里使用continue会出现问题。但是使用<a target="_blank" rel="noopener" href="https://sourceware.org/gdb/current/onlinedocs/gdb/Break-Commands.html"><code>break command</code></a>就可以了。</p>
+<h2
+id="gdb如何断点自动执行命令并继续">gdb如何断点自动执行命令并继续？</h2>
+<p>在使用hook-stop里使用continue会出现问题。但是使用<a
+target="_blank" rel="noopener" href="https://sourceware.org/gdb/current/onlinedocs/gdb/Break-Commands.html"><code>break command</code></a>就可以了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def hook-stop</span><br><span class="line">end</span><br><span class="line">b usb_packet_copy</span><br><span class="line">commands</span><br><span class="line">  print $rdx</span><br><span class="line">  continue</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
 <h2 id="linux-目录的可执行权限">Linux 目录的可执行权限</h2>
 <p>https://unix.stackexchange.com/questions/21251/execute-vs-read-bit-how-do-directory-permissions-in-linux-work</p>
@@ -249,8 +298,12 @@
 <li>便秘考虑吃些纤维素补充剂。似乎木耳主要成分都是纤维素？但是木耳含水有90%，吃起来效率太低。</li>
 </ol>
 <h2 id="chroot-环境下debug">chroot 环境下Debug</h2>
-<p>主要问题是在chroot的环境下debug，没有proc文件系统。网上下了一个静态编译的gdb放进去。结果启动gdb 的时候出现了unable to disable address ramdonmization和不能跟随fork，set folllow-fork-mode child解决。gdb最开始调的时候还没有符号信息，好像是开了PIE而不能读取到mapping，关闭PIE好像就行了。。。。</p>
-<p>最后发现是DNS的问题。。。在chroot的文件夹里新建etc，里面新建resolv.conf，里面写nameserver 8.8.8.8就可以了。</p>
+<p>主要问题是在chroot的环境下debug，没有proc文件系统。网上下了一个静态编译的gdb放进去。结果启动gdb
+的时候出现了unable to disable address ramdonmization和不能跟随fork，set
+folllow-fork-mode
+child解决。gdb最开始调的时候还没有符号信息，好像是开了PIE而不能读取到mapping，关闭PIE好像就行了。。。。</p>
+<p>最后发现是DNS的问题。。。在chroot的文件夹里新建etc，里面新建resolv.conf，里面写nameserver
+8.8.8.8就可以了。</p>
 <p>以后考虑看看chroot环境下能不能搞出procfs，这样可能就方便很多。</p>
 <p>https://superuser.com/questions/165116/mount-dev-proc-sys-in-a-chroot-environment</p>
 <h2 id="影响程序堆布局的因素">影响程序堆布局的因素</h2>
@@ -264,12 +317,16 @@
 <li><p>patchelf修改rpath</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> ./*; <span class="keyword">do</span></span><br><span class="line">	patchelf --set-rpath /home/wjk/raw/reallib2 <span class="variable">$f</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 <p>比较坑的一点是，<code>patchelf $f --set-rpath /home/wjk/raw/reallib2</code>这样不行，文件一定要放到set-rpath后面。。。有时间去patchelf看看是不是确实有这个问题，提个PR。</p></li>
-<li><p>拿出<code>libc</code>，<code>ld</code>，<code>libpthread</code> <code>librt.so</code>，<code>libdl</code>。不要忘了<code>libdl</code>。这次就是因为没有使用系统的<code>libdl</code>而执行<code>dlopen</code>函数的时候崩了。这些库都用目标系统的。如果还是崩就用下面这条检查检查文件访问，看看缺了什么文件，用gdb debug看看是不是加载什么库的时候崩的。</p></li>
+<li><p>拿出<code>libc</code>，<code>ld</code>，<code>libpthread</code>
+<code>librt.so</code>，<code>libdl</code>。不要忘了<code>libdl</code>。这次就是因为没有使用系统的<code>libdl</code>而执行<code>dlopen</code>函数的时候崩了。这些库都用目标系统的。如果还是崩就用下面这条检查检查文件访问，看看缺了什么文件，用gdb
+debug看看是不是加载什么库的时候崩的。</p></li>
 </ol>
 <h2 id="如何strace脚本的文件访问">如何strace脚本的文件访问</h2>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace -f bash ./run.sh 2&gt;&amp;1 | grep bios</span><br></pre></td></tr></table></figure>
-<p>strace 的<code>-f</code>能够trace fork。一般访问文件的时候是<code>openat</code>系统调用，或者<code>access</code>。</p>
-<h2 id="codimd-slide放映模式-调整格式">Codimd slide放映模式 调整格式</h2>
+<p>strace 的<code>-f</code>能够trace
+fork。一般访问文件的时候是<code>openat</code>系统调用，或者<code>access</code>。</p>
+<h2 id="codimd-slide放映模式-调整格式">Codimd slide放映模式
+调整格式</h2>
 <p>图片：</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://xxx.png&quot;</span> <span class="attr">style</span>=<span class="string">&quot;height: 60%; width: 60%&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>其他： 注意在列表和html标签前后留空行</p>
@@ -277,21 +334,28 @@
 <p>换行使用<code>&lt;br&gt;</code>。</p>
 <h2 id="快速解决编译的exe的闪退问题">快速解决编译的exe的闪退问题</h2>
 <p>首先按住alt，拖动exe到当前目录，从而创建快捷方式。</p>
-<p>然后编辑快捷方式的目标，在前面加上<code>cmd[空格]/k[空格]</code> 执行完exe就会回到cmd了，不会闪退了。</p>
+<p>然后编辑快捷方式的目标，在前面加上<code>cmd[空格]/k[空格]</code>
+执行完exe就会回到cmd了，不会闪退了。</p>
 <h2 id="在ubuntu中找到文件属于什么包">在Ubuntu中找到文件属于什么包</h2>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dpkg -S &quot;*/libclangBasic.a&quot;</span><br></pre></td></tr></table></figure>
 <h2 id="手机电脑传文件">手机电脑传文件</h2>
 <p>MT管理器的远程管理可以选择目录（局域网FTP）。</p>
 <p>电脑可以开启一个https://github.com/filebrowser/filebrowser</p>
-<h2 id="linux-进程池时间内存消耗超时">Linux 进程池，时间内存消耗，超时</h2>
-<p>进程池：xargs：<a target="_blank" rel="noopener" href="http://coldattic.info/post/7/">Easy parallelization with Bash in Linux - A Foo walks into a Bar... - blog by Paul Shved - coldattic.info</a></p>
-<p>时间内存消耗：time：<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/774556/peak-memory-usage-of-a-linux-unix-process">command line - Peak memory usage of a linux/unix process - Stack Overflow</a></p>
+<h2 id="linux-进程池时间内存消耗超时">Linux
+进程池，时间内存消耗，超时</h2>
+<p>进程池：xargs：<a target="_blank" rel="noopener" href="http://coldattic.info/post/7/">Easy
+parallelization with Bash in Linux - A Foo walks into a Bar... - blog by
+Paul Shved - coldattic.info</a></p>
+<p>时间内存消耗：time：<a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/774556/peak-memory-usage-of-a-linux-unix-process">command
+line - Peak memory usage of a linux/unix process - Stack
+Overflow</a></p>
 <p>超时：timeout</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/%E4%B8%80%E5%8F%A5%E8%AF%9D/" data-id="cmda69qo40000g4ue4kdj48oh" data-title="一句话的问题" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/%E4%B8%80%E5%8F%A5%E8%AF%9D/" data-id="cmgmjrgk9000c6guea6053hmn" data-title="一句话的问题" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -301,18 +365,18 @@
     
 <nav id="article-nav">
   
-    <a href="/2022/%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+    <a href="/2022/NativeSummary/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          静态分析学习资源分享
+          NativeSummary：Java/C安卓应用无源码污点分析。
         
       </div>
     </a>
   
   
     <a href="/2021/%E6%8D%A2%E7%94%B5%E8%84%91-2021/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">换电脑-2021</div>
     </a>
   
@@ -353,7 +417,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -375,16 +439,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

@@ -18,8 +18,8 @@
 <meta property="article:published_time" content="2023-12-11T03:11:12.000Z">
 <meta property="article:modified_time" content="2024-02-02T02:20:24.672Z">
 <meta property="article:author" content="am009@github.com">
-<meta property="article:tag" content="StaticAnalysis">
 <meta property="article:tag" content="PL">
+<meta property="article:tag" content="StaticAnalysis">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/%E8%87%AA%E5%8A%A8%E6%9C%BA1.png">
   
@@ -78,10 +78,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -116,15 +116,18 @@
       
         <p>自动机与程序分析</p>
 <span id="more"></span>
-<p>最早在程序分析中遇到自动机，是在学IFDS的时候（比如<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/16381920.html#_label2">这里</a>），里面需要根据call和return指令，做类似括号匹配的操作。</p>
+<p>最早在程序分析中遇到自动机，是在学IFDS的时候（比如<a
+target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/16381920.html#_label2">这里</a>），里面需要根据call和return指令，做类似括号匹配的操作。</p>
 <h2 id="自动机基础">自动机基础</h2>
 <p>参考 《形式语言与自动机导论%20%20（原书第三版）_11454864.pdf》</p>
-<h3 id="下推自动机push-down-automata-pda">下推自动机（Push Down Automata, PDA）</h3>
+<h3 id="下推自动机push-down-automata-pda">下推自动机（Push Down
+Automata, PDA）</h3>
 <p>背景知识是，编译原理中，有限状态自动机和正则表达式的知识。另外，也需要一些上下文无关语言的知识。</p>
 <p>下推自动机，在有限状态自动机上，额外增加了一个栈，每次转换状态的时候，允许向栈上压入，或弹出元素。</p>
 <p>这里介绍一个例子，我们想要匹配偶数长度的，包含a,b两种字符的回文字符串。可以定义一个语法如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">R -&gt; aRa | bRb | ε</span><br></pre></td></tr></table></figure>
-<p>同时，我们可以定义一个下推自动机(来自这个<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=BxA-aI2dyRo&amp;list=PLBlnK6fEyqRgp46KUv4ZY69yXmpwKOIev&amp;index=89">youtube视频</a>)。自动机包含四个状态：</p>
+<p>同时，我们可以定义一个下推自动机(来自这个<a
+target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=BxA-aI2dyRo&amp;list=PLBlnK6fEyqRgp46KUv4ZY69yXmpwKOIev&amp;index=89">youtube视频</a>)。自动机包含四个状态：</p>
 <ul>
 <li>初始状态q1：读入ε空字符（不读入字符），同时把开始符号Z0压到栈中，可以转换到状态q2</li>
 <li>q2：读入字符a，或字符b，同时把字符压入栈中，可以转换到状态q2（不变）。或者直接转换到状态q3。</li>
@@ -133,26 +136,39 @@
 </ul>
 <p>这里是不确定性下推自动机，按规则走时有多条路径。只要有可能走到结束，则说明该字符串被接受。其他情况是有可能走不下去的。</p>
 <figure>
-<img src="自动机1.png" alt="" /><figcaption>一个自动机的例子</figcaption>
+<img src="自动机1.png" alt="一个自动机的例子" />
+<figcaption aria-hidden="true">一个自动机的例子</figcaption>
 </figure>
 <p><strong>下推自动机和上下文无关语言的一致性</strong>：</p>
-<p>这里称上下文无关语言为Context Free Grammar, CFG。下推自动机被称为Push Down Automata, PDA。</p>
-<p>如何把CFG转为PDA？ - 在CFG根据规则替换非终结符的时候，我们约定每次仅替换最左侧的终结符。 - 对于每个状态正在推导的CFG，它包含终结符和非终结符的混合序列。我们从最左侧开始扫描，遇到的所有终结符放在PDA的输出上，剩下的放在PDA的栈里。 - 我们每次看栈上最左侧的非终结符，然后看它有哪些规则，比如<code>R -&gt; aRa</code>，我们对应此时有PDA的状态转换规则，即将这个非终结符替换成对应规则应用后的结果，即此时对当前状态有规则，弹出栈上的<code>R</code>，压入<code>aRa</code>，转换到下一个状态。 - 如果栈上是终结符，此时允许读入相同的终结符，弹出栈顶上的这个终结符。</p>
+<p>这里称上下文无关语言为Context Free Grammar, CFG。下推自动机被称为Push
+Down Automata, PDA。</p>
+<p>如何把CFG转为PDA？ -
+在CFG根据规则替换非终结符的时候，我们约定每次仅替换最左侧的终结符。 -
+对于每个状态正在推导的CFG，它包含终结符和非终结符的混合序列。我们从最左侧开始扫描，遇到的所有终结符放在PDA的输出上，剩下的放在PDA的栈里。
+-
+我们每次看栈上最左侧的非终结符，然后看它有哪些规则，比如<code>R -&gt; aRa</code>，我们对应此时有PDA的状态转换规则，即将这个非终结符替换成对应规则应用后的结果，即此时对当前状态有规则，弹出栈上的<code>R</code>，压入<code>aRa</code>，转换到下一个状态。
+-
+如果栈上是终结符，此时允许读入相同的终结符，弹出栈顶上的这个终结符。</p>
 <figure>
-<img src="CFG转PDA.png" alt="" /><figcaption>CFG转PDA</figcaption>
+<img src="CFG转PDA.png" alt="CFG转PDA" />
+<figcaption aria-hidden="true">CFG转PDA</figcaption>
 </figure>
 <p>对于CFG，我们有时候不知道用哪个推导规则合适，这个正好对应上不确定性的自动机中，有多种状态转移，不知道转移为哪一种最后能到终态。因此，虽然有这种转换，但是并不代表能够高效解决确定字符串是否属于语言的问题。</p>
-<h2 id="什么是-cfl-reachability-problem">什么是 CFL Reachability Problem</h2>
-<p>阅读《Interconvertibility of Set Constraints and Context-Free Language Reachability》</p>
+<h2 id="什么是-cfl-reachability-problem">什么是 CFL Reachability
+Problem</h2>
+<p>阅读《Interconvertibility of Set Constraints and Context-Free
+Language Reachability》</p>
 <p>我们知道普通的有向图的可达问题。但是这种图可达性太简单了。比如，多个函数的控制流图，它首先把每个函数的控制流图放上来，然后对于call指令，增加call指令到被调用函数开头的调用边，以及被调用函数结束时，返回call指令继续执行的边。这样构建出来的图会发现存在一个问题，即没有考虑到返回的时候要根据调用栈返回的情况。返回的时候，由于边就是连着的，直接看可达性的话我可以返回到任意调用点之后继续执行，然而实际情况是只会根据之前call是从哪里过来的，然后返回那边执行。</p>
 <p>CFL Reachibility问题，就是结合CFG，给图可达性问题增加一些限制。</p>
 <p>首先，我们允许对有向图上每一条边上都标上CFG里的终结符或者非终结符。对于每一条路径，把边上标记的符号连起来就是一个字符串。如果这个字符串属于某个CFG语言，即这个字符串能从CFG的开始符号S，通过CFG语法规则推导得到，则我们称这条路径属于S-Path。</p>
-<p>all pair版本的图可达问题，就是求出所有的这样顶点对 v1, v2，使得v1能走到v2。我们定义all pair版本的S-Path问题为，找出所有的顶点对，使得存在一条v1到v2，且属于S-Path的路径。</p>
+<p>all pair版本的图可达问题，就是求出所有的这样顶点对 v1,
+v2，使得v1能走到v2。我们定义all
+pair版本的S-Path问题为，找出所有的顶点对，使得存在一条v1到v2，且属于S-Path的路径。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/" data-id="cmda69qp4003bg4uee5c39p8i" data-title="自动机与程序分析" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2023/%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/" data-id="cmgmjrgkj00256gueejl31fmx" data-title="自动机与程序分析" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -165,7 +181,7 @@
 <nav id="article-nav">
   
     <a href="/2023/Fuzz%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           Fuzz快速上手指南
@@ -175,7 +191,7 @@
   
   
     <a href="/2023/SMTSolver%E4%B8%8E%E7%A8%8B%E5%BA%8F%E5%90%88%E6%88%90/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">SMTSolver与程序合成</div>
     </a>
   
@@ -216,7 +232,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -238,16 +254,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

@@ -77,10 +77,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -116,7 +116,8 @@
         <p>BTIGhidra和BinSub代码解析</p>
 <span id="more"></span>
 <h3 id="运行与调试环境搭建">运行与调试环境搭建</h3>
-<p>想要舒服地阅读代码肯定需要良好的调试环境。本次使用的代码是<a target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/tree/28dee6a31d00d171ef37765f933d22a44ae95998">这个commit</a></p>
+<p>想要舒服地阅读代码肯定需要良好的调试环境。本次使用的代码是<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/tree/28dee6a31d00d171ef37765f933d22a44ae95998">这个commit</a></p>
 <ol type="1">
 <li>安装Ghidra 10.3.3并设置环境变量 <code>GHIDRA_INSTALL_DIR</code>.
 <ol type="1">
@@ -130,45 +131,65 @@
 </ol>
 <!-- 3. (如果想要调试Java) 安装IntelliJ IDEA -->
 <p><strong>调试rust部分</strong></p>
-<p>在<a target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/blob/28dee6a31d00d171ef37765f933d22a44ae95998/plugin/src/main/java/binary_type_inference/BinaryTypeInferenceRunner.java#L110">BinaryTypeInferenceRunner</a>尝试增加代码打印执行<code>binary_to_types</code>的命令。然后创建一个项目，尝试运行一下插件。初始分析的时候记得额外勾选decompiler param ID。然后在Analysis-&gt;one Shot-&gt;Type inference这里执行插件。</p>
-<p>然后vscode安装好rust开发环境，codeLLDB插件。需要用vscode直接打开内部的rust项目文件夹，language server的提升和跳转才会正常。然后基于上面打印的执行命令，先执行测试一下，然后增加Launch的debug选项。只需要把运行的程序路径改为构建后debug版本的可执行文件路径。参数就是打印出来的参数。比如我的是：</p>
+<p>在<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/blob/28dee6a31d00d171ef37765f933d22a44ae95998/plugin/src/main/java/binary_type_inference/BinaryTypeInferenceRunner.java#L110">BinaryTypeInferenceRunner</a>尝试增加代码打印执行<code>binary_to_types</code>的命令。然后创建一个项目，尝试运行一下插件。初始分析的时候记得额外勾选decompiler
+param ID。然后在Analysis-&gt;one Shot-&gt;Type
+inference这里执行插件。</p>
+<p>然后vscode安装好rust开发环境，codeLLDB插件。需要用vscode直接打开内部的rust项目文件夹，language
+server的提升和跳转才会正常。然后基于上面打印的执行命令，先执行测试一下，然后增加Launch的debug选项。只需要把运行的程序路径改为构建后debug版本的可执行文件路径。参数就是打印出来的参数。比如我的是：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;type&quot;: &quot;lldb&quot;,</span><br><span class="line">    &quot;request&quot;: &quot;launch&quot;,</span><br><span class="line">    &quot;name&quot;: &quot;Launch mooosl&quot;,</span><br><span class="line">    &quot;program&quot;: &quot;/sn640/BTIGhidra/binary_type_inference/target/debug/binary_to_types&quot;,</span><br><span class="line">    &quot;args&quot;: [&quot;/sn640/BTIGhidra/binary_type_inference/test_data/mooosl&quot;, &quot;/tmp/1738839619485-0/ir.json&quot;, &quot;/tmp/1738839619485-0/lattice.json&quot;, &quot;/tmp/1738839619485-0/additional_constraints.pb&quot;, &quot;/tmp/1738839619485-0/interesting_tids.pb&quot;, &quot;--out&quot;, &quot;/tmp/1738839619485-0/ctypes.pb&quot;, &quot;--debug_out_dir&quot;, &quot;/tmp/1738839619485-0&quot;],</span><br><span class="line">    &quot;cwd&quot;: &quot;$&#123;workspaceFolder&#125;&quot;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
 <h2 id="代码架构">代码架构</h2>
 <p>整体架构如图所示</p>
 <p><img src="BTIGhidra架构.drawio.png" /></p>
 <p><strong>BTIGhidra的Java插件</strong></p>
-<p>当点击Ghidra菜单的type inference按钮的时候，首先BTIGhidra的Ghidra插件部分会导出各种信息，准备传递给Rust部分的主体分析代码。</p>
-<p>从脚本的<a target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/blob/5253fd83baf89baf32efab9bc8b24cd7f674b22e/plugin/src/main/java/binary_type_inference/BinaryTypeInference.java#L476">main函数</a>可以看出这里主要分为三步：</p>
+<p>当点击Ghidra菜单的type
+inference按钮的时候，首先BTIGhidra的Ghidra插件部分会导出各种信息，准备传递给Rust部分的主体分析代码。</p>
+<p>从脚本的<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/blob/5253fd83baf89baf32efab9bc8b24cd7f674b22e/plugin/src/main/java/binary_type_inference/BinaryTypeInference.java#L476">main函数</a>可以看出这里主要分为三步：</p>
 <ul>
-<li>produceArtifacts：提取约束，导出相关的文件，准备执行Rust那边可执行文件<code>binary_to_types</code>。可以参考rust那边的<a target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/bin/binary_to_types.rs#L25">命令行参数</a>。
+<li>produceArtifacts：提取约束，导出相关的文件，准备执行Rust那边可执行文件<code>binary_to_types</code>。可以参考rust那边的<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/bin/binary_to_types.rs#L25">命令行参数</a>。
 <ul>
-<li>GetBinaryJson：<a target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/blob/b5fba911f9237ce1d8e7c46762fed73cc6d1706d/plugin/src/main/java/binary_type_inference/GetBinaryJson.java#L66">调用</a>CWEChecker的PcodeExtractor插件里的脚本，导出一个pcode的json表示。</li>
+<li>GetBinaryJson：<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/blob/b5fba911f9237ce1d8e7c46762fed73cc6d1706d/plugin/src/main/java/binary_type_inference/GetBinaryJson.java#L66">调用</a>CWEChecker的PcodeExtractor插件里的脚本，导出一个pcode的json表示。</li>
 <li>createTypeLattice：生成类型的格（偏序集）表示</li>
 <li>生成额外的约束文件</li>
 </ul></li>
-<li>getCtypes：调用<a target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/blob/main/plugin/src/main/java/binary_type_inference/BinaryTypeInferenceRunner.java">BinaryTypeInferenceRunner</a>，运行rust那边的类型分析逻辑，生成最终类型导出的文件。</li>
+<li>getCtypes：调用<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/BTIGhidra/blob/main/plugin/src/main/java/binary_type_inference/BinaryTypeInferenceRunner.java">BinaryTypeInferenceRunner</a>，运行rust那边的类型分析逻辑，生成最终类型导出的文件。</li>
 <li>applyCtype：在Ghidra中设置并创建导出的类型。目前似乎只设置了函数参数和返回值类型，以及全局变量类型。</li>
 </ul>
 <p><strong>Rust代码部分</strong></p>
-<p>从可执行文件<code>binary_to_types</code>的<a target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/bin/binary_to_types.rs#L24">main函数</a>开始。所有的输入首先被封装为<code>JobDefinition</code>，然后进一步生成<code>InferenceJob</code>类，并调用<code>infer_ctypes</code>函数生成结果。最后将结果导出为文件。</p>
+<p>从可执行文件<code>binary_to_types</code>的<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/bin/binary_to_types.rs#L24">main函数</a>开始。所有的输入首先被封装为<code>JobDefinition</code>，然后进一步生成<code>InferenceJob</code>类，并调用<code>infer_ctypes</code>函数生成结果。最后将结果导出为文件。</p>
 <p>这里如果对基础理论不懂，想要深入研究的可以看我上一篇博客对retypd论文的解读，找里面相关的部分。</p>
 <p><code>infer_ctypes</code>的主要函数调用：</p>
 <ul>
 <li><code>infer_labeled_graph</code>
 <ul>
-<li><code>get_simplified_constraints</code> 生成每个函数的summary，即如果有其他函数调用它，它的返回值类型和参数类型会有什么关系。即summary表示了这个函数调用对类型的影响，避免反复重复递归进去分析。
+<li><code>get_simplified_constraints</code>
+生成每个函数的summary，即如果有其他函数调用它，它的返回值类型和参数类型会有什么关系。即summary表示了这个函数调用对类型的影响，避免反复重复递归进去分析。
 <ul>
 <li>首先从CWE_Checker那边拿到函数的调用图。因为summary之间也有依赖关系，提取调用者的summary的时候要应用依赖于被调函数的summary。因此我们采用拓扑排序的思想，按照调用图的拓扑排序顺序去依次分析得到summary。（如果调用边形成了环形依赖，即强联通分量，则把所有环上的函数看作一个大的函数进行分析。）这里和retypd论文中一致。</li>
-<li>然后创建<code>scc_constraint_generation::Context</code>并调用那边的生成约束逻辑。进一步调用那边的<a target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/solver/scc_constraint_generation.rs#L670"><code>get_simplified_constraints</code></a>函数。多次转调调用<a target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/solver/scc_constraint_generation.rs#L510"><code>Context::simplify_scc</code></a>
+<li>然后创建<code>scc_constraint_generation::Context</code>并调用那边的生成约束逻辑。进一步调用那边的<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/solver/scc_constraint_generation.rs#L670"><code>get_simplified_constraints</code></a>函数。多次转调调用<a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/solver/scc_constraint_generation.rs#L510"><code>Context::simplify_scc</code></a>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/solver/scc_constraint_generation.rs#L546"><code>instantiate_callee_signatures</code></a>应用调用的其他函数的summary。</li>
-<li><code>infer_pointers</code>: 处理区分指针和数字类型的问题。通过一些加法减法运算，判断它们是数字加减还是指针加减。进一步推理那些变量是指针。</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/solver/constraint_graph.rs#L1021"><code>simplify_graph</code></a>:
+<li><a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/solver/scc_constraint_generation.rs#L546"><code>instantiate_callee_signatures</code></a>应用调用的其他函数的summary。</li>
+<li><code>infer_pointers</code>:
+处理区分指针和数字类型的问题。通过一些加法减法运算，判断它们是数字加减还是指针加减。进一步推理那些变量是指针。</li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/solver/constraint_graph.rs#L1021"><code>simplify_graph</code></a>:
 <ul>
 <li>首先执行Saturate算法，算是核心的类型推断了，和retypd论文应该一致。简单来说，如果结构体指针A是结构体指针B子类型，则A在不同偏移位置的成员，也应当是B对应成员的子类型。此时saturation算法就会增加一条额外的子类型边给这两个成员节点。</li>
-<li><code>intersect_with_pop_push</code>: 这里涉及自动机理论，具体对应retypd论文里<code>D.4 Shadowing</code>的第二段（里面轻描淡写的一句）。把图看作自动机，创建一个新的图（自动机）保留原图的路径，仅去掉不允许先走pop边然后走push边的路径。把类型看作自动机之后，这里本质上是应用了自动机理论里语言相交的算法，节点数量为两边自动机状态数相乘。但是因为那边不允许pop+push的语言只需要两个自动机即可描述，节点只增加了一倍。</li>
-<li><code>generate_recursive_type_variables</code>：这里和后续的<code>walk_constraints</code>函数相关。这里涉及自动机转正则表达式的算法。因为retypd原文中用文本形式表示约束，同时允许一种递归的约束形式，因此本质上就是正则表达式。retypd原文在Algorithm D.1推荐的是Tarjan’s path expression algorithm。《A Unified Approach to Path Problems》这篇。</li>
-<li><code>walk_constraints</code> 见上面的描述。首先需要标记参数和返回值节点，作为interesting的节点，然后生成interesting节点之间的所有路径组合成的正则表达式。因为路径只允许先push一些边，然后再pop一些边，对应的就是约束两边的label，所以最后的表达式就是一系列constraint。这个最后也就是summary。</li>
+<li><code>intersect_with_pop_push</code>:
+这里涉及自动机理论，具体对应retypd论文里<code>D.4 Shadowing</code>的第二段（里面轻描淡写的一句）。把图看作自动机，创建一个新的图（自动机）保留原图的路径，仅去掉不允许先走pop边然后走push边的路径。把类型看作自动机之后，这里本质上是应用了自动机理论里语言相交的算法，节点数量为两边自动机状态数相乘。但是因为那边不允许pop+push的语言只需要两个自动机即可描述，节点只增加了一倍。</li>
+<li><code>generate_recursive_type_variables</code>：这里和后续的<code>walk_constraints</code>函数相关。这里涉及自动机转正则表达式的算法。因为retypd原文中用文本形式表示约束，同时允许一种递归的约束形式，因此本质上就是正则表达式。retypd原文在Algorithm
+D.1推荐的是Tarjan’s path expression algorithm。《A Unified Approach to
+Path Problems》这篇。</li>
+<li><code>walk_constraints</code>
+见上面的描述。首先需要标记参数和返回值节点，作为interesting的节点，然后生成interesting节点之间的所有路径组合成的正则表达式。因为路径只允许先push一些边，然后再pop一些边，对应的就是约束两边的label，所以最后的表达式就是一系列constraint。这个最后也就是summary。</li>
 </ul></li>
 </ul></li>
 </ul></li>
@@ -177,7 +198,9 @@
 <ul>
 <li><code>get_labeled_sketch_graph</code>：将节点转换为具体的类型。
 <ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/lowering/mod.rs#L550"><code>build_type</code></a> 递归访问节点，转换为C类型。涉及类型的图表示和语法树表示之间的对应关系。</li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/trailofbits/binary_type_inference/blob/94918fa010b5d2fe0bb7589ebf3efe72ae5d9322/src/lowering/mod.rs#L550"><code>build_type</code></a>
+递归访问节点，转换为C类型。涉及类型的图表示和语法树表示之间的对应关系。</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -188,7 +211,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="cmda69qp7003zg4ue1f1z0y1m" data-title="BTIGhidra和BinSub代码解析" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="cmgmjrgkt004b6gue6knh2py2" data-title="BTIGhidra和BinSub代码解析" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -201,7 +224,7 @@
 <nav id="article-nav">
   
     <a href="/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           Honggfuzz的DynamicFeedbackDict
@@ -211,7 +234,7 @@
   
   
     <a href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">高效的指针分析与二进制类型恢复</div>
     </a>
   
@@ -252,7 +275,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -274,16 +297,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

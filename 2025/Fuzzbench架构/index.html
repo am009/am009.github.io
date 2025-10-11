@@ -74,10 +74,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -134,23 +134,30 @@
 <ul>
 <li><strong>project-builder镜像</strong>：每个Benchmark提供的基础的project-builder镜像里面负责存储项目的源码，并放好相关的构建脚本<code>$SRC/build.sh</code>。</li>
 <li><strong>Coverage镜像</strong>：有个特殊的fuzzer叫做Coverage，内部其实是一个LLVM的Libfuzzer。它负责测量实验过程中的coverage：实验过程中提取所有的queue里的种子，然后拿这个插桩的binary跑一遍得到coverage信息。</li>
-<li><strong>builder-intermediate镜像</strong>（Fuzzer的<strong>builder.Dockerfile</strong>）：<code>fuzzers/xxx/builder.Dockerfile</code>：每个Fuzzer提供的两个dockerfile之一。它开头是固定的通过参数传入Paren Image。该镜像负责在原有的project-builder镜像中构建好fuzzer自身。然后得到<strong>builder-intermediate镜像</strong>。</li>
+<li><strong>builder-intermediate镜像</strong>（Fuzzer的<strong>builder.Dockerfile</strong>）：<code>fuzzers/xxx/builder.Dockerfile</code>：每个Fuzzer提供的两个dockerfile之一。它开头是固定的通过参数传入Paren
+Image。该镜像负责在原有的project-builder镜像中构建好fuzzer自身。然后得到<strong>builder-intermediate镜像</strong>。</li>
 </ul>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ARG</span> parent_image</span><br><span class="line"><span class="keyword">FROM</span> $parent_image</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译并准备好fuzzer</span></span><br></pre></td></tr></table></figure>
 <ul>
-<li><strong>builder镜像</strong>：基于builder-intermediate镜像，使用统一的dockerfile（<code>docker/benchmark-builder/Dockerfile</code>），开始用Fuzzer构建Target。它安装了fuzzbench需要的python3，用于运行Fuzzer提供的三大文件之一的fuzzer.py。最后提供了一个fuzzer_build脚本，内部主要运行的是<code>python3 -c "from fuzzers import utils; utils.initialize_env(); from fuzzers.$FUZZER import fuzzer; fuzzer.build()"</code>，而给fuzzers提供的编译Target的接口<code>utils.build_benchmark</code>内部就是用bash执行<code>$SRC/build.sh</code> 这个就是最早project-builder镜像放好的构建脚本。</li>
+<li><strong>builder镜像</strong>：基于builder-intermediate镜像，使用统一的dockerfile（<code>docker/benchmark-builder/Dockerfile</code>），开始用Fuzzer构建Target。它安装了fuzzbench需要的python3，用于运行Fuzzer提供的三大文件之一的fuzzer.py。最后提供了一个fuzzer_build脚本，内部主要运行的是<code>python3 -c "from fuzzers import utils; utils.initialize_env(); from fuzzers.$FUZZER import fuzzer; fuzzer.build()"</code>，而给fuzzers提供的编译Target的接口<code>utils.build_benchmark</code>内部就是用bash执行<code>$SRC/build.sh</code>
+这个就是最早project-builder镜像放好的构建脚本。</li>
 </ul>
 <p>最终编译好的Target的相关文件会被放到<code>OUT=/out</code>。同时fuzzer.py也要将Fuzzer自身的binary放过去。</p>
 <ul>
 <li><p><strong>intermediate-runner镜像</strong>（Fuzzer的<strong>runner.Dockerfile</strong>）：从最基础的Base镜像，使用runner.Dockerfile构建，给fuzzer准备一些辅助的环境，比如安装一些包，设置一些环境变量。对于简单的fuzzer，这里是可以是空的。由于从Base重新构建，这里面不含任何Target和Fuzzer的东西。</p></li>
-<li><p><strong>runner镜像</strong>：将builder镜像里面构建好的Fuzzer和Target复制到intermediate-runner镜像，然后复制了一些fuzzbench的源码进去，最后设置了entry point为<code>docker/benchmark-runner/startup-runner.sh</code>。使用docker的multi-stage build特性，使用<code>docker/benchmark-runner/Dockerfile</code>统一构建。</p></li>
+<li><p><strong>runner镜像</strong>：将builder镜像里面构建好的Fuzzer和Target复制到intermediate-runner镜像，然后复制了一些fuzzbench的源码进去，最后设置了entry
+point为<code>docker/benchmark-runner/startup-runner.sh</code>。使用docker的multi-stage
+build特性，使用<code>docker/benchmark-runner/Dockerfile</code>统一构建。</p></li>
 </ul>
 <p><strong>相关的debug target</strong></p>
 <ul>
 <li><strong>builder-debug镜像</strong>：在builder镜像的基础上增加了个<code>--build-arg debug_builder=1</code>。</li>
-<li><strong>debug-builder-xxx Target</strong>：在builder-debug镜像上给shell。</li>
-<li><strong>debug-xxx Target</strong>：在runner镜像上给一个shell <code>--entrypoint "/bin/bash"</code></li>
-<li><strong>test-run Target</strong>：在runner镜像基础上设置<code>SNAPSHOT_PERIOD=10</code>，<code>MAX_TOTAL_TIME=20</code></li>
+<li><strong>debug-builder-xxx
+Target</strong>：在builder-debug镜像上给shell。</li>
+<li><strong>debug-xxx Target</strong>：在runner镜像上给一个shell
+<code>--entrypoint "/bin/bash"</code></li>
+<li><strong>test-run
+Target</strong>：在runner镜像基础上设置<code>SNAPSHOT_PERIOD=10</code>，<code>MAX_TOTAL_TIME=20</code></li>
 </ul>
 <h2 id="fuzzbench的镜像">Fuzzbench的镜像</h2>
 <ul>
@@ -163,7 +170,8 @@
 <p>处理跑实验的fuzzer容器，还有负责总体管理的dispatcher容器。</p>
 <p>主要的入口是<code>experiment/run_experiment.py</code></p>
 <ul>
-<li><strong>构建镜像</strong>根据上面镜像的构建流程，得到最终runner镜像。具体就是使用docker依次构建Fuzzer，使用Fuzzer的Toolchain构建Fuzz Target，最后将构建好的Target放到Fuzzer一起准备运行。</li>
+<li><strong>构建镜像</strong>根据上面镜像的构建流程，得到最终runner镜像。具体就是使用docker依次构建Fuzzer，使用Fuzzer的Toolchain构建Fuzz
+Target，最后将构建好的Target放到Fuzzer一起准备运行。</li>
 <li>然后会将相关的参数转存并启动dispatcher-image，执行dispatcher.py。
 <ul>
 <li>dispatcher容器内部会启动scheduler_loop_thread</li>
@@ -177,7 +185,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/Fuzzbench%E6%9E%B6%E6%9E%84/" data-id="cmda69qp6003sg4ueevtu1o50" data-title="Fuzzbench架构" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/Fuzzbench%E6%9E%B6%E6%9E%84/" data-id="cmgmjrgks00456gue1iiq71bh" data-title="Fuzzbench架构" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -189,9 +197,18 @@
     
 <nav id="article-nav">
   
+    <a href="/2025/%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E4%B8%8E%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          类型系统与编程语言
+        
+      </div>
+    </a>
+  
   
     <a href="/2025/AlgebraticSubtyping/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">AlgebraticSubtyping</div>
     </a>
   
@@ -232,7 +249,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -254,16 +271,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

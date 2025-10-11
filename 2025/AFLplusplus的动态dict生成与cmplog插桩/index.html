@@ -75,10 +75,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -117,7 +117,9 @@
 <p>正常的Fuzzing模式是编译插桩后的二进制，然后使用afl-fuzz程序指定路径启动fuzz。</p>
 <p>使用cmplog模式后，除了普通的插桩二进制，还需要额外编译一份cmplog插桩的二进制。通过编译的时候指定<code>AFL_LLVM_CMPLOG=1</code>启动这种特殊的插桩。然后在fuzz的过程中，使用<code>-c path-to-cmplog-binary</code>指定第二个二进制程序。在fuzz过程中会执行该二进制，通过插桩记录下所有的比较指令，以及字符串比较。</p>
 <h3 id="cmplog模式的插桩">CmpLog模式的插桩</h3>
-<p>AFL++采用了cmplog，和动态dict在功能上有所重合。这篇文章<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2211.08357.pdf">《Improving AFL++ CmpLog: Tackling the bottlenecks》</a>介绍了cmplog当前实现的不足。</p>
+<p>AFL++采用了cmplog，和动态dict在功能上有所重合。这篇文章<a
+target="_blank" rel="noopener" href="https://arxiv.org/pdf/2211.08357.pdf">《Improving AFL++ CmpLog:
+Tackling the bottlenecks》</a>介绍了cmplog当前实现的不足。</p>
 <p>不像honggfuzz使用clang的标准插桩，AFL++使用了自己的自定义的Pass进行插桩。</p>
 <p>字符串比较函数相关的插桩逻辑如下</p>
 <ul>
@@ -125,58 +127,64 @@
 </ul>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> isPtrRtn = FT-&gt;<span class="built_in">getNumParams</span>() &gt;= <span class="number">2</span> &amp;&amp;</span><br><span class="line">                !FT-&gt;<span class="built_in">getReturnType</span>()-&gt;<span class="built_in">isVoidTy</span>() &amp;&amp;</span><br><span class="line">                FT-&gt;<span class="built_in">getParamType</span>(<span class="number">0</span>) == FT-&gt;<span class="built_in">getParamType</span>(<span class="number">1</span>) &amp;&amp;</span><br><span class="line">                FT-&gt;<span class="built_in">getParamType</span>(<span class="number">0</span>)-&gt;<span class="built_in">isPointerTy</span>();</span><br><span class="line"></span><br><span class="line"><span class="type">bool</span> isPtrRtnN = FT-&gt;<span class="built_in">getNumParams</span>() &gt;= <span class="number">3</span> &amp;&amp;</span><br><span class="line">                 !FT-&gt;<span class="built_in">getReturnType</span>()-&gt;<span class="built_in">isVoidTy</span>() &amp;&amp;</span><br><span class="line">                 FT-&gt;<span class="built_in">getParamType</span>(<span class="number">0</span>) == FT-&gt;<span class="built_in">getParamType</span>(<span class="number">1</span>) &amp;&amp;</span><br><span class="line">                 FT-&gt;<span class="built_in">getParamType</span>(<span class="number">0</span>)-&gt;<span class="built_in">isPointerTy</span>() &amp;&amp;</span><br><span class="line">                 FT-&gt;<span class="built_in">getParamType</span>(<span class="number">2</span>)-&gt;<span class="built_in">isIntegerTy</span>();</span><br></pre></td></tr></table></figure>
 <ul>
-<li>主要区分的核心函数，isMemcmp isStrcmp isStrncmp。根据函数名判断，收集常见的函数名以及其他的类似封装<code>xmlStrcmp</code>。<code>isPtrRtnN</code>直接看作是一种Memcmp</li>
+<li>主要区分的核心函数，isMemcmp isStrcmp
+isStrncmp。根据函数名判断，收集常见的函数名以及其他的类似封装<code>xmlStrcmp</code>。<code>isPtrRtnN</code>直接看作是一种Memcmp</li>
 </ul>
 <table>
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 22%" />
+<col style="width: 24%" />
+</colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>插桩函数名</th>
 <th>变量名</th>
 <th>被插桩的函数组</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>__cmplog_rtn_hook</td>
 <td>cmplogHookFn</td>
 <td>其他未归类的签名类似的函数</td>
 </tr>
-<tr class="even">
+<tr>
 <td>__cmplog_rtn_llvm_stdstring_stdstring</td>
 <td>cmplogLlvmStdStd</td>
 <td>llvmStdStd</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>__cmplog_rtn_llvm_stdstring_cstring</td>
 <td>cmplogLlvmStdC</td>
 <td>llvmStdC</td>
 </tr>
-<tr class="even">
+<tr>
 <td>__cmplog_rtn_gcc_stdstring_stdstring</td>
 <td>cmplogGccStdStd</td>
 <td>gccStdStd</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>__cmplog_rtn_gcc_stdstring_cstring</td>
 <td>cmplogGccStdC</td>
 <td>gccStdC</td>
 </tr>
-<tr class="even">
+<tr>
 <td>__cmplog_rtn_hook_n</td>
 <td>cmplogHookFnN</td>
 <td>Memcmp 和未归类的同签名函数</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>__cmplog_rtn_hook_strn</td>
 <td>cmplogHookFnStrN</td>
 <td>Strncmp</td>
 </tr>
-<tr class="even">
+<tr>
 <td>__cmplog_rtn_hook_str</td>
 <td>cmplogHookFnStr</td>
 <td>Strcmp</td>
 </tr>
-<tr class="odd">
+<tr>
 <td></td>
 <td></td>
 <td></td>
@@ -184,9 +192,12 @@
 </tbody>
 </table>
 <p>相关的插桩函数的实现在<code>instrumentation/afl-compiler-rt.o.c</code>：</p>
-<p>插桩的共享内存相关的数据结构主要在<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/c1e4b8f7f6f1f95a94c2340de4f57a998c90f094/include/cmplog.h"><code>cmplog.h</code></a>里。包括两个数组。用具体哪个下标是通过hash函数处理得到的，然后拿着这个下标访问headers和log两个结构体数组。</p>
+<p>插桩的共享内存相关的数据结构主要在<a
+target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/c1e4b8f7f6f1f95a94c2340de4f57a998c90f094/include/cmplog.h"><code>cmplog.h</code></a>里。包括两个数组。用具体哪个下标是通过hash函数处理得到的，然后拿着这个下标访问headers和log两个结构体数组。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">cmp_map</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">cmp_header</span>   headers[CMP_MAP_W];</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">cmp_operands</span> log[CMP_MAP_W][CMP_MAP_H];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>首先会在headers里面设置一些信息。包括 hits 击中次数。shape，对比的两边的大小。type，对比的两大类类型，cmp表示一些cmp指令，比较整数，rtn表示一些memcmp或者strcmp这种内存比较。attribute 属性，比如是switch还是什么strcmp。</p>
+<p>首先会在headers里面设置一些信息。包括 hits
+击中次数。shape，对比的两边的大小。type，对比的两大类类型，cmp表示一些cmp指令，比较整数，rtn表示一些memcmp或者strcmp这种内存比较。attribute
+属性，比如是switch还是什么strcmp。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">cmp_header</span> &#123;  <span class="comment">// 16 bit = 2 bytes</span></span><br><span class="line"></span><br><span class="line">  <span class="type">unsigned</span> hits : <span class="number">6</span>;       <span class="comment">// up to 63 entries, we have CMP_MAP_H = 32</span></span><br><span class="line">  <span class="type">unsigned</span> shape : <span class="number">5</span>;      <span class="comment">// 31+1 bytes max</span></span><br><span class="line">  <span class="type">unsigned</span> type : <span class="number">1</span>;       <span class="comment">// 2: cmp, rtn</span></span><br><span class="line">  <span class="type">unsigned</span> attribute : <span class="number">4</span>;  <span class="comment">// 16 for arithmetic comparison types</span></span><br><span class="line"></span><br><span class="line">&#125; __attribute__((packed));</span><br></pre></td></tr></table></figure>
 <p>然后在log里面存入两个被对比的值。由于256bit大小的数字大多都能支持，这里留了两个256bit数字的大小。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">cmp_operands</span> &#123;</span><br><span class="line"></span><br><span class="line">  u64 v0;</span><br><span class="line">  u64 v0_128;</span><br><span class="line">  u64 v0_256_0;  <span class="comment">// u256 is unsupported by any compiler for now, so future use</span></span><br><span class="line">  u64 v0_256_1;</span><br><span class="line">  u64 v1;</span><br><span class="line">  u64 v1_128;</span><br><span class="line">  u64 v1_256_0;</span><br><span class="line">  u64 v1_256_1;</span><br><span class="line">  u8  unused[<span class="number">8</span>];  <span class="comment">// 2 bits could be used for &quot;is constant operand&quot;</span></span><br><span class="line"></span><br><span class="line">&#125; __attribute__((packed));</span><br></pre></td></tr></table></figure>
@@ -198,9 +209,11 @@
 <ol type="1">
 <li>执行colorization阶段，更新buf
 <ol type="1">
-<li>在保证执行路径完全相同（coverage map完全相同），且执行时间大致不变的情况下，尽量替换输入中的字节。</li>
+<li>在保证执行路径完全相同（coverage
+map完全相同），且执行时间大致不变的情况下，尽量替换输入中的字节。</li>
 </ol></li>
-<li>在原始输入和colorized输入上，运行待测程序得到两份cmplog。(由于coverage map完全相同，可以假设cmplog完全按顺序一一对应。)
+<li>在原始输入和colorized输入上，运行待测程序得到两份cmplog。(由于coverage
+map完全相同，可以假设cmplog完全按顺序一一对应。)
 <ol type="1">
 <li>cmplog数据分别存在afl-&gt;orig_cmp_map和afl-&gt;shm.cmp_map</li>
 </ol></li>
@@ -216,7 +229,12 @@
 <p>CmpLog状态的第一步是着色阶段。在着色过程中，输入的每个字节都被替换为同一类型的另一个字节，一系列被替换的字节称为一个Taint区域。最初，整个输入被视为一个Taint区域，这个着色后的输入被传递给目标程序。当执行路径的结果哈希与原始执行路径的哈希不同时，Taint区域会被分成两半并分别处理，否则该区域会被保存。着色后的结果是一个着色输入，其中每个Taint区域中的字节都被替换为同一类型的另一个字节，并且执行路径的哈希等于原始输入。对于哈希的构建，使用了“trace_bits”和“map_size”。</p>
 </blockquote>
 <blockquote>
-<p><code>rtn_extend_encoding()</code> 函数替换复制值的第一个字节，并使用这个修改后的输入执行目标。这将持续进行，直到达到Taint区域长度的最后一个字节，并且只要比较的另一侧的值等于将要被替换的输入字节。其背后的想法是，如果操作数值与该输入字节具有 I2S（input-to-state） 关系，则值应该相等。对于 INS 比较，这必须同时适用于原始输入和着色输入。对于 RTN 类型，这只需要适用于其中之一。请注意，只有在禁用转换时才会执行此 I2S 检查，因为当转换启用时，此检查不再适用。</p>
+<p><code>rtn_extend_encoding()</code>
+函数替换复制值的第一个字节，并使用这个修改后的输入执行目标。这将持续进行，直到达到Taint区域长度的最后一个字节，并且只要比较的另一侧的值等于将要被替换的输入字节。其背后的想法是，如果操作数值与该输入字节具有
+I2S（input-to-state） 关系，则值应该相等。对于 INS
+比较，这必须同时适用于原始输入和着色输入。对于 RTN
+类型，这只需要适用于其中之一。请注意，只有在禁用转换时才会执行此 I2S
+检查，因为当转换启用时，此检查不再适用。</p>
 </blockquote>
 <p>这里主要关注的是什么条件下会增加dict：在cmp_fuzz或者rtn_fuzz的结尾的判断中，</p>
 <ul>
@@ -228,7 +246,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/AFLplusplus%E7%9A%84%E5%8A%A8%E6%80%81dict%E7%94%9F%E6%88%90%E4%B8%8Ecmplog%E6%8F%92%E6%A1%A9/" data-id="cmda69qp6003vg4ue5ba3fg7x" data-title="AFLplusplus的动态dict生成与cmplog插桩" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/AFLplusplus%E7%9A%84%E5%8A%A8%E6%80%81dict%E7%94%9F%E6%88%90%E4%B8%8Ecmplog%E6%8F%92%E6%A1%A9/" data-id="cmgmjrgks00426guea57kccqb" data-title="AFLplusplus的动态dict生成与cmplog插桩" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -241,7 +259,7 @@
 <nav id="article-nav">
   
     <a href="/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           AFLplusplus的enhancedDeterministicMode
@@ -251,7 +269,7 @@
   
   
     <a href="/2025/Fuzzing-MOpt-Mutator/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">Fuzzing-MOpt-Mutator</div>
     </a>
   
@@ -292,7 +310,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -314,16 +332,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

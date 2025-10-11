@@ -74,10 +74,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -118,15 +118,26 @@
 <h2 id="常用命令与环境配置">常用命令与环境配置：</h2>
 <p>手动命令行命令：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 最好先运行make编译每个.v为.vo文件</span><br><span class="line">coqc -Q . LF Basics.v</span><br><span class="line">coqc -Q . LF BasicsTest.v</span><br><span class="line">coqtop -Q . LF # 进入交互式模式。退出使用 `Quit.`</span><br><span class="line">ledit coqtop -Q . LF # 直接使用coqtop 会无法使用左右箭头，上下翻历史等功能。搜了发现需要先`opam install ledit`然后用ledit执行coqtop</span><br></pre></td></tr></table></figure>
-<p>然后执行 <code>From LF Require Export Induction.</code> 导入当前在读的章节。</p>
+<p>然后执行 <code>From LF Require Export Induction.</code>
+导入当前在读的章节。</p>
 <p>最基本的做题环境设置：VSCode下面开两个分屏的终端，上面看代码（即同时也是看书）。每次做题目就把上面的定理复制到下面coqtop。然后在下面手动证明。做好了把答案整理上去。</p>
-<p>更好用的配置，首先安装vscoq插件并配置好，然后在要做题的地方使用快捷键Alt + 右箭头。插件会解释代码到文件当前位置。同时在右侧展示当前Goal。不断写语句并查看右侧。</p>
+<p>更好用的配置，首先安装vscoq插件并配置好，然后在要做题的地方使用快捷键Alt
++
+右箭头。插件会解释代码到文件当前位置。同时在右侧展示当前Goal。不断写语句并查看右侧。</p>
 <h2 id="逻辑基础-basics">1 逻辑基础 Basics</h2>
-<p>声明（Declaration），将一个名字和规范（specification）对应起来，有三种规范：logical propositions, mathematical collections, and abstract types。 - Hypothesis 假设，一个返回Prop（bool）类型值的logical propositions， - Definition 定义，就是给个别名。Definition double (m : nat) := plus m m. - Inductive 递归的定义，即定义里面可以用当前正在定义的类型。类似Fixpoint，但是Fixpoint更复杂。 - Fixpoint 递归函数定义，可以函数体内用这个函数。 Coq 要求每个 Fixpoint 定义中的某些参数必须是“递减的”。</p>
+<p>声明（Declaration），将一个名字和规范（specification）对应起来，有三种规范：logical
+propositions, mathematical collections, and abstract types。 -
+Hypothesis 假设，一个返回Prop（bool）类型值的logical propositions， -
+Definition 定义，就是给个别名。Definition double (m : nat) := plus m m.
+- Inductive
+递归的定义，即定义里面可以用当前正在定义的类型。类似Fixpoint，但是Fixpoint更复杂。
+- Fixpoint 递归函数定义，可以函数体内用这个函数。 Coq 要求每个 Fixpoint
+定义中的某些参数必须是“递减的”。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Fixpoint evenb (n:nat) : bool :=</span><br><span class="line">  match n with</span><br><span class="line">  | O ⇒ true</span><br><span class="line">  | S O ⇒ false</span><br><span class="line">  | S (S n&#x27;) ⇒ evenb n&#x27;</span><br><span class="line">  end.</span><br></pre></td></tr></table></figure>
 <ul>
 <li>Check 类型检查。如果不加类型则打印类型。</li>
-<li>Example / Theorem /Lemma / Fact / Remark 都是表示一个需要证明的定理？</li>
+<li>Example / Theorem /Lemma / Fact / Remark
+都是表示一个需要证明的定理？</li>
 </ul>
 <h3 id="数据结构">数据结构</h3>
 <p>有参数的构造函数： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Inductive color : Type :=</span><br><span class="line">  | black</span><br><span class="line">  | white</span><br><span class="line">  | primary (p : rgb).</span><br></pre></td></tr></table></figure></p>
@@ -139,50 +150,74 @@
 <h3 id="证明模式">证明模式：</h3>
 <p>https://www.cs.cornell.edu/courses/cs3110/2018sp/a5/coq-tactics-cheatsheet.html#induction</p>
 <ul>
-<li>intro H：将条件成立的定理的条件移入到局部的假设，假设命名为H。intros：反复应用intro，自动取假设的名字。</li>
+<li>intro
+H：将条件成立的定理的条件移入到局部的假设，假设命名为H。intros：反复应用intro，自动取假设的名字。</li>
 <li>Symmetry 交换等式左右两边。</li>
-<li>Apply H: H是一个条件成立的定理，且结果和待证明目标相同。想要应用H，则需要满足H的条件。接下来只需要证明H的条件，即可证明待证明的目标。</li>
+<li>Apply H:
+H是一个条件成立的定理，且结果和待证明目标相同。想要应用H，则需要满足H的条件。接下来只需要证明H的条件，即可证明待证明的目标。</li>
 <li>Exact HA: 待证明目标就是假设HA。不需要证明/直接完成证明。</li>
-<li>Assumption: 当前需要证明的目标，直接可以由已有的假设得到。尝试在上下文中查找完全匹配目标的前提 H。 如果找到了，那么其行为与 apply H 相同。</li>
+<li>Assumption:
+当前需要证明的目标，直接可以由已有的假设得到。尝试在上下文中查找完全匹配目标的前提
+H。 如果找到了，那么其行为与 apply H 相同。</li>
 <li>assert：引入一个子目标，先证明它然后把它加入假设。例如：<code>assert (H : n * m * n = n * n * m). &#123; rewrite mul_comm. apply mult_assoc. &#125;</code></li>
 <li>Qed.: 检查当前的证明并保存。</li>
-<li>rewrite -&gt; H ：基于相等的某个前提，把等式一边的东西改写成另外一边的东西。右箭头表示从左往右改写</li>
-<li>Destruct n as [| n'] eqn:E : 根据结构体结构解构，引入多个子目标。这里方括号内用|分割，是给每个构造函数的参数取的变量名字。然后后面用标号依次证明每个子目标。减号和加号 星号，或者它们的重复都可以。也可以花括号。
+<li>rewrite -&gt; H
+：基于相等的某个前提，把等式一边的东西改写成另外一边的东西。右箭头表示从左往右改写</li>
+<li>Destruct n as [| n'] eqn:E :
+根据结构体结构解构，引入多个子目标。这里方括号内用|分割，是给每个构造函数的参数取的变量名字。然后后面用标号依次证明每个子目标。减号和加号
+星号，或者它们的重复都可以。也可以花括号。
 <ul>
-<li>这里的eqn，表示用E表示引入的等价关系。比如这里将n解构为<code>0</code>或者<code>S n1</code>，这里E就分别代表<code>n = 0</code>或者 <code>n = S n1</code>。</li>
+<li>这里的eqn，表示用E表示引入的等价关系。比如这里将n解构为<code>0</code>或者<code>S n1</code>，这里E就分别代表<code>n = 0</code>或者
+<code>n = S n1</code>。</li>
 </ul></li>
 <li>unfold 展开定义。有时候定义会阻止simpl.简化。</li>
 <li>induction：归纳法，证明基础的，证明传递保持的。和destruct类似，引入多个子目标。</li>
-<li>injection：利用构造子的单射性，比如把<code>S n = S m</code>的两边都移除构造子，<code>injection H as Hnm</code>，得到假设<code>Hnm</code> 即<code>n = m</code>。</li>
-<li>discriminate 理由构造子的不相交性，对一个假设说这个是不可能成立的。因此直接停止证明。因为错误的假设可以推出任何东西。</li>
+<li>injection：利用构造子的单射性，比如把<code>S n = S m</code>的两边都移除构造子，<code>injection H as Hnm</code>，得到假设<code>Hnm</code>
+即<code>n = m</code>。</li>
+<li>discriminate
+理由构造子的不相交性，对一个假设说这个是不可能成立的。因此直接停止证明。因为错误的假设可以推出任何东西。</li>
 <li>transitivity 连续的应用等式，利用等式的传递性。</li>
 <li>f_equal 可以将结论外面相同的函数脱去。
 <ul>
 <li>如果每个参数依次等价，则相同形式的构造器/函数等价。对一个<code>f a1 ... an = g b1 ... bn</code>的场景应用该定理，得到多个子目标：<code>[f = g], [a1 = b1], ..., [an = bn]</code>。</li>
 </ul></li>
-<li>inversion 和上面类型，但是应用在假设上，把假设里相同的构造器脱去。</li>
-<li>specialize 将一个通用的假设，用一个情况特化。比如假设<code>H : forall m : nat, m * n = 0</code> 然后执行<code>specialize H with (m := 1).</code>，这个假设变成<code>H : 1 * n = 0</code>。可以specialize一个外面的定理进来，得到新的假设，控制apply的工作方式。</li>
-<li>generalize dependent 可以将变量重新放回forall的量词。在想要给量词顺序换位置的时候有用。</li>
+<li>inversion
+和上面类型，但是应用在假设上，把假设里相同的构造器脱去。</li>
+<li>specialize
+将一个通用的假设，用一个情况特化。比如假设<code>H : forall m : nat, m * n = 0</code>
+然后执行<code>specialize H with (m := 1).</code>，这个假设变成<code>H : 1 * n = 0</code>。可以specialize一个外面的定理进来，得到新的假设，控制apply的工作方式。</li>
+<li>generalize dependent
+可以将变量重新放回forall的量词。在想要给量词顺序换位置的时候有用。</li>
 </ul>
 <p>直接使用这些Tactics都是反向证明，使用<code>apply xx in H</code>这种带in的Tactics则可以进行前向证明。即，不断变换前提条件，最后直接在某个假设中得到结论，Apply一下即可完成证明。</p>
 <ul>
 <li>clear H：从上下文中删除前提 H。</li>
-<li>subst x：对于变量 x，在上下文中查找假设 x = e 或 e = x， 将整个上下文和当前目标中的所有 x 替换为 e 并清除该假设。</li>
-<li>subst：替换掉'所有'形如 x = e 或 e = x 的假设（其中 x 为变量）。</li>
-<li>rename... into...：更改证明上下文中前提的名字。例如， 如果上下文中包含名为 x 的变量，那么 rename x into y 就会将所有出现的 x 重命名为 y。</li>
-<li>contradiction：尝试在当前上下文中查找逻辑等价于 False 的前提 H。 如果找到了，就解决该目标。</li>
-<li>constructor：尝试在当前环境中的 Inductive 定义中查找可用于解决当前目标的构造子 c。如果找到了，那么其行为与 apply c 相同。</li>
+<li>subst x：对于变量 x，在上下文中查找假设 x = e 或 e = x，
+将整个上下文和当前目标中的所有 x 替换为 e 并清除该假设。</li>
+<li>subst：替换掉'所有'形如 x = e 或 e = x 的假设（其中 x
+为变量）。</li>
+<li>rename... into...：更改证明上下文中前提的名字。例如，
+如果上下文中包含名为 x 的变量，那么 rename x into y 就会将所有出现的 x
+重命名为 y。</li>
+<li>contradiction：尝试在当前上下文中查找逻辑等价于 False 的前提 H。
+如果找到了，就解决该目标。</li>
+<li>constructor：尝试在当前环境中的 Inductive
+定义中查找可用于解决当前目标的构造子 c。如果找到了，那么其行为与 apply c
+相同。</li>
 </ul>
 <h3 id="连接不同的证明">连接不同的证明：</h3>
 <ul>
-<li><code>T(1) ; T(2) (read T(1) then T(2))</code> 先应用T1，出现了多个需要证明的子目标时，对所有子目标应用T2</li>
-<li><code>T; [T(1) | T(2) | ... | T(n)]</code> 先应用T，出现了多个需要证明的子目标时，对每个子目标按顺序应用T1 T2 ... Tn</li>
+<li><code>T(1) ; T(2) (read T(1) then T(2))</code>
+先应用T1，出现了多个需要证明的子目标时，对所有子目标应用T2</li>
+<li><code>T; [T(1) | T(2) | ... | T(n)]</code>
+先应用T，出现了多个需要证明的子目标时，对每个子目标按顺序应用T1 T2 ...
+Tn</li>
 </ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="cmda69qpb004rg4uef3yvbvmd" data-title="SoftwareFoundations学习笔记" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="cmgmjrgkp003e6guegn1z6mxh" data-title="SoftwareFoundations学习笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -194,18 +229,18 @@
     
 <nav id="article-nav">
   
-    <a href="/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+    <a href="/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          二进制代码的多态类型推断Retypd
+          学术论文写作总结
         
       </div>
     </a>
   
   
     <a href="/2023/%E7%94%9F%E6%B4%BB%E5%92%8C%E6%95%88%E7%8E%87/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">生活和效率</div>
     </a>
   
@@ -246,7 +281,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -268,16 +303,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

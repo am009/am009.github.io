@@ -75,10 +75,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -113,26 +113,37 @@
       
         <p>Docker与UFW防火墙共存</p>
 <span id="more"></span>
-<p>2023年9月22日 最终还是完全放弃了这个方案，这个方案在docker重启的时候会出现问题，把重启ufw和重启docker关联起来是很有问题的，确实在forward链上做防护更好。</p>
-<p>“众所周知”，Docker和UFW（ubuntu自带的防火墙，Uncomplicated Firewall）等一系列防火墙都是不太能共存的。但是最近学校护网，需要打开防火墙。</p>
-<p>UFW与Docker不能共存，肯定也有其他人忍不了。最知名的方案大概是<a target="_blank" rel="noopener" href="https://github.com/chaifeng/ufw-docker#%E5%A4%AA%E9%95%BF%E4%B8%8D%E6%83%B3%E8%AF%BB">ufw-docker</a>项目。然而当我看到里面所说的为什么不选用在input链上做那一段的时候，我觉得我想要的就是在input链上防护！折腾由此开始。</p>
-<p>最后用了<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30383845/what-is-the-best-practice-of-docker-ufw-under-ubuntu/58098930#58098930">这个</a>回答的方案。</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/moby/moby/issues/4737#issuecomment-456792819">这个github issue</a> 涉及的讨论，里面有人提到要改<code>MANAGE_BUILTINS</code></p>
+<p>2023年9月22日
+最终还是完全放弃了这个方案，这个方案在docker重启的时候会出现问题，把重启ufw和重启docker关联起来是很有问题的，确实在forward链上做防护更好。</p>
+<p>“众所周知”，Docker和UFW（ubuntu自带的防火墙，Uncomplicated
+Firewall）等一系列防火墙都是不太能共存的。但是最近学校护网，需要打开防火墙。</p>
+<p>UFW与Docker不能共存，肯定也有其他人忍不了。最知名的方案大概是<a
+target="_blank" rel="noopener" href="https://github.com/chaifeng/ufw-docker#%E5%A4%AA%E9%95%BF%E4%B8%8D%E6%83%B3%E8%AF%BB">ufw-docker</a>项目。然而当我看到里面所说的为什么不选用在input链上做那一段的时候，我觉得我想要的就是在input链上防护！折腾由此开始。</p>
+<p>最后用了<a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30383845/what-is-the-best-practice-of-docker-ufw-under-ubuntu/58098930#58098930">这个</a>回答的方案。</p>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/moby/moby/issues/4737#issuecomment-456792819">这个github
+issue</a> 涉及的讨论，里面有人提到要改<code>MANAGE_BUILTINS</code></p>
 <h3 id="操作步骤">操作步骤</h3>
 <ol type="1">
 <li>修改<code>/etc/default/ufw</code>， 把no改成MANAGE_BUILTINS=yes</li>
-<li>修改<code>/etc/ufw/after.rules</code>（把下面的加到结尾） 注意把eno1改成网卡名字！！ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># Put Docker behind UFW</span><br><span class="line">*filter</span><br><span class="line">:DOCKER-USER - [0:0]</span><br><span class="line">:ufw-user-input - [0:0]</span><br><span class="line"></span><br><span class="line">-A DOCKER-USER -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT # 只有加上这个才能允许docker的响应包回来。</span><br><span class="line">-A DOCKER-USER -i eno1 -j ufw-user-input</span><br><span class="line">-A DOCKER-USER -i eno1 -j DROP</span><br><span class="line">COMMIT</span><br></pre></td></tr></table></figure></li>
+<li>修改<code>/etc/ufw/after.rules</code>（把下面的加到结尾）
+注意把eno1改成网卡名字！！ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># Put Docker behind UFW</span><br><span class="line">*filter</span><br><span class="line">:DOCKER-USER - [0:0]</span><br><span class="line">:ufw-user-input - [0:0]</span><br><span class="line"></span><br><span class="line">-A DOCKER-USER -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT # 只有加上这个才能允许docker的响应包回来。</span><br><span class="line">-A DOCKER-USER -i eno1 -j ufw-user-input</span><br><span class="line">-A DOCKER-USER -i eno1 -j DROP</span><br><span class="line">COMMIT</span><br></pre></td></tr></table></figure></li>
 <li>依次重启ufw和docker <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ufw reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure></li>
 </ol>
 <h3 id="背后的经验">背后的经验：</h3>
-<p>如果不增加MANAGE_BUILTINS=yes 刚开始的时候好像没事，但是后面（加规则？和）reload好像会导致ufw直接爆炸。似乎是ufw没有管理DOCKER-USER这个链，但是它引用了ufw-user-input，导致reload过程中关闭ufw的时候无法删掉ufw-user-input链，从而ufw爆炸，解决办法是用sudo iptables -X ufw-user-input手动删掉这个链</p>
-<p>如果不重启docker，好像docker的网络直接紊乱了。启动需要转发端口的container的时候报错 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker: Error response from daemon: driver failed programming external connectivity on endpoint laughing_northcutt (d38a235dfd7d9a54d19598945713b2d4c47a71eaaef4d9e4e1136d537656673e):  (iptables failed: iptables --wait -t filter -A DOCKER ! -i docker0 -o docker0 -p tcp -d 172.17.0.2 --dport 80 -j ACCEPT: iptables: No chain/target/match by that name.</span><br><span class="line"> (exit status 1)).</span><br></pre></td></tr></table></figure></p>
-<p>最后一定要注意，每次重启ufw之后都要重启docker，因为MANAGE_BUILTINS=yes之后会把docker自己的ipatables规则都删掉！！需要重启docker增加一下它自己的规则。（经过对比前后iptables -L输出的区别发现）。</p>
+<p>如果不增加MANAGE_BUILTINS=yes
+刚开始的时候好像没事，但是后面（加规则？和）reload好像会导致ufw直接爆炸。似乎是ufw没有管理DOCKER-USER这个链，但是它引用了ufw-user-input，导致reload过程中关闭ufw的时候无法删掉ufw-user-input链，从而ufw爆炸，解决办法是用sudo
+iptables -X ufw-user-input手动删掉这个链</p>
+<p>如果不重启docker，好像docker的网络直接紊乱了。启动需要转发端口的container的时候报错
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker: Error response from daemon: driver failed programming external connectivity on endpoint laughing_northcutt (d38a235dfd7d9a54d19598945713b2d4c47a71eaaef4d9e4e1136d537656673e):  (iptables failed: iptables --wait -t filter -A DOCKER ! -i docker0 -o docker0 -p tcp -d 172.17.0.2 --dport 80 -j ACCEPT: iptables: No chain/target/match by that name.</span><br><span class="line"> (exit status 1)).</span><br></pre></td></tr></table></figure></p>
+<p>最后一定要注意，每次重启ufw之后都要重启docker，因为MANAGE_BUILTINS=yes之后会把docker自己的ipatables规则都删掉！！需要重启docker增加一下它自己的规则。（经过对比前后iptables
+-L输出的区别发现）。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/Docker%E4%B8%8EUFW%E9%98%B2%E7%81%AB%E5%A2%99%E5%85%B1%E5%AD%98/" data-id="cmda69qoy002ag4ue6gm82f73" data-title="Docker与UFW防火墙共存" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2023/Docker%E4%B8%8EUFW%E9%98%B2%E7%81%AB%E5%A2%99%E5%85%B1%E5%AD%98/" data-id="cmgmjrgkd000y6gue274w75jo" data-title="Docker与UFW防火墙共存" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -145,7 +156,7 @@
 <nav id="article-nav">
   
     <a href="/2023/X11%E8%BD%AC%E5%8F%91-%E4%BB%8Edocker%E5%88%B0wsl/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           X11转发-从docker到WSL
@@ -154,9 +165,9 @@
     </a>
   
   
-    <a href="/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">SSA-for-decompilation读后感</div>
+    <a href="/2023/SSA-for-decompilation-5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">SSA-for-decompilation-5</div>
     </a>
   
 </nav>
@@ -196,7 +207,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -218,16 +229,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

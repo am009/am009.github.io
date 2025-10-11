@@ -6,12 +6,12 @@
   
   <title>从零开始编写反编译器-WebAssembly | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="NotDec：从零开始编写反编译器： https:&#x2F;&#x2F;github.com&#x2F;am009&#x2F;NotDec  2022年10月5日 项目目前处于起步阶段，希望有大佬能来一起参与开发。">
+  <meta name="description" content="NotDec：从零开始编写反编译器： https:&#x2F;&#x2F;github.com&#x2F;am009&#x2F;NotDec  2022年10月5日 项目目前处于起步阶段，希望有大佬能来一起参与开发。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从零开始编写反编译器-WebAssembly">
 <meta property="og:url" content="https://wjk.moe/2022/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%BC%96%E5%86%99%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8-WebAssembly/">
 <meta property="og:site_name">
-<meta property="og:description" content="NotDec：从零开始编写反编译器： https:&#x2F;&#x2F;github.com&#x2F;am009&#x2F;NotDec  2022年10月5日 项目目前处于起步阶段，希望有大佬能来一起参与开发。">
+<meta property="og:description" content="NotDec：从零开始编写反编译器： https:&#x2F;&#x2F;github.com&#x2F;am009&#x2F;NotDec  2022年10月5日 项目目前处于起步阶段，希望有大佬能来一起参与开发。">
 <meta property="og:locale">
 <meta property="og:image" content="https://wjk.moe/2022/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%BC%96%E5%86%99%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8-WebAssembly/wasm-design-rationale.png">
 <meta property="article:published_time" content="2022-09-18T03:11:12.000Z">
@@ -78,10 +78,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -116,12 +116,16 @@
       
         <p>NotDec：从零开始编写反编译器： https://github.com/am009/NotDec</p>
 <ul>
-<li>2022年10月5日 项目目前处于起步阶段，希望有大佬能来一起参与开发。</li>
+<li>2022年10月5日
+项目目前处于起步阶段，希望有大佬能来一起参与开发。</li>
 </ul>
 <span id="more"></span>
-<h3 id="为什么要反编译-二进制分析和源码分析的差距到底在哪">为什么要反编译？ 二进制分析和源码分析的差距到底在哪？</h3>
+<h3
+id="为什么要反编译-二进制分析和源码分析的差距到底在哪">为什么要反编译？
+二进制分析和源码分析的差距到底在哪？</h3>
 <p><strong>程序分析和程序变换相结合</strong>：我一直在思考，二进制分析和源码分析的差距到底在哪？我们知道，源代码一般是不能被直接执行的，我们之所以能够在源代码这个层次上编程，得益于最初编译技术的发展。程序在编译后变成了机器能理解的代码，但是同时也变得更复杂了。从这个角度看，编译器也可以看作是一种混淆，而我们去除混淆后不仅能更容易理解，也使得静态分析更加容易。</p>
-<p>我们知道，机器执行的是汇编指令，有各种寄存器，内存，然后高层的数据类型，比如结构体和数组，在汇编指令的层次也不复存在。但最关键的是，每个函数的局部变量，变成了线性内存中维护的栈空间。（callee saved register和寄存器也是，但是这里暂时不提）举一个很简单的例子。</p>
+<p>我们知道，机器执行的是汇编指令，有各种寄存器，内存，然后高层的数据类型，比如结构体和数组，在汇编指令的层次也不复存在。但最关键的是，每个函数的局部变量，变成了线性内存中维护的栈空间。（callee
+saved register和寄存器也是，但是这里暂时不提）举一个很简单的例子。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> arr[<span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> b = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> c = <span class="number">2</span>;</span><br><span class="line">arr[input()] = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 <p>如果直接分析汇编指令，就有点类似下面的形式。可以看到对数组的访问可以影响后面的所有变量。这种出现问题的情况还有很多。现在有不少针对二进制代码的定制化静态分析，但是因为处理了很多这样的复杂情况，效率上也是远远比不上源码的分析效率的。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> arr[<span class="number">6</span>];</span><br><span class="line">arr[input()] = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
@@ -132,22 +136,41 @@
 <li>中端：优化与分析
 <ol type="1">
 <li>分析函数参数、分析callee saved register (wasm可以跳过这个阶段)</li>
-<li>SSA构建：使得前端可以有些冗余的alloca，由SSA构建来将相关alloca消除。 （编译原理相关）</li>
-<li>GVNGCM：Global Value Numbering and Global Code Motion 优化算法，有强大的优化能力，有助于反混淆等。（编译原理相关）</li>
-<li>内存分析：将各种通过内存访问的变量显式地恢复出来。可能要用到指针分析算法，类型恢复等。关键词：Memory SSA。</li>
+<li>SSA构建：使得前端可以有些冗余的alloca，由SSA构建来将相关alloca消除。
+（编译原理相关）</li>
+<li>GVNGCM：Global Value Numbering and Global Code Motion
+优化算法，有强大的优化能力，有助于反混淆等。（编译原理相关）</li>
+<li>内存分析：将各种通过内存访问的变量显式地恢复出来。可能要用到指针分析算法，类型恢复等。关键词：Memory
+SSA。</li>
 </ol></li>
 <li>后端：高层控制流恢复，将字节码转为AST，打印为高级语言的形式。</li>
 </ol>
 <p>有的人可能会说反编译器可能不能保证静态分析的安全性（soundness），但是随着反编译技术的发展，很多分析手段都是较为通用的，同时能够在遇到异常情况的时候报出警告，告知相关不安全的判断。</p>
-<h3 id="当我们说转ir的时候我们在说什么">当我们说转IR的时候，我们在说什么</h3>
-<p>在反编译过程中，随着分析的深入，我们的IR也从low level变得更加high level。引用《Static Single Assignment for Decompilation》第6页（1.1 source code）附近说的，源代码可以说分为几个层次：</p>
+<h3
+id="当我们说转ir的时候我们在说什么">当我们说转IR的时候，我们在说什么</h3>
+<p>在反编译过程中，随着分析的深入，我们的IR也从low level变得更加high
+level。引用《Static Single Assignment for Decompilation》第6页（1.1
+source code）附近说的，源代码可以说分为几个层次：</p>
 <ol type="1">
-<li>高质量，带注释源码（Well written, documented source code, written by the best human programmers.）</li>
-<li>丢失了注释，函数名和各种变量名，结构体成员名字（Source code with few to no comments, mainly generic variable and function names, but otherwise no strange constructs. This is probably the best source code that a fully automatic decompiler could generate.）</li>
-<li>同上，但是偶尔有奇怪的（底层的）东西（occasional strange constructs）</li>
-<li>没有从内存中识别变量，所有的内存访问都是通过地址计算（Source code with no translation of the data section. Accesses to variables and data structures are via complex expressions such as <em>(v3</em>4+0x8048C00). Most registers in the original program are represented by generic local variables such as v3.）</li>
-<li>同上，而且所有原始的寄存器也存在（but all original registers are visible.）</li>
-<li>同上，相当于套了一个虚拟机，整个程序就是一个巨大的switch结构，根据不同的opcode去执行不同的指令。（but even the program counter is visible, and the program is in essence a large switch statement with one arm for the various original instructions）</li>
+<li>高质量，带注释源码（Well written, documented source code, written by
+the best human programmers.）</li>
+<li>丢失了注释，函数名和各种变量名，结构体成员名字（Source code with few
+to no comments, mainly generic variable and function names, but
+otherwise no strange constructs. This is probably the best source code
+that a fully automatic decompiler could generate.）</li>
+<li>同上，但是偶尔有奇怪的（底层的）东西（occasional strange
+constructs）</li>
+<li>没有从内存中识别变量，所有的内存访问都是通过地址计算（Source code
+with no translation of the data section. Accesses to variables and data
+structures are via complex expressions such as <em>(v3</em>4+0x8048C00).
+Most registers in the original program are represented by generic local
+variables such as v3.）</li>
+<li>同上，而且所有原始的寄存器也存在（but all original registers are
+visible.）</li>
+<li>同上，相当于套了一个虚拟机，整个程序就是一个巨大的switch结构，根据不同的opcode去执行不同的指令。（but
+even the program counter is visible, and the program is in essence a
+large switch statement with one arm for the various original
+instructions）</li>
 </ol>
 <h3 id="现有的wasm反编译器">现有的wasm反编译器</h3>
 <p>正如上文所说，现有的“反编译器”，很多的问题都在于没有去理解更深入的语义。</p>
@@ -159,10 +182,14 @@
 </ol>
 <p>观察现有的“反编译器”：</p>
 <ol type="1">
-<li>wasm2c 这是wabt的一个工具，可以配套一些外围代码让wasm转换后的C语言能够运行起来。它比套虚拟机好一些，因为wasm指令还是比较简单的，可以转换为C语言指令，而不用弄一个巨大的switch case。</li>
+<li>wasm2c
+这是wabt的一个工具，可以配套一些外围代码让wasm转换后的C语言能够运行起来。它比套虚拟机好一些，因为wasm指令还是比较简单的，可以转换为C语言指令，而不用弄一个巨大的switch
+case。</li>
 <li>wasm-decompile 这也是wabt的一个工具，</li>
-<li>wasmdec github上的一个简单的开源项目。很多这种“反编译器”一看代码量非常小，必然是不可能有完善的反编译分析的。问题也在于没有对内存有足够的分析。</li>
-<li>jeb-pro 这个软件包含一个商业的反编译器，之前在安卓和二进制那边都有一些名气。二进制那边出名的反编译器大多都不怎么支持wasm和EVM，但是它似乎对EVM字节码和wasm都有支持。这种从二进制那边过来的反编译器想必基础更加扎实，效果应该也更好。</li>
+<li>wasmdec
+github上的一个简单的开源项目。很多这种“反编译器”一看代码量非常小，必然是不可能有完善的反编译分析的。问题也在于没有对内存有足够的分析。</li>
+<li>jeb-pro
+这个软件包含一个商业的反编译器，之前在安卓和二进制那边都有一些名气。二进制那边出名的反编译器大多都不怎么支持wasm和EVM，但是它似乎对EVM字节码和wasm都有支持。这种从二进制那边过来的反编译器想必基础更加扎实，效果应该也更好。</li>
 </ol>
 <h2 id="wasm的反编译">wasm的反编译</h2>
 <ol type="1">
@@ -177,58 +204,82 @@
 <ul>
 <li>wasm作为新时代的字节码标准，作为在浏览器运行中的标准，层次就比汇编高了很多，反编译也更加容易。这里主要说的是，汇编中需要指令和数据的区分，函数的识别，函数参数与保存的寄存器的处理，而这些在wasm中完全不需要。</li>
 </ul></li>
-<li>SSA构建：使得前端可以有些冗余的alloca，由SSA构建来将相关alloca消除。 （编译原理相关）（可以直接用LLVM的）</li>
-<li>GVNGCM：Global Value Numbering and Global Code Motion 优化算法，有强大的优化能力，有助于反混淆等。（编译原理相关）（可以直接用LLVM的）
+<li>SSA构建：使得前端可以有些冗余的alloca，由SSA构建来将相关alloca消除。
+（编译原理相关）（可以直接用LLVM的）</li>
+<li>GVNGCM：Global Value Numbering and Global Code Motion
+优化算法，有强大的优化能力，有助于反混淆等。（编译原理相关）（可以直接用LLVM的）
 <ul>
 <li>还有很多LLVM的pass可以用过来，可以参考RetDec用的。</li>
 </ul></li>
-<li>内存分析：将各种通过内存访问的变量显式地恢复出来。可能要用到指针分析算法，类型恢复等。关键词：Memory SSA。</li>
+<li>内存分析：将各种通过内存访问的变量显式地恢复出来。可能要用到指针分析算法，类型恢复等。关键词：Memory
+SSA。</li>
 </ol></li>
 <li>后端：高层控制流恢复，将字节码转为AST，打印为高级语言的形式。</li>
 </ol>
 <h3 id="wasm的栈处理与wasm混淆">wasm的栈处理与wasm混淆</h3>
 <figure>
-<img src="wasm-design-rationale.png" alt="" /><figcaption>wasm设计时就考虑了解码为ssa</figcaption>
+<img src="wasm-design-rationale.png"
+alt="wasm设计时就考虑了解码为ssa" />
+<figcaption aria-hidden="true">wasm设计时就考虑了解码为ssa</figcaption>
 </figure>
-<p>其实底层看，wasm的栈机制和结构化控制流，和一个东西很像。在SSA形式的IR中，用于替换Phi指令的语义等价的另一种表示形式是basic block argument。<a target="_blank" rel="noopener" href="https://mlir.llvm.org/docs/Rationale/Rationale/#block-arguments-vs-phi-nodes">MLIR</a>也提到了，<a target="_blank" rel="noopener" href="https://news.ycombinator.com/item?id=22432344">这里</a>也有相关的讨论。。所以其实wasm字节码的栈部分其实应该可以直接转成SSA形式。</p>
-<p>如果你还是不确定Phi指令和Basic Argument是一个东西的话：因为Phi指令必须在基本块开头，而且必须对每个precessor都有一个对应的值，即操作数数量和precessor数量相同。（如果你说未初始化的变量。。那可以在entry块给每个变量赋值为undef，这样必然有值存在）然后想象把Phi指令的操作数直接保存到这条边上，更进一步放到跳转过来的每个jump语句处，然后phi指令对应的value还是放在当前基本块开头，这样其实就变成了BasicBlockArgument。</p>
-<p>那wasm的栈到底要怎么转为SSA形式呢？我们可以参考basic block argument思想，在每个block或者loop块，为每个block的argument创建Phi指令，最后再移除trivial的Phi指令即可。</p>
-<p>wasm和其SSA的对应形式其实也是对应的。比如，在字节码层面直接进行控制流平坦化，可能遇到栈上的东西不平衡的形式。而栈对应着SSA的值，其实在OLLVM那边的控制流平坦化也会遇到处理Phi指令的问题。他们的策略是demote ssa的值，降级到普通load-store的形式，这个就对应到wasm的local了。意味着我们也应该将导致栈不平衡的值作为local处理。这三个层次从上到下，限制越来越少，即下面的层次完全可以替代上面的层次，但是同时也越来越难以分析，因为其实限制越多越利于分析。</p>
+<p>其实底层看，wasm的栈机制和结构化控制流，和一个东西很像。在SSA形式的IR中，用于替换Phi指令的语义等价的另一种表示形式是basic
+block argument。<a
+target="_blank" rel="noopener" href="https://mlir.llvm.org/docs/Rationale/Rationale/#block-arguments-vs-phi-nodes">MLIR</a>也提到了，<a
+target="_blank" rel="noopener" href="https://news.ycombinator.com/item?id=22432344">这里</a>也有相关的讨论。。所以其实wasm字节码的栈部分其实应该可以直接转成SSA形式。</p>
+<p>如果你还是不确定Phi指令和Basic
+Argument是一个东西的话：因为Phi指令必须在基本块开头，而且必须对每个precessor都有一个对应的值，即操作数数量和precessor数量相同。（如果你说未初始化的变量。。那可以在entry块给每个变量赋值为undef，这样必然有值存在）然后想象把Phi指令的操作数直接保存到这条边上，更进一步放到跳转过来的每个jump语句处，然后phi指令对应的value还是放在当前基本块开头，这样其实就变成了BasicBlockArgument。</p>
+<p>那wasm的栈到底要怎么转为SSA形式呢？我们可以参考basic block
+argument思想，在每个block或者loop块，为每个block的argument创建Phi指令，最后再移除trivial的Phi指令即可。</p>
+<p>wasm和其SSA的对应形式其实也是对应的。比如，在字节码层面直接进行控制流平坦化，可能遇到栈上的东西不平衡的形式。而栈对应着SSA的值，其实在OLLVM那边的控制流平坦化也会遇到处理Phi指令的问题。他们的策略是demote
+ssa的值，降级到普通load-store的形式，这个就对应到wasm的local了。意味着我们也应该将导致栈不平衡的值作为local处理。这三个层次从上到下，限制越来越少，即下面的层次完全可以替代上面的层次，但是同时也越来越难以分析，因为其实限制越多越利于分析。</p>
 <ol type="1">
 <li>栈 对应着SSA</li>
 <li>local 对应着没有转为SSA的局部变量</li>
 <li>内存中另外维护的栈 对应着需要取地址的变量，最为复杂。</li>
 </ol>
-<p><strong>wasm的混淆自身有没有独特（specific challenge）之处呢？</strong> 我觉得还是有的，核心其实就在转换这部分。通过先转为现有SSA，再转回Wasm的方式，最大程度复用了混淆中共通的逻辑，那么额外需要的逻辑自然就是wasm特有的挑战了。如果不转为IR直接混淆确实会将部分wasm特有的挑战和混淆逻辑混合在一起，应该是让事情更复杂了。</p>
+<p><strong>wasm的混淆自身有没有独特（specific
+challenge）之处呢？</strong>
+我觉得还是有的，核心其实就在转换这部分。通过先转为现有SSA，再转回Wasm的方式，最大程度复用了混淆中共通的逻辑，那么额外需要的逻辑自然就是wasm特有的挑战了。如果不转为IR直接混淆确实会将部分wasm特有的挑战和混淆逻辑混合在一起，应该是让事情更复杂了。</p>
 <h3 id="wasm的控制流处理">wasm的控制流处理</h3>
-<p>最近出来了wasm 2.0。看了下好多复杂的东西。不过wasm 1.0 （MVP）还是非常简单的。对于每个控制流相关的指令</p>
+<p>最近出来了wasm 2.0。看了下好多复杂的东西。不过wasm 1.0
+（MVP）还是非常简单的。对于每个控制流相关的指令</p>
 <ol type="1">
 <li>block，loop分别对应在结尾，开头，增加一个label。</li>
 <li>if对应一些label和br_if，br代表直接跳转，br_if同理，根据语义找到对应的跳转目标，生成条件跳转即可。</li>
 <li>br_table看似比较麻烦，看了下和LLVM的switch语句对应得非常好啊。也是根据不同的值跳转到不同的边。</li>
 </ol>
-<h3 id="ssa-ir的选择---为什么用这个ir">SSA IR的选择 - 为什么用这个IR？</h3>
-<p>搜了一下，wasm相关的IR有bineryen，和Cranelift。他们内部都有SSA相关的表示。cranelift作为SSA IR，和LLVM IR在很多方面是非常相似的。但是最后各种选择可能</p>
+<h3 id="ssa-ir的选择---为什么用这个ir">SSA IR的选择 -
+为什么用这个IR？</h3>
+<p>搜了一下，wasm相关的IR有bineryen，和Cranelift。他们内部都有SSA相关的表示。cranelift作为SSA
+IR，和LLVM IR在很多方面是非常相似的。但是最后各种选择可能</p>
 <ol type="1">
-<li>bineryen：非常有名，命令行工具是wasm-opt好像。它使用的IR似乎已经有点<a target="_blank" rel="noopener" href="https://github.com/WebAssembly/binaryen/issues/663">架构上的问题</a></li>
-<li>Cranelift: wasmtime的编译器架构中使用的IR。也支持SSA。但是没想到它居然直接添加了类似vmContext这种隐藏的参数，同时将全局变量lower到了用offset表示。</li>
+<li>bineryen：非常有名，命令行工具是wasm-opt好像。它使用的IR似乎已经有点<a
+target="_blank" rel="noopener" href="https://github.com/WebAssembly/binaryen/issues/663">架构上的问题</a></li>
+<li>Cranelift:
+wasmtime的编译器架构中使用的IR。也支持SSA。但是没想到它居然直接添加了类似vmContext这种隐藏的参数，同时将全局变量lower到了用offset表示。</li>
 </ol>
-<p><strong>为什么不用现有的开源代码里面的转换部分？</strong> 确实存在相关的项目：</p>
+<p><strong>为什么不用现有的开源代码里面的转换部分？</strong>
+确实存在相关的项目：</p>
 <ol type="1">
-<li><a target="_blank" rel="noopener" href="https://github.com/WAVM/WAVM">WAVM</a>和<a target="_blank" rel="noopener" href="https://github.com/gwsystems/aWsm">aWsm</a> 这两个都有编译器，而且也是LLVM IR的。所以里面很多转换相关的逻辑都是可以抄的。</li>
-<li>WAMR wasm-micro-runtime 基于LLVM的，但是是C语言，使用LLVM-C-API，我们打算用的是C++的API。所以不太合适。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/WAVM/WAVM">WAVM</a>和<a
+target="_blank" rel="noopener" href="https://github.com/gwsystems/aWsm">aWsm</a>
+这两个都有编译器，而且也是LLVM
+IR的。所以里面很多转换相关的逻辑都是可以抄的。</li>
+<li>WAMR wasm-micro-runtime
+基于LLVM的，但是是C语言，使用LLVM-C-API，我们打算用的是C++的API。所以不太合适。</li>
 </ol>
 <p>但是他们似乎也有类似的问题：</p>
 <ol type="1">
 <li>转换出来的IR带有很多“无关”函数。因为这些VM的编译器要么是JIT要么是AOT，都得带上运行需要的外围函数。和我们的目标还是有所偏离的。</li>
 </ol>
-<p>另外一个非常奇怪的事情是，(在各种C/C++的wasm runtime项目中，wavm和wamr)，wasm二进制格式解析也没有特别通用统一的库。大家好像都自己写了一套。（除了rust的项目，rust好像都用的wasmparser）</p>
+<p>另外一个非常奇怪的事情是，(在各种C/C++的wasm
+runtime项目中，wavm和wamr)，wasm二进制格式解析也没有特别通用统一的库。大家好像都自己写了一套。（除了rust的项目，rust好像都用的wasmparser）</p>
 <p>TODO: 内存分析，控制流恢复，AST生成</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2022/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%BC%96%E5%86%99%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8-WebAssembly/" data-id="cmda69qor0017g4uedxvse3ee" data-title="从零开始编写反编译器-WebAssembly" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2022/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%BC%96%E5%86%99%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8-WebAssembly/" data-id="cmgmjrgkh001r6gue70nb0jdb" data-title="从零开始编写反编译器-WebAssembly" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -241,7 +292,7 @@
 <nav id="article-nav">
   
     <a href="/2022/%E9%94%90%E6%8D%B7%E6%A0%A1%E5%9B%AD%E7%BD%91IPv6%E7%9A%84%EF%BC%8F64%E5%86%85%E7%BD%91%E4%B8%AD%E7%BB%A7%E9%85%8D%E7%BD%AE%EF%BC%9Andp-proxy%E3%80%81relay/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           锐捷校园网IPv6的／64内网中继配置：ndp-proxy、relay
@@ -251,7 +302,7 @@
   
   
     <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">反编译-代码混淆-程序分析与编译优化</div>
     </a>
   
@@ -292,7 +343,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -314,16 +365,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

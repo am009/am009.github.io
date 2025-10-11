@@ -17,8 +17,8 @@
 <meta property="article:modified_time" content="2025-03-11T06:01:30.830Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Embedded">
-<meta property="article:tag" content="Openwrt">
 <meta property="article:tag" content="Networking">
+<meta property="article:tag" content="Openwrt">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
@@ -76,10 +76,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -116,24 +116,34 @@
 <span id="more"></span>
 <h2 id="tldr">TL;DR</h2>
 <ol type="1">
-<li>Interfaces » WAN6 » DHCP server » IPv6 Settings里，勾选Designated Master，RA 设置relay，DHCPv6 禁用，NDP proxy设置relay。<strong>勾选learn routes。</strong></li>
-<li>Interfaces » LAN » DHCP server » IPv6 Settings里，不能勾选Designated Master，RA 设置relay，DHCPv6 禁用，NDP proxy设置relay。<strong>勾选learn routes。</strong></li>
-<li>注意wan的IPv6 Settings就别动了，全禁用。wan和wan6一起设置relay会导致RA通过wan转发到外面去。</li>
+<li>Interfaces » WAN6 » DHCP server » IPv6 Settings里，勾选Designated
+Master，RA 设置relay，DHCPv6 禁用，NDP proxy设置relay。<strong>勾选learn
+routes。</strong></li>
+<li>Interfaces » LAN » DHCP server » IPv6 Settings里，不能勾选Designated
+Master，RA 设置relay，DHCPv6 禁用，NDP proxy设置relay。<strong>勾选learn
+routes。</strong></li>
+<li>注意wan的IPv6
+Settings就别动了，全禁用。wan和wan6一起设置relay会导致RA通过wan转发到外面去。</li>
 </ol>
-<p>然后使用 <a target="_blank" rel="noopener" href="https://github.com/EarthCompass/ns_dup">ns_dup</a> 这个小工具。用openwrt的procd挂着</p>
+<p>然后使用 <a target="_blank" rel="noopener" href="https://github.com/EarthCompass/ns_dup">ns_dup</a>
+这个小工具。用openwrt的procd挂着</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh /etc/rc.common</span><br><span class="line">USE_PROCD=1</span><br><span class="line">START=99</span><br><span class="line"></span><br><span class="line">start_service() &#123;</span><br><span class="line">        procd_open_instance</span><br><span class="line">        procd_set_param command /bin/ash -c &quot;/root/ns_dup eth3.2109 br-lan &gt; /dev/null&quot;</span><br><span class="line">        procd_set_param respawn $&#123;respawn_threshold:-3600&#125; $&#123;respawn_timeout:-5&#125; 0</span><br><span class="line">        procd_close_instance</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="有人乱发ra怎么办">有人乱发RA怎么办</h4>
 <p>由于学校网关设备没有启动RA抑制，导致其他人的配置错误会导致IPv6出现问题。可以通过防火墙，仅允许学校网关的RA包进入。以OpenWRT配置为例：</p>
 <ul>
-<li>获取网关MAC地址：WireShark抓包，随便找个包，<code>80:05:88</code>开头的MAC就是锐捷设备，或者先用icmpv6过滤找Router Advertisement包。</li>
-<li>默认不允许RA包进入：找到 网络 - 防火墙 - Traffic Rules 里面的自带规则：<code>Allow-ICMPv6-Input</code>，然后 修改 - 高级设置 - Match ICMP Type里面取消勾选 router-advertisement。保存</li>
+<li>获取网关MAC地址：WireShark抓包，随便找个包，<code>80:05:88</code>开头的MAC就是锐捷设备，或者先用icmpv6过滤找Router
+Advertisement包。</li>
+<li>默认不允许RA包进入：找到 网络 - 防火墙 - Traffic Rules
+里面的自带规则：<code>Allow-ICMPv6-Input</code>，然后 修改 - 高级设置 -
+Match ICMP Type里面取消勾选 router-advertisement。保存</li>
 <li>允许网关设备的ICMPv6：增加一条规则，比如名为允许网关Input。<code>Incoming IPv6 - protocol ICMP - From wan - MAC xx:xx:xx:xx:xx:xx To this device</code>。这里填写上面找到的正确的网关地址。</li>
 </ul>
 <h3 id="问题描述">问题描述</h3>
 <h4 id="锐捷校园网认证">锐捷校园网认证</h4>
 <p>在校园网网页认证的情况下，IPv4应该是只能有一个的，但是IPv6可以有多个。因为现代设备会利用ipv6巨大的地址段，自动在/64子网下生成一个临时ip地址。这一过程是完全和外界没有沟通的（应该），所以在校园网认证那边看来，就是自己网段下凭空出来了一个新的ipv6。经过长时间的使用，可以确信锐捷校园网认证是通过mac地址识别这种新增的用户的。只要你的mac地址认证了，那么上面过的任何包都可以通过认证。</p>
 <p>另外，旁路由的情况也和IPv4类似，IPv4只要加个网关就能上网，IPv6则是加条默认路由就可以了。但是要在防火墙禁掉Openwrt默认发出来的ICMP6-redirect消息。这个消息会让机子重新主动连学校路由器。</p>
-<h4 id="在64地址下如何让内网机器有ipv6">在/64地址下如何让内网机器有IPv6</h4>
+<h4
+id="在64地址下如何让内网机器有ipv6">在/64地址下如何让内网机器有IPv6</h4>
 <p>校园网认证的问题暂且不提。IPv6真正的问题是在于路由。校园网只会给里面的设备/64的地址，即不会分配到任何前缀。而其实前缀一般到/64就到底了，从这种意义上说，不能再往下划分任何子网了。但是校园网内确实有路由器的需求。那么解决办法必然是2选1。（第一个方案缺点是非公网地址，外网无法直连，而且配置非常麻烦。这里直接略过。）</p>
 <ol type="1">
 <li>NAT6</li>
@@ -142,20 +152,40 @@
 <p>当你路由器的wan接口有了一个/64的地址之后，那么很自然，这整个/64网段都会必然会被路由到wan接口出去。然而，relay模式把RA消息relay进来了，LAN的机器也是这个网段。这就导致了尴尬的路由问题。假设内网机器想要ping外网ipv6，包走到路由器，路由器从wan发出去，没问题。但是当服务器的响应包从wan回来的时候，到了路由器这里。路由器一看目的地址是wan接口的/64网段，直接把包又丢回wan接口了。。。</p>
 <h4 id="ndp-proxy">ndp proxy</h4>
 <p>NDP，这里主要关注NS和NA，可以想象成是IPv4的ARP。即，我知道包要从这个接口发出去了，但是我要填以太网的mac地址，那我填谁的mac地址呢？解决的是这个问题。这时，需要发送NS请求，询问某个ip地址（网关或者包的目的ip）的机器的mac地址是什么。这时，对面就会发NA响应回来，通告mac地址。</p>
-<p>而NDP proxy就是用来解决这种情况的，无论是odhcpd，还是ndppd，都支持在wan监听，发现NS转发进来，如果里面主机响应了，就会增加内核中ipv6的neighbor的缓存表，此时如果开启了对应选项，odhcpd和ndppd都会增加一条/128的专门针对这个主机的路由。从而解决路由问题。</p>
+<p>而NDP
+proxy就是用来解决这种情况的，无论是odhcpd，还是ndppd，都支持在wan监听，发现NS转发进来，如果里面主机响应了，就会增加内核中ipv6的neighbor的缓存表，此时如果开启了对应选项，odhcpd和ndppd都会增加一条/128的专门针对这个主机的路由。从而解决路由问题。</p>
 <h4 id="ndp-proxy的落败">ndp proxy的落败</h4>
-<p><a target="_blank" rel="noopener" href="https://forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt/107157/6">forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt</a> （似乎ndppd更好些？然而并不是）</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/DanielAdolfsson/ndppd/issues/71">ndppd/issues/71</a> 不支持转发主机主动发出去的包</p>
-<p><a target="_blank" rel="noopener" href="https://blog.icpz.dev/articles/notes/odhcpd-relay-mode-discuss/#中继模式的局限性以及可能的解决方法">odhcpd 中继模式原理、局限以及解决方案 | Silent Blog (icpz.dev)</a> 正如这篇文章里工作条件里提到的5个步骤，为什么需要5个步骤呢？就是因为现在的ndp proxy有一个非常离谱的缺陷，即只能转发别人发的NS，不能转发路由器自己发出的NS到lan里。这可能是内核的设计问题。内核其实给了什么socket机制，让你只监听NS包，但是这里只能监听到外面来的，不包括自己发出去的。</p>
-<p>比如我内网机子有一个<code>::aaaa</code>的IP，接入我自己的路由器，然后再接入学校路由器。只有学校路由器发NS请求问<code>::aaaa</code>的mac地址是什么的时候，这个包才能被转发到lan内，触发NA响应，然后触发上述的ndp proxy的增加路由机制。</p>
+<p><a
+target="_blank" rel="noopener" href="https://forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt/107157/6">forum.openwrt.org/t/ipv6-ndp-relay-works-only-on-second-attempt</a>
+（似乎ndppd更好些？然而并不是）</p>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/DanielAdolfsson/ndppd/issues/71">ndppd/issues/71</a>
+不支持转发主机主动发出去的包</p>
+<p><a
+target="_blank" rel="noopener" href="https://blog.icpz.dev/articles/notes/odhcpd-relay-mode-discuss/#中继模式的局限性以及可能的解决方法">odhcpd
+中继模式原理、局限以及解决方案 | Silent Blog (icpz.dev)</a>
+正如这篇文章里工作条件里提到的5个步骤，为什么需要5个步骤呢？就是因为现在的ndp
+proxy有一个非常离谱的缺陷，即只能转发别人发的NS，不能转发路由器自己发出的NS到lan里。这可能是内核的设计问题。内核其实给了什么socket机制，让你只监听NS包，但是这里只能监听到外面来的，不包括自己发出去的。</p>
+<p>比如我内网机子有一个<code>::aaaa</code>的IP，接入我自己的路由器，然后再接入学校路由器。只有学校路由器发NS请求问<code>::aaaa</code>的mac地址是什么的时候，这个包才能被转发到lan内，触发NA响应，然后触发上述的ndp
+proxy的增加路由机制。</p>
 <p>然而经过测试，学校的路由器完全不会发这个NS请求，不知道是缓存了还是什么情况。导致还是最开始的那个问题，缺一条路由。有响应包直接到路由器，但是路由器不会往内网转。非常讽刺的是，其实路由器自身会不断发NS包问内网谁是<code>::aaaa</code>，但是经过路由之后，这个NS包还是往wan口发走了。。。也就是说，路由器一直在往wan口找人，却不知道人其实就在自己背后的lan口那边。</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/DanielAdolfsson/ndppd/issues/69">ndppd does receive locally generated neighbor discovery · Issue #69 · DanielAdolfsson/ndppd (github.com)</a> （现在的ndp proxy，包括odhcpd和ndppd，都不支持转发主机主动发出去的包）</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/DanielAdolfsson/ndppd/issues/69">ndppd
+does receive locally generated neighbor discovery · Issue #69 ·
+DanielAdolfsson/ndppd (github.com)</a> （现在的ndp
+proxy，包括odhcpd和ndppd，都不支持转发主机主动发出去的包）</p>
 <p>但是这个问题的临时解决方案也非常简单，ping一下路由器的公网ip地址即可。ping外面的机子还不管用，必须要ping路由器的公网ipv6。此时路由器就会发现，原来我内网有个邻居，然后触发上面的增加路由机制。</p>
-<p>其实现在ipv6已经非常接近正常了，也就是发现没有ipv6的时候要ping一下路由器。在Openwrt上的配置也非常简单：（这里假设interface wan的协议是dhcpv4 client，interface wan6的协议是dhcpv6 client，并且路由器自身ipv6已经正常）</p>
+<p>其实现在ipv6已经非常接近正常了，也就是发现没有ipv6的时候要ping一下路由器。在Openwrt上的配置也非常简单：（这里假设interface
+wan的协议是dhcpv4 client，interface wan6的协议是dhcpv6
+client，并且路由器自身ipv6已经正常）</p>
 <ol type="1">
-<li>Interfaces » WAN6 » DHCP server » IPv6 Settings里，勾选Designated Master，RA 设置relay，DHCPv6 禁用，NDP proxy设置relay。<strong>勾选learn routes。</strong></li>
-<li>Interfaces » LAN » DHCP server » IPv6 Settings里，不能勾选Designated Master，RA 设置relay，DHCPv6 禁用，NDP proxy设置relay。<strong>勾选learn routes。</strong></li>
-<li>注意wan的IPv6 Settings就别动了，全禁用。wan和wan6一起设置relay会导致RA通过wan转发到外面去。</li>
+<li>Interfaces » WAN6 » DHCP server » IPv6 Settings里，勾选Designated
+Master，RA 设置relay，DHCPv6 禁用，NDP proxy设置relay。<strong>勾选learn
+routes。</strong></li>
+<li>Interfaces » LAN » DHCP server » IPv6 Settings里，不能勾选Designated
+Master，RA 设置relay，DHCPv6 禁用，NDP proxy设置relay。<strong>勾选learn
+routes。</strong></li>
+<li>注意wan的IPv6
+Settings就别动了，全禁用。wan和wan6一起设置relay会导致RA通过wan转发到外面去。</li>
 </ol>
 <p>其实可以就这样将就着用了。</p>
 <h3 id="继续折腾">继续折腾</h3>
@@ -174,13 +204,17 @@
 <li>非常神奇的一件事情是，如果你此时正好在wireshark抓包，会发现自己的ipv6是好的。一旦关掉wireshark，ipv6就没了。可能和网卡是否在混杂模式有关。（值得试一试，即此时再将网卡打开嗅探模式，是否内网v6能正常工作）</li>
 </ol></li>
 </ol></li>
-<li><p>既然上面NDP proxy的问题是不能抓自己发出的NS包，那我直接用nftables规则把NS包复制一份到LAN口不就行了吗。（话说内核不能直接指定一下，NS包往多个接口发吗，反正目的地址都是广播地址。只要我路由器往LAN发了NS包，自然就知道内网有neighbor了。）（也许是经过路由表路由了）</p>
+<li><p>既然上面NDP
+proxy的问题是不能抓自己发出的NS包，那我直接用nftables规则把NS包复制一份到LAN口不就行了吗。（话说内核不能直接指定一下，NS包往多个接口发吗，反正目的地址都是广播地址。只要我路由器往LAN发了NS包，自然就知道内网有neighbor了。）（也许是经过路由表路由了）</p>
 <ol type="1">
-<li><p>搜nftables规则的时候，想在netdev类型里hook egress方向的包。但是发现报错，一搜是内核版本太低了，我的openwrt22.03是5.10内核，然而需要5.17才行。</p></li>
+<li><p>搜nftables规则的时候，想在netdev类型里hook
+egress方向的包。但是发现报错，一搜是内核版本太低了，我的openwrt22.03是5.10内核，然而需要5.17才行。</p></li>
 <li><p>但是发现tc （traffic control）可以实现这个功能</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">先用nftables把出去的NS包标记上mark 4</span><br><span class="line"></span><br><span class="line">tc qdisc add dev wan root handle 1: htb default 30</span><br><span class="line">tc class add dev wan parent 1: classid 1:30 htb rate 1000mbit ceil 2000mbit burst 15k</span><br><span class="line">tc class add dev wan parent 1: classid 1:10 htb rate 1000mbit ceil 2000mbit burst 15k</span><br><span class="line">tc filter add dev wan parent 1:0 prio 1 \</span><br><span class="line">    protocol ipv6 u32 \</span><br><span class="line">    match mark 4 0xff \</span><br><span class="line">    action mirred ingress mirror dev wan</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>抓包，确实有NS包复制过来了。然而源mac地址不对。就算有NA响应，路由器会接收吗。。。话说改MAC地址啥的，不就是ndp proxy做的事情吗？应该要改挺多的吧，我直接用这种规则应该应付不过来？</p></li>
-<li><p>我能不能直接把这个NS包重新发给自己，从而触发ndp proxy的转发，发到内网？在尝试这一条的时候，我路由器崩了。</p></li>
+<p>抓包，确实有NS包复制过来了。然而源mac地址不对。就算有NA响应，路由器会接收吗。。。话说改MAC地址啥的，不就是ndp
+proxy做的事情吗？应该要改挺多的吧，我直接用这种规则应该应付不过来？</p></li>
+<li><p>我能不能直接把这个NS包重新发给自己，从而触发ndp
+proxy的转发，发到内网？在尝试这一条的时候，我路由器崩了。</p></li>
 </ol></li>
 <li><p>路由器你就不能智能一点吗，我tcp包都从你那过了，你还不知道我在lan吗？即在lan口上嗅探包的源IP地址，如果有进入lan口的包，源IP地址在同网段，则增加一条路由。更进一步，如果长时间没有相关请求，可以删除对应的路由。</p>
 <ol type="1">
@@ -188,41 +222,58 @@
 </ol></li>
 </ol>
 <h4 id="dhcpv6方案">dhcpv6方案</h4>
-<p>折腾了这么久，也是非常的累。想到了之前有一篇文章里，那个人也放弃了ndp proxy。</p>
-<p><a target="_blank" rel="noopener" href="https://quantum5.ca/2019/03/08/ndp-proxy-route-ipv6-vpn-addresses/">ndp-proxy-route-ipv6-vpn-addresses</a></p>
-<p>本质上就是要知道lan那边有哪些ip，从而加路由。dhcp不就是用来分发IP的吗，让内网机器直接通过dhcp要地址，然后通过dnsmasq的hook加ndp proxy。</p>
+<p>折腾了这么久，也是非常的累。想到了之前有一篇文章里，那个人也放弃了ndp
+proxy。</p>
+<p><a
+target="_blank" rel="noopener" href="https://quantum5.ca/2019/03/08/ndp-proxy-route-ipv6-vpn-addresses/">ndp-proxy-route-ipv6-vpn-addresses</a></p>
+<p>本质上就是要知道lan那边有哪些ip，从而加路由。dhcp不就是用来分发IP的吗，让内网机器直接通过dhcp要地址，然后通过dnsmasq的hook加ndp
+proxy。</p>
 <p>更进一步，可以直接用dhcpv6给内网分发一个小网段，然后直接加静态路由，让这个小网段的包进入lan。</p>
 <p>累了，本来还想着说自己搞一个包嗅探，然后加一条路由的程序。这个dhcpv6方案也不错，能用就行。（缺点是，别人一看就知道你这个IP不对劲，肯定是自己配的）</p>
 <ol type="1">
 <li><p>在Openwrt上也可以非常简单地原生配置：</p>
 <ol type="1">
-<li>lan的ipv6 setting里，开启dhcpv6 server，RA server。RA里面关闭slaac，开启Manage的flag。</li>
-<li>关闭lan接口Advanced Setting里的IPv6 assignment length然后把wan的/64地址复制一份到那边lan接口。此时客户端就可以分到这个/64段的地址</li>
-<li>注意odhcpd的这个选项：dhcpv6_hostidlength默认值是12 <a target="_blank" rel="noopener" href="https://openwrt.org/docs/techref/odhcpd">openwrt.org/docs/techref/odhcpd</a> 即客户端地址除了低12位，其他会是全零（<a target="_blank" rel="noopener" href="https://github.com/openwrt/odhcpd/issues/84">https://github.com/openwrt/odhcpd/issues/84</a>）。</li>
+<li>lan的ipv6 setting里，开启dhcpv6 server，RA
+server。RA里面关闭slaac，开启Manage的flag。</li>
+<li>关闭lan接口Advanced Setting里的IPv6 assignment
+length然后把wan的/64地址复制一份到那边lan接口。此时客户端就可以分到这个/64段的地址</li>
+<li>注意odhcpd的这个选项：dhcpv6_hostidlength默认值是12 <a
+target="_blank" rel="noopener" href="https://openwrt.org/docs/techref/odhcpd">openwrt.org/docs/techref/odhcpd</a>
+即客户端地址除了低12位，其他会是全零（<a
+target="_blank" rel="noopener" href="https://github.com/openwrt/odhcpd/issues/84">https://github.com/openwrt/odhcpd/issues/84</a>）。</li>
 <li>再加一个/116的静态路由即可。</li>
 </ol></li>
 <li><p>自己起一个dnsmasq，可以手选一个IP段。RA的发送还是可以交给odhcpd，毕竟有图形界面。</p>
-<p><a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/dnsmasq#Test">dnsmasq - ArchWiki (archlinux.org)</a></p>
+<p><a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/dnsmasq#Test">dnsmasq -
+ArchWiki (archlinux.org)</a></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># dnsmasq -k --conf-file=./dnsmasq.conf --log-facility=- --log-debug</span><br><span class="line"># ipconfig /release6 以太网</span><br><span class="line"># ipconfig /renew6 以太网</span><br><span class="line"></span><br><span class="line">port=0 # disable dns</span><br><span class="line">listen-address=::</span><br><span class="line"></span><br><span class="line"># enable-ra</span><br><span class="line">interface=br-lan</span><br><span class="line"></span><br><span class="line">dhcp-range=::4321:1,::4321:ffff,constructor:br-lan</span><br></pre></td></tr></table></figure></li>
 </ol>
 <p>还有没考虑的就是，如果IPv6地址前缀经常变怎么办。。。只能说再看吧。</p>
 <p>配置还是得追求简单，可复现，容易维护。太累了自己承担不住。</p>
 <h3 id="学习资源">学习资源：</h3>
 <h4 id="nftables">nftables</h4>
-<p><a target="_blank" rel="noopener" href="https://wiki.nftables.org/wiki-nftables/index.php/Quick_reference-nftables_in_10_minutes#Icmpv6">Quick reference-nftables in 10 minutes - nftables wiki</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://wiki.nftables.org/wiki-nftables/index.php/Quick_reference-nftables_in_10_minutes#Icmpv6">Quick
+reference-nftables in 10 minutes - nftables wiki</a></p>
 <h4 id="tc-traffic-control-qdisc">tc traffic control qdisc</h4>
-<p>[<a target="_blank" rel="noopener" href="https://arthurchiao.art/blog/lartc-qdisc-zh/">译] 《Linux 高级路由与流量控制手册（2012）》第九章：用 tc qdisc 管理 Linux 网络带宽 (arthurchiao.art)</a></p>
-<p><a target="_blank" rel="noopener" href="https://tonydeng.github.io/sdn-handbook/linux/tc.html">流量控制 · GitBook (tonydeng.github.io)</a></p>
-<p><a target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler#actions">openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler</a></p>
+<p>[<a target="_blank" rel="noopener" href="https://arthurchiao.art/blog/lartc-qdisc-zh/">译] 《Linux
+高级路由与流量控制手册（2012）》第九章：用 tc qdisc 管理 Linux 网络带宽
+(arthurchiao.art)</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://tonydeng.github.io/sdn-handbook/linux/tc.html">流量控制 ·
+GitBook (tonydeng.github.io)</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler#actions">openwrt.org/docs/guide-user/network/traffic-shaping/packet.scheduler</a></p>
 <h4 id="ipv6">IPv6</h4>
 <p>《IPv6技术精要》（美）格拉齐亚尼 著</p>
 <h4 id="其他">其他</h4>
-<p>最后分享一下我的<a target="_blank" rel="noopener" href="https://forum.openwrt.org/t/solved-usr-share-nftables-d-table-post-not-in-the-right-place/142961/6">v2ray透明代理配置</a></p>
+<p>最后分享一下我的<a
+target="_blank" rel="noopener" href="https://forum.openwrt.org/t/solved-usr-share-nftables-d-table-post-not-in-the-right-place/142961/6">v2ray透明代理配置</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2022/%E9%94%90%E6%8D%B7%E6%A0%A1%E5%9B%AD%E7%BD%91IPv6%E7%9A%84%EF%BC%8F64%E5%86%85%E7%BD%91%E4%B8%AD%E7%BB%A7%E9%85%8D%E7%BD%AE%EF%BC%9Andp-proxy%E3%80%81relay/" data-id="cmda69qot001ig4uec5m95nkg" data-title="锐捷校园网IPv6的／64内网中继配置：ndp-proxy、relay" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2022/%E9%94%90%E6%8D%B7%E6%A0%A1%E5%9B%AD%E7%BD%91IPv6%E7%9A%84%EF%BC%8F64%E5%86%85%E7%BD%91%E4%B8%AD%E7%BB%A7%E9%85%8D%E7%BD%AE%EF%BC%9Andp-proxy%E3%80%81relay/" data-id="cmgmjrgko00386gue1uqnh2tj" data-title="锐捷校园网IPv6的／64内网中继配置：ndp-proxy、relay" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -235,7 +286,7 @@
 <nav id="article-nav">
   
     <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99%E9%98%85%E8%AF%BB/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           反编译相关资料阅读
@@ -245,7 +296,7 @@
   
   
     <a href="/2022/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%BC%96%E5%86%99%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8-WebAssembly/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">从零开始编写反编译器-WebAssembly</div>
     </a>
   
@@ -286,7 +337,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -308,16 +359,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

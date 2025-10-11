@@ -69,10 +69,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -80,6 +80,174 @@
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-2025/SVF-LLVM指针分析框架" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/SVF-LLVM%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E6%A1%86%E6%9E%B6/" class="article-date">
+  <time class="dt-published" datetime="2025-09-21T03:11:12.000Z" itemprop="datePublished">2025-09-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dev/">Dev</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/SVF-LLVM%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E6%A1%86%E6%9E%B6/">SVF-LLVM指针分析框架</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>本文解析SVF的代码框架。</p>
+<h2 id="svf">SVF</h2>
+<p>SVF是一个C++指针分析框架。</p>
+<h2 id="whole-program-analysis">Whole Program Analysis</h2>
+<ul>
+<li>构建了LLVMModuleSet，包含了一系列Module，以及函数集合等。</li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/SVF-tools/SVF/blob/45597fc4c7fe44ff798db73dde5e7097cb3af444/svf-llvm/lib/SVFIRBuilder.cpp#L54">构建SVFIR</a>：
+<ul>
+<li>处理外部函数节点，全局变量节点</li>
+<li>转换类型：LLVM的类型被转换为了SVFType。</li>
+<li>构建SVFIRCallGraph</li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/SVF-tools/SVF/blob/45597fc4c7fe44ff798db73dde5e7097cb3af444/svf-llvm/lib/SVFIRBuilder.cpp#L1004">处理不同的指令</a></li>
+</ul></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/SVF-LLVM%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E6%A1%86%E6%9E%B6/" data-id="cmgmjrgkt004e6gue8djz5xj3" data-title="SVF-LLVM指针分析框架" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+
+
+
+  
+    <article id="post-2025/C指针分析基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/C%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time class="dt-published" datetime="2025-09-01T03:11:12.000Z" itemprop="datePublished">2025-09-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/C%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E5%9F%BA%E7%A1%80/">C指针分析基础</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>C指针分析基础。</p>
+        
+          <p class="article-more-link">
+            <a href="/2025/C%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E5%9F%BA%E7%A1%80/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/C%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E5%9F%BA%E7%A1%80/" data-id="cmgmjrgkr003v6gue1c37dts2" data-title="C指针分析基础" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+
+
+
+  
+    <article id="post-2025/类型系统与编程语言" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E4%B8%8E%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" class="article-date">
+  <time class="dt-published" datetime="2025-09-01T03:11:12.000Z" itemprop="datePublished">2025-09-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E4%B8%8E%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">类型系统与编程语言</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>类型系统与编程语言，《Types and Programming
+Languages》TAPL的阅读笔记。</p>
+        
+          <p class="article-more-link">
+            <a href="/2025/%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E4%B8%8E%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F%E4%B8%8E%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" data-id="cmgmjrgku004l6guea6jcg6uv" data-title="类型系统与编程语言" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+
+
+
   
     <article id="post-2025/Fuzzbench架构" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
@@ -116,7 +284,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/Fuzzbench%E6%9E%B6%E6%9E%84/" data-id="cmda69qp6003sg4ueevtu1o50" data-title="Fuzzbench架构" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/Fuzzbench%E6%9E%B6%E6%9E%84/" data-id="cmgmjrgks00456gue1iiq71bh" data-title="Fuzzbench架构" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -168,7 +336,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/AlgebraticSubtyping/" data-id="cmda69qp6003og4uea7i5doc6" data-title="AlgebraticSubtyping" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/AlgebraticSubtyping/" data-id="cmgmjrgkr003y6gue836aao5d" data-title="AlgebraticSubtyping" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -211,7 +379,9 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>AFL++的<a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/pull/1972">Enhanced Deterministic mode</a>的实现解析</p>
+        <p>AFL++的<a
+target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/pull/1972">Enhanced
+Deterministic mode</a>的实现解析</p>
         
           <p class="article-more-link">
             <a href="/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/#more">Read More</a>
@@ -220,7 +390,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/" data-id="cmda69qp5003ig4uehcky341a" data-title="AFLplusplus的enhancedDeterministicMode" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/AFLplusplus%E7%9A%84enhancedDeterministicMode/" data-id="cmgmjrgkq003s6gue597perzh" data-title="AFLplusplus的enhancedDeterministicMode" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -272,7 +442,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/AFLplusplus%E7%9A%84%E5%8A%A8%E6%80%81dict%E7%94%9F%E6%88%90%E4%B8%8Ecmplog%E6%8F%92%E6%A1%A9/" data-id="cmda69qp6003vg4ue5ba3fg7x" data-title="AFLplusplus的动态dict生成与cmplog插桩" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/AFLplusplus%E7%9A%84%E5%8A%A8%E6%80%81dict%E7%94%9F%E6%88%90%E4%B8%8Ecmplog%E6%8F%92%E6%A1%A9/" data-id="cmgmjrgks00426guea57kccqb" data-title="AFLplusplus的动态dict生成与cmplog插桩" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -315,7 +485,8 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation Scheduling for Fuzzers》</p>
+        <p>Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation
+Scheduling for Fuzzers》</p>
         
           <p class="article-more-link">
             <a href="/2025/Fuzzing-MOpt-Mutator/#more">Read More</a>
@@ -324,7 +495,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/Fuzzing-MOpt-Mutator/" data-id="cmda69qp70042g4ueelx9g1mf" data-title="Fuzzing-MOpt-Mutator" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/Fuzzing-MOpt-Mutator/" data-id="cmgmjrgkt00486gue557bg7w4" data-title="Fuzzing-MOpt-Mutator" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -367,7 +538,9 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>LLVM的<a target="_blank" rel="noopener" href="https://llvm.org/docs/Passes.html#sroa-scalar-replacement-of-aggregates">SROA（Scalar Replacement of Aggregates）</a>的实现解析</p>
+        <p>LLVM的<a
+target="_blank" rel="noopener" href="https://llvm.org/docs/Passes.html#sroa-scalar-replacement-of-aggregates">SROA（Scalar
+Replacement of Aggregates）</a>的实现解析</p>
         
           <p class="article-more-link">
             <a href="/2025/LLVM-SROA/#more">Read More</a>
@@ -376,7 +549,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/LLVM-SROA/" data-id="cmda69qp80049g4uedni939te" data-title="LLVM的SROA解析" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/LLVM-SROA/" data-id="cmgmjrgkv004o6gue5dtsbpwx" data-title="LLVM的SROA解析" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -428,7 +601,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/" data-id="cmda69qp9004dg4uehc9lcg8z" data-title="Honggfuzz的DynamicFeedbackDict" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/" data-id="cmgmjrgkv004s6guea74h6bfo" data-title="Honggfuzz的DynamicFeedbackDict" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -445,168 +618,11 @@
 
 
   
-    <article id="post-2025/BTIGhidra和BinSub代码解析" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/" class="article-date">
-  <time class="dt-published" datetime="2025-02-06T03:11:12.000Z" itemprop="datePublished">2025-02-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Dev/">Dev</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/">BTIGhidra和BinSub代码解析</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>BTIGhidra和BinSub代码解析</p>
-        
-          <p class="article-more-link">
-            <a href="/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="cmda69qp7003zg4ue1f1z0y1m" data-title="BTIGhidra和BinSub代码解析" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- 2024年1月11日 giscus -->
-
-
-
-
-  
-    <article id="post-2025/高效的指针分析与二进制类型恢复" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/" class="article-date">
-  <time class="dt-published" datetime="2025-02-06T03:11:12.000Z" itemprop="datePublished">2025-02-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Read/">Read</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/">高效的指针分析与二进制类型恢复</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>基于《FULCRA POINTER ANALYSIS FRAMEWORK》，迁移到retypd（《Polymorphic Type Inference for Machine Code》）上</p>
-        
-          <p class="article-more-link">
-            <a href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/" data-id="cmda69qpa004gg4uecebtgzlv" data-title="高效的指针分析与二进制类型恢复" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- 2024年1月11日 giscus -->
-
-
-
-
-  
-    <article id="post-2025/Ghidra反编译器原理与代码架构解析" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/" class="article-date">
-  <time class="dt-published" datetime="2025-01-31T03:11:12.000Z" itemprop="datePublished">2025-01-31</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Dev/">Dev</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/">Ghidra反编译器原理与代码架构解析</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Ghidra反编译器原理与架构解析</p>
-<p>Ghidra Sleigh Decompiler Internals and Code Architectures</p>
-        
-          <p class="article-more-link">
-            <a href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/" data-id="cmda69qp80046g4ue03r4g911" data-title="Ghidra反编译器原理与代码架构解析" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-<!-- 2024年1月11日 giscus -->
-
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">weiter &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -618,7 +634,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -640,16 +656,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

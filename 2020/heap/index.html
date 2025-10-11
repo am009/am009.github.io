@@ -6,12 +6,12 @@
   
   <title>堆复习 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="堆复习 64位时, 默认开启的fastbin范围(chunk总大小)是0x20 - 0x80 32位TODO tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。 fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个, 大小基本重合. 当某一个">
+  <meta name="description" content="堆复习 64位时, 默认开启的fastbin范围(chunk总大小)是0x20 - 0x80 32位TODO tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。 fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个, 大小基本重合. 当某">
 <meta property="og:type" content="article">
 <meta property="og:title" content="堆复习">
 <meta property="og:url" content="https://wjk.moe/2020/heap/">
 <meta property="og:site_name">
-<meta property="og:description" content="堆复习 64位时, 默认开启的fastbin范围(chunk总大小)是0x20 - 0x80 32位TODO tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。 fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个, 大小基本重合. 当某一个">
+<meta property="og:description" content="堆复习 64位时, 默认开启的fastbin范围(chunk总大小)是0x20 - 0x80 32位TODO tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。 fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个, 大小基本重合. 当某">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-06-01T03:11:11.000Z">
 <meta property="article:modified_time" content="2021-03-12T13:12:21.349Z">
@@ -74,10 +74,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -112,71 +112,162 @@
       
         <h1 id="堆复习">堆复习</h1>
 <p>64位时, 默认开启的fastbin范围(chunk总大小)是0x20 - 0x80 32位TODO</p>
-<p>tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。 fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个, 大小基本重合.</p>
-<p>当某一个tcache链表满了7个，再有对应的chunk（不属于fastbin的）被free，就直接进入了unsortedbin中。 tcache_perthread_struct结构，一般是在heapbase+0x10（0x8）的位置。对应tcache的数目是char类型。</p>
+<p>tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。
+fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个,
+大小基本重合.</p>
+<p>当某一个tcache链表满了7个，再有对应的chunk（不属于fastbin的）被free，就直接进入了unsortedbin中。
+tcache_perthread_struct结构，一般是在heapbase+0x10（0x8）的位置。对应tcache的数目是char类型。</p>
 <span id="more"></span>
 <h2 id="堆块结构">堆块结构</h2>
-<p>堆块大小计算: 使用者视角, 两个指针的大小的整数倍(不包括下一个块的prevsize), 或者指针大小的奇数倍(包括下一个块的prevsize). 采用后一种说法</p>
-<p>管理者视角, 每个堆块前面有size和prevsize, 其中prevsize属于前一个堆块, 当前一个堆块是空闲的时候, 会放上前一个堆块的大小. (有没有标志位?? TODO). 管理者视角来说的话, 堆块的大小为: (n * 两个指针的大小) + 指针大小(prevsize) + 指针大小(size). 也就是n+1倍的两个指针大小. size域保存的就是这种大小. 因此谈到各种bin的时候也是指包括size域的大小.</p>
+<p>堆块大小计算: 使用者视角,
+两个指针的大小的整数倍(不包括下一个块的prevsize),
+或者指针大小的奇数倍(包括下一个块的prevsize). 采用后一种说法</p>
+<p>管理者视角, 每个堆块前面有size和prevsize, 其中prevsize属于前一个堆块,
+当前一个堆块是空闲的时候, 会放上前一个堆块的大小. (有没有标志位?? TODO).
+管理者视角来说的话, 堆块的大小为: (n * 两个指针的大小) +
+指针大小(prevsize) + 指针大小(size). 也就是n+1倍的两个指针大小.
+size域保存的就是这种大小.
+因此谈到各种bin的时候也是指包括size域的大小.</p>
 <p>chunk指针一般指向prev_size域的开始处.</p>
-<p>堆块siza域最低位是AMP. (32位的时候只有3bit, 但是64位的时候就有4bit没有用了. 但还是只用3bit)</p>
-<p>总结NON_MAIN_ARENA块和mmapped块与其他正常块的区别. 在libc_malloc调用int_malloc返回的时候, 会检测得到的堆块是不是当前arena的. ?? TODO</p>
-<p>mmapped的块指一页内存大小的整数倍的分配来的内存. 其他两个bit会被忽略, 因为它是单独的一块, 不会和其他空闲块相邻, 也不会在任何arena里. 回收的时候会直接调用munmap</p>
+<p>堆块siza域最低位是AMP. (32位的时候只有3bit,
+但是64位的时候就有4bit没有用了. 但还是只用3bit)</p>
+<p>总结NON_MAIN_ARENA块和mmapped块与其他正常块的区别.
+在libc_malloc调用int_malloc返回的时候,
+会检测得到的堆块是不是当前arena的. ?? TODO</p>
+<p>mmapped的块指一页内存大小的整数倍的分配来的内存. 其他两个bit会被忽略,
+因为它是单独的一块, 不会和其他空闲块相邻, 也不会在任何arena里.
+回收的时候会直接调用munmap</p>
 <h2 id="malloc_state">malloc_state</h2>
-<p>malloc_state描述arena的结构体. 主线程的arena是全局变量, 其他的arena在堆上(TODO). non_main_arena 可以有多个"堆"(heap_info). <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="comment">/* Serialize access.  */</span></span><br><span class="line">  __libc_lock_define (, mutex);</span><br><span class="line">  <span class="comment">/* Flags (formerly in max_fast).  */</span></span><br><span class="line">  <span class="type">int</span> flags;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Fastbins */</span></span><br><span class="line">  mfastbinptr fastbinsY[NFASTBINS];</span><br><span class="line">  <span class="comment">/* Base of the topmost chunk 不在其他任何bin里 */</span></span><br><span class="line">  mchunkptr top;</span><br><span class="line">  <span class="comment">/* The remainder from the most recent split of a small request */</span></span><br><span class="line">  mchunkptr last_remainder;</span><br><span class="line">  <span class="comment">/* Unsorted, small and large bins */</span></span><br><span class="line">  mchunkptr bins[NBINS * <span class="number">2</span> - <span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Bitmap of bins 表示某个bin空 */</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> binmap[BINMAPSIZE];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Linked list, 组织各个arena */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">next</span>;</span></span><br><span class="line">  <span class="comment">/* Linked list for free arenas.  Access to this field is serialized</span></span><br><span class="line"><span class="comment">     by free_list_lock in arena.c.  */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">next_free</span>;</span></span><br><span class="line">  <span class="comment">/* Number of threads attached to this arena.  0 if the arena is on</span></span><br><span class="line"><span class="comment">     the free list.  Access to this field is serialized by</span></span><br><span class="line"><span class="comment">     free_list_lock in arena.c.  */</span></span><br><span class="line"></span><br><span class="line">  INTERNAL_SIZE_T attached_threads;</span><br><span class="line">  <span class="comment">/* Memory allocated from the system in this arena.  */</span></span><br><span class="line">  INTERNAL_SIZE_T system_mem;</span><br><span class="line">  INTERNAL_SIZE_T max_system_mem;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">mstate</span>;</span></span><br></pre></td></tr></table></figure></p>
+<p>malloc_state描述arena的结构体. 主线程的arena是全局变量,
+其他的arena在堆上(TODO). non_main_arena 可以有多个"堆"(heap_info).
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="comment">/* Serialize access.  */</span></span><br><span class="line">  __libc_lock_define (, mutex);</span><br><span class="line">  <span class="comment">/* Flags (formerly in max_fast).  */</span></span><br><span class="line">  <span class="type">int</span> flags;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Fastbins */</span></span><br><span class="line">  mfastbinptr fastbinsY[NFASTBINS];</span><br><span class="line">  <span class="comment">/* Base of the topmost chunk 不在其他任何bin里 */</span></span><br><span class="line">  mchunkptr top;</span><br><span class="line">  <span class="comment">/* The remainder from the most recent split of a small request */</span></span><br><span class="line">  mchunkptr last_remainder;</span><br><span class="line">  <span class="comment">/* Unsorted, small and large bins */</span></span><br><span class="line">  mchunkptr bins[NBINS * <span class="number">2</span> - <span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Bitmap of bins 表示某个bin空 */</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> binmap[BINMAPSIZE];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Linked list, 组织各个arena */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">next</span>;</span></span><br><span class="line">  <span class="comment">/* Linked list for free arenas.  Access to this field is serialized</span></span><br><span class="line"><span class="comment">     by free_list_lock in arena.c.  */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">next_free</span>;</span></span><br><span class="line">  <span class="comment">/* Number of threads attached to this arena.  0 if the arena is on</span></span><br><span class="line"><span class="comment">     the free list.  Access to this field is serialized by</span></span><br><span class="line"><span class="comment">     free_list_lock in arena.c.  */</span></span><br><span class="line"></span><br><span class="line">  INTERNAL_SIZE_T attached_threads;</span><br><span class="line">  <span class="comment">/* Memory allocated from the system in this arena.  */</span></span><br><span class="line">  INTERNAL_SIZE_T system_mem;</span><br><span class="line">  INTERNAL_SIZE_T max_system_mem;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">mstate</span>;</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="bins">bins</h2>
-<p>fastbin有10个,位于fastbinsY, 单链表, 栈式后进先出, 大小是 <code>(1 * 两个指针的大小) + 2 * 指针大小</code> 到 <code>(10 * 两个指针的大小) + 2 * 指针大小</code>. 内部的堆块标记为使用中, 不前后合并</p>
-<p>其他的bin都是双链表.<code>mchunkptr bins[NBINS * 2 - 2];</code>中, 两个指针是一个bin. 下标为0的bin没有被使用, 下标为1的是unsorted bin. 下标2-63的是small bin. 下标64-126的是large bin.</p>
-<p>small bins 有 62个. 列表式的先进后出. 范围是16=0x10 --- 504=0x1f8大小.(含header) 64位是32=0x20 - 1008=0x3f0大小</p>
-<p>large bins 有63个. 前32个, 每个bin管理64大小, 后16个, 每个bin管理512字节的范围, 8个4096, 2个262144, 1个剩下的任何大小.</p>
-<p>top chunk是最底下的chunk, 使用sbrk的时候扩大的就是这个chunk. 它的prev_inuse位总是在的, 因为相邻的free chunk在free的时候总会被合并.</p>
+<p>fastbin有10个,位于fastbinsY, 单链表, 栈式后进先出, 大小是
+<code>(1 * 两个指针的大小) + 2 * 指针大小</code> 到
+<code>(10 * 两个指针的大小) + 2 * 指针大小</code>.
+内部的堆块标记为使用中, 不前后合并</p>
+<p>其他的bin都是双链表.<code>mchunkptr bins[NBINS * 2 - 2];</code>中,
+两个指针是一个bin. 下标为0的bin没有被使用, 下标为1的是unsorted bin.
+下标2-63的是small bin. 下标64-126的是large bin.</p>
+<p>small bins 有 62个. 列表式的先进后出. 范围是16=0x10 ---
+504=0x1f8大小.(含header) 64位是32=0x20 - 1008=0x3f0大小</p>
+<p>large bins 有63个. 前32个, 每个bin管理64大小, 后16个,
+每个bin管理512字节的范围, 8个4096, 2个262144, 1个剩下的任何大小.</p>
+<p>top chunk是最底下的chunk, 使用sbrk的时候扩大的就是这个chunk.
+它的prev_inuse位总是在的, 因为相邻的free
+chunk在free的时候总会被合并.</p>
 <p>last remainder chunk 上一个被分隔的chunk</p>
 <h2 id="bins的循环">bins的循环</h2>
-<p>综述: free的bins首先放到unsorted里, malloc遍历unsorted的时候顺便整理放到各个bins里</p>
+<p>综述: free的bins首先放到unsorted里,
+malloc遍历unsorted的时候顺便整理放到各个bins里</p>
 <h3 id="malloc_init_state">malloc_init_state</h3>
-<p>对非fastbin, 创建头节点指向尾节点的循环 设置mstate的flags中的FASTCHUNKS_BIT. 初始化top chunk为第一个unsorted bin中的chunk.</p>
+<p>对非fastbin, 创建头节点指向尾节点的循环
+设置mstate的flags中的FASTCHUNKS_BIT. 初始化top chunk为第一个unsorted
+bin中的chunk.</p>
 <h3 id="int_malloc">_int_malloc</h3>
-<p>__libc_malloc获取了arena后调用该函数. 如果大小在fastbin中. 去fastbin中找, 没有则到下一步, 有则检查得到的块, 检查通过后返回. 大小在small bin的时候, 去small bin中找, 如果对应的bin为空, 则下一步. 有则从末尾取一个, 检查一下另外一个方向的链表是否正常. 然后设置内存相邻的下一个chunk的prev_inuse, 最后返回 大小在large bin的, 也到large bin里找. 找完后调用malloc_consolidate (如果arena有FASTCHUNKS_BIT). 如果都没找到就遍历unsorted bin, (只有这时候才会把chunk放到bins里面) 从尾部遍历, 遍历的时候插入large bin的时候会总是插入第二个位置. 当1. 申请的chunk是small bin大小. 2. 当前的chunk是last remainder. 3. 这个chunk的大小大于请求的大小, 则将这个chunk分割, 剩下的部分还放回unsorted bin. 还没找到的话, 如果是large bin, 就遍历每个更大的large bin, 找到小的但大于要求大小的large bin. 能分隔则分隔, 不能分隔(剩下的空间小于最小chunk大小)则不分隔返回. 分隔出来的chunk插入到unsorted bin 末尾. 如果是small bin, 开始考虑更大small bin的分割. 同样找到最小的但大于要求大小的chunk分隔. 如果都不能满足, 则使用top chunk. 剩下的成为新的top chunk 如果还不能满足, 调用sysmalloc用mmap分配内存.</p>
+<p>__libc_malloc获取了arena后调用该函数. 如果大小在fastbin中.
+去fastbin中找, 没有则到下一步, 有则检查得到的块, 检查通过后返回.
+大小在small bin的时候, 去small bin中找, 如果对应的bin为空, 则下一步.
+有则从末尾取一个, 检查一下另外一个方向的链表是否正常.
+然后设置内存相邻的下一个chunk的prev_inuse, 最后返回 大小在large bin的,
+也到large bin里找. 找完后调用malloc_consolidate
+(如果arena有FASTCHUNKS_BIT). 如果都没找到就遍历unsorted bin,
+(只有这时候才会把chunk放到bins里面) 从尾部遍历, 遍历的时候插入large
+bin的时候会总是插入第二个位置. 当1. 申请的chunk是small bin大小. 2.
+当前的chunk是last remainder. 3. 这个chunk的大小大于请求的大小,
+则将这个chunk分割, 剩下的部分还放回unsorted bin. 还没找到的话,
+如果是large bin, 就遍历每个更大的large bin,
+找到小的但大于要求大小的large bin. 能分隔则分隔,
+不能分隔(剩下的空间小于最小chunk大小)则不分隔返回.
+分隔出来的chunk插入到unsorted bin 末尾. 如果是small bin,
+开始考虑更大small bin的分割. 同样找到最小的但大于要求大小的chunk分隔.
+如果都不能满足, 则使用top chunk. 剩下的成为新的top chunk 如果还不能满足,
+调用sysmalloc用mmap分配内存.</p>
 <h2 id="int_free">_int_free</h2>
-<p>如果在fastbin 区间内, 插入人fastbin 再前后合并, 注意和top chunk的合并, 检查unsorted bin 并插入头节点.</p>
+<p>如果在fastbin 区间内, 插入人fastbin 再前后合并, 注意和top
+chunk的合并, 检查unsorted bin 并插入头节点.</p>
 <h3 id="malloc_consolidate">malloc_consolidate</h3>
-<p>遍历每个fastbin, 前后如果有free chunk先调用unlink后合并, 放到unsorted bin 头部里面去. 如果是top chunk当然和top chunk 合并</p>
+<p>遍历每个fastbin, 前后如果有free chunk先调用unlink后合并, 放到unsorted
+bin 头部里面去. 如果是top chunk当然和top chunk 合并</p>
 <h2 id="层次化描述malloc">层次化描述malloc</h2>
-<p>malloc和free这内存管理的逻辑过于复杂, 而且很多逻辑耦合比较紧密, 不好拆开分块理解. 导致了学习的难度. 这里试图采取迭代的思想, 毕竟大型项目都是从简单到复杂的迭代出来的.</p>
+<p>malloc和free这内存管理的逻辑过于复杂, 而且很多逻辑耦合比较紧密,
+不好拆开分块理解. 导致了学习的难度. 这里试图采取迭代的思想,
+毕竟大型项目都是从简单到复杂的迭代出来的.</p>
 <h3 id="small-binlarge-bin模型">small bin+large bin模型</h3>
-<p>该模型中只有small bin和large bin. 堆块的分配, 第一阶段是精确查找. 无法在对应的bin中找到时进入第二阶段是best fit查找, 找到满足要求的最小的堆块, 分隔或者不分割得到最终的堆块. free的时候也前后合并, 合并了再放到bin里. 该模型还包含了top chunk. free的时候如果和top chunk 相邻, 则和top chunk合并. 当small/large bin中任何chunk都无法满足的时候, 首先看top chunk, 然后使用mmap去满足. 包含了binmap的数据结构, 方便跳过空的bins. binmap中标记为空的bin一定为空, 但是标记为有的bin则不一定必须有chunk, 也可以为空.</p>
-<p>(精确查找阶段对于large bin是只要求处于相同bin内还是必须相同大小?? TODO 怀疑是后者)</p>
-<h3 id="slsmall-large-unsorted-bin模型">sl(small large) + unsorted bin模型</h3>
-<p>该模型加入了unsorted bin. free的时候直接放入unsorted bin开头, 而malloc的时候, 在精确查找和best fit查找之间插入unsorted bin查找, 在末尾一边找一边处理unsorted bin. 当unsorted bin碰到大小合适的bin的时候直接返回, 否则就一直查找处理(把遍历过的chunk插入合适的small/large bin中).</p>
-<p>为了使unsorted bin处理的时间更加均匀, 处理unsorted bin中的chunk最多处理MAX_ITER个.</p>
+<p>该模型中只有small bin和large bin. 堆块的分配, 第一阶段是精确查找.
+无法在对应的bin中找到时进入第二阶段是best fit查找,
+找到满足要求的最小的堆块, 分隔或者不分割得到最终的堆块.
+free的时候也前后合并, 合并了再放到bin里. 该模型还包含了top chunk.
+free的时候如果和top chunk 相邻, 则和top chunk合并. 当small/large
+bin中任何chunk都无法满足的时候, 首先看top chunk, 然后使用mmap去满足.
+包含了binmap的数据结构, 方便跳过空的bins. binmap中标记为空的bin一定为空,
+但是标记为有的bin则不一定必须有chunk, 也可以为空.</p>
+<p>(精确查找阶段对于large bin是只要求处于相同bin内还是必须相同大小??
+TODO 怀疑是后者)</p>
+<h3 id="slsmall-large-unsorted-bin模型">sl(small large) + unsorted
+bin模型</h3>
+<p>该模型加入了unsorted bin. free的时候直接放入unsorted bin开头,
+而malloc的时候, 在精确查找和best fit查找之间插入unsorted bin查找,
+在末尾一边找一边处理unsorted bin. 当unsorted
+bin碰到大小合适的bin的时候直接返回,
+否则就一直查找处理(把遍历过的chunk插入合适的small/large bin中).</p>
+<p>为了使unsorted bin处理的时间更加均匀, 处理unsorted
+bin中的chunk最多处理MAX_ITER个.</p>
 <h3 id="改进1-减少多次分割时的开销.">改进1 减少多次分割时的开销.</h3>
-<p>经常会碰到小bin完全空, 分配时总是去某个large bin中分割的情况. 这种情况每次分配小块的时候都需要遍历一次很多small bin和large bin. 可以做出改进. 当每次有split的时候, 将剩下的chunk作为last remainder chunk单独指针保存, 并且插入unsorted bin的末尾. 当遍历unsorted bin的时候, 如果是小chunk(在small bin范围内), 当前指向的chunk是last remainder chunk, 并且大小大于要求的大小, 则优先分隔该chunk直接返回.</p>
+<p>经常会碰到小bin完全空, 分配时总是去某个large bin中分割的情况.
+这种情况每次分配小块的时候都需要遍历一次很多small bin和large bin.
+可以做出改进. 当每次有split的时候, 将剩下的chunk作为last remainder
+chunk单独指针保存, 并且插入unsorted bin的末尾. 当遍历unsorted bin的时候,
+如果是小chunk(在small bin范围内), 当前指向的chunk是last remainder chunk,
+并且大小大于要求的大小, 则优先分隔该chunk直接返回.</p>
 <h3 id="slu-fast-bin模型">slu + fast bin模型</h3>
-<p>增加10个fast bin 作为上述模型的外包层. free的时候, 如果是fast bin范围内的直接放入fast bin(因为fast bin无限容量.233 这也说明unsorted bin不会有fast bin范围的chunk?? TODO) malloc的时候的精确查找阶段先去fast bin里面找(fast bin范围内), 没有再去small/large bin里找.</p>
-<p>引入 malloc_consolidate函数, 用于把fast bin中的chunk清理到small bin 中去. 引入flags中的 FASTCHUNKS_BIT 指示当前的arena有没有fast bin.</p>
-<p>best fit阶段也不能满足, 找到了topchunk. 如果top chunk也不能满足要求, 就先清理掉fast bin再去mmap. 调用malloc_consolidate, 然后再去重新遍历unsorted bin, 把所有的chunk都清理了. 之后再回到这里, 发现没有fast bin的时候再通过mmap满足要求.</p>
-<p>当分配large bin而精确查找阶段也满足了的时候也调用 malloc_consolidate.</p>
+<p>增加10个fast bin 作为上述模型的外包层. free的时候, 如果是fast
+bin范围内的直接放入fast bin(因为fast bin无限容量.233 这也说明unsorted
+bin不会有fast bin范围的chunk?? TODO) malloc的时候的精确查找阶段先去fast
+bin里面找(fast bin范围内), 没有再去small/large bin里找.</p>
+<p>引入 malloc_consolidate函数, 用于把fast bin中的chunk清理到small bin
+中去. 引入flags中的 FASTCHUNKS_BIT 指示当前的arena有没有fast bin.</p>
+<p>best fit阶段也不能满足, 找到了topchunk. 如果top chunk也不能满足要求,
+就先清理掉fast bin再去mmap. 调用malloc_consolidate,
+然后再去重新遍历unsorted bin, 把所有的chunk都清理了. 之后再回到这里,
+发现没有fast bin的时候再通过mmap满足要求.</p>
+<p>当分配large bin而精确查找阶段也满足了的时候也调用
+malloc_consolidate.</p>
 <h2 id="sluf-tcache模型">sluf + tcache模型</h2>
-<p>在fast bin之前增加tcache. (在__libc_malloc()调用_int_malloc()之前)在获取arena之前, 就先看tcache, 有则直接返回. free的时候优先放到tcache, 满了才继续放到别处.</p>
-<p>tcache是很多个链表, 保存大小相同的chunk. tcache是直接指向下一个的tcache_next, 而不是指向堆块头部. 直接形成链表 tcache_perthread_struct用于维护各个tcache内空闲堆块的数量, 和索引各个tcache. 第一次malloc的时候, 会malloc一块区域保存tcache_perthread_struct.</p>
+<p>在fast bin之前增加tcache.
+(在__libc_malloc()调用_int_malloc()之前)在获取arena之前, 就先看tcache,
+有则直接返回. free的时候优先放到tcache, 满了才继续放到别处.</p>
+<p>tcache是很多个链表, 保存大小相同的chunk.
+tcache是直接指向下一个的tcache_next, 而不是指向堆块头部. 直接形成链表
+tcache_perthread_struct用于维护各个tcache内空闲堆块的数量,
+和索引各个tcache. 第一次malloc的时候,
+会malloc一块区域保存tcache_perthread_struct.</p>
 <h2 id="与其他部分的关系">与其他部分的关系</h2>
-<p>glibc2.26 开始有了tcache, 并默认开启. tcache比small bin还多一点. 内存释放的时候, tcache没满优先放到tcache. 分配的时候, 调用malloc之前看看tcache有没有. 申请fastbin大小的内存的时候, 找到fastbin内如果找到, 把fastbin上其他块填入tcache中. smallbin同理. 处理unsorted bin的时候, 即使找到大小合适的块, 也不直接返回, 而是</p>
+<p>glibc2.26 开始有了tcache, 并默认开启. tcache比small bin还多一点.
+内存释放的时候, tcache没满优先放到tcache. 分配的时候,
+调用malloc之前看看tcache有没有. 申请fastbin大小的内存的时候,
+找到fastbin内如果找到, 把fastbin上其他块填入tcache中. smallbin同理.
+处理unsorted bin的时候, 即使找到大小合适的块, 也不直接返回, 而是</p>
 <h2 id="查阅的资料">查阅的资料</h2>
 <p>64位时, 默认开启的fastbin范围(chunk总大小)是0x20 - 0x80 32位TODO</p>
-<p>tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。 fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个, 大小基本重合.</p>
-<p>当某一个tcache链表满了7个，再有对应的chunk（不属于fastbin的）被free，就直接进入了unsortedbin中。 tcache_perthread_struct结构，一般是在heapbase+0x10（0x8）的位置。对应tcache的数目是char类型。</p>
+<p>tcache是64个单向链表，最多7个节点(chunk)，chunk的大小在32bit上是8到512（8byte递增）；在64bits上是16到1024（16bytes递增）。
+fastbin只有10个链表, 范围肯定很小, 而和smallbins有62个,
+大小基本重合.</p>
+<p>当某一个tcache链表满了7个，再有对应的chunk（不属于fastbin的）被free，就直接进入了unsortedbin中。
+tcache_perthread_struct结构，一般是在heapbase+0x10（0x8）的位置。对应tcache的数目是char类型。</p>
 <h2 id="待整理">待整理</h2>
 <blockquote>
 <p>绕过tcache使得堆块free后进入unsorted bin的方式通常有两种：</p>
 </blockquote>
 <blockquote>
-<p>每个tcache链上默认最多包含7个块，再次free这个大小的堆块将会进入其他bin中，例如tcache_attack/libc-leak 默认情况下，tcache中的单链表个数是64个，64位下可容纳的最大内存块大小是1032（0x408），故只要申请一个size大于0x408的堆块，然后free即可</p>
+<p>每个tcache链上默认最多包含7个块，再次free这个大小的堆块将会进入其他bin中，例如tcache_attack/libc-leak
+默认情况下，tcache中的单链表个数是64个，64位下可容纳的最大内存块大小是1032（0x408），故只要申请一个size大于0x408的堆块，然后free即可</p>
 </blockquote>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/heap/" data-id="cmda69qon000sg4uehftb0g97" data-title="堆复习" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2020/heap/" data-id="cmgmjrgka000g6gue0fj8ddtk" data-title="堆复习" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -189,7 +280,7 @@
 <nav id="article-nav">
   
     <a href="/2020/K210%E5%BC%80%E5%8F%91%E6%9D%BF%E7%9B%B8%E5%85%B3%E5%A4%96%E8%AE%BE%E5%AD%A6%E4%B9%A0/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
           K210开发板相关外设学习
@@ -198,9 +289,9 @@
     </a>
   
   
-    <a href="/2020/samba/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">设置最新版本的windows10能够访问的samba服务器</div>
+    <a href="/2020/windows%E6%9D%83%E9%99%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Windows权限与UAC</div>
     </a>
   
 </nav>
@@ -240,7 +331,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -262,16 +353,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

@@ -6,12 +6,12 @@
   
   <title>ucore lab2 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="ucore lab2 继续看Intel 80386 Programmer&#39;s Reference Manual, 1987 (HTML) http:&#x2F;&#x2F;www.logix.cz&#x2F;michal&#x2F;doc&#x2F;i386&#x2F; 再看Intel® 64 and IA-32 Architectures Software Developer Manuals https:&#x2F;&#x2F;software.intel.com&#x2F;en-">
+  <meta name="description" content="ucore lab2 继续看Intel 80386 Programmer&#39;s Reference Manual, 1987 (HTML) http:&#x2F;&#x2F;www.logix.cz&#x2F;michal&#x2F;doc&#x2F;i386&#x2F; 再看Intel® 64 and IA-32 Architectures Software Developer Manuals https:&#x2F;&#x2F;software.intel.com&#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ucore lab2">
 <meta property="og:url" content="https://wjk.moe/2020/ucore%20lab2/">
 <meta property="og:site_name">
-<meta property="og:description" content="ucore lab2 继续看Intel 80386 Programmer&#39;s Reference Manual, 1987 (HTML) http:&#x2F;&#x2F;www.logix.cz&#x2F;michal&#x2F;doc&#x2F;i386&#x2F; 再看Intel® 64 and IA-32 Architectures Software Developer Manuals https:&#x2F;&#x2F;software.intel.com&#x2F;en-">
+<meta property="og:description" content="ucore lab2 继续看Intel 80386 Programmer&#39;s Reference Manual, 1987 (HTML) http:&#x2F;&#x2F;www.logix.cz&#x2F;michal&#x2F;doc&#x2F;i386&#x2F; 再看Intel® 64 and IA-32 Architectures Software Developer Manuals https:&#x2F;&#x2F;software.intel.com&#x2F;">
 <meta property="og:locale">
 <meta property="og:image" content="https://segmentfault.com/img/remote/1460000009450843">
 <meta property="article:published_time" content="2019-09-29T05:46:25.000Z">
@@ -77,10 +77,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -114,54 +114,107 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h1 id="ucore-lab2">ucore lab2</h1>
-<p>继续看Intel 80386 Programmer's Reference Manual, 1987 (HTML) http://www.logix.cz/michal/doc/i386/ 再看Intel® 64 and IA-32 Architectures Software Developer Manuals https://software.intel.com/en-us/articles/intel-sdm</p>
+<p>继续看Intel 80386 Programmer's Reference Manual, 1987 (HTML)
+http://www.logix.cz/michal/doc/i386/ 再看Intel® 64 and IA-32
+Architectures Software Developer Manuals
+https://software.intel.com/en-us/articles/intel-sdm</p>
 <span id="more"></span>
 <h3 id="内存管理">内存管理</h3>
-<p>分段机制启动、分页机制未启动：逻辑地址---&gt;段机制处理---&gt;线性地址=物理地址 分段机制和分页机制都启动：逻辑地址---&gt;段机制处理---&gt;线性地址---&gt;页机制处理---&gt;物理地址</p>
-<p>2^32 = 2^10 * 2^10 * 4k 段机制的时候，limit域长20bit，如果以4k为单位，那么就是最大4g 页机制，一个页4k字节，4字节一个页，一个页可以放1k个页表，那就是1k × 4k = 4M的内存，页表目录则是保存1k个页表，正好4M × 1000 = 4G</p>
-<p>内存分配有几个阶段 https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_3_5_4_maping_relations.html</p>
+<p>分段机制启动、分页机制未启动：逻辑地址---&gt;段机制处理---&gt;线性地址=物理地址
+分段机制和分页机制都启动：逻辑地址---&gt;段机制处理---&gt;线性地址---&gt;页机制处理---&gt;物理地址</p>
+<p>2^32 = 2^10 * 2^10 * 4k
+段机制的时候，limit域长20bit，如果以4k为单位，那么就是最大4g
+页机制，一个页4k字节，4字节一个页，一个页可以放1k个页表，那就是1k × 4k =
+4M的内存，页表目录则是保存1k个页表，正好4M × 1000 = 4G</p>
+<p>内存分配有几个阶段
+https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_3_5_4_maping_relations.html</p>
 <h3 id="lab2-宏观内存分配">lab2 宏观内存分配</h3>
-<p><img src="https://segmentfault.com/img/remote/1460000009450843" /> 图片来自https://segmentfault.com/a/1190000009450840 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">memory: 0009fc00, [00000000, 0009fbff], type = 1.</span><br><span class="line">memory: 00000400, [0009fc00, 0009ffff], type = 2.</span><br><span class="line">memory: 00010000, [000f0000, 000fffff], type = 2.</span><br><span class="line">memory: 07ee0000, [00100000, 07fdffff], type = 1.</span><br><span class="line">memory: 00020000, [07fe0000, 07ffffff], type = 2.</span><br><span class="line">memory: 00040000, [fffc0000, ffffffff], type = 2.</span><br></pre></td></tr></table></figure> 可用内存有两块，一个是从00000000 --&gt; 0009fc00 约1M字节 5个十六进制位是20bit，2^10 是1KB,那么2^20就是1M</p>
-<p>bios加载bootloader bootblock占512字节 = 0x200.占0x7c00 ---&gt; 0x 7dff bootloader探测的内存信息位于0x8000</p>
-<p>内核加载到100000，恰好是第二块可用内存的起始地址 第二块内存有07ee0000，大概126MB多一点 在memlayout.h <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define KMEMSIZE            0x38000000                  // the maximum amount of physical memory</span><br></pre></td></tr></table></figure> 这里限制的物理内存接近1g</p>
-<p>然后就是kernel的ELF一路加载下来 其中data段有页目录表（约0x0010b000）和第一个页表 映射0~4MB的首个页表已经填充好。</p>
-<p>0x10e000之后就是Page结构体，有32736个，每一个管理4K内存，和内存总量相符。 每一个Page有20字节，所以Pages占了654720字节 = 0x9fd80。占了640K...比想象中大好多 page管理物理内存，数量固定，页表数量可能变化，按需创建。 0x1add80之后就是用来分配的内存了，我们的kernel总共用了0xadd80=712KB。</p>
+<p><img src="https://segmentfault.com/img/remote/1460000009450843" />
+图片来自https://segmentfault.com/a/1190000009450840 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">memory: 0009fc00, [00000000, 0009fbff], type = 1.</span><br><span class="line">memory: 00000400, [0009fc00, 0009ffff], type = 2.</span><br><span class="line">memory: 00010000, [000f0000, 000fffff], type = 2.</span><br><span class="line">memory: 07ee0000, [00100000, 07fdffff], type = 1.</span><br><span class="line">memory: 00020000, [07fe0000, 07ffffff], type = 2.</span><br><span class="line">memory: 00040000, [fffc0000, ffffffff], type = 2.</span><br></pre></td></tr></table></figure>
+可用内存有两块，一个是从00000000 --&gt; 0009fc00 约1M字节
+5个十六进制位是20bit，2^10 是1KB,那么2^20就是1M</p>
+<p>bios加载bootloader bootblock占512字节 = 0x200.占0x7c00 ---&gt; 0x
+7dff bootloader探测的内存信息位于0x8000</p>
+<p>内核加载到100000，恰好是第二块可用内存的起始地址
+第二块内存有07ee0000，大概126MB多一点 在memlayout.h <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define KMEMSIZE            0x38000000                  // the maximum amount of physical memory</span><br></pre></td></tr></table></figure>
+这里限制的物理内存接近1g</p>
+<p>然后就是kernel的ELF一路加载下来
+其中data段有页目录表（约0x0010b000）和第一个页表
+映射0~4MB的首个页表已经填充好。</p>
+<p>0x10e000之后就是Page结构体，有32736个，每一个管理4K内存，和内存总量相符。
+每一个Page有20字节，所以Pages占了654720字节 =
+0x9fd80。占了640K...比想象中大好多
+page管理物理内存，数量固定，页表数量可能变化，按需创建。
+0x1add80之后就是用来分配的内存了，我们的kernel总共用了0xadd80=712KB。</p>
 <p>如果内存再大的话，如果想对应上整个4g空间，那么Page占的空间还可以大32倍。</p>
 <h3 id="diff-lab2-with-lab1">diff lab2 with lab1</h3>
-<p>https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_2_2_phymemlab_files.html 简单来说变化不大，变化的部分除了一些不重要的库（cprintf，什么console的命令解析）其他的基本上都要在写lab2的时候碰到，指导书也讲得很详细。 可以先git commit lab1_result 之后再把lab2 覆盖进去看看变化。</p>
+<p>https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_2_2_phymemlab_files.html
+简单来说变化不大，变化的部分除了一些不重要的库（cprintf，什么console的命令解析）其他的基本上都要在写lab2的时候碰到，指导书也讲得很详细。
+可以先git commit lab1_result 之后再把lab2 覆盖进去看看变化。</p>
 <h3 id="内存探测">内存探测</h3>
-<p>bootasm.S 添加了有关内存分布的汇编代码 https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_5_probe_phymem_methods.html</p>
+<p>bootasm.S 添加了有关内存分布的汇编代码
+https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_5_probe_phymem_methods.html</p>
 <h3 id="do-while0">do while(0)</h3>
 <p>kern/sync/sync.h https://www.jianshu.com/p/99efda8dfec9</p>
 <h3 id="kern_entry">kern_entry</h3>
-<p>https://segmentfault.com/a/1190000009450840 https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_3_5_4_maping_relations.html</p>
+<p>https://segmentfault.com/a/1190000009450840
+https://chyyuu.gitbooks.io/ucore_os_docs/content/lab2/lab2_3_3_5_4_maping_relations.html</p>
 <h3 id="gdb打印变量不对">gdb打印变量不对</h3>
-<p>https://blog.csdn.net/jeff_/article/details/53333154 http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html CFLAGS := -march=i686 -fno-builtin -fno-PIC -Wall -ggdb -m32 -gstabs -nostdinc $(DEFS) 修改成 CFLAGS := -march=i686 -fno-builtin -fno-PIC -Wall -ggdb -m32 -gdwarf-4 -nostdinc $(DEFS) 目测没有什么其他问题 然而 造成了print_stackframe()不能打印出行数了</p>
+<p>https://blog.csdn.net/jeff_/article/details/53333154
+http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html CFLAGS :=
+-march=i686 -fno-builtin -fno-PIC -Wall -ggdb -m32 -gstabs -nostdinc
+$(DEFS) 修改成 CFLAGS := -march=i686 -fno-builtin -fno-PIC -Wall -ggdb
+-m32 -gdwarf-4 -nostdinc $(DEFS) 目测没有什么其他问题 然而
+造成了print_stackframe()不能打印出行数了</p>
 <h3 id="页表映射到自己">页表映射到自己</h3>
-<p>页目录表地址意义： 这个地址开头的线性地址，管理它的页表在哪一个内存页（物理地址）？ 页表地址意义： 你这个4M的地址范围空间，里面的这个地址页在哪个物理内存页？</p>
-<p>如果把页目录表项当成页表项，也就是说，里面的每一个页，都是一个页表。 把0xFAC（10 bit）映射到自己，也就是说在0xFAC（10 bit），这4M的虚拟地址，之后加上10bit的页表的虚拟地址前10bit作为index，就可以直接访问到页表了。 这就相当于必须要解两次地址，消耗了一次，这样就可以达到只取一次地址的效果了。</p>
+<p>页目录表地址意义：
+这个地址开头的线性地址，管理它的页表在哪一个内存页（物理地址）？
+页表地址意义：
+你这个4M的地址范围空间，里面的这个地址页在哪个物理内存页？</p>
+<p>如果把页目录表项当成页表项，也就是说，里面的每一个页，都是一个页表。
+把0xFAC（10 bit）映射到自己，也就是说在0xFAC（10
+bit），这4M的虚拟地址，之后加上10bit的页表的虚拟地址前10bit作为index，就可以直接访问到页表了。
+这就相当于必须要解两次地址，消耗了一次，这样就可以达到只取一次地址的效果了。</p>
 <h3 id="invlpg">invlpg</h3>
-<p>https://blog.csdn.net/cinmyheart/article/details/39994769 TLB 页表缓冲，我还以为只是页目录表缓冲。。。</p>
-<p>问： TLB里面有页目录表吗？ 暂时答：因为缓冲一次就缓冲了整个页表，是否命中的判断就是根据对应的页目录表项对不对，所以可能命中缓冲时完全不需要访问页目录表。。。</p>
+<p>https://blog.csdn.net/cinmyheart/article/details/39994769 TLB
+页表缓冲，我还以为只是页目录表缓冲。。。</p>
+<p>问： TLB里面有页目录表吗？
+暂时答：因为缓冲一次就缓冲了整个页表，是否命中的判断就是根据对应的页目录表项对不对，所以可能命中缓冲时完全不需要访问页目录表。。。</p>
 <blockquote>
-<p>5.2.5 Page Translation Cache For greatest efficiency in address translation, the processor stores the most recently used page-table data in an on-chip cache. Only if the necessary paging information is not in the cache must both levels of page tables be referenced.</p>
-<p>The existence of the page-translation cache is invisible to applications programmers but not to systems programmers; operating-system programmers must flush the cache whenever the page tables are changed. The page-translation cache can be flushed by either of two methods:</p>
+<p>5.2.5 Page Translation Cache For greatest efficiency in address
+translation, the processor stores the most recently used page-table data
+in an on-chip cache. Only if the necessary paging information is not in
+the cache must both levels of page tables be referenced.</p>
+<p>The existence of the page-translation cache is invisible to
+applications programmers but not to systems programmers;
+operating-system programmers must flush the cache whenever the page
+tables are changed. The page-translation cache can be flushed by either
+of two methods:</p>
 <ol type="1">
 <li><p>By reloading CR3 with a MOV instruction; for example:</p>
 <p>MOV CR3, EAX</p></li>
-<li><p>By performing a task switch to a TSS that has a different CR3 image than the current TSS. (Refer to Chapter 7 for more information on task switching.)</p></li>
+<li><p>By performing a task switch to a TSS that has a different CR3
+image than the current TSS. (Refer to Chapter 7 for more information on
+task switching.)</p></li>
 </ol>
 </blockquote>
-<p>When to do or not do INVLPG, MOV to CR3 to minimize TLB flushing https://www.e-learn.cn/content/wangluowenzhang/626493 TLB的那些事儿 https://blog.csdn.net/omnispace/article/details/61415935</p>
+<p>When to do or not do INVLPG, MOV to CR3 to minimize TLB flushing
+https://www.e-learn.cn/content/wangluowenzhang/626493 TLB的那些事儿
+https://blog.csdn.net/omnispace/article/details/61415935</p>
 <h2 id="缺页">缺页？</h2>
-<p>问题： 现在管理的只是物理内存，那谁管理页表的映设关系？如果某虚拟地址没有对应的页怎么办？ 还是说lab2其实就没有管这一块？ 暂时答：似乎确实不管这回事？虽然有一些维护页表项的函数，但是没怎么被调用。 先写写lab3吧。</p>
+<p>问题：
+现在管理的只是物理内存，那谁管理页表的映设关系？如果某虚拟地址没有对应的页怎么办？
+还是说lab2其实就没有管这一块？
+暂时答：似乎确实不管这回事？虽然有一些维护页表项的函数，但是没怎么被调用。
+先写写lab3吧。</p>
 <h3 id="mark-收藏夹">mark-收藏夹</h3>
-<p>https://www.jianshu.com/p/abbe81dfe016 https://blog.csdn.net/hezxyz/article/details/95764158</p>
+<p>https://www.jianshu.com/p/abbe81dfe016
+https://blog.csdn.net/hezxyz/article/details/95764158</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2020/ucore%20lab2/" data-id="cmda69qop000zg4ue084c8oku" data-title="ucore lab2" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2020/ucore%20lab2/" data-id="cmgmjrgk700066gue8i8n7uen" data-title="ucore lab2" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -173,18 +226,18 @@
     
 <nav id="article-nav">
   
-    <a href="/2020/ucore%20lab1/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+    <a href="/2019/%E5%A0%86%E5%9D%97Unlink%E7%9A%84%E7%90%86%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          ucore lab1
+          堆块Unlink的理解
         
       </div>
     </a>
   
   
     <a href="/2019/%E6%A0%91%E8%8E%93%E6%B4%BEresbian/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">Older</strong>
       <div class="article-nav-title">树莓派与resbian</div>
     </a>
   
@@ -225,7 +278,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -247,16 +300,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 

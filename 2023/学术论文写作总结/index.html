@@ -13,8 +13,8 @@
 <meta property="og:site_name">
 <meta property="og:description" content="学术论文写作总结">
 <meta property="og:locale">
-<meta property="article:published_time" content="2024-01-27T03:11:12.000Z">
-<meta property="article:modified_time" content="2025-07-19T11:34:39.758Z">
+<meta property="article:published_time" content="2025-01-27T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-10-11T09:16:17.308Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Scientific">
 <meta name="twitter:card" content="summary">
@@ -74,10 +74,10 @@
         
           <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -87,7 +87,7 @@
         <section id="main"><article id="post-2023/学术论文写作总结" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/" class="article-date">
-  <time class="dt-published" datetime="2024-01-27T03:11:12.000Z" itemprop="datePublished">2024-01-27</time>
+  <time class="dt-published" datetime="2025-01-27T03:11:12.000Z" itemprop="datePublished">2025-01-27</time>
 </a>
     
   <div class="article-category">
@@ -112,17 +112,238 @@
       
         <p>学术论文写作总结</p>
 <span id="more"></span>
-<h3 id="资料和工具">资料和工具</h3>
+<h2 id="概述">概述</h2>
+<p>写一篇论文大致要经过下面几个步骤:</p>
+<ol type="1">
+<li>基本idea: 有基本的idea，技术路线。基本的内容。</li>
+<li>搭建论文的最基本的框架列出大标题。写出基本的内容。</li>
+<li>画出架构图，给出例子作为图。给出实验数据的图。</li>
+<li>写出主要内容，并基于图介绍。</li>
+<li>改进图表，更加紧凑，更加逻辑清晰。</li>
+<li>改进叙事逻辑：叙事思路上逻辑需要清晰，更易懂。</li>
+<li>不断完善和改进论文细节。</li>
+</ol>
+<p>语言上，关注这两个问题：</p>
+<ol type="1">
+<li>是否容易看懂？</li>
+<li>是否有更准确的说法？是否别人根据我的说法就可以复现？</li>
+<li>必要的铺垫和呼应 vs. 无意义的重复。向前引用，而非重新描述。</li>
+</ol>
+<h2 id="资料和工具">资料和工具</h2>
 <ul>
 <li>How to Write a Good Scientific Paper 作者：Chris. A. Mack.</li>
-<li><a target="_blank" rel="noopener" href="https://simon.peytonjones.org/great-research-paper/">How to Write a Great Research Paper</a> Simon Peyton Jones</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/am009/git-latexdiff-web">git-latexdiff-web</a>：上传两个overleaf压缩包，运行git-latexdiff，返回一个可以看出有哪些修改的pdf。可以在其他人帮改paper后得到反馈。</li>
-<li><a target="_blank" rel="noopener" href="https://poe.com/TranslatingChinese">Poe翻译机器人</a>：直接输入中文，内置提示词会让ChatGPT将内容直接翻译为英文。</li>
+<li><a target="_blank" rel="noopener" href="https://simon.peytonjones.org/great-research-paper/">How to
+Write a Great Research Paper</a> Simon Peyton Jones</li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/am009/git-latexdiff-web">git-latexdiff-web</a>：上传两个overleaf压缩包，运行git-latexdiff，返回一个可以看出有哪些修改的pdf。可以在其他人帮改paper后得到反馈。</li>
 </ul>
-<h2 id="总体思想">总体思想</h2>
+<h2 id="英语写作">英语写作</h2>
+<p>不要尝试自己写了，容易有语法错误。只需要提升英语阅读能力，知道一段文字比另外一段好。使用大模型翻译，比如：<a
+target="_blank" rel="noopener" href="https://poe.com/TranslatingChinese">Poe翻译机器人</a>：直接输入中文，内置提示词会让ChatGPT将内容直接翻译为英文。</p>
+<ul>
+<li>先写出中文、或者垃圾英文，然后让大模型按照这个思路翻译润色。</li>
+<li>修改时：直接用中文修改，然后让大模型翻译润色这个中英混杂片段。</li>
+<li>问大模型这个怎么说比较好，让他按要求改成想要的说法。</li>
+<li>润色：Act as a language expert, Paraphrase the text using more
+academic and scientific language. Polish the writing to meet the
+academic style, improve the spelling, grammar, clarity, concision and
+overall readability. When necessary, rewrite the whole sentence.
+Furthermore, list all modification and explain the reasons to do so in
+markdown table.</li>
+<li>找语法错误：Proofread the following text for spelling and
+grammatical errors and rewrite it with corrections.</li>
+</ul>
+<h2 id="找idea">找idea</h2>
+<ul>
+<li>Generate 10 academic research questions about</li>
+<li>Suggest novel applications</li>
+<li>Identify gaps in the literature</li>
+<li>Identify potential areas for future research. Find a research topic
+for a PhD in this area, Write a detailed proposal on the following
+research topic.</li>
+</ul>
+<h2 id="论文结构">论文结构</h2>
+<p>Good Logic: -
+总体结构上，都是形成了模式的。就像填模板一样，不需要要有格式上的创新。 -
+宏观是逻辑是一条线下来，微观上段落都是总分的结构。 -
+多找其他人看一看自己写的好不好。</p>
+<p><strong>写Abstract、Introduction可以留到最后。</strong>
+Abstract需要考虑让没有背景的人也能看懂。Introduction也不需要写得太细节，即使能很好地概况你的内容。写清楚是正文approach的事情。最最早的时候，可以把内容都当做introduction写。然后，将内容整理分开为Backround，Challenge，Method三部分，然后Challenge后续可能扩写为Motivating
+Example部分。 最开始写的时候跳过Abstract，</p>
+<p>常见的论文结构 - Introduction - Background - Methodology - Evaluation
+- Related Work</p>
+<p>根据需要调整： - 通常都会有一个Motivating
+Example。直接在例子上解释整个流程。如果方便写的话一定要写，例子是最容易懂的。
+- Background和Related work可以合并放到前面。 - 如果没有Motivating
+Example导致内容不多，也可以Method前面有单独的Challenge一章，为Challenge编号，后续在Method引用。</p>
+<h3 id="abstract">Abstract</h3>
+<p>为下面的内容写一份论文摘要，不要超过250词，分别按顺序讲述：背景、工作重要性、挑战、解决方案、实验结果。</p>
+<ul>
+<li><strong>不该写什么：</strong>
+<ul>
+<li>未来工作： 绝对不要出现在摘要里。</li>
+<li>空洞的吹嘘：
+避免“本文提出了一种开创性的方法”这类无实质内容的自我评价，用事实（结果）说话。</li>
+<li>图表、公式、引用： 摘要应自成一体，无需引用其他部分或文献。</li>
+</ul></li>
+</ul>
+<h3 id="introduction">Introduction</h3>
+<p>One clear sharp idea，不要混合多个问题，有多个idea就写多个paper。Make
+certain that the reader is in no doubt what the idea is.</p>
+<ul>
+<li><strong>使命：</strong>
+解释你研究的问题，然后说明你的贡献，不要太复杂。直接举例子也很好。The
+list of contributions drives the entire paper:</li>
+<li>Introduction解释问题的时候，直接make
+claim，或者挑明Challenge，然后引用后面的章节。</li>
+<li>讲一个好故事，让读者相信你研究的问题既重要又有趣，并且目前还没有完美的解决方案，从而为你的方法登场做好铺垫。</li>
+<li><strong>该写什么：</strong>
+<ol type="1">
+<li><strong>背景与重要性：</strong> 宽泛地介绍研究领域及其重要性。</li>
+<li><strong>问题聚焦：</strong> 将范围缩小到你所研究的具体问题。</li>
+<li><strong>现状与不足：</strong>
+综述现有工作（高度概括），并明确指出其存在的<strong>关键缺口</strong>
+或<strong>未解决的问题</strong>。这是引言的灵魂！</li>
+<li><strong>你的贡献：</strong>
+明确提出本文为解决上述缺口所做的事情。最好用条目列表列出你的主要贡献，清晰明了。</li>
+<li><strong>论文结构：</strong>
+最后一段概述本文后续章节的组织结构。</li>
+</ol></li>
+<li><strong>不该写什么：</strong>
+<ul>
+<li><strong>过于详细的背景：</strong>
+引言是“导游图”，不是“教科书”。细节留给Background/Related Work章节。</li>
+<li><strong>冗长的文献综述：</strong>
+对现有工作的详细分析应放在“相关工作”章节，引言中只需点出最关键、最相关的不足。</li>
+<li><strong>方法细节：</strong>
+不要在这里描述算法的具体步骤。只说高层的核心思想。</li>
+<li><strong>实验结果的详细数据：</strong>
+可以提一句“实验证明了我们方法的有效性”，但不要给出具体数字。</li>
+</ul></li>
+</ul>
+<h3 id="background-related-work">3. Background / Related work</h3>
+<p>推荐不要让related
+work阻挡别人读paper，不需要看related也应当能看懂你的paper。</p>
+<ul>
+<li><strong>使命：</strong>
+提及相关的工作。从当前工作的视角提及现有工作的不足。从专业的视角对当前领域提出一些insight。</li>
+<li><strong>该写什么：</strong>
+<ul>
+<li><strong>背景：</strong>
+提供理解你方法所必需的理论基础（如公式、定义）。</li>
+<li><strong>相关工作：</strong>
+对现有工作进行<strong>分类、梳理和总结</strong>。例如，将方法分为A、B、C三类，分别阐述其思想、优势和局限性。</li>
+<li><strong>与本文的关联：</strong>
+在讨论每一类工作时，都要巧妙地将其与你的工作联系起来（例如，“我们的方法借鉴了A类的思想，但解决了其……的问题”）。</li>
+</ul></li>
+<li><strong>不该写什么：</strong>
+<ul>
+<li><strong>简单的罗列：</strong>
+避免“A做了X，B做了Y，C做了Z”这种流水账。要有批判性思考和有机的组织。</li>
+<li><strong>攻击性语言：</strong>
+批评要客观、公正，用“可能无法处理”、“对……场景敏感”等句式，而不是“他们的方法很糟糕”。</li>
+<li><strong>忽略重要文献：</strong>
+必须引用并讨论最相关、最重要的文献，否则会被认为调研不充分。</li>
+</ul></li>
+</ul>
+<h3 id="方法">4. 方法</h3>
+<p>Conveying the intuition is primary, not secondary。</p>
+<ul>
+<li><strong>使命：</strong>
+易懂、语言准确、完整地描述你做了什么，让同行能够复现你的工作。</li>
+<li><strong>该写什么：</strong>
+<ul>
+<li><strong>总体框架：</strong>
+先用一张“框图”和高层文字描述整个方法的流程和组成部分。</li>
+<li><strong>前提假设：</strong> 明确说明你的方法基于哪些假设。</li>
+<li><strong>符号定义：</strong> 清晰定义将使用的数学符号。</li>
+<li><strong>细节分解：</strong>
+分小节详细描述每个组件的设计、算法流程、公式推导。<strong>每一部分都应回答“是什么”和“为什么”</strong>，但“为什么”要简洁地关联到引言中提出的挑战。</li>
+<li><strong>伪代码：</strong>
+如果适用，提供清晰的伪代码并配以解释。</li>
+</ul></li>
+<li><strong>不该写什么：</strong>
+<ul>
+<li><strong>重复引言中的动机：</strong>
+不要大段复述“为什么做这个研究”，要用“为了解诀第1节提到的X问题，我们设计了Y模块”这种方式快速衔接。</li>
+<li><strong>讨论结果：</strong>
+方法部分只讲“怎么做”，结果好坏留给实验部分。</li>
+<li><strong>描述实现细节：</strong>
+避免“我们使用了PyTorch框架，在一台RTX
+4090显卡上运行”这类信息，这些应放在实验部分的“实现细节”小节。</li>
+</ul></li>
+</ul>
+<h3 id="实验">5. 实验</h3>
+<ul>
+<li><strong>使命：</strong>
+通过严谨的、可重复的实验设计，令人信服地证明你的方法优于其他方案，并深入分析其优缺点。</li>
+<li><strong>该写什么：</strong>
+<ol type="1">
+<li><strong>实验设置：</strong>
+数据集介绍、评估指标、基线方法、实现细节（超参数等）。确保可复现性。</li>
+<li><strong>主实验：</strong>
+与基线方法的定量比较（表格、曲线），并辅以定性比较（图片示例）。</li>
+<li><strong>消融实验：</strong>
+证明你方法中各个组件的必要性。这是体现你工作价值的关键！</li>
+<li><strong>分析与讨论：</strong>
+分析结果背后的原因，展示方法的失败案例，讨论其局限性。</li>
+</ol></li>
+<li><strong>不该写什么：</strong>
+<ul>
+<li><strong>只展示好的结果：</strong>
+诚实是科学的第一准则，讨论局限性能增加可信度。</li>
+<li><strong>不合理的比较：</strong>
+比较的基线方法必须具有代表性和可比性，并在相同的实验设置下进行。</li>
+<li><strong>空洞的结论：</strong>
+不要说“从表1可以看出我们的方法更好”，而要说“我们的方法在指标Y上平均提升了Z%，这主要归功于我们设计的X模块对……问题的有效解决”。</li>
+</ul></li>
+</ul>
+<h3 id="结论与未来工作">6. 结论与未来工作</h3>
+<ul>
+<li><strong>使命：</strong>
+总结全文，再次强调核心贡献，并指出未来的研究方向。</li>
+<li><strong>该写什么：</strong>
+<ul>
+<li><strong>总结：</strong>
+用不同于摘要的话言，再次概括研究问题、方法和主要发现。</li>
+<li><strong>重申贡献：</strong>
+再次强调你的核心贡献，但要基于实验结果的支撑。</li>
+<li><strong>未来工作：</strong>
+基于当前研究的局限性，提出具体、可行的未来研究方向。</li>
+</ul></li>
+<li><strong>不该写什么：</strong>
+<ul>
+<li><strong>引入新内容：</strong>
+结论中不应出现前文未提及的新概念、新结果或新引用。</li>
+<li><strong>过度夸大：</strong> 结论应稳健，避免不切实际的断言。</li>
+<li><strong>简单的重复：</strong> 不要只是把摘要复制粘贴过来。</li>
+</ul></li>
+</ul>
+<h3 id="evaluation-assessment">Evaluation / Assessment</h3>
+<ul>
+<li>几个Assessment的角度：
+<ul>
+<li>解释数据</li>
+<li>展示了方法的什么限制？</li>
+<li>得出什么推论？对未来发展方向的指导？</li>
+</ul></li>
+<li>总分的结构，先总结，然后分析推理数据，然后提出推论。</li>
+<li>最后可以用加粗或者框总结并强调最后的结论。</li>
+<li>描述的时候必须要定量，给出数据。不能说多了很多这种。</li>
+<li>要写的非常直接，不要觉得图上隐含。</li>
+<li>用一般现在时。过去时会让人觉得现在不成立。</li>
+</ul>
+<h3 id="rebuttal-revision">Rebuttal &amp; Revision</h3>
+<p>最直接的想法当然是，针对review提出的问题，直接列表一个个回答便是。但是，review经常会，完全不记得问题的上下文。因此这种方式容易导致review想不起来之前的问题。因此要注意重新介绍一下相关的上下文。</p>
+<ol type="1">
+<li>reviewer可能忘了自己之前说什么，最好不要有太多引用文章或者rebuttal的地方，而是复述一下。</li>
+<li>rebuttal的时候最好不要对其他没有提到意见的地方有太大修改。因为理论上应该在投paper之前，paper应当被打磨完毕。</li>
+</ol>
+<h2 id="心态">心态</h2>
 <p>没有不能克服的困难。写paper看似很难，实际上是由一些没那么难的事情组合而成。</p>
 <ul>
-<li>Good paper = Good Research + Good Writing。一般过于忽视了好的写作的重要性。好的写作和好的Research同等重要。不需要注重词语，不建议写很长句子。
+<li>Good paper = Good Research + Good
+Writing。一般过于忽视了好的写作的重要性。好的写作和好的Research同等重要。不需要注重词语，不建议写很长句子。
 <ul>
 <li>Good Research:
 <ul>
@@ -130,7 +351,8 @@
 </ul></li>
 <li>Good Writing
 <ul>
-<li>English: 大模型帮助很大，但是依然要注重提升英语水平。不要用太多复杂的词。
+<li>English:
+大模型帮助很大，但是依然要注重提升英语水平。不要用太多复杂的词。
 <ul>
 <li>同时准备雅思/托福等英语考试。</li>
 </ul></li>
@@ -143,12 +365,12 @@
 <li>Reader Oriented:</li>
 <li>Correct and Succinct:</li>
 <li>Clear with Good Logic: 把自己的逻辑先列出来，然后再理清楚。</li>
-<li>Reproducible: 重视实验结果的可复现性。写作上指写出来的东西是可复现的，要把关键的点写出来。</li>
+<li>Reproducible:
+重视实验结果的可复现性。写作上指写出来的东西是可复现的，要把关键的点写出来。</li>
 </ul></li>
 </ul></li>
 </ul>
-<p><strong>写Abstract、Introduction可以留到最后。</strong> Abstract需要考虑让没有背景的人也能看懂。Introduction也不需要写得太细节，即使能很好地概况你的内容。写清楚是正文approach的事情。</p>
-<h2 id="重要注意事项">重要注意事项</h2>
+<h3 id="重要注意事项">重要注意事项</h3>
 <p><strong>方法上</strong>：</p>
 <ul>
 <li>是否尽早开始写paper。
@@ -159,22 +381,25 @@
 </ul></li>
 <li>找到自己的Key Idea
 <ul>
-<li>One clear, sharp idea. Idea是否clear, sharp。有很多idea就写很多paper，而不是混在一起。</li>
+<li>One clear, sharp idea. Idea是否clear,
+sharp。有很多idea就写很多paper，而不是混在一起。</li>
 </ul></li>
 </ul>
 <p><strong>写作上：</strong></p>
 <ul>
 <li>使用主动语态，使用一致的词。</li>
 </ul>
-<h2 id="写paper">写paper</h2>
+<h2 id="文字细节">文字细节</h2>
 <h3 id="标点符号">标点符号</h3>
 <ul>
-<li>ref和cite前要用<a target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/468726/cite-is-the-tie-actully-recommended">波浪线替代空格</a>。</li>
+<li>ref和cite前要用<a
+target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/468726/cite-is-the-tie-actully-recommended">波浪线替代空格</a>。</li>
 <li>不能用缩写：不能用Can't, I'm, It's等。</li>
 <li>逗号表示列举：两个物体不需要用逗号，直接用and或or连接。三个及以上需要使用两个引号，即在and/or前要加逗号。想象自己读句子的时候在and前也会停顿。</li>
 <li>冒号：必须在完整的句子后使用冒号。比如<code>The tasks contain: \n - xxx\n - xxx</code>这种是错误的，需要加上对应的宾语：<code>The tasks contain three steps: ...</code>
 <ul>
-<li>即使在句子内也是： You can bring the following things: a book, a pen, and a laptop. 必须是完整的句子</li>
+<li>即使在句子内也是： You can bring the following things: a book, a
+pen, and a laptop. 必须是完整的句子</li>
 </ul></li>
 <li>连字符Hyphen: 名词前的复合形容词。或者某些数字（"twenty-one"）</li>
 <li>引号
@@ -184,7 +409,10 @@
 <li>如果涉及到书，paper标题，起到类似书名号的作用。</li>
 </ul></li>
 <li>footnote写在标点符号后面</li>
-<li>引用Paper的时候的<a target="_blank" rel="noopener" href="https://academia.stackexchange.com/questions/213673/first-et-al-many-authors-with-same-surname-and-ieee-citations">两种方法</a>：<code>In [1], the authors xxx</code>，以及基于<a target="_blank" rel="noopener" href="https://www.scribbr.com/citing-sources/et-al/">姓氏+et al.的引用</a></li>
+<li>引用Paper的时候的<a
+target="_blank" rel="noopener" href="https://academia.stackexchange.com/questions/213673/first-et-al-many-authors-with-same-surname-and-ieee-citations">两种方法</a>：<code>In [1], the authors xxx</code>，以及基于<a
+target="_blank" rel="noopener" href="https://www.scribbr.com/citing-sources/et-al/">姓氏+et
+al.的引用</a></li>
 </ul>
 <h3 id="数字的使用">数字的使用</h3>
 <p>总体思想：不能有歧义，全文要一致。</p>
@@ -194,7 +422,8 @@
 <li>word里使用<code>Ctrl+Shift+Space</code></li>
 <li>latex里使用<code>~</code></li>
 </ul></li>
-<li>具体的数字不要加近似词限定：<del>Approximately</del> 17 samples ...</li>
+<li>具体的数字不要加近似词限定：<del>Approximately</del> 17 samples
+...</li>
 <li>1到9的数字（不带单位），序数词通常写单词，而不是阿拉伯数字。0都可以。</li>
 <li>大于9的数字写阿拉伯数字，序数词同理：50th xxx, 21st century</li>
 <li>拉丁或者希腊符号，往往用斜体。latex里加了数学模式自然会斜体。单位不斜体。</li>
@@ -231,7 +460,8 @@
 </ul>
 <p><strong>大小对比</strong></p>
 <ul>
-<li>避免有歧义的比例：不要用几倍小几倍大(one-fourth smaller, 10 times smaller)，而是用<code>two times as much/many as</code></li>
+<li>避免有歧义的比例：不要用几倍小几倍大(one-fourth smaller, 10 times
+smaller)，而是用<code>two times as much/many as</code></li>
 <li>正确描述大小关系
 <ul>
 <li>测量出来的值：less than, more than, amount of</li>
@@ -248,7 +478,8 @@
 <li>加粗是否使用规范。</li>
 <li>推荐右对齐，使得小数点末尾对齐。百分号可以提到表头。</li>
 <li>底部如果字太长可以斜过来</li>
-<li>位置：图表放到顶部或底部，从而防止两图之间文字太少。图表不能跨页。如果实在太长，用continue table的方式说明。图表和文字之间至少有两行间距。</li>
+<li>位置：图表放到顶部或底部，从而防止两图之间文字太少。图表不能跨页。如果实在太长，用continue
+table的方式说明。图表和文字之间至少有两行间距。</li>
 <li>如果用bar graph/折线图描述平均值，可以带上error bar。</li>
 <li>折线图如果点标出来了可以根据情况选择趋势线而不是直接连接。</li>
 <li>如果散点图有趋势，可以画一个趋势线。</li>
@@ -258,56 +489,66 @@
 <ul>
 <li>如果只是描述某个图展示了什么，没有什么意义。描述图表的时候建议直接描述直接吸引读者注意力，然后用括号引用到表。
 <ul>
-<li>Germination rates were significantly higher after 24h in running water than in controls (Figure 4)</li>
+<li>Germination rates were significantly higher after 24h in running
+water than in controls (Figure 4)</li>
 </ul></li>
 </ul>
-<p>配色选择网站：colorbrewer2.org 勾选print friendly选项可以保证灰度时也可读。</p>
-<h3 id="evaluation-assessment">Evaluation / Assessment</h3>
-<ul>
-<li>几个Assessment的角度：
-<ul>
-<li>解释数据</li>
-<li>展示了方法的什么限制？</li>
-<li>得出什么推论？对未来发展方向的指导？</li>
-</ul></li>
-<li>总分的结构，先总结，然后分析推理数据，然后提出推论。</li>
-<li>最后可以用加粗或者框总结并强调最后的结论。</li>
-<li>描述的时候必须要定量，给出数据。不能说多了很多这种。</li>
-<li>要写的非常直接，不要觉得图上隐含。</li>
-<li>用一般现在时。过去时会让人觉得现在不成立。</li>
-</ul>
+<p>配色选择网站：colorbrewer2.org 勾选print
+friendly选项可以保证灰度时也可读。</p>
 <h3 id="引用">引用</h3>
 <ul>
 <li>不要后面去补引用，而是一边写就一边增加引用。</li>
-<li>Google Scholar的引用，即使bibtex也可能不全。而是使用ACM/IEEE网站，或者DBLP的bibtex。</li>
+<li>Google
+Scholar的引用，即使bibtex也可能不全。而是使用ACM/IEEE网站，或者DBLP的bibtex。</li>
+<li>引用Section的时候用<code>\S</code>替代以节约空间，例如<code>\S~\ref&#123;sssec:xxx&#125;</code></li>
 </ul>
 <h2 id="latex相关问题">Latex相关问题</h2>
+<p>小技巧： - 有加粗字的段落可以都不缩进
+<code>\noindent \textbf&#123;xxx&#125;: xxx</code></p>
 <p><strong>段内编号</strong></p>
 <figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\one</span>&#125;&#123;(&#123;<span class="keyword">\em</span> i&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\two</span>&#125;&#123;(&#123;<span class="keyword">\em</span> ii&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\three</span>&#125;&#123;(&#123;<span class="keyword">\em</span> iii&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\four</span>&#125;&#123;(&#123;<span class="keyword">\em</span> iv&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\five</span>&#125;&#123;(&#123;<span class="keyword">\em</span> v&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\six</span>&#125;&#123;(&#123;<span class="keyword">\em</span> vi&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\seven</span>&#125;&#123;(&#123;<span class="keyword">\em</span> vii&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\eight</span>&#125;&#123;(&#123;<span class="keyword">\em</span> viii&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br><span class="line"><span class="keyword">\newcommand</span>&#123;<span class="keyword">\nine</span>&#125;&#123;(&#123;<span class="keyword">\em</span> ix&#125;<span class="keyword">\/</span>)<span class="keyword">\xspace</span>&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>标号也可以用<a
+target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/7032/good-way-to-make-textcircled-numbers">带圆圈的数字</a>。
+<ul>
+<li>另外一种方法：基于 <code>\ding&#123;172&#125;</code>
+表示带圆圈的1。要几就递增一下。<code>\usepackage&#123;pifont&#125;</code>
+里面有黑底和白底的圆圈数字。</li>
+</ul></li>
+</ul>
 <p><strong>Revision时给文字增加高亮</strong></p>
 <ul>
 <li>文字高亮：使用蓝色：<code>\textcolor&#123;blue&#125;&#123;&#125;</code></li>
 <li>图片增加蓝色边框，使用textcolor+frame：<code>\textcolor&#123;blue&#125;&#123;\frame&#123;\includegraphics[width=xxx]&#123;xxx.pdf&#125;&#125;&#125;</code></li>
 </ul>
 <p><strong>ACM模板移除Copyright</strong></p>
-<p>这篇<a target="_blank" rel="noopener" href="https://shantoroy.com/latex/acm-remove-copyright-information-from-first-page/">文章</a>介绍了。其中<a target="_blank" rel="noopener" href="https://fr.overleaf.com/learn/latex/Headers_and_footers#LaTeX_page_styles">pagestyle</a>是和header和footer有关的设置，我加上好像没什么变化。</p>
+<p>这篇<a
+target="_blank" rel="noopener" href="https://shantoroy.com/latex/acm-remove-copyright-information-from-first-page/">文章</a>介绍了。其中<a
+target="_blank" rel="noopener" href="https://fr.overleaf.com/learn/latex/Headers_and_footers#LaTeX_page_styles">pagestyle</a>是和header和footer有关的设置，我加上好像没什么变化。</p>
 <figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 加在use的package后面</span></span><br><span class="line"><span class="keyword">\setcopyright</span>&#123;none&#125;</span><br><span class="line"><span class="keyword">\settopmatter</span>&#123;printacmref=false&#125; <span class="comment">% Removes citation information below abstract</span></span><br><span class="line"><span class="keyword">\renewcommand</span><span class="keyword">\footnotetextcopyrightpermission</span>[1]&#123;&#125; <span class="comment">% removes footnote with conference information in first column</span></span><br><span class="line"><span class="comment">% \pagestyle&#123;plain&#125;% removes running headers</span></span><br></pre></td></tr></table></figure>
 <p><strong>hyperref与链接颜色：</strong></p>
 <p>不加上<code>hyperref</code>包之前，各种链接都无法点击，包括<code>\url&#123;https://...&#125;</code>和表格和图的<code>Fig.~\ref&#123;xxx&#125;</code>。直接引入<code>hyperref</code>后会使得链接外面有个浅蓝色边框。使用<code>\usepackage[hidelinks]&#123;hyperref&#125;</code>可以消除边框。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">\usepackage&#123;hyperref&#125;</span><br><span class="line">\AtEndPreamble&#123;</span><br><span class="line">	\usepackage&#123;hyperref&#125;</span><br><span class="line">	\hypersetup&#123;</span><br><span class="line">		colorlinks = true,</span><br><span class="line">		linkcolor = brown,</span><br><span class="line">		anchorcolor = brown,</span><br><span class="line">		citecolor = brown,</span><br><span class="line">		filecolor = brown,</span><br><span class="line">		urlcolor = brown</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>使用autoref可以免去写<code>Figure. 1</code>前面的<code>Figure.</code>部分。</p>
 <p><strong>IEEE 表Caption是大写</strong></p>
-<p><a target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/166814/table-caption-in-uppercase-i-dont-know-why">IEEE模板确实要求表的标题是Small Caps格式</a>的。但是，当你<a target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/387133/my-table-is-not-conforming-to-the-ieeetran-caption-table-format">引用了<code>\usepackage&#123;subcaption&#125;</code>之后会变成正常格式</a>。如果要提交到期刊，这是一个容易犯的错误。但是确实有很多paper的table的格式因为这个而不对。有一个<a target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/154435/ieee-template-and-caption-false-option-for-subcaption-package">方法</a>（<a target="_blank" rel="noopener" href="https://liuzhiguang.wordpress.com/2018/01/05/get-ieeetran-to-work-with-the-subcaption-package/">这里</a>也提到）可以绕过这个问题而正常使用subcaption包。</p>
+<p><a
+target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/166814/table-caption-in-uppercase-i-dont-know-why">IEEE模板确实要求表的标题是Small
+Caps格式</a>的。但是，当你<a
+target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/387133/my-table-is-not-conforming-to-the-ieeetran-caption-table-format">引用了<code>\usepackage&#123;subcaption&#125;</code>之后会变成正常格式</a>。如果要提交到期刊，这是一个容易犯的错误。但是确实有很多paper的table的格式因为这个而不对。有一个<a
+target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/154435/ieee-template-and-caption-false-option-for-subcaption-package">方法</a>（<a
+target="_blank" rel="noopener" href="https://liuzhiguang.wordpress.com/2018/01/05/get-ieeetran-to-work-with-the-subcaption-package/">这里</a>也提到）可以绕过这个问题而正常使用subcaption包。</p>
 <ul>
-<li><strong>在Caption中使用footnote</strong>：<a target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/10181/using-footnote-in-a-figures-caption">这里</a>说需要先使用<code>\protect\footnotemark</code>生成脚标标记，然后在表后增加一个<code>\footnotetext&#123;xxxx&#125;</code>。此外，建议此时同时使用<code>\caption[short description]&#123;long description&#125;</code>的格式。有的论文会在结尾生成一个list of figures/tables目录，此时short description会被用到。</li>
+<li><strong>在Caption中使用footnote</strong>：<a
+target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/10181/using-footnote-in-a-figures-caption">这里</a>说需要先使用<code>\protect\footnotemark</code>生成脚标标记，然后在表后增加一个<code>\footnotetext&#123;xxxx&#125;</code>。此外，建议此时同时使用<code>\caption[short description]&#123;long description&#125;</code>的格式。有的论文会在结尾生成一个list
+of figures/tables目录，此时short description会被用到。</li>
 </ul>
 <h3 id="图表-1">图表</h3>
-<p>基础样式的表格：基于 https://www.tablesgenerator.com/ 生成，选择Booktabs table style，仅选择三个横线（表顶部底部和表头）和内部竖线。</p>
+<p>基础样式的表格：基于 https://www.tablesgenerator.com/
+生成，选择Booktabs table
+style，仅选择三个横线（表顶部底部和表头）和内部竖线。</p>
 <ul>
 <li>图表说明是否需要句号？</li>
 <li>引用图表时使用不换行空格：<code>Fig.~\ref&#123;fig:xxx&#125;</code>。波浪线代表不换行空格。</li>
-<li>引用Section的时候用<code>\S</code>替代以节约空间，例如<code>\S~\ref&#123;sssec:xxx&#125;</code></li>
-<li>标号可以用<a target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/7032/good-way-to-make-textcircled-numbers">带圆圈的数字</a>。</li>
 </ul>
 <p><strong>节约空间</strong></p>
 <p>调paper空间要注意Latex的块结构。如果有个块是一个整体，比如一些RQ的Answer块，正好卡在了页面边缘，那么除非你能删改出整个块的空间，不然空间布局是不会变的。</p>
@@ -318,14 +559,18 @@
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">\addtolength&#123;\floatsep&#125;&#123;-2mm&#125;</span><br><span class="line">\addtolength&#123;\dblfloatsep&#125;&#123;-4mm&#125;</span><br><span class="line">\addtolength&#123;\textfloatsep&#125;&#123;-4mm&#125;  % single column figure margin</span><br><span class="line">\addtolength&#123;\dbltextfloatsep&#125;&#123;-3mm&#125;  % double column figure margin</span><br><span class="line">\addtolength&#123;\abovecaptionskip&#125;&#123;-2mm&#125;</span><br><span class="line">\addtolength&#123;\belowcaptionskip&#125;&#123;-2mm&#125;</span><br></pre></td></tr></table></figure>
 <p><strong>表太宽或太窄</strong></p>
-<p>不推荐使用resize，用的话也是用<code>\resizebox&#123;\columnwidth&#125;&#123;!&#125;&#123;....&#125;</code>（<a target="_blank" rel="noopener" href="https://tex.stackexchange.com/a/387166/308917">出处</a>）</p>
+<p>不推荐使用resize，用的话也是用<code>\resizebox&#123;\columnwidth&#125;&#123;!&#125;&#123;....&#125;</code>（<a
+target="_blank" rel="noopener" href="https://tex.stackexchange.com/a/387166/308917">出处</a>）</p>
 <h3 id="引用-1">引用</h3>
 <ul>
-<li>作者名字的引用，可以 1 仅姓氏， 2 名字首字母加姓氏 比如F. Wang 3 全名。</li>
+<li>作者名字的引用，可以 1 仅姓氏， 2 名字首字母加姓氏 比如F. Wang 3
+全名。</li>
 <li>单个作者直接称呼姓氏？两个作者直接用and连接</li>
-<li>三个及以上作者的，使用第一个人的姓氏+et al. 比如： Wang et al. suggested ... [1].
+<li>三个及以上作者的，使用第一个人的姓氏+et al. 比如： Wang et al.
+suggested ... [1].
 <ul>
-<li>如果多个作者有重复的姓氏，则考虑名字首字母加姓氏：F. Wang et al. suggested ...</li>
+<li>如果多个作者有重复的姓氏，则考虑名字首字母加姓氏：F. Wang et al.
+suggested ...</li>
 <li>或者直接避开
 <ul>
 <li>In [1], the authors</li>
@@ -334,36 +579,43 @@
 </ul></li>
 </ul>
 <blockquote>
-<p>as shown by Brown [4], [5]; as mentioned earlier [2], [4]–[7], [9]; Smith [4] and Brown and Jones [5]; Wood et al. [7]</p>
-<p>NOTE: Use et al. when three or more names are given for a reference cited in the text.</p>
+<p>as shown by Brown [4], [5]; as mentioned earlier [2], [4]–[7], [9];
+Smith [4] and Brown and Jones [5]; Wood et al. [7]</p>
+<p>NOTE: Use et al. when three or more names are given for a reference
+cited in the text.</p>
 <p>or as nouns:</p>
 <p>as demonstrated in [3]; according to [4] and [6]–[9].</p>
 </blockquote>
-<p>(摘自<a target="_blank" rel="noopener" href="https://ieeeauthorcenter.ieee.org/wp-content/uploads/IEEE-Reference-Guide.pdf">IEEE Reference Guide</a>)</p>
+<p>(摘自<a
+target="_blank" rel="noopener" href="https://ieeeauthorcenter.ieee.org/wp-content/uploads/IEEE-Reference-Guide.pdf">IEEE
+Reference Guide</a>)</p>
 <p>但最好不要将引用数字作为句子的成分，而是改为提作者名字，或代词指代。</p>
 <h3 id="缩写">缩写</h3>
 <ul>
 <li>对于容量，可以直接用全大写的MB，虽然MiB更精确，但是实际上都行。</li>
 </ul>
-<h2 id="rebuttal-revision">Rebuttal &amp; Revision</h2>
-<p>最直接的想法当然是，针对review提出的问题，直接列表一个个回答便是。但是，review经常会，完全不记得问题的上下文。因此这种方式容易导致review想不起来之前的问题。因此要注意重新介绍一下相关的上下文。</p>
-<ol type="1">
-<li>reviewer可能忘了自己之前说什么，最好不要有太多引用文章或者rebuttal的地方，而是复述一下。</li>
-<li>rebuttal的时候最好不要对其他没有提到意见的地方有太大修改。因为理论上应该在投paper之前，paper应当被打磨完毕。</li>
-</ol>
-<h2 id="matplotlib">matplotlib</h2>
-<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/42097053/matplotlib-cannot-find-basic-fonts">安装字体</a></p>
+<h3 id="matplotlib">matplotlib</h3>
+<p><a
+target="_blank" rel="noopener" href="https://stackoverflow.com/questions/42097053/matplotlib-cannot-find-basic-fonts">安装字体</a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="comment"># 防止type 3字体的出现</span></span><br><span class="line">matplotlib.rcParams[<span class="string">&#x27;pdf.fonttype&#x27;</span>] = <span class="number">42</span></span><br><span class="line">matplotlib.rcParams[<span class="string">&#x27;ps.fonttype&#x27;</span>] = <span class="number">42</span></span><br><span class="line"><span class="comment"># 设置默认字体</span></span><br><span class="line">matplotlib.rcParams[<span class="string">&quot;font.family&quot;</span>] = <span class="string">&quot;Times New Roman&quot;</span></span><br></pre></td></tr></table></figure>
 <h2 id="其他">其他</h2>
 <p>先写中文是有帮助的。能够清楚地知道自己往往遇到的是逻辑问题，而不是英语表达能力的问题。速度就是质量，真正好的文章是改出来的，如果不能以很快的速度进行这个过程，那么就很可能不能在自己可接受的时间范围内写出“还看得过去”的paper内容，自己也会非常折磨。可以在文档中自己分两栏，比如用个两列的列表，左边放中文，右边放英文。每次同时修改两边内容。</p>
 <p>在分离了语言这个困难后，其次是讲求逻辑，有明确的逻辑关系。优先看自己是不是完全写清楚了，其次是考虑篇幅等其他问题。往往会发现越写越多，然后超出内容，然后开始精简，这也是写paper的必经之路。后面再删，删的时候优先选择必要的逻辑，次要的注释掉。</p>
-<p>最后，需要注意，语言是一种艺术。必须要让自己的语言能够以最简单的方式被看懂。首先，任何逻辑上复杂的弯都最好理顺，①进一步增加自己paper的受众，让更多人能看懂，②很有可能reviewer在看你paper的时候很累，思维也并不是很清晰。其次，为了段落结构的清晰，可以通过调整句子，让自己每个段落想表达什么都明确出来。比如，介绍自己paper主要思想时，我们往往并不会写：“The main idea of our paper is that xxxx.”，但是我们却可以刻意改成这样，从而极度明确地让人知道这个段落的主要内容。从另外一方面想，把段落组织起来，利用开头句作为索引，也是方便知识查找和索引的一种方式。语言也是一种艺术，你很难知道这些句子在别人脑子里能否和得到你形成一样的想法。就像艺术要追求美一样，我们要追求逻辑上的清晰，简洁易懂。</p>
+<p>最后，需要注意，语言是一种艺术。必须要让自己的语言能够以最简单的方式被看懂。首先，任何逻辑上复杂的弯都最好理顺，①进一步增加自己paper的受众，让更多人能看懂，②很有可能reviewer在看你paper的时候很累，思维也并不是很清晰。其次，为了段落结构的清晰，可以通过调整句子，让自己每个段落想表达什么都明确出来。比如，介绍自己paper主要思想时，我们往往并不会写：“The
+main idea of our paper is that
+xxxx.”，但是我们却可以刻意改成这样，从而极度明确地让人知道这个段落的主要内容。从另外一方面想，把段落组织起来，利用开头句作为索引，也是方便知识查找和索引的一种方式。语言也是一种艺术，你很难知道这些句子在别人脑子里能否和得到你形成一样的想法。就像艺术要追求美一样，我们要追求逻辑上的清晰，简洁易懂。</p>
 <h3 id="年7月19日">2025年7月19日</h3>
-<p>如何优化paper： 1. 行文的结构逻辑上理清楚，然后能简化都简化。如果没有站在读者角度考虑简化，那么肯定是要改的。 2. 把对工具的修改放到discussion里面？ 3. 介绍表除了带上具体数字，要带上具体行号 4. 多加交叉应用。指向别的段落 5. 评价其他工作的时候要客观而具体。不要说他们做得不好，可以说具体的方面，struggle with。</p>
+<p>如何优化paper： 1.
+行文的结构逻辑上理清楚，然后能简化都简化。如果没有站在读者角度考虑简化，那么肯定是要改的。
+2. 把对工具的修改放到discussion里面？ 3.
+介绍表除了带上具体数字，要带上具体行号 4. 多加交叉应用。指向别的段落 5.
+评价其他工作的时候要客观而具体。不要说他们做得不好，可以说具体的方面，struggle
+with。</p>
 <h3 id="年1月24日">2024年1月24日</h3>
 <ul>
 <li>表格的<code>\extracolsep</code>填满整个页，会导致边框有gap，rotate之后不对齐到中间。</li>
-<li>引用网页时，使用<code>@misc&#123;&#125;</code>项目，如果写<code>url = &#123;&#123;xxx&#125;&#125;</code>则在后面不会显示链接。写<code>howpublished  = &#123;\url&#123;xxx&#125;&#125;</code>才会显示。<a target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/171441/url-not-showing-in-references">这里</a>有个相关的问题。可能<code>@online</code>和<code>url</code>搭配，而<code>@misc</code>和<code>howpublished</code>搭配使用。</li>
+<li>引用网页时，使用<code>@misc&#123;&#125;</code>项目，如果写<code>url = &#123;&#123;xxx&#125;&#125;</code>则在后面不会显示链接。写<code>howpublished  = &#123;\url&#123;xxx&#125;&#125;</code>才会显示。<a
+target="_blank" rel="noopener" href="https://tex.stackexchange.com/questions/171441/url-not-showing-in-references">这里</a>有个相关的问题。可能<code>@online</code>和<code>url</code>搭配，而<code>@misc</code>和<code>howpublished</code>搭配使用。</li>
 </ul>
 <h3 id="年12月9日">2023年12月9日</h3>
 <p>注意小节开头的句子和之前的连贯性。</p>
@@ -374,7 +626,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/" data-id="cmda69qp30037g4ue7tupcfwt" data-title="学术论文写作总结" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/" data-id="cmgmjrgkg001k6guegwgnf20z" data-title="学术论文写作总结" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -386,19 +638,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2023/Openwrt%E7%9A%84GRETap%E9%9A%A7%E9%81%93%E7%9A%84MTU%E9%97%AE%E9%A2%98/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+    <a href="/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Openwrt的GRETap6隧道的MTU问题
+          二进制代码的多态类型推断Retypd
         
       </div>
     </a>
   
   
-    <a href="/2023/PL%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">PL基础入门</div>
+    <a href="/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">SoftwareFoundations学习笔记</div>
     </a>
   
 </nav>
@@ -438,7 +690,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Kategorien</h3>
+    <h3 class="widget-title">Categories</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -460,16 +712,16 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 13.75px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 17.5px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 16.25px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 11.25px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 18.89px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
