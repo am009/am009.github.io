@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>多态类型推理SimpleSub和MLsub | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="多态类型推理SimpleSub和MLsub">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多态类型推理SimpleSub和MLsub">
+<meta property="og:url" content="https://wjk.moe/2025/%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E7%90%86SimpleSub%E5%92%8CMLsub/">
+<meta property="og:site_name">
+<meta property="og:description" content="多态类型推理SimpleSub和MLsub">
+<meta property="og:locale">
+<meta property="article:published_time" content="2025-11-20T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-11-21T03:43:18.105Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="PL">
+<meta property="article:tag" content="StaticAnalysis">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2025/多态类型推理SimpleSub和MLsub" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E7%90%86SimpleSub%E5%92%8CMLsub/" class="article-date">
+  <time class="dt-published" datetime="2025-11-20T03:11:12.000Z" itemprop="datePublished">2025-11-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      多态类型推理SimpleSub和MLsub
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>多态类型推理SimpleSub和MLsub</p>
+<span id="more"></span>
+<h2 id="简介">简介</h2>
+<p>SimpleSub 和
+MLsub是编程语言理论（PL）中的类型推理方向的，一系列支持多态子类型推理的算法框架。子类型（可以想象为继承和接口之类的）其实在现实编程中用得特别多，而多态类型（可以想象一下C++的模板）其实用的也多。这个算法可以让编译型语言也不用写很多类型标注，同时它在程序分析领域也可能有着很广泛的应用。</p>
+<h2 id="资源总结">资源总结</h2>
+<p>按时间线：</p>
+<ul>
+<li>2016 Dolan的PhD paper，提出了被称为<a
+target="_blank" rel="noopener" href="https://www.cs.tufts.edu/~nr/cs257/archive/stephen-dolan/thesis.pdf">MLsub</a>的系统，是最原始的资源。但是偏理论。到中间才介绍自动机和图等算法，最后的算法不涉及前几章的理论。（我反复看了，略懂一些，有问题可以发邮件问我）<a
+target="_blank" rel="noopener" href="https://github.com/stedolan/mlsub">代码</a>是OCaml写的。</li>
+<li>2020 SimplSub <a
+target="_blank" rel="noopener" href="https://infoscience.epfl.ch/entities/publication/106da598-3385-4029-892b-27ea85194046">论文</a>和<a
+target="_blank" rel="noopener" href="https://github.com/LPTK/simple-sub">代码</a>和<a
+target="_blank" rel="noopener" href="https://lptk.github.io/programming/2020/03/26/demystifying-mlsub.html">博客</a></li>
+<li>CubiML系列<a
+target="_blank" rel="noopener" href="https://blog.polybdenum.com/2020/07/04/subtype-inference-by-example-part-1-introducing-cubiml.html">博客</a>，以及系列代码<a
+target="_blank" rel="noopener" href="https://github.com/Storyyeller/cubiml-demo">CubiML</a> -&gt; <a
+target="_blank" rel="noopener" href="https://github.com/Storyyeller/IntercalScript">IntercalScript</a>
+-&gt; <a
+target="_blank" rel="noopener" href="https://github.com/Storyyeller/polysubml-demo">polysubML</a>。</li>
+</ul>
+<p>入门优先看几篇博客，然后考虑看SimpleSub论文，这个论文作者专门希望没什么基础的人也能看懂，对着代码讲。然后可以考虑看看相关代码。MLsub原代码和论文比较难懂，优先级最低。</p>
+<h2 id="introduction">Introduction</h2>
+<p>简单来说： -
+<strong>子类型</strong>：子类型的本质是，如果某个类型在任何情况下都能替代另外一个类型被使用，我们称这种情况下为子类型。这种替换关系很直接，也很核心。
+-
+<strong>多态</strong>：一段程序可以接受不同类型的变量，使得它在不同上下文中有着不同的类型。可以想象一下C++的模版。但是python通过动态检查对象的类型不属于这种情况。</p>
+<p>应用的角度： -
+<strong>新的编程语言</strong>：想象一下，比如C++语言，所有的引用和指针不需要声明类型，只需要写auto即可。现在的auto只支持明确有类型的地方，而且只根据定义的初始化的时候确定类型。而这个算法可以根据变量的使用去综合确定类型，比如直接写不带初始化的auto变量。总之，它可以让你使用更多的auto。如果类型出问题了，编译器会告诉你的。不过分配堆、栈上的结构体对象的时候还是得完整声明具体的类型。
+- <strong>更深入的静态分析</strong>： -
+<strong>基于类型的安全检查</strong>：比如Rust语言的生命周期就是一种可以在类型中表示的特性，而编译器需要推理出没有标注的地方的生命周期，使得程序不会出错。这个算法可以应用于这种情况，让语言编写者写出更多的基于类型的安全检查。
+-
+<strong>加速动态语言</strong>：比如pypy这种转译python的方式，通过深入的类型分析，说不定可以让更多的python程序直接被编译出来，极大增加速度。</p>
+<p>从PL的角度来说， -
+SimpleSub与MLsub<strong>不需要很深入的基础知识</strong>：现在的类型推理算法其实并没有进步很多，入门PL与类型系统的经典书籍《Types
+and Programming Languages》
+TaPL中就介绍了ML语言的基于unification的类型推理。 -
+<strong>系统更加简单高效</strong>：后续很长一段时间的类型推理系统，它基于单独维护一个约束集合，和约束求解器那边有一些关联，效率低且复杂。这次的算法高效且简洁。</p>
+<h2 id="mlsub">MLsub</h2>
+<p>传统的 Hindley-Milner
+类型推断是基于Unification算法的过程，该过程通过不断地强迫两个未知类型相等，直到达到矛盾或所有程序约束满足为止。在MLsub中，Dolan
+提出了一个叫做biunification的过程。biunification的一个关键部分是极性类型系统。极性意味着类型被分为两种类型，传统上称为正类型（+）和负类型（-）。<a
+target="_blank" rel="noopener" href="https://blog.polybdenum.com/2020/07/11/subtype-inference-by-example-part-2-parsing-and-biunification.html">这个</a>里面说的很好，为了使理解更加容易，我称之为值类型（+）和用法类型（-）。为了避免导致半统一不可判定的无限循环，biunification将所有子类型约束限制为
+v &lt;= u 的形式，其中 v 是值类型，u
+是用法类型。这些约束可以自然地解释为要求程序值与其使用方式相兼容。</p>
+<p><strong>类型变量</strong>：基本原则是，为每个表达式创建一个值类型（+），为每个表达式操作数创建一个用法类型（-），并在每个值类型（+）与其使用上下文（-）之间建立子类型约束，以确保一致性。我们将这些约束
+v+ &lt;= u- 称为值流向其使用，它们是通过 TypeCheckerCore 中的 flow
+方法创建的。</p>
+<p>还有一个更复杂的方面——变量。变量由一对类型表示——值类型（+）和用法类型（-）。从概念上讲，值类型表示从变量读取的类型（），而用法类型表示分配给该变量的类型。自然，我们需要约束
+v- &lt;=
+v+，即对变量的每一次写入与对该变量的每一次读取都是兼容的。然而，这种类型的约束我们使用数据流边直接表示。它确保流关系的传递性。对于每个变量
+(v1, u1)，以及每个流向 u1 的值类型 v2 和 v1 流向的每个用法类型
+u2，我们添加约束 v2 流向
+u2。本质上，变量（一对连接了数据流边的类型节点）在类型图中像小隧道或虫洞一样运作。无论从一端进入的是什么，都会从数据流另一端出来。直接把下界/上界类型约束沿着数据流边传递。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E7%90%86SimpleSub%E5%92%8CMLsub/" data-id="cmih259wf0076i4ue4q5w3u69" data-title="多态类型推理SimpleSub和MLsub" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          凯利公式在投资上的应用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/SVF-LLVM%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E6%A1%86%E6%9E%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">SVF-LLVM指针分析框架</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Investing/" rel="tag">Investing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read/" rel="tag">Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Investing/" style="font-size: 10px;">Investing</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.5px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 20px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 20px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>凯利公式在投资上的应用 | </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="凯利公式在投资上的应用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凯利公式在投资上的应用">
+<meta property="og:url" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/">
+<meta property="og:site_name">
+<meta property="og:description" content="凯利公式在投资上的应用">
+<meta property="og:locale">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logx-positive.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logx-negative.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logexpect1.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logexpect2.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logexpect3.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logexpect4.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logexpect5.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logexpect6.png">
+<meta property="og:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logexpect7.png">
+<meta property="article:published_time" content="2025-11-26T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-11-27T06:33:24.364Z">
+<meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Investing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/logx-positive.png">
+  
+    <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+  
+<meta name="generator" content="Hexo 7.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo"></a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          
+            <a class="nav-icon" target="_blank" rel="noopener" href="https://github.com/am009"><span class="fa fa-github"></span></a>
+          
+        
+        
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-2025/凯利公式在投资上的应用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2025-11-26T03:11:12.000Z" itemprop="datePublished">2025-11-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      凯利公式在投资上的应用
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>凯利公式在投资上的应用</p>
+<span id="more"></span>
+<p>在和概率相关的游戏中，我们常常会直接看数学期望，然而，只看期望的话，难道意味着期望为正的赌局我们就直接all
+in，期望为负的赌局就完全不参与吗？比如<a
+target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1QLHnzEEzp">这个视频</a>中，明明是期望为正的赌局，all
+in策略却在99%的情况下最后输到根本不剩多少？</p>
+<p>同样的道理在德州扑克中也会出现。合适的下注比例非常重要，<a
+target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1h9ySBiE49">下注尺度错误会直接损失EV</a>。</p>
+<p>而数学期望只能决定是否存在赚的可能性。考虑这样一种抽奖场景，你必须投入你所有本金，1%的概率赚200倍，99%的概率全亏。即使你知道你总体期望是赚的，但是你依然有99%的可能性倾家荡产。而在剩下1%的情况又有着过多的钱。我想大多数人都不会去参与这个游戏。</p>
+<p>核心的道理是，中位数非常重要。可以想象成，在平行世界里，有很多个你在投资后有着不一样的结果，怎么让平行世界里的大多数的你（至少一半，即中位数）都能最终富起来。</p>
+<p>深刻理解凯利公式是投资的基础。更为客观的投资，投资尺寸应该考虑的是当前投资策略，看作一个多次重复的赌局时，如何最大化中位数的增长。</p>
+<h3 id="凯利公式的推导">凯利公式的推导</h3>
+<p>在赌博或投资中，假设每次投注比例为 $ f <span
+class="math inline">\(（\)</span> 0 f $），初始财富为 $ W_0
+$。每次赌博的获胜概率为 $ p $，失败概率为 $ q = 1 - p $，获胜时的赔率为
+$ b $（即获胜时财富变为 $ 1 + fb $，失败时损失全部投入，财富变为 $ 1 - f
+$）。经过 $ n $ 次独立赌博后，财富 $ W_n $ 为：</p>
+<p><span class="math display">\[
+W_n = W_0 \cdot (1 + fb)^S \cdot (1 - f)^F
+\]</span></p>
+<p>其中 $ S $ 是获胜次数，$ F $ 是失败次数，且 $ n = S + F $。</p>
+<h3 id="中位数财富与几何平均增长率">中位数财富与几何平均增长率</h3>
+<p>从长期的角度，所有财富都是指数增长的。因此，我们尝试从对数的视角去看我们的财富增长情况。</p>
+<p>从财富表达式可得：</p>
+<p><span class="math display">\[
+\log W_n = \log W_0 + S \log(1 + fb) + F \log(1 - f)
+\]</span></p>
+<p>如果重复次数足够多，$ S = np $, $ F = nq $</p>
+<!-- 由于对数变换，$ \log W_n $ 近似服从正态分布。 -->
+<p><span class="math display">\[
+\log W_n = \log W_0 + n \left[ p \log(1 + fb) + q \log(1 - f) \right]
+\]</span></p>
+<p>因此，最大化 $ [W_n] $ 等价于最大化那个<span
+class="math inline">\(n\)</span>的系数，即以下函数：</p>
+<p><span class="math display">\[
+G(f) = p \log(1 + fb) + q \log(1 - f)
+\]</span></p>
+<p>这里 $ G(f) $ 就是每期赌博的期望对数回报，即几何平均增长率。将它关于
+<span class="math inline">\(f\)</span> 求导</p>
+<p>为了找到使几何平均增长率 <span class="math display">\[
+G(f) = p \log(1 + fb) + q \log(1 - f)
+\]</span></p>
+<h3 id="求导得到最大值">求导得到最大值</h3>
+<p>重要的是对数的视角，有了公式之后，我们只需要求导找出极值点即可了。下面是枯燥的计算过程，可以跳过。总之最后计算出了凯利公式</p>
+<p>最大的最优投注比例 $ f^* $，我们对 $ G(f) $ 关于 $ f $
+求导，并令导数为零。</p>
+<p>首先计算导数： <span class="math display">\[
+\frac{dG}{df} = p \cdot \frac{b}{1 + fb} + q \cdot \frac{-1}{1 - f}
+= \frac{pb}{1 + fb} - \frac{q}{1 - f}
+\]</span></p>
+<p>令导数为零，求极值点： <span class="math display">\[
+\frac{pb}{1 + fb} - \frac{q}{1 - f} = 0
+\]</span></p>
+<p>移项得： <span class="math display">\[
+\frac{pb}{1 + fb} = \frac{q}{1 - f}
+\]</span></p>
+<p>交叉相乘： <span class="math display">\[
+pb(1 - f) = q(1 + fb)
+\]</span></p>
+<p>展开两边： <span class="math display">\[
+pb - pbf = q + qfb
+\]</span></p>
+<p>整理含 $ f $ 的项： <span class="math display">\[
+pb - q = f(pb + qb) = f b (p + q)
+\]</span></p>
+<p>由于 $ p + q = 1 <span class="math inline">\(，有：\)</span>$ pb - q
+= f b $$</p>
+<p>解出 $ f <span class="math inline">\(：\)</span>$ f^* = $$</p>
+<p>这就是<a
+target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%87%B1%E5%88%A9%E5%85%AC%E5%BC%8F"><strong>凯利公式</strong></a>（Kelly
+Criterion）的标准形式。</p>
+<h3
+id="真正的核心多次重复视角下的对数期望">真正的核心：多次重复视角下的对数期望</h3>
+<p>假如我们有一个投资机会，它未来的回报率<span
+class="math inline">\(f\)</span>有多种可能。这里我们假设有三种情况，可能性分别是<span
+class="math inline">\(p_1, p_2,
+p_3\)</span>，加起来等于1，同时三种情况下的回报率是<span
+class="math inline">\(r_1, r_2, r_3\)</span>。</p>
+<p>这里回报率 <span class="math inline">\(r\)</span>
+的定义是，比如，回报率是0.1表示赚了投入的10%，回报率是-0.1表示亏了投入的10%。</p>
+<p>打算投入产品的比例是<span class="math inline">\(x &gt;=
+0\)</span>，如果<span class="math inline">\(x &gt;
+1\)</span>则表示加杠杆了。单次进行投资，我们投资后的钱就是 本金乘以
+<span class="math inline">\(1+rx\)</span>。</p>
+<p>我们反复进行投资，最终的回报是</p>
+<p><span class="math display">\[
+W_n = W_0 \cdot {(1 + r_1x)}^{S_1} \cdot {(1 + r_2x)}^{S_2} \cdot {(1 +
+r_3x)}^{S_3}
+\]</span></p>
+<p>其中，几个 <span class="math inline">\(S\)</span>
+表示几种情况出现的次数。如果次数足够多，那么几种情况出现的次数会和概率成比例，分别等于n乘以对应的概率。</p>
+<p><span class="math display">\[
+W_n = W_0 \cdot {(1 + r_1x)}^{n \cdot p_1} \cdot {(1 + r_2x)}^{n \cdot
+p_2} \cdot {(1 + r_3x)}^{n \cdot p_3}
+\]</span></p>
+<p>接下来我们求对数：</p>
+<p><span class="math display">\[
+\log W_n = \log W_0 + n \cdot p_1 \log (1+r_1x) + n \cdot p_2 \log
+(1+r_2x) + n \cdot p_3 \log (1+r_3x)
+\]</span></p>
+<p>我们关注关于n的系数，因此关注：</p>
+<p><span class="math display">\[
+p_1 \log (1+r_1x) + p_2 \log (1+r_2x) + p_3 \log (1+r_3x)
+\]</span></p>
+<p>这个就是最核心，最需要深入理解的式子。以后投资时，可以列出这个函数，然后去在线画一下函数图像，比如用<a
+target="_blank" rel="noopener" href="https://www.geogebra.org/classic">GeoGebra</a>。</p>
+<h3 id="深入理解对数期望">深入理解对数期望</h3>
+<p><span class="math display">\[
+p_1 \log (1+r_1x) + p_2 \log (1+r_2x) + p_3 \log (1+r_3x)
+\]</span></p>
+<p>直观上看，首先是概率加权，给出现可能性更大的情况更大的权重，这个比较好理解。</p>
+<p>其次，回报率会按照下面的函数处理：</p>
+<p><span class="math display">\[
+f(b) = log(1+rx)
+\]</span></p>
+<p>我们按照那个视频里的经典场景，投一枚硬币，0.5概率赚本金的0.8，0.5概率亏损一半本金。</p>
+<p>对于赚的情况，系数r是大于零的，这里是0.5，此时对应的函数 <span
+class="math inline">\(\log(1+0.8x)\)</span> 图像如下：</p>
+<p><img src="logx-positive.png" /></p>
+<p>函数随着x一直增长，这意味着，如果没有损失本金的情况，那么自然应该无限加杠杆，加的越多赚的越多。</p>
+<p>对于亏的情况，系数 <span
+class="math inline">\(r=-0.5\)</span>，此时函数 <span
+class="math inline">\(\log(1-0.5x)\)</span> 图像如下：</p>
+<p><img src="logx-negative.png" /></p>
+<p>这个函数图像可以看作是 <span class="math inline">\(\log x\)</span>
+的翻转平移。</p>
+<p>首先我们可以观察到，随着x的增长，函数指数级地向下掉。即使和上面增长的函数图像叠加，上面log级别的增长怎么也不可能比得过这里指数级的下跌。这意味着，只要存在风险，就不能无限制加杠杆，否则会极大放大归零风险。特别是当
+<span
+class="math inline">\(x=2\)</span>，加两倍杠杆的时候，正好让自己可以一次归零。</p>
+<p>然后我们将两个函数相加，函数 $ (1+0.8x) + (1-0.5x)$ 的图像如下：</p>
+<p><img src="logexpect1.png" /></p>
+<p>（严格来说，两个函数都要乘以概率0.5，但是函数图像的趋势类似）</p>
+<p>可以看到，正好在0.375的时候达到最高点，和凯利公式的结果一致。投入本金的37.5%是最优解。</p>
+<p>同时，我们如果在游戏中没有优势，即赢的时候也只能赚一半的本金，那么就有函数图像
+$ (1+0.5x) + (1-0.5x)$，如下：</p>
+<p><img src="logexpect2.png" /></p>
+<p>可以看到，无论怎么投入，大多数人的本金都是减少的。</p>
+<p>总的来说，因为投资总是有赚钱的情况和不赚钱的情况，因此一般都是这样的两个图像叠加。关键在于是否有大于零的情况，以及极值点对应的投入是多少。</p>
+<h3 id="判断赚钱的机会">判断赚钱的机会</h3>
+<p>还是这个式子，但是这次我们观察在零点处的斜率，看看我们投入很少的本金，是不是能赚到钱。</p>
+<p><span class="math display">\[
+p_1 \log (1+r_1x) + p_2 \log (1+r_2x) + p_3 \log (1+r_3x)
+\]</span></p>
+<p>求导后可得</p>
+<p><span class="math display">\[
+f&#39;(x) = \frac{p_1 r_1}{1 + r_1 x} + \frac{p_2 r_2}{1 + r_2 x} +
+\frac{p_3 r_3}{1 + r_3 x}
+\]</span></p>
+<p>取 <span class="math inline">\(x = 0\)</span></p>
+<p><span class="math display">\[
+f&#39;(0) = p_1 r_1 + p_2 r_2 + p_3 r_3
+\]</span></p>
+<p>这个其实就是数学期望了。不同的概率下，损失和盈利加权平均。所以期望还是有用的，但是具体的投入比例和期望无关，而是和结果的离散程度有关。</p>
+<h3 id="场景买彩票">场景：买彩票</h3>
+<p>比如我们考虑买彩票的场景。当然，因为彩票的总体期望是负的，所以怎么算都是赚不了钱的。因此我们看看期望为正的彩票场景：有1%的概率赚200倍，99%概率损失全部本金。</p>
+<p>期望：$ 0.01<em>200+0.99</em>-1 = 1.01$</p>
+<p>此时的函数是 $ 0.01(1+200x) + 0.99(1-x) $</p>
+<p><img src="logexpect3.png" /></p>
+<p>此时只能投入很少量的本金！而期望是几乎翻倍！期望为正只能判断是否能赚，而决定投入比例的是结果的离散程度。</p>
+<h3 id="场景借钱">场景：借钱</h3>
+<p>假如你要存银行（也算是借钱给银行了），在99%的可能性下会还你的本金加5%利息，在1%的可能性下世界末日，银行倒闭。</p>
+<p>期望：<span class="math inline">\(0.99*0.05 - 0.01 * -1=0.0295 &gt;
+0\)</span></p>
+<p>函数： $ 0.99(1+0.05x) + 0.01(1-x) $</p>
+<p><img src="logexpect4.png" /></p>
+<p>可以看出，还是可以投入大部分钱的，至少大概80%左右。</p>
+<p>需要警惕的是，你是否低估了不还钱的风险，比如借给网上认识的网友。只需要将不还钱的可能性增加到5%，就可以抵消利息带来的正期望。</p>
+<p>此时期望：$ 0.97<em>0.05 + 0.03</em>-1 = -0.0025 $</p>
+<p>如果不还钱的可能性只增加到4%，虽然还是有的赚，但是应该借的比例也依然急剧下降</p>
+<p>此时函数：$ 0.96(1+0.05x) + 0.04(1-x) $</p>
+<p><img src="logexpect5.png" /></p>
+<p>可以看到该借的百分比少于30%了。</p>
+<p>此时，你的网友说，你借给银行期望也才0.0295，我给你提高利率，让你最终的期望更高，这下可以借给我了吧</p>
+<p>利率被提高到了8%，此时期望是 $0.96<em>0.08 + 0.04</em>-1 = 0.0368
+$。然而，此时的函数 $ 0.96(1+0.08x) + 0.04(1-x) $ 图像是：</p>
+<p><img src="logexpect6.png" /></p>
+<p>此时能借的比例依然略小于二分之一。</p>
+<h3 id="分散风险">分散风险</h3>
+<p>如果有多个独立的赌局，同时分散在他们上，有助于减少风险。</p>
+<p>比如最开始的投硬币赚0.8亏0.5的场景，如果钱被等量分散在两个独立赌局，那么其实就变成了四种情况：</p>
+<ul>
+<li>0.25的概率两边都赚，赚0.8的投入本金</li>
+<li>0.5的概率一赚一亏，赚0.15的投入本金</li>
+<li>0.25的情况两边都亏，亏0.5的投入本金</li>
+</ul>
+<p>可以明显看出，严重亏损的概率明显减少。这也使得单次可以投入的本金变多了。</p>
+<p>函数是 $ 0.25 (1+0.8x) + 0.5 (1+0.15x) + 0.25 (1-0.5x) $</p>
+<p>当然，前提是风险真正分散了。如果你在A股市场买不同股票，其实背后有很大一块共同的大盘风险。真正分散则需要配置黄金ETF，豆粕ETF等真正风险独立的产品。</p>
+<p><img src="logexpect7.png" /></p>
+<p>最优投资比例几乎是原来0.375的两倍，即0.75左右。</p>
+<h3 id="更复杂的情况">更复杂的情况</h3>
+<p>当然，如果同时有着不同的投资机会，那么自然可能会在两个机会上分散，但是有着不同的投资比例。此时可以使用蒙特卡洛模拟法，暴力遍历所有的投资组合可能性，看看哪个更好。</p>
+<p>在线工具：</p>
+<p><a
+href="https://wjk.moe/monte-carlo-invest/">https://wjk.moe/monte-carlo-invest/</a></p>
+<p>此外，后续还可以进一步引入夏普比率，通过折算的年化去考虑资金占用的时间太长造成的影响。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/" data-id="cmih259w60051i4ue72k0h4hw" data-title="凯利公式在投资上的应用" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Investing/" rel="tag">Investing</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2025/%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E7%90%86SimpleSub%E5%92%8CMLsub/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">多态类型推理SimpleSub和MLsub</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- 2024年1月11日 giscus -->
+
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
+
+
+
+</section>
+        
+      </div>
+      <footer id="footer">
+  
+    <aside id="sidebar" class="outer">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Investing/" rel="tag">Investing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read/" rel="tag">Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Investing/" style="font-size: 10px;">Investing</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.5px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 20px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 20px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 am009@github.com<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
