@@ -6,7 +6,7 @@
   <link href="https://wjk.moe/rss.xml" rel="self"/>
   
   <link href="https://wjk.moe/"/>
-  <updated>2025-11-27T06:33:24.364Z</updated>
+  <updated>2025-11-27T07:28:12.280Z</updated>
   <id>https://wjk.moe/</id>
   
   <author>
@@ -17,11 +17,30 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>凯利公式在投资上的应用</title>
-    <link href="https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/"/>
-    <id>https://wjk.moe/2025/%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F%E5%9C%A8%E6%8A%95%E8%B5%84%E4%B8%8A%E7%9A%84%E5%BA%94%E7%94%A8/</id>
+    <title>基于对数期望的投资尺寸计算</title>
+    <link href="https://wjk.moe/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/"/>
+    <id>https://wjk.moe/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/</id>
+    <published>2025-11-27T03:11:12.000Z</published>
+    <updated>2025-11-27T07:28:12.280Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;基于对数期望的投资尺寸计算&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
+    
+    
+    <category term="Investing" scheme="https://wjk.moe/tags/Investing/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>深入理解投资中的凯利公式</title>
+    <link href="https://wjk.moe/2025/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%8A%95%E8%B5%84%E4%B8%AD%E7%9A%84%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F/"/>
+    <id>https://wjk.moe/2025/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%8A%95%E8%B5%84%E4%B8%AD%E7%9A%84%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F/</id>
     <published>2025-11-26T03:11:12.000Z</published>
-    <updated>2025-11-27T06:33:24.364Z</updated>
+    <updated>2025-11-27T07:10:11.848Z</updated>
     
     
     <summary type="html">&lt;p&gt;凯利公式在投资上的应用&lt;/p&gt;</summary>
@@ -225,29 +244,6 @@ Scheduling for Fuzzers》&lt;/p&gt;</summary>
   </entry>
   
   <entry>
-    <title>LLVM的SROA解析</title>
-    <link href="https://wjk.moe/2025/LLVM-SROA/"/>
-    <id>https://wjk.moe/2025/LLVM-SROA/</id>
-    <published>2025-04-02T03:11:12.000Z</published>
-    <updated>2025-07-01T13:31:19.028Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;LLVM的&lt;a
-href=&quot;https://llvm.org/docs/Passes.html#sroa-scalar-replacement-of-aggregates&quot;&gt;SROA（Scalar
-Replacement of Aggregates）&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
-    
-    
-    <category term="LLVM" scheme="https://wjk.moe/tags/LLVM/"/>
-    
-    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
-    
-  </entry>
-  
-  <entry>
     <title>Honggfuzz的DynamicFeedbackDict</title>
     <link href="https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/"/>
     <id>https://wjk.moe/2025/Honggfuzz%E7%9A%84DynamicFeedbackDict/</id>
@@ -265,6 +261,29 @@ Replacement of Aggregates）&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
     <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
     
     <category term="Read" scheme="https://wjk.moe/tags/Read/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LLVM的SROA解析</title>
+    <link href="https://wjk.moe/2025/LLVM-SROA/"/>
+    <id>https://wjk.moe/2025/LLVM-SROA/</id>
+    <published>2025-04-02T03:11:12.000Z</published>
+    <updated>2025-07-01T13:31:19.028Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;LLVM的&lt;a
+href=&quot;https://llvm.org/docs/Passes.html#sroa-scalar-replacement-of-aggregates&quot;&gt;SROA（Scalar
+Replacement of Aggregates）&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="Compiler" scheme="https://wjk.moe/tags/Compiler/"/>
+    
+    <category term="LLVM" scheme="https://wjk.moe/tags/LLVM/"/>
     
   </entry>
   
@@ -412,27 +431,6 @@ Code&lt;/a&gt;》论文。看完本文后还有任何相关的问题可以问我
     
     <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
     
-    
-    <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>如何写一篇好的学术论文综述</title>
-    <link href="https://wjk.moe/2024/%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E7%AF%87%E5%A5%BD%E7%9A%84%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E7%BB%BC%E8%BF%B0/"/>
-    <id>https://wjk.moe/2024/%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E7%AF%87%E5%A5%BD%E7%9A%84%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E7%BB%BC%E8%BF%B0/</id>
-    <published>2024-04-30T03:11:12.000Z</published>
-    <updated>2024-05-03T03:14:43.253Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;如何写一篇好的学术论文综述&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
-    
-    
-    <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
     
     <category term="Learning" scheme="https://wjk.moe/tags/Learning/"/>
     

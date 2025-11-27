@@ -4,14 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>Tag: Decompile | </title>
+  <title>基于对数期望的投资尺寸计算 | </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title">
-<meta property="og:url" content="https://wjk.moe/tags/Decompile/">
+  <meta name="description" content="基于对数期望的投资尺寸计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于对数期望的投资尺寸计算">
+<meta property="og:url" content="https://wjk.moe/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/">
 <meta property="og:site_name">
+<meta property="og:description" content="基于对数期望的投资尺寸计算">
 <meta property="og:locale">
+<meta property="article:published_time" content="2025-11-27T03:11:12.000Z">
+<meta property="article:modified_time" content="2025-11-27T07:28:12.280Z">
 <meta property="article:author" content="am009@github.com">
+<meta property="article:tag" content="Investing">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/rss.xml" title="" type="application/atom+xml">
@@ -79,230 +84,97 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2025" class="archive-year">2025</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/AlgebraticSubtyping/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-04-08T03:11:12.000Z" itemprop="datePublished">Apr 8</time>
+        <section id="main"><article id="post-2025/基于对数期望的投资尺寸计算" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/" class="article-date">
+  <time class="dt-published" datetime="2025-11-27T03:11:12.000Z" itemprop="datePublished">2025-11-27</time>
 </a>
-      
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Read/">Read</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/AlgebraticSubtyping/">AlgebraticSubtyping</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      基于对数期望的投资尺寸计算
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-02-06T03:11:12.000Z" itemprop="datePublished">Feb 6</time>
-</a>
+    <div class="e-content article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/">BTIGhidra和BinSub代码解析</a>
-    </h1>
-  
+        <p>基于对数期望的投资尺寸计算</p>
+<span id="more"></span>
+<p>根据<a
+href="/2025/深入理解投资中的凯利公式/">上一篇文章</a>，我们知道了投入比例关键的式子是：</p>
+<p><span class="math display">\[
+\log W_n = \log W_0 + n \cdot p_1 \log (1+r_1x) + n \cdot p_2 \log
+(1+r_2x) + n \cdot p_3 \log (1+r_3x)
+\]</span></p>
+<p>其中<span
+class="math inline">\(r\)</span>是的定义是，比如，回报率是0.1表示赚了投入的10%，回报率是-0.1表示亏了投入的10%。</p>
+<p>我们依然需要考虑更复杂的问题：</p>
+<ul>
+<li>对于多个投资机会同时存在时，如何计算最优投资比例？</li>
+<li>如何考虑投资机会的时间成本？比如通过折算夏普比率</li>
+<li>如何考虑杠杆带来的成本？</li>
+</ul>
+<p>巴菲特和芒格批评现代资产组合理论说分散风险是对无知的保护。他的意思是，如果不去做任何筛选，直接随意地进行分散风险投资，对于他们这种能够辨别优质投资机会的人来说，确实不好，因为买入了很多平庸的投资。如果经过筛选后，依然同时存在多个优质投资机会，然后将风险分散在其中，当然依然是更好的。</p>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-02-06T03:11:12.000Z" itemprop="datePublished">Feb 6</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/%E9%AB%98%E6%95%88%E7%9A%84%E6%8C%87%E9%92%88%E5%88%86%E6%9E%90%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%B1%BB%E5%9E%8B%E6%81%A2%E5%A4%8D/">高效的指针分析与二进制类型恢复</a>
-    </h1>
-  
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://wjk.moe/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/" data-id="cmih6ilfg003jloue0mux6i4r" data-title="基于对数期望的投资尺寸计算" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Investing/" rel="tag">Investing</a></li></ul>
 
-    </header>
+    </footer>
   </div>
-</article>
   
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-01-31T03:11:12.000Z" itemprop="datePublished">Jan 31</time>
-</a>
-      
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/Ghidra%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90/">Ghidra反编译器原理与代码架构解析</a>
-    </h1>
   
+    <a href="/2025/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%8A%95%E8%B5%84%E4%B8%AD%E7%9A%84%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">深入理解投资中的凯利公式</div>
+    </a>
+  
+</nav>
 
-    </header>
-  </div>
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/" class="archive-article-date">
-  <time class="dt-published" datetime="2025-01-30T03:11:12.000Z" itemprop="datePublished">Jan 30</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/">二进制代码的多态类型推断Retypd</a>
-    </h1>
-  
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/" class="archive-article-date">
-  <time class="dt-published" datetime="2023-05-12T03:11:12.000Z" itemprop="datePublished">May 12</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/SSA-for-decompilation%E8%AF%BB%E5%90%8E%E6%84%9F/">SSA-for-decompilation读后感</a>
-    </h1>
-  
+<!-- 2024年1月11日 giscus -->
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2023/SSA-for-decompilation-5/" class="archive-article-date">
-  <time class="dt-published" datetime="2023-05-12T03:11:12.000Z" itemprop="datePublished">May 12</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/SSA-for-decompilation-5/">SSA-for-decompilation-5</a>
-    </h1>
-  
+  <section id="comments" class="vcomment">
+    <script src="https://giscus.app/client.js"
+      data-repo="am009/am009.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI3MTU2MzI="
+      data-category="Comments"
+      data-category-id="DIC_kwDOC3ybcM4CcWIQ"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="zh-CN"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </section>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99%E9%98%85%E8%AF%BB/" class="archive-article-date">
-  <time class="dt-published" datetime="2022-11-27T03:11:12.000Z" itemprop="datePublished">Nov 27</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99%E9%98%85%E8%AF%BB/">反编译相关资料阅读</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%BC%96%E5%86%99%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8-WebAssembly/" class="archive-article-date">
-  <time class="dt-published" datetime="2022-09-18T03:11:12.000Z" itemprop="datePublished">Sep 18</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%BC%96%E5%86%99%E5%8F%8D%E7%BC%96%E8%AF%91%E5%99%A8-WebAssembly/">从零开始编写反编译器-WebAssembly</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/" class="archive-article-date">
-  <time class="dt-published" datetime="2022-09-18T03:11:11.000Z" itemprop="datePublished">Sep 18</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/%E5%8F%8D%E7%BC%96%E8%AF%91-%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86-%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96/">反编译-代码混淆-程序分析与编译优化</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
 
 
 </section>
