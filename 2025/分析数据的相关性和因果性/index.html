@@ -14,7 +14,7 @@
 <meta property="og:description" content="分析数据的相关性和因果性">
 <meta property="og:locale">
 <meta property="article:published_time" content="2025-12-05T03:11:12.000Z">
-<meta property="article:modified_time" content="2025-12-05T08:15:37.959Z">
+<meta property="article:modified_time" content="2025-12-21T04:22:51.152Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
@@ -72,12 +72,12 @@
           
         
         
-          <a class="nav-icon" href="/rss.xml" title="Flux RSS"><span class="fa fa-rss"></span></a>
+          <a class="nav-icon" href="/rss.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Rechercher"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Rechercher"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://wjk.moe"></form>
       </div>
     </div>
   </div>
@@ -113,8 +113,10 @@
         <p>分析数据的相关性和因果性</p>
 <span id="more"></span>
 <h2 id="资料">资料</h2>
-<p>相关书籍： - 《数据挖掘导论》 - 《数据挖掘：概念与技术》</p>
-<h2 id="概论">概论</h2>
+<p>相关书籍： - 《统计因果推理入门-Judea-Pearl》 - 《数据挖掘导论》 -
+《数据挖掘：概念与技术》</p>
+<h2
+id="相关性挖掘机器学习大数据数据挖掘">相关性挖掘（机器学习、大数据、数据挖掘）</h2>
 <blockquote>
 <p>实际上，在面对少量数据时关联分析并不难，可以直接使用统计学中有关相关性的知识，这也正是机器学习界没有研究关联分析的一个重要原因。</p>
 <p>关联分析的困难其实完全是由海量数据造成的，因为数据量的增加会直接造成挖掘效率的下降，当数据量增加到一定程度，问题的难度就会产生质变，例如，在关联分析中必须考虑因数据太大而无法承受多次扫描数据库的开销、可能产生在存储和计算上都无法接受的大量中间结果等，而关联分析技术正是围绕着“提高效率”这条主线发展起来的。在R.
@@ -128,11 +130,61 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
 <li>基于统计学的相关性：因果分析</li>
 <li>针对大数据的算法</li>
 </ul>
+<h2 id="因果分析的重要性-辛普森悖论">因果分析的重要性-辛普森悖论</h2>
+<ul>
+<li>数据总体上的结果，可能和内部<strong>每</strong>一小块细分数据相反！（辛普森悖论）</li>
+<li>相关性不是因果关系。统计学知识通常只能分析出相关性。</li>
+</ul>
+<p><strong>样例1</strong></p>
+<table>
+<thead>
+<tr>
+<th>患者</th>
+<th>患者服药情况</th>
+<th></th>
+<th>患者未服药情况</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>症状患者数</td>
+<td>症状率/%</td>
+<td>症状患者数</td>
+<td>症状率/%</td>
+</tr>
+<tr>
+<td>男性患者</td>
+<td>81 例（共 87 例）</td>
+<td>93</td>
+<td>234 例（共 270 例）</td>
+<td>87</td>
+</tr>
+<tr>
+<td>女性患者</td>
+<td>192 例（共 263 例）</td>
+<td>73</td>
+<td>55 例（共 80 例）</td>
+<td>69</td>
+</tr>
+<tr>
+<td>合计</td>
+<td>273 例（共 350 例）</td>
+<td>78</td>
+<td>289 例（共 350 例）</td>
+<td>83</td>
+</tr>
+</tbody>
+</table>
+<p>对于男性和女性各自有效，但是为什么合起来看就没有效果了呢？难道说，医生如果知道性别就可以开药，不知道性别就不能开药吗？</p>
+<p>因为女性的激素让她们更不容易痊愈。而因为允许患者自由选择是否服药，导致数据中，女性更倾向于服药，男性倾向于不服药。导致整体的数据受到了数据分布的偏差。更进一步地，女性在服药中权重更大，因此整体的服药痊愈率被拉低到女性服药后的结果。整体的不服药痊愈率，被拉高到男性的结果。</p>
+<p><strong>如果你要</strong></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E5%92%8C%E5%9B%A0%E6%9E%9C%E6%80%A7/" data-id="cmj017clt007610uehkzkcxyn" data-title="分析数据的相关性和因果性" class="article-share-link"><span class="fa fa-share">Partager</span></a>
+      <a data-url="https://wjk.moe/2025/%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E5%92%8C%E5%9B%A0%E6%9E%9C%E6%80%A7/" data-id="cmjidxm4r003i94ueaiarfecr" data-title="分析数据的相关性和因果性" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -145,7 +197,7 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
 <nav id="article-nav">
   
     <a href="/2025/%E4%BB%A3%E6%95%B0%E5%AD%90%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%B2%BE%E9%AB%93%EF%BC%88%E5%8F%8C%E8%AF%AD%E4%BA%A4%E6%9B%BF%E7%89%88%E6%9C%AC%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Récent</strong>
+      <strong class="article-nav-caption">Neuer</strong>
       <div class="article-nav-title">
         
           代数子类型的精髓（双语交替版本）
@@ -155,7 +207,7 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
   
   
     <a href="/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Ancien</strong>
+      <strong class="article-nav-caption">Älter</strong>
       <div class="article-nav-title">基于对数期望的投资尺寸计算</div>
     </a>
   
@@ -196,7 +248,7 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Catégories</h3>
+    <h3 class="widget-title">Kategorien</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Digi/">Digi</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hack/">Hack</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Project/">Project</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Read/">Read</a></li></ul>
     </div>
@@ -206,7 +258,7 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Mot-clés</h3>
+    <h3 class="widget-title">Tags</h3>
     <div class="widget">
       <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Compiler/" rel="tag">Compiler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decompile/" rel="tag">Decompile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Embedded/" rel="tag">Embedded</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/English/" rel="tag">English</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Investing/" rel="tag">Investing</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLVM/" rel="tag">LLVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Learning/" rel="tag">Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openwrt/" rel="tag">Openwrt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PL/" rel="tag">PL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raspberrypi/" rel="tag">Raspberrypi</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Read/" rel="tag">Read</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scientific/" rel="tag">Scientific</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/StaticAnalysis/" rel="tag">StaticAnalysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebAssembly/" rel="tag">WebAssembly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/" rel="tag">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rcore/" rel="tag">rcore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ucore/" rel="tag">ucore</a></li></ul>
     </div>
@@ -216,16 +268,16 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 11.25px;">AI</a> <a href="/tags/CTF/" style="font-size: 18.75px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 20px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Investing/" style="font-size: 11.25px;">Investing</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.5px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 20px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.5px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 20px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 11.11px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18.89px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Investing/" style="font-size: 11.11px;">Investing</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 20px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archiv</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">December 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
@@ -239,7 +291,7 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
     <div id="footer-info" class="inner">
       
       &copy; 2025 am009@github.com<br>
-      Propulsé par <a href="https://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

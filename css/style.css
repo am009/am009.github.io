@@ -374,7 +374,7 @@ body {
 .main-nav-link {
   float: left;
   color: #fff;
-  opacity: 0.6;
+  opacity: 0.9;
   text-decoration: none;
   text-shadow: 0 1px rgba(0,0,0,0.2);
   -webkit-transition: opacity 0.2s;
@@ -398,7 +398,8 @@ body {
   cursor: pointer;
 }
 .main-nav-link {
-  font-weight: 300;
+  font-weight: 400;
+  text-shadow: 0 0 2px #000;
   letter-spacing: 1px;
 }
 @media screen and (max-width: 479px) {
@@ -598,7 +599,11 @@ a.article-title:hover {
 }
 .article-entry blockquote {
   font-family: Georgia, "Times New Roman", serif;
-  margin: 1.6em 20px;
+  margin: 1.6em 20px 1.6em 0px;
+  padding-left: 15px;
+  border: solid #79b6de;
+  border-width: 0px 0px 0px 5px;
+  background-color: #f2f2f2;
   text-align: center;
 }
 .article-entry blockquote footer {
