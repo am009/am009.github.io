@@ -14,7 +14,7 @@
 <meta property="og:description" content="分析数据的相关性和因果性">
 <meta property="og:locale">
 <meta property="article:published_time" content="2025-12-05T03:11:12.000Z">
-<meta property="article:modified_time" content="2025-12-21T04:22:51.152Z">
+<meta property="article:modified_time" content="2026-01-05T06:36:23.733Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
@@ -113,8 +113,29 @@
         <p>分析数据的相关性和因果性</p>
 <span id="more"></span>
 <h2 id="资料">资料</h2>
-<p>相关书籍： - 《统计因果推理入门-Judea-Pearl》 - 《数据挖掘导论》 -
-《数据挖掘：概念与技术》</p>
+<p>相关书籍：</p>
+<ul>
+<li>《统计因果推理入门-Judea-Pearl》</li>
+<li>《数据挖掘导论》</li>
+<li>《数据挖掘：概念与技术》</li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/Doragd/Algorithm-Practice-in-Industry">这里</a>
+搜索因果推理</li>
+<li><a
+target="_blank" rel="noopener" href="https://cosx.org/2022/10/causality-statistical-method/">因果推断的统计方法</a></li>
+<li><a
+target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzU1NTMyOTI4Mw==&amp;mid=2247618221&amp;idx=1&amp;sn=bbbb4acd59fa304fd9941138d03a5b03&amp;chksm=fbd6bcc1cca135d72d19924659d0ba226d516409c975610d077e64705d351b2c0b82ee46da4f&amp;scene=27#wechat_redirect">因果推理主要技术思想与方法总结</a></li>
+</ul>
+<p>结构因果框架主要的文献：</p>
+<ul>
+<li>《统计因果推理入门》- Judea, Pearl</li>
+<li>J. Pearl. Causality: models, reasoning and inference, volume 29.
+Springer, 2000.</li>
+<li>J. Pearl. <a
+target="_blank" rel="noopener" href="https://ftp.cs.ucla.edu/pub/stat_ser/r350.pdf">Causal inference in
+statistics: An overview</a>. Statistics surveys, 3:96–146, 2009.</li>
+<li>https://blog.csdn.net/l8947943/article/details/128946593</li>
+</ul>
 <h2
 id="相关性挖掘机器学习大数据数据挖掘">相关性挖掘（机器学习、大数据、数据挖掘）</h2>
 <blockquote>
@@ -130,7 +151,30 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
 <li>基于统计学的相关性：因果分析</li>
 <li>针对大数据的算法</li>
 </ul>
-<h2 id="因果分析的重要性-辛普森悖论">因果分析的重要性-辛普森悖论</h2>
+<h3 id="数据的相关性">数据的相关性</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/194254252">《数学建模笔记——相关系数》</a></li>
+</ul>
+<p><strong>Pearson 相关系数</strong></p>
+<p>高中的时候我们都学过相关系数，对于两个二值的变量有一个表，然后根据公式可以有一个相关系数，从而判断是否存在线性关系。</p>
+<p>φ = (ad - bc) / √((a+b)(c+d)(a+c)(b+d))</p>
+<p>这个相关系数进一步拓展到连续变量就是Pearson 相关系数Pearson
+相关系数表示为 <span class="math inline">\(\rho(X,Y) =
+\sigma_{xy}/(\sigma_x\sigma_y)\)</span>，其中，<span
+class="math inline">\(\sigma_{xy}\)</span> 是 <span
+class="math inline">\(X,Y\)</span> 的协方差，<span
+class="math inline">\(\sigma_x,\sigma_y\)</span> 分别是 <span
+class="math inline">\(X,Y\)</span> 的标准差。</p>
+<p>对于很多不同数据形成的一个表，我们可以列出数据之间两两的Pearson
+相关系数，形成一个相关系数矩阵，方便我们进一步观察哪两个数据之间相关。</p>
+<p><strong>斯皮尔曼秩相关系数</strong></p>
+<p>然而，Pearson
+相关系数假设变量之间关系大致呈线性，且数据最好服从二元正态分布（对大样本要求可放宽）。不符合假设的时候，我们可以使用<strong>斯皮尔曼秩相关系数</strong>。它衡量两个变量之间单调关系的强度和方向（无论是否为线性）。它的思想非常简单，为每个数据点在X和Y内部分配排名（秩），得到两个秩序列，然后对这两个配对好的秩序列直接套用皮尔逊公式。通过这种分配排名的方式，就可以更好地衡量非线性关系的同时，突出相关性。</p>
+<h2 id="因果分析">因果分析</h2>
+<p>统计学只能给出相关性的表示，而无法给出因果关系的表示。即使是数学表示上，也缺乏这种单向性。随着因果分析在近年来的发展，相关理论应当被更广泛地应用。</p>
+<h3 id="背景">背景</h3>
+<p><strong>重要性：辛普森悖论</strong></p>
 <ul>
 <li>数据总体上的结果，可能和内部<strong>每</strong>一小块细分数据相反！（辛普森悖论）</li>
 <li>相关性不是因果关系。统计学知识通常只能分析出相关性。</li>
@@ -179,12 +223,135 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
 </table>
 <p>对于男性和女性各自有效，但是为什么合起来看就没有效果了呢？难道说，医生如果知道性别就可以开药，不知道性别就不能开药吗？</p>
 <p>因为女性的激素让她们更不容易痊愈。而因为允许患者自由选择是否服药，导致数据中，女性更倾向于服药，男性倾向于不服药。导致整体的数据受到了数据分布的偏差。更进一步地，女性在服药中权重更大，因此整体的服药痊愈率被拉低到女性服药后的结果。整体的不服药痊愈率，被拉高到男性的结果。</p>
-<p><strong>如果你要</strong></p>
+<p><strong>广告推荐，策略投放的应用</strong></p>
+<p>因果推理的用途： -
+探索变量之间的关系，即相关性。常规机器学习在应用中主要学习的就是变量之间的相关性。
+-
+研究实施某种干扰的效果，这一层次在营销领域使用得较多，典型的例子是uplift
+model。举个例子，我们对某个地方或者某一群用户发放优惠券，我们考虑发多少优惠券、对哪些人发放优惠券，实施这一行为后产生的效果或者收益是否符合业务预期。这类方法被称为干扰或者干预。
+-
+结果考虑原因，被称为反事实推断，即如果我想得到某种结果我们应该做什么改变。现在大多数因果建模都是从这一层次来进行探索。</p>
+<h3 id="因果分析的知识体系"><strong>因果分析的知识体系</strong></h3>
+<p>因果分析有几个著名的框架：“潜在结果框架” potential outcome
+framework和 结构因果框架 structural causal
+model。它们是两种完全不同的范式。结构因果框架致力于从纯观测数据中发现因果关系，自动学习因果结构的骨架或方向。而潜在结果框架旨在精确估计一个特定干预或处理（Treatment）对某个结果（Outcome）的定量影响。它通常不关心整个系统的全图，而是聚焦于一对具体的因果关系。潜在结果模型主要用于估计变量之间一度相关的影响(i.e，只允许有一个因变量和一些自变量，不能估计间接影响的链路)。如何学习众多变量之间的链路和复杂关系，则需要用到另一个流派
+结构因果框架 的结构因果模型方法。</p>
+<p>基于因果网络模型方法主要可以检验和改进已知的网络，但弱点是，在实际中很难得到一个已知的因果网络。潜在结果模型的方法不需要一个已知的因果网络，但是需要可忽略处理分配假定或者工具变量假定。</p>
+<h2 id="结构因果框架">结构因果框架</h2>
+<p>控制随机试验是发现因果关系的首选方法。即使不能控制，在特定假设下，随机变量间的部分或完整因果关系可以从观测数据中还原
+(Pearl,2009b)。</p>
+<p>主要的假设 - Causal
+Markov因果马尔可夫假设：该假设意味任何节点的条件分布仅基于其直接父节点。
+- Causal Sufficiency
+因果充分性假设：该假设等同于不存在无法观测的混淆变量。 - Causal
+Faithfulness
+因果忠诚性假设：该假设意味基于一些条件概率分布，一些节点之间是独立的（因此图可以被切割）。</p>
+<p><strong>d-分离</strong></p>
+<p><strong>前门准则</strong></p>
+<p><strong>后门准则</strong></p>
+<p><strong>因果网络学习</strong></p>
+<p>因果网络学习又分为因果网络的参数学习和结构学习。因果网络结构学习有两类方法：基于条件独立检验的方法学习出所有满足faithfulness和causal
+markov假设的因果图，即检验两个节点之间的条件分布是否独立。例如PC算法（Spirtes
+and Glymour 1991）和IC算法（Verma and Pearl 1990）。</p>
+<ul>
+<li><strong>IC算法</strong>：Verma and Pearl (1990) 提出了 IC (inductive
+causation) 算法，首先针对任意两个节点 <span
+class="math inline">\(X_i\)</span> 和 <span
+class="math inline">\(X_j\)</span> 尽力搜索是否存在分离集 <span
+class="math inline">\(S_{ij}\)</span> 使得条件独立 <span
+class="math inline">\(X_i \perp\!\!\!\perp X_j \mid S_{ij}\)</span>
+成立；如果存在这样的 <span
+class="math inline">\(S_{ij}\)</span>，则删去这两个节点间的边。然后利用两个不相邻的节点
+<span class="math inline">\(X_i\)</span> 和 <span
+class="math inline">\(X_j\)</span>，如果它们的公共邻居 <span
+class="math inline">\(X_k\)</span> 不包含在它们的分离集 <span
+class="math inline">\(S_{ij}\)</span> 中，则确定一个 V-结构 (<span
+class="math inline">\(X_i \rightarrow X_k \leftarrow
+X_j\)</span>)。最后确定其他边的方向，避免出现新的 V-结构和有向环。</li>
+<li><strong>PC算法</strong>：在 IC 算法中穷尽搜索分离集 <span
+class="math inline">\(S_{ij}\)</span>
+的计算复杂度很高，并且对于大的分离集 <span
+class="math inline">\(S_{ij}\)</span>，其条件独立检验功效低。为了改善 IC
+算法的效率，Spirtes and Glymour (1991) 提出了 PC (Peter and Clark)
+算法。PC
+算法仍是将完全图作为初始骨架图，然后从空集开始逐步增大分离集的大小，不断删除骨架图中的边，使得每个结点的邻居数不断减少，寻找两个节点的分离集限定在它们的邻居集的子集范围内，目的是避免高维变量的条件独立检验。后续的研究对
+PC
+算法不断改进，克服了其在稳定性、潜在混杂变量处理、非线性因果关系处理、混合变量处理等方面的不足。Colombo
+and Maathuis (2014) 提出了 Stable PC
+算法，通过引入稳定骨架学习及固定定向规则的修改，降低了 PC
+算法对随机变量的序列关系的敏感度，使其在高维变量的场景中仍能获得稳定的结构学习效果。FCI/RFCI
+算法及其变体被提出 (Spirtes et al.,2000,1999;),
+用以在未观测混杂变量和样本选择偏差存在的情况下学习因果结构，这些方法在
+PC 邻接搜索的基础上，利用额外的条件独立性检验以处理潜在混杂变量。Zhang
+et al.(2012)
+提出基于核的独立性检验方式并给出条件独立零假设下的渐近分布构造方法，以支持非线性假设下的因果关系发现。Copula
+PC(Cui et al.,2016)将 PC 算法中基于相关矩阵的独立性检验更新为基于高斯
+copula
+相关矩阵的独立性检验，以支持混合变量（连续和离散变量并存）下的因果结构学习。</li>
+</ul>
+<p>在所有可能生成的图中进行搜索是NP-Hard的问题。第二种方法，通过最优化定义的某种score来寻找和数据最匹配的图结构，避免了搜索所有可能的图。NOTEARS算法将离散搜索的问题转化成了连续搜索的问题。该算法极大提高了运算速度。但这个方法也存在着一定的局限性，例如假设所有变量的噪声必须是高斯分布。近年来也有越来越多的方法（如He
+et al.2021）尝试改进这类方法的假设。</p>
+<p>Copula PC(Cui et al.,2016)将 PC
+算法中基于相关矩阵的独立性检验更新为基于高斯 copula
+相关矩阵的独立性检验，以支持混合变量（连续和离散变量并存）下的因果结构学习。</p>
+<p><strong>将因果网络进行参数化</strong></p>
+<p>将因果网络进行参数化，利用结构方程模型（SEM）描述变量间的因果关系。将结果变量
+<span class="math inline">\(Y\)</span> 与直接原因变量集合 <span
+class="math inline">\(X\)</span> 和噪音项 <span
+class="math inline">\(\varepsilon\)</span> 用结构方程 <span
+class="math inline">\(Y = f(X, \varepsilon)\)</span> 联系起来，其中
+<span class="math inline">\(X\)</span> 和 <span
+class="math inline">\(\varepsilon\)</span>
+相互独立。因果方向的可判定问题是 SEM 研究中的一项重要课题。Hoyer et
+al.(2009); Shimizu et al.(2006)
+的研究表明，当噪音项服从非高斯分布或者函数方程满足非线性约束时，由于原因变量和噪音项间的独立性仅在正确的因果方向下成立，使得变量间的因果方向是可判定的。</p>
+<p>LINGAM (Shimizu et al., 2006)
+是该研究方向的一个代表性模型，它建模连续随机变量间的因果关系，假设变量间线性关联且噪音项服从非高斯分布。独立主成分分析技术（ICA）被用于
+LINGAM 的模型选择，由于超参数选择问题，ICA
+算法常常陷入局部最优而无法收敛于最优解。为此，DirectLiNGAM 算法 (Shimizu
+et al., 2011)
+利用外部变量及非外部变量在其上的回归残差间的独立性信息求解变量间的因果结构，被证明可以收敛于最优。后续研究针对
+LINGAM 在诸多方向上进行了扩展。例如，Hoyer et al.(2008)
+将潜在混杂变量及其对观测变量的影响进行建模，并利用完备 ICA
+算法实现模型选择。Henao and Winther (2011) 提出一种
+方法来解带潜在线性因子的 LINGAM 模型。Lacerda et al.(2008) 和 Hyvarinen
+and Smith (2013) 将 LINGAM
+进行了有环化的扩展，并给出了模型可判定的充分条件。Zhang and Hyvarinen
+(2009) 扩展 LINGAM
+以处理随机变量间的非线性因果关系，并证明除个别非线性函数及数据分布外，其模型是可判定的。Zhang
+et al.(2010) 对这些非线性模型进行扩展以处理潜在混杂变量。</p>
+<p>噪音可加模型（additive noise model, ANM）将因果关系建模为 <span
+class="math inline">\(Y = f(X) + \varepsilon\)</span>。Hoyer et
+al.(2009) 的研究表明，当函数满足非线性约束时，该模型是可判定模型。Hoyer
+et al.(2009)
+利用目标变量与源变量在其上非线性回归的残差之间的独立性信息判定因果方向。Buhlmann
+et al.(2013) 提出基于 评分准则的非线性 ANM 的模型选择算法。Mooij et
+al.(2011) 致力于有环 ANM
+的模型选择等。针对似然函数方法存在的马尔科夫等价类问题，Cai et
+al.(2018a)
+通过将结构方程模型引入到似然函数计算框架中，实现了似然函数方法和结构方程模型的有效结合较好地解决了马尔科夫等价类问题。Fei
+and Yang (2017)
+提出了一种结合探索性因子分析和路径分析方法推断存在隐变量情况下的因果关系，利用因子分析得到相对各自独立的隐变量，采用路径分析（PA）算法得到观测变量之间的因果方向与因果关系，扩展了隐变量以及它们与观测变量之间的线性因果关系。</p>
+<p>还有一些研究将独立性检验和逻辑推理结合，以解决 PC
+类算法的稳健性问题（不正确的独立性检验会导致连锁的定向错误）。该类方法的另一个优势在于易集成多种类别的先验知识，同时易于处理未观测的混杂因素及数据选择偏差。Claassen
+and Heskes (2011)
+将变量间的（条件）独立信息转换成逻辑命题，并给出了相应的逻辑推理算法以识别部分祖先图（PAG）。Hyttinen
+et al.(2013)
+提出使用一阶逻辑编码随机变量间的条件独立关系，从而将因果关系发现问题转换成骨干变量求解问题，并利用
+SAT 处理器识别因果结构。Borboudakis and Tsamardinos (2016)
+的工作更进一步定义了更多的逻辑项及规则对控制试验数据、非同源数据等信息进行编码及推理，实现了更泛化的因果结构学习。</p>
+<h2 id="潜在结果框架">潜在结果框架</h2>
+<p>参考资料： - <a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/360837921">因果推断综述解析</a></p>
+<p>识别因果效应的三个关键假设</p>
+<p>权重分配方法、分层推理方法、基于匹配的方法、基于树的方法、基于表征的方法、基于多任务学习的方法和基于元学习的方法</p>
+<p>放松上述三个假设的因果推断方法，以满足不同情况下的需求</p>
+<h3 id="贝叶斯网络">贝叶斯网络</h3>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E5%92%8C%E5%9B%A0%E6%9E%9C%E6%80%A7/" data-id="cmjidxm4r003i94ueaiarfecr" data-title="分析数据的相关性和因果性" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E5%92%8C%E5%9B%A0%E6%9E%9C%E6%80%A7/" data-id="cmks49mcl004y4guec0sygngu" data-title="分析数据的相关性和因果性" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -270,7 +437,7 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 11.11px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18.89px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Investing/" style="font-size: 11.11px;">Investing</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 20px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 12.5px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.5px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18.75px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Investing/" style="font-size: 12.5px;">Investing</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.5px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 20px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 11.25px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.75px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
@@ -279,7 +446,7 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">December 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">January 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">December 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -290,7 +457,7 @@ target="_blank" rel="noopener" href="https://cs.nju.edu.cn/zhouzh/zhouzh.files/p
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2025 am009@github.com<br>
+      &copy; 2026 am009@github.com<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

@@ -14,7 +14,7 @@
 <meta property="og:description" content="基于对数期望的投资尺寸计算">
 <meta property="og:locale">
 <meta property="article:published_time" content="2025-11-27T03:11:12.000Z">
-<meta property="article:modified_time" content="2025-11-27T07:28:12.280Z">
+<meta property="article:modified_time" content="2025-12-31T10:54:50.026Z">
 <meta property="article:author" content="am009@github.com">
 <meta property="article:tag" content="Investing">
 <meta name="twitter:card" content="summary">
@@ -113,25 +113,30 @@
         <p>基于对数期望的投资尺寸计算</p>
 <span id="more"></span>
 <p>根据<a
-href="/2025/深入理解投资中的凯利公式/">上一篇文章</a>，我们知道了投入比例关键的式子是：</p>
+href="/2025/深入理解投资中的凯利公式/">上一篇文章</a>，我们知道了投入比例关键在于，最大化下面的函数：</p>
 <p><span class="math display">\[
-\log W_n = \log W_0 + n \cdot p_1 \log (1+r_1x) + n \cdot p_2 \log
-(1+r_2x) + n \cdot p_3 \log (1+r_3x)
+f(x) = p_1 \log (1+r_1x) + p_2 \log (1+r_2x) + p_3 \log (1+r_3x)
 \]</span></p>
-<p>其中<span
-class="math inline">\(r\)</span>是的定义是，比如，回报率是0.1表示赚了投入的10%，回报率是-0.1表示亏了投入的10%。</p>
-<p>我们依然需要考虑更复杂的问题：</p>
+<p>其中多个概率 <span class="math inline">\(p\)</span>
+表示不同回报场景出现的概率。回报率 <span
+class="math inline">\(r\)</span>
+的定义是，比如，回报率是0.1表示赚了投入的10%，回报率是-0.1表示亏了投入的10%。</p>
+<p>我们需要考虑更复杂的问题：</p>
 <ul>
 <li>对于多个投资机会同时存在时，如何计算最优投资比例？</li>
 <li>如何考虑投资机会的时间成本？比如通过折算夏普比率</li>
 <li>如何考虑杠杆带来的成本？</li>
 </ul>
-<p>巴菲特和芒格批评现代资产组合理论说分散风险是对无知的保护。他的意思是，如果不去做任何筛选，直接随意地进行分散风险投资，对于他们这种能够辨别优质投资机会的人来说，确实不好，因为买入了很多平庸的投资。如果经过筛选后，依然同时存在多个优质投资机会，然后将风险分散在其中，当然依然是更好的。</p>
+<h2 id="完全独立的多个机会">完全独立的多个机会</h2>
+<p>如果投资机会的分布完全独立，我们可以考虑两个机会所有可能结果的组合。</p>
+<blockquote>
+<p>巴菲特和芒格批评现代资产组合理论说分散风险是对无知的保护。他的意思是，如果不去做任何筛选，直接随意地进行分散风险投资，对于他们这种能够辨别优质投资机会的人来说，确实不好，因为买入了很多平庸的投资。如果经过筛选后，依然同时存在多个优质投资机会，然后将风险分散在其中，当然依然是更好的。所以和我们这里不冲突</p>
+</blockquote>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wjk.moe/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/" data-id="cmjidxm4v003r94ue4nt42sz4" data-title="基于对数期望的投资尺寸计算" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://wjk.moe/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/" data-id="cmks49mcl00544guees6iexbq" data-title="基于对数期望的投资尺寸计算" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
@@ -217,7 +222,7 @@ class="math inline">\(r\)</span>是的定义是，比如，回报率是0.1表示
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 11.11px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.78px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 15.56px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18.89px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.22px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 16.67px;">Fuzz</a> <a href="/tags/Investing/" style="font-size: 11.11px;">Investing</a> <a href="/tags/Java/" style="font-size: 11.11px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.11px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.33px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.11px;">Linux</a> <a href="/tags/Networking/" style="font-size: 14.44px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.22px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 20px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 12.22px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.22px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.89px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 14.44px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
+      <a href="/tags/AI/" style="font-size: 12.5px;">AI</a> <a href="/tags/CTF/" style="font-size: 17.5px;">CTF</a> <a href="/tags/Compiler/" style="font-size: 16.25px;">Compiler</a> <a href="/tags/Decompile/" style="font-size: 18.75px;">Decompile</a> <a href="/tags/Embedded/" style="font-size: 12.5px;">Embedded</a> <a href="/tags/English/" style="font-size: 10px;">English</a> <a href="/tags/Fuzz/" style="font-size: 17.5px;">Fuzz</a> <a href="/tags/Investing/" style="font-size: 12.5px;">Investing</a> <a href="/tags/Java/" style="font-size: 11.25px;">Java</a> <a href="/tags/LLVM/" style="font-size: 11.25px;">LLVM</a> <a href="/tags/Learning/" style="font-size: 13.75px;">Learning</a> <a href="/tags/Linux/" style="font-size: 11.25px;">Linux</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/OS/" style="font-size: 12.5px;">OS</a> <a href="/tags/Openwrt/" style="font-size: 10px;">Openwrt</a> <a href="/tags/PL/" style="font-size: 20px;">PL</a> <a href="/tags/Raspberrypi/" style="font-size: 10px;">Raspberrypi</a> <a href="/tags/Read/" style="font-size: 11.25px;">Read</a> <a href="/tags/Scientific/" style="font-size: 12.5px;">Scientific</a> <a href="/tags/StaticAnalysis/" style="font-size: 18.75px;">StaticAnalysis</a> <a href="/tags/WebAssembly/" style="font-size: 10px;">WebAssembly</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/rcore/" style="font-size: 10px;">rcore</a> <a href="/tags/ucore/" style="font-size: 10px;">ucore</a>
     </div>
   </div>
 
@@ -226,7 +231,7 @@ class="math inline">\(r\)</span>是的定义是，比如，回报率是0.1表示
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">December 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">January 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">December 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/04/">April 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
     </div>
   </div>
 
@@ -237,7 +242,7 @@ class="math inline">\(r\)</span>是的定义是，比如，回报率是0.1表示
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2025 am009@github.com<br>
+      &copy; 2026 am009@github.com<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

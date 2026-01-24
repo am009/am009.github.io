@@ -6,7 +6,7 @@
   <link href="https://wjk.moe/rss.xml" rel="self"/>
   
   <link href="https://wjk.moe/"/>
-  <updated>2025-12-15T01:18:40.907Z</updated>
+  <updated>2026-01-21T10:18:33.750Z</updated>
   <id>https://wjk.moe/</id>
   
   <author>
@@ -17,11 +17,49 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>旧显卡在2026年的AI-LLM生存指南</title>
+    <link href="https://wjk.moe/2026/%E6%97%A7%E6%98%BE%E5%8D%A1%E5%9C%A82026%E5%B9%B4%E7%9A%84AI-LLM%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97/"/>
+    <id>https://wjk.moe/2026/%E6%97%A7%E6%98%BE%E5%8D%A1%E5%9C%A82026%E5%B9%B4%E7%9A%84AI-LLM%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97/</id>
+    <published>2026-01-20T03:11:12.000Z</published>
+    <updated>2026-01-21T10:18:33.750Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;旧显卡在2026年的AI-LLM生存指南&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="AI" scheme="https://wjk.moe/tags/AI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>投资策略与市场走势的概率分布</title>
+    <link href="https://wjk.moe/2025/%E6%8A%95%E8%B5%84%E7%AD%96%E7%95%A5%E4%B8%8E%E5%B8%82%E5%9C%BA%E8%B5%B0%E5%8A%BF%E7%9A%84%E6%A6%82%E7%8E%87%E5%88%86%E5%B8%83/"/>
+    <id>https://wjk.moe/2025/%E6%8A%95%E8%B5%84%E7%AD%96%E7%95%A5%E4%B8%8E%E5%B8%82%E5%9C%BA%E8%B5%B0%E5%8A%BF%E7%9A%84%E6%A6%82%E7%8E%87%E5%88%86%E5%B8%83/</id>
+    <published>2025-12-31T03:11:12.000Z</published>
+    <updated>2025-12-31T08:45:40.604Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;投资策略与市场走势的概率分布&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
+    
+    
+    <category term="Investing" scheme="https://wjk.moe/tags/Investing/"/>
+    
+  </entry>
+  
+  <entry>
     <title>代数子类型的精髓（双语交替版本）</title>
     <link href="https://wjk.moe/2025/%E4%BB%A3%E6%95%B0%E5%AD%90%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%B2%BE%E9%AB%93%EF%BC%88%E5%8F%8C%E8%AF%AD%E4%BA%A4%E6%9B%BF%E7%89%88%E6%9C%AC%EF%BC%89/"/>
     <id>https://wjk.moe/2025/%E4%BB%A3%E6%95%B0%E5%AD%90%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%B2%BE%E9%AB%93%EF%BC%88%E5%8F%8C%E8%AF%AD%E4%BA%A4%E6%9B%BF%E7%89%88%E6%9C%AC%EF%BC%89/</id>
     <published>2025-12-09T03:11:12.000Z</published>
-    <updated>2025-12-15T01:18:40.907Z</updated>
+    <updated>2025-12-27T08:44:52.074Z</updated>
     
     
     <summary type="html">&lt;p&gt;一篇论文的中英文翻译版本：&lt;/p&gt;
@@ -47,7 +85,7 @@ Switzerland&lt;/p&gt;</summary>
     <link href="https://wjk.moe/2025/%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E5%92%8C%E5%9B%A0%E6%9E%9C%E6%80%A7/"/>
     <id>https://wjk.moe/2025/%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E5%92%8C%E5%9B%A0%E6%9E%9C%E6%80%A7/</id>
     <published>2025-12-05T03:11:12.000Z</published>
-    <updated>2025-12-21T04:22:51.152Z</updated>
+    <updated>2026-01-05T06:36:23.733Z</updated>
     
     
     <summary type="html">&lt;p&gt;分析数据的相关性和因果性&lt;/p&gt;</summary>
@@ -66,7 +104,7 @@ Switzerland&lt;/p&gt;</summary>
     <link href="https://wjk.moe/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/"/>
     <id>https://wjk.moe/2025/%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%95%B0%E6%9C%9F%E6%9C%9B%E7%9A%84%E6%8A%95%E8%B5%84%E5%B0%BA%E5%AF%B8%E8%AE%A1%E7%AE%97/</id>
     <published>2025-11-27T03:11:12.000Z</published>
-    <updated>2025-11-27T07:28:12.280Z</updated>
+    <updated>2025-12-31T10:54:50.026Z</updated>
     
     
     <summary type="html">&lt;p&gt;基于对数期望的投资尺寸计算&lt;/p&gt;</summary>
@@ -85,7 +123,7 @@ Switzerland&lt;/p&gt;</summary>
     <link href="https://wjk.moe/2025/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%8A%95%E8%B5%84%E4%B8%AD%E7%9A%84%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F/"/>
     <id>https://wjk.moe/2025/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%8A%95%E8%B5%84%E4%B8%AD%E7%9A%84%E5%87%AF%E5%88%A9%E5%85%AC%E5%BC%8F/</id>
     <published>2025-11-26T03:11:12.000Z</published>
-    <updated>2025-11-27T10:08:57.865Z</updated>
+    <updated>2026-01-19T03:44:37.488Z</updated>
     
     
     <summary type="html">&lt;p&gt;凯利公式在投资上的应用&lt;/p&gt;</summary>
@@ -104,7 +142,7 @@ Switzerland&lt;/p&gt;</summary>
     <link href="https://wjk.moe/2025/%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E7%90%86SimpleSub%E5%92%8CMLsub/"/>
     <id>https://wjk.moe/2025/%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E7%90%86SimpleSub%E5%92%8CMLsub/</id>
     <published>2025-11-20T03:11:12.000Z</published>
-    <updated>2025-12-17T08:13:22.940Z</updated>
+    <updated>2026-01-08T09:06:09.081Z</updated>
     
     
     <summary type="html">&lt;p&gt;多态类型推理SimpleSub和MLsub&lt;/p&gt;</summary>
@@ -187,7 +225,7 @@ Languages》TAPL的阅读笔记。&lt;/p&gt;</summary>
     <link href="https://wjk.moe/2025/Fuzzbench%E6%9E%B6%E6%9E%84/"/>
     <id>https://wjk.moe/2025/Fuzzbench%E6%9E%B6%E6%9E%84/</id>
     <published>2025-06-29T03:11:12.000Z</published>
-    <updated>2025-06-29T07:13:25.950Z</updated>
+    <updated>2026-01-20T06:11:25.546Z</updated>
     
     
     <summary type="html">&lt;p&gt;Fuzzbench的代码架构解析&lt;/p&gt;</summary>
@@ -271,7 +309,7 @@ Deterministic mode&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
     <link href="https://wjk.moe/2025/Fuzzing-MOpt-Mutator/"/>
     <id>https://wjk.moe/2025/Fuzzing-MOpt-Mutator/</id>
     <published>2025-04-02T03:11:12.000Z</published>
-    <updated>2025-04-02T04:56:55.750Z</updated>
+    <updated>2026-01-21T03:39:03.510Z</updated>
     
     
     <summary type="html">&lt;p&gt;Fuzzing-MOpt-Mutator。再次阅读这篇paper《MOpt: Optimized Mutation
@@ -283,8 +321,6 @@ Scheduling for Fuzzers》&lt;/p&gt;</summary>
     
     
     <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
-    
-    <category term="Read" scheme="https://wjk.moe/tags/Read/"/>
     
   </entry>
   
@@ -333,6 +369,25 @@ Replacement of Aggregates）&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
   </entry>
   
   <entry>
+    <title>盘点开源Fuzzer的策略-LibAFL-AFL++-Honggfuzz</title>
+    <link href="https://wjk.moe/2026/%E7%9B%98%E7%82%B9%E5%BC%80%E6%BA%90Fuzzer%E7%9A%84%E7%AD%96%E7%95%A5-LibAFL-AFL++-Honggfuzz/"/>
+    <id>https://wjk.moe/2026/%E7%9B%98%E7%82%B9%E5%BC%80%E6%BA%90Fuzzer%E7%9A%84%E7%AD%96%E7%95%A5-LibAFL-AFL++-Honggfuzz/</id>
+    <published>2025-04-02T03:11:12.000Z</published>
+    <updated>2026-01-23T10:43:42.088Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;盘点开源Fuzzer的策略-LibAFL-AFL++-Honggfuzz&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Dev" scheme="https://wjk.moe/categories/Dev/"/>
+    
+    
+    <category term="Fuzz" scheme="https://wjk.moe/tags/Fuzz/"/>
+    
+  </entry>
+  
+  <entry>
     <title>BTIGhidra和BinSub代码解析</title>
     <link href="https://wjk.moe/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/"/>
     <id>https://wjk.moe/2025/BTIGhidra%E5%92%8CBinSub%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90/</id>
@@ -372,70 +427,6 @@ Replacement of Aggregates）&lt;/a&gt;的实现解析&lt;/p&gt;</summary>
     <category term="CTF" scheme="https://wjk.moe/tags/CTF/"/>
     
     <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>二进制代码的多态类型推断Retypd</title>
-    <link href="https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/"/>
-    <id>https://wjk.moe/2025/%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E5%A4%9A%E6%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%ADRetypd/</id>
-    <published>2025-01-30T03:11:12.000Z</published>
-    <updated>2025-12-05T08:09:37.335Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;钻研了两年半《&lt;a href=&quot;https://arxiv.org/abs/1603.05495&quot;&gt;Polymorphic
-Type Inference for Machine
-Code&lt;/a&gt;》论文。看完本文后还有任何相关的问题可以问我。&lt;/p&gt;
-&lt;p&gt;跨函数的类型传播算法，可以将库函数的类型传递到代码内部。即使没有库函数识别时，也可以识别处函数内的结构体信息。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
-    
-    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
-    
-    <category term="StaticAnalysis" scheme="https://wjk.moe/tags/StaticAnalysis/"/>
-    
-    <category term="Decompile" scheme="https://wjk.moe/tags/Decompile/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>学术论文写作总结</title>
-    <link href="https://wjk.moe/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
-    <id>https://wjk.moe/2023/%E5%AD%A6%E6%9C%AF%E8%AE%BA%E6%96%87%E5%86%99%E4%BD%9C%E6%80%BB%E7%BB%93/</id>
-    <published>2025-01-27T03:11:12.000Z</published>
-    <updated>2025-11-14T05:59:23.168Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;学术论文写作总结&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Notes" scheme="https://wjk.moe/categories/Notes/"/>
-    
-    
-    <category term="Scientific" scheme="https://wjk.moe/tags/Scientific/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SoftwareFoundations学习笔记</title>
-    <link href="https://wjk.moe/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
-    <id>https://wjk.moe/2024/SoftwareFoundations%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
-    <published>2024-11-03T03:11:12.000Z</published>
-    <updated>2024-12-30T08:16:35.609Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;SoftwareFoundations学习笔记。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Read" scheme="https://wjk.moe/categories/Read/"/>
-    
-    
-    <category term="PL" scheme="https://wjk.moe/tags/PL/"/>
     
   </entry>
   
